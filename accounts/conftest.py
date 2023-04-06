@@ -1,6 +1,7 @@
 import pytest
+from django.contrib.auth import get_user_model
 
-from digital_agenda.apps.accounts.models import User
+User = get_user_model()
 
 
 @pytest.fixture
