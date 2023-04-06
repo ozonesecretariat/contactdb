@@ -1,0 +1,8 @@
+Django==4.2.*  # LTS
+django-admin-autocomplete-filter
+django-admin-env-notice
+django-ckeditor
+django-constance[database]
+django-environ
+django-extensions
+psycopg[binary]

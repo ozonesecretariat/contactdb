@@ -1,0 +1,11 @@
+-r base.txt
+
+black[d]
+coverage
+django-debug-toolbar
+ipdb
+ipython
+pytest
+pytest-cov
+pytest-django
+pytest-subtests
