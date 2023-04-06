@@ -1,0 +1,9 @@
+{% extends "two_factor/core/login.html" %}
+
+{% block content %}
+  {{ block.super }}
+
+  {% if wizard.steps.current == 'auth' %}
+    <a href="{% url 'admin_password_reset' %}">Forgot your password?</a>
+  {% endif %}
+{% endblock %}

@@ -5,6 +5,7 @@ from django.urls import include
 from django.urls import path
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
+from two_factor.urls import urlpatterns as tf_urls
 
 urlpatterns = [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
@@ -30,6 +31,8 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("admin/", admin.site.urls),
+    path("accounts/profile/", RedirectView.as_view(pattern_name="two_factor:profile")),
+    path("", include(tf_urls)),
     path("", RedirectView.as_view(pattern_name="admin:index")),
 ]
 

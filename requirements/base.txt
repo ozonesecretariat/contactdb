@@ -5,4 +5,5 @@ django-ckeditor
 django-constance[database]
 django-environ
 django-extensions
+django-two-factor-auth[phonenumbers]
 psycopg[binary]

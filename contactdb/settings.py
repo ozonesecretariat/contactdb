@@ -66,6 +66,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "django_otp",
+    "django_otp.plugins.otp_static",
+    "django_otp.plugins.otp_totp",
+    "two_factor",
+    # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
 ]
@@ -78,6 +83,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_otp.middleware.OTPMiddleware",
 ]
 
 ROOT_URLCONF = "contactdb.urls"
@@ -85,7 +91,7 @@ ROOT_URLCONF = "contactdb.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -168,7 +174,8 @@ SHORT_DATE_FORMAT = "d-m-Y"
 TIME_FORMAT = "H:i:s"
 
 # https://docs.djangoproject.com/en/4.0/ref/settings/#login-url
-LOGIN_URL = "/admin/login"
+# LOGIN_URL = "/admin/login"
+LOGIN_URL = "two_factor:login"
 
 FS_DIR = BASE_DIR / ".fs"
 
