@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "accounts.apps.AccountsConfig",
+    "core.apps.CoreConfig",
 ]
 
 MIDDLEWARE = [
@@ -99,15 +101,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "contactdb.wsgi.application"
 
+# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-AUTH_USER_MODEL
+AUTH_USER_MODEL = "accounts.User"
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+POSTGRES_HOST = env.str("POSTGRES_HOST")
+POSTGRES_PORT = env.int("POSTGRES_PORT", default=5432)
+POSTGRES_DB = env.str("POSTGRES_DB")
+POSTGRES_USER = env.str("POSTGRES_USER")
+POSTGRES_PASSWORD = env.str("POSTGRES_PASSWORD")
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": POSTGRES_DB,
+        "HOST": POSTGRES_HOST,
+        "PORT": POSTGRES_PORT,
+        "USER": POSTGRES_USER,
+        "PASSWORD": POSTGRES_PASSWORD,
+        "CONN_MAX_AGE": None,
+        "CONN_HEALTH_CHECKS": True,
+    },
 }
 
 
