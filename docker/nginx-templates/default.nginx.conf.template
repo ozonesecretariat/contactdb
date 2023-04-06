@@ -1,0 +1,25 @@
+server {
+    listen 80;
+
+    root /usr/share/nginx/html;
+
+    sendfile on;
+    tcp_nopush on;
+
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+
+    location /static/ {
+        alias /.fs/static/;
+        expires 365d;
+    }
+
+    location /media/ {
+        alias /.fs/media/;
+        expires 365d;
+    }
+
+    location / {
+        include /etc/nginx/conf.d/proxy_pass_backend;
+    }
+}

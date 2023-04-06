@@ -1,0 +1,9 @@
+FROM nginx:1.23-alpine
+
+# Env defaults
+ENV NGINX_WORKER_PROCESSES=1
+
+RUN rm /etc/nginx/conf.d/default.conf
+
+COPY docker/nginx-templates/ /etc/nginx/templates/
+COPY docker/nginx.conf /etc/nginx/nginx.conf

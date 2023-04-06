@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    expose:
+      - 5432
+    restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/app.docker
+    env_file:
+      - .env
+    environment:
+      - DJANGO_MIGRATE=yes
+    volumes:
+      - app_data:/app/.fs
+    expose:
+      - 8000
+    depends_on:
+      - db
+    restart: always
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.docker
+    volumes:
+      - app_data:/.fs
+    depends_on:
+      - app
+    restart: always
+
+volumes:
+  postgres_data:
+    driver: local
+  app_data:
+    driver: local

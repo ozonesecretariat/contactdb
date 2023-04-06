@@ -1,0 +1,14 @@
+services:
+  app:
+    environment:
+      # Control how many resources to give the webapp.
+      # See full list here https://docs.gunicorn.org/en/stable/settings.html#config
+      - GUNICORN_CMD_ARGS=--workers=4 --threads=4
+
+  nginx:
+    environment:
+      # Control how many resources to give the nginx
+      - NGINX_WORKER_PROCESSES=4
+    ports:
+      # Map to expose the docker webserver to outside
+      - 8080:80
