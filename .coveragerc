@@ -1,0 +1,6 @@
+[run]
+omit =
+    contactdb/settings.py
+    */tests/*
+    */migrations/*
+    */management/*
