@@ -18,4 +18,4 @@ services:
     environment:
       - NGINX_WORKER_PROCESSES=2
     ports:
-      - 8080:80
+      - 8000:80
