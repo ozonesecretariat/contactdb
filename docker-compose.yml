@@ -13,6 +13,14 @@ services:
       - 5432
     restart: always
 
+  redis:
+    image: redis:6-alpine
+    # Disables persistence for better performance
+    command: ["redis-server", "--save", '""', "--appendonly", "no"]
+    expose:
+      - 6379
+    restart: always
+
   app:
     build:
       context: .
@@ -28,6 +36,20 @@ services:
     depends_on:
       - db
     restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/app.docker
+    env_file:
+      - .env
+    volumes:
+      - app_data:/app/.fs
+    depends_on:
+      - db
+      - redis
+    restart: always
+    command: ["./manage.py", "rqworker"]
 
   nginx:
     build:
