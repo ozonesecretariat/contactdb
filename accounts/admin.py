@@ -1,8 +1,16 @@
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django_otp import devices_for_user
+from django_otp.plugins.otp_static.models import StaticDevice
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from .forms import UserCreationForm, UserChangeForm
 from .models import User
+
+
+admin.site.unregister(StaticDevice)
+admin.site.unregister(TOTPDevice)
 
 
 @admin.register(User)
@@ -23,6 +31,7 @@ class UserAdmin(BaseUserAdmin):
         "is_active",
     )
     readonly_fields = ("last_login",)
+    actions = ("reset_2fa",)
     fieldsets = (
         (
             None,
@@ -59,3 +68,14 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
+
+    @admin.action(description="Reset 2FA for selected users")
+    def reset_2fa(self, request, queryset):
+        for user in queryset:
+            for device in devices_for_user(user):
+                device.delete()
+        self.message_user(
+            request,
+            "2FA has been disabled for selected users",
+            level=messages.SUCCESS,
+        )
