@@ -10,3 +10,4 @@ django-rq
 django-task
 django-two-factor-auth[phonenumbers]
 psycopg[binary]
+sentry-sdk[django]

@@ -279,6 +279,21 @@ CONSTANCE_CONFIG_FIELDSETS = (
     ),
 )
 
+# Sentry
+SENTRY_DSN = env.str("SENTRY_DSN", default="")
+
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment=ENVIRONMENT_NAME,
+        integrations=[
+            DjangoIntegration(),
+        ],
+    )
+
 if DEBUG:
     DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)
 
