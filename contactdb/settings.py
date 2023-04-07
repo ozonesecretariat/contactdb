@@ -32,6 +32,11 @@ PROTOCOL = "https://" if HAS_HTTPS else "http://"
 
 BACKEND_HOST = env.list("BACKEND_HOST")
 
+REDIS_HOST = env.str("REDIS_HOST")
+REDIS_PORT = env.int("REDIS_PORT", default=6379)
+REDIS_CACHE_DB = 0
+REDIS_TASK_DB = 1
+
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DEBUG
 DEBUG = env.bool("DEBUG", default=False)
 
@@ -72,6 +77,8 @@ INSTALLED_APPS = [
     "constance",
     "constance.backends.database",
     "two_factor",
+    "django_rq",
+    "django_task",
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
@@ -134,6 +141,34 @@ DATABASES = {
         "CONN_HEALTH_CHECKS": True,
     },
 }
+
+# Caching
+# https://docs.djangoproject.com/en/4.2/ref/settings/#caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CACHE_DB}",
+        "OPTIONS": {
+            "SOCKET_TIMEOUT": 5,
+            "SOCKET_CONNECT_TIMEOUT": 5,
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "contactdb",
+    }
+}
+
+# Task Queue (RQ)
+
+RQ_QUEUES = {
+    "default": {
+        "HOST": REDIS_HOST,
+        "PORT": REDIS_PORT,
+        "DB": REDIS_TASK_DB,
+    }
+}
+
+# Hide RQ admin, since we are using Django Task models instead
+RQ_SHOW_ADMIN_LINK = False
 
 
 # Password validation

@@ -10,6 +10,7 @@ from two_factor.urls import urlpatterns as tf_urls
 urlpatterns = [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    path("django_task/", include("django_task.urls", namespace="django_task")),
     path(
         "admin/password_reset/",
         auth_views.PasswordResetView.as_view(),
