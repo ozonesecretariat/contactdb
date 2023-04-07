@@ -69,6 +69,8 @@ INSTALLED_APPS = [
     "django_otp",
     "django_otp.plugins.otp_static",
     "django_otp.plugins.otp_totp",
+    "constance",
+    "constance.backends.database",
     "two_factor",
     # This app
     "accounts.apps.AccountsConfig",
@@ -184,6 +186,7 @@ FS_DIR = BASE_DIR / ".fs"
 
 STATIC_URL = "/static/"
 STATIC_ROOT = FS_DIR / "static"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Media files / user uploads
 # https://docs.djangoproject.com/en/4.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development
@@ -222,6 +225,24 @@ ENVIRONMENT_NAME = env.str("ENVIRONMENT_NAME", default="")
 ENVIRONMENT_COLOR = env.str("ENVIRONMENT_COLOR", default="")
 ENVIRONMENT_TEXT_COLOR = env.str("ENVIRONMENT_TEXT_COLOR", default="#ffffff")
 
+# https://django-constance.readthedocs.io/en/latest/
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+CONSTANCE_CONFIG = {
+    "REQUIRE_2FA": (
+        False,
+        "Require two-factor authentication. Users will not be able to use "
+        "the application until they complete the 2FA setup.",
+    ),
+}
+CONSTANCE_CONFIG_FIELDSETS = (
+    (
+        "Security",
+        {
+            "collapse": False,
+            "fields": ("REQUIRE_2FA",),
+        },
+    ),
+)
 
 if DEBUG:
     DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)

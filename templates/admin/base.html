@@ -1,5 +1,13 @@
 {% extends "admin/base.html" %}
 
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static "admin.css" %}">
+{% endblock %}
+
+
 {% block userlinks %}
   {% if user.has_usable_password %}
     <a href="{% url 'admin:password_change' %}">Change password</a> /

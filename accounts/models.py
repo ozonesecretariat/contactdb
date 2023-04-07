@@ -4,6 +4,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from two_factor.utils import default_device
 
 from contactdb.citext import CIEmailField
 
@@ -40,3 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    @property
+    def two_factor_enabled(self):
+        return bool(default_device(self))
