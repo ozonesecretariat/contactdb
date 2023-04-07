@@ -22,9 +22,7 @@ services:
     restart: always
 
   app:
-    build:
-      context: .
-      dockerfile: docker/app.docker
+    image: ghcr.io/ozonesecretariat/contactdb-app:${DOCKER_TAG:-main}
     env_file:
       - .env
     environment:
@@ -38,9 +36,7 @@ services:
     restart: always
 
   worker:
-    build:
-      context: .
-      dockerfile: docker/app.docker
+    image: ghcr.io/ozonesecretariat/contactdb-app:${DOCKER_TAG:-main}
     env_file:
       - .env
     volumes:
@@ -52,9 +48,7 @@ services:
     command: ["./manage.py", "rqworker"]
 
   nginx:
-    build:
-      context: .
-      dockerfile: docker/nginx.docker
+    image: ghcr.io/ozonesecretariat/contactdb-nginx:${DOCKER_TAG:-main}
     volumes:
       - app_data:/.fs
     depends_on:

@@ -1,0 +1,14 @@
+name: "Continuous Integration"
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  docker-build:
+    uses: ./.github/workflows/docker-build.yml
+# TODO
+#  deploy-staging:
+#    needs: docker-build
+#    uses: ./.github/workflows/deploy-staging.yml

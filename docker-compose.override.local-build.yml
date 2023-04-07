@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app.docker
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/app.docker
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.docker
+    ports:
+      # Map to expose the docker webserver to outside
+      - 8000:80
