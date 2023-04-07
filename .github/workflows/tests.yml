@@ -1,0 +1,40 @@
+name: "Test Suite"
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Configure env"
+        run: |
+          cp .env.test .env
+          sed -i "/^DOCKER_TAG=/c\DOCKER_TAG=${{ github.base_ref || github.ref_name }}" .env
+          cp docker-compose.override.test.yml docker-compose.override.yml
+      - name: "Start services"
+        run: |
+          docker compose build --pull
+          docker compose up -d 
+          docker compose exec -T app wait_for_services.sh
+      - name: "Top"
+        run: |
+          docker compose top
+      - name: "Install dev dependencies"
+        run: |
+          docker compose exec -T app pip install -c requirements/constraints.txt -r requirements/dev.txt
+      - name: "Backend tests"
+        id: "backendTests"
+        run: |
+          docker compose exec -T app pytest --cov

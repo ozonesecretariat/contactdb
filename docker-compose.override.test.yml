@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app.docker
+    environment:
+      - GUNICORN_CMD_ARGS=--workers=2 --threads=2
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/app.docker
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.docker
+    environment:
+      - NGINX_WORKER_PROCESSES=2
+    ports:
+      - 8080:80
