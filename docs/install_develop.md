@@ -59,6 +59,26 @@ This document describes installation steps required to install locally for devel
   ./manage.py migrate
   ```
 
+## Docker
+
+- Copy the env file
+  ```shell
+  cp .env.develop.docker.example .env
+  ```
+- Copy the docker-compose file to create an override
+  ```shell
+  cp docker-compose.override.local-build.yml docker-compose.override.yml
+  ```
+- Build and start the containers
+  ```shell
+  docker-compose build
+  docker-compose up -d
+  ```
+- Create superuser
+  ```shell
+  docker-compose exec app ./manage.py createsuperuser
+  ```
+
 ## Where to go from here?
 
 See the [tests guide](./tests.md) to run the test suites locally. Afterward check

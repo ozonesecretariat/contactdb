@@ -1,4 +1,4 @@
-Django==4.2.*  # LTS
+Django==4.2
 django-admin-autocomplete-filter
 django-admin-env-notice
 django-ckeditor
