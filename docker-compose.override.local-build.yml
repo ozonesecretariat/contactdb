@@ -1,13 +1,16 @@
 services:
   app:
+    restart: always
     build:
       context: .
-      dockerfile: docker/app.docker
+      dockerfile: docker/app.dev.docker
+    volumes:
+      - .:/app
 
   worker:
     build:
       context: .
-      dockerfile: docker/app.docker
+      dockerfile: docker/app.dev.docker
 
   nginx:
     build:
