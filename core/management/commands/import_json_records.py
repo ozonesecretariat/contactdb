@@ -30,7 +30,9 @@ class Command(BaseCommand):
                     organization_type_id=record["organization"]["organizationTypeId"],
                     organization_type=record["organization"]["organizationType"],
                     government=check_field(record["organization"], "government"),
-                    government_name=check_field(record["organization"], "governmentName"),
+                    government_name=check_field(
+                        record["organization"], "governmentName"
+                    ),
                     country=check_field(record["organization"], "country"),
                     country_name=check_field(record["organization"], "countryName"),
                 )
@@ -57,7 +59,6 @@ class Command(BaseCommand):
                     country=check_field(record, "country"),
                     postal_code=check_field(record, "postalCode"),
                     birth_date=check_field(record, "dateOfBirth"),
-
                 )
                 for registration in record["registrationStatuses"]:
                     RegistrationStatus.objects.get_or_create(
@@ -68,6 +69,8 @@ class Command(BaseCommand):
                         date=registration["date"],
                         is_funded=registration["isFunded"],
                         role=check_field(registration, "role"),
-                        priority_pass_code=check_field(registration, "priorityPassCode"),
+                        priority_pass_code=check_field(
+                            registration, "priorityPassCode"
+                        ),
                         tags=check_field(registration, "tags"),
                     )

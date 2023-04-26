@@ -28,15 +28,16 @@ class SendMailTaskAdmin(TaskAdmin):
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    search_fields = ["organization_id",
-                     "name",
-                     "acronym",
-                     "organization_type_id",
-                     "government",
-                     "government_name",
-                     "country",
-                     "country_name"
-                     ]
+    search_fields = [
+        "organization_id",
+        "name",
+        "acronym",
+        "organization_type_id",
+        "government",
+        "government_name",
+        "country",
+        "country_name",
+    ]
     list_filter = ["organization_type"]
 
 
@@ -49,5 +50,12 @@ class RegistrationStatusAdmin(admin.ModelAdmin):
 
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
-    search_fields = ["contact_id", "first_name", "last_name", "designation", "department", "organization__name"]
+    search_fields = [
+        "contact_id",
+        "first_name",
+        "last_name",
+        "designation",
+        "department",
+        "organization__name",
+    ]
     list_filter = ["is_in_mailing_list", "is_use_organization_address"]
