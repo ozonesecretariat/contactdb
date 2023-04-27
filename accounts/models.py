@@ -31,9 +31,42 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = CIEmailField(unique=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    email = CIEmailField(
+        unique=True,
+        help_text="You can use <a href=\"../password/\">this form</a> to change the password. "
+                  "It is recommended to use 'Forgot password' for account retrieval.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Active",
+        help_text="Designates whether the account can be used. It is recommended to disable an "
+                  "account instead of deleting.",
+    )
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name="Staff",
+        help_text="Designates whether the user can access the admin page.",
+    )
+    can_view = models.BooleanField(
+        default=True,
+        verbose_name="View contacts",
+        help_text="Designates whether the user can view contacts.",
+    )
+    can_edit = models.BooleanField(
+        default=False,
+        verbose_name="Edit contacts",
+        help_text="Designates whether the user can edit contacts.",
+    )
+    can_import = models.BooleanField(
+        default=False,
+        verbose_name="Import contacts",
+        help_text="Designates whether the user can import contacts.",
+    )
+    can_send_mail = models.BooleanField(
+        default=False,
+        verbose_name="Send emails",
+        help_text="Designates whether the user can send emails to contacts.",
+    )
 
     USERNAME_FIELD = "email"
 

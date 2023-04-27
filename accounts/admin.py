@@ -43,12 +43,24 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
         (
-            "Permissions",
+            "Django Admin Permissions",
             {
                 "fields": (
                     "is_active",
                     "is_staff",
                     "is_superuser",
+                    "groups",
+                )
+            },
+        ),
+        (
+            "Site permissions",
+            {
+                "fields": (
+                    "can_view",
+                    "can_edit",
+                    "can_import",
+                    "can_send_mail",
                 )
             },
         ),
@@ -64,6 +76,11 @@ class UserAdmin(BaseUserAdmin):
                     "password2",
                     "is_staff",
                     "is_superuser",
+                    "can_view",
+                    "can_edit",
+                    "can_import",
+                    "can_send_mail",
+                    "groups",
                 ),
             },
         ),
