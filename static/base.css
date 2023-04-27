@@ -1,0 +1,32 @@
+:root {
+  --main-color: #417690;
+  --main-color-hover: #325b70;
+}
+
+.main-color{
+    background: var(--main-color) !important;
+}
+
+.btn-main-color{
+    background: var(--main-color) !important;
+    color: white;
+}
+
+.btn-main-color:hover{
+    background: var(--main-color-hover) !important;
+    box-shadow: 0 0 1rem rgba(50, 91, 112, .55) !important;
+    color: white;
+
+}
+
+.button-gray-shadow:hover{
+    box-shadow: 0 0 1rem rgba(0,0,0, .35);
+}
+
+.button-primary-shadow:hover{
+    box-shadow: 0 0 1rem rgba(13, 110, 253, .55);
+}
+
+.logout-btn:hover{
+    color: var(--main-color) !important;
+}

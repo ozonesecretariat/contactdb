@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include
 from django.urls import path
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from django.contrib.auth import views as auth_views
 from two_factor.urls import urlpatterns as tf_urls
+
+from core.views import HomepageView
 
 urlpatterns = [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
@@ -34,7 +37,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/profile/", RedirectView.as_view(pattern_name="two_factor:profile")),
     path("", include(tf_urls)),
-    path("", RedirectView.as_view(pattern_name="admin:index")),
+    path("account/logout", LogoutView.as_view(), name='logout'),
+    path("", HomepageView.as_view(), name='home'),
 ]
 
 if settings.DEBUG:

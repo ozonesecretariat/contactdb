@@ -213,6 +213,7 @@ TIME_FORMAT = "H:i:s"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#login-url
 # LOGIN_URL = "/admin/login"
 LOGIN_URL = "two_factor:login"
+LOGOUT_REDIRECT_URL = "/"
 
 FS_DIR = BASE_DIR / ".fs"
 
