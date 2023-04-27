@@ -37,8 +37,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/profile/", RedirectView.as_view(pattern_name="two_factor:profile")),
     path("", include(tf_urls)),
-    path("account/logout", LogoutView.as_view(), name='logout'),
-    path("", HomepageView.as_view(), name='home'),
+    path("account/logout", LogoutView.as_view(), name="logout"),
+    path("", HomepageView.as_view(), name="home"),
 ]
 
 if settings.DEBUG:
