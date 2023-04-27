@@ -33,14 +33,14 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = CIEmailField(
         unique=True,
-        help_text="You can use <a href=\"../password/\">this form</a> to change the password. "
-                  "It is recommended to use 'Forgot password' for account retrieval.",
+        help_text='You can use <a href="../password/">this form</a> to change the password. '
+        "It is recommended to use 'Forgot password' for account retrieval.",
     )
     is_active = models.BooleanField(
         default=True,
         verbose_name="Active",
         help_text="Designates whether the account can be used. It is recommended to disable an "
-                  "account instead of deleting.",
+        "account instead of deleting.",
     )
     is_staff = models.BooleanField(
         default=False,
