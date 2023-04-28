@@ -24,7 +24,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Home</a>
+                            <a class="nav-link" aria-current="page" href="/">Contacts</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">Imports/Exports</a>
                         </li>
                     </ul>
 
@@ -33,6 +37,13 @@
                         <li class="nav-item">
                           <a class="nav-link" aria-current="page" href="#">Hello, {{ user.get_username }}</a>
                         </li>
+
+                        {% if user.is_staff %}
+                            <li class="nav-item">
+                              <a class="nav-link" aria-current="page" href="{% url 'admin:index' %}">Admin</a>
+                            </li>
+                        {% endif %}
+
                         <li class="nav-item ms-2">
                             <form class="d-flex" action="{% url 'logout' %}">
                                 {% csrf_token %}
