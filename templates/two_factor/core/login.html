@@ -1,9 +1,15 @@
 {% extends "two_factor/core/login.html" %}
 
-{% block content %}
-  {{ block.super }}
+{% load static %}
 
-  {% if wizard.steps.current == 'auth' %}
-    <a href="{% url 'admin_password_reset' %}">Forgot your password?</a>
-  {% endif %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'login.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="mx-auto shadow rounded p-5 login-container">
+    {{ block.super }}
+
+  </div>
+
 {% endblock %}
