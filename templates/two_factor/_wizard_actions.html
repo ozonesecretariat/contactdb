@@ -6,14 +6,12 @@
     <button name="wizard_goto_step" type="submit"
             value="{{ wizard.steps.prev }}"
             class="btn btn-lg btn-secondary mx-2 button-gray-shadow">{% trans "Back" %}</button>
-  {% else %}
-    <button disabled name="" type="button" class="btn btn-lg mx-2 button-gray-shadow">{% trans "Back" %}</button>
   {% endif %}
   <button type="submit" class="btn btn-lg mx-2 btn-main-color">
-    {% if wizard.steps.current == 'auth' %}
-      {% trans "Next" %}
-    {% else %}
+    {% if wizard.steps.current == 'token' %}
       {% trans "Log In" %}
+    {% else %}
+      {% trans "Next" %}
     {% endif %}
   </button>
 </div>
