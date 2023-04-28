@@ -1,0 +1,26 @@
+name: Deploy Staging
+
+# Ensure that only one job works on this at a time
+concurrency: staging_deployment
+
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    runs-on:
+      - self-hosted
+      - contactdb-staging
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update docker-compose.yml
+        run: |
+          cp docker-compose.yml /home/contactdb/
+      - name: Update services
+        run: |
+          cd /home/contactdb/
+          sed -i "/^DOCKER_TAG=/c\DOCKER_TAG=$GITHUB_REF_NAME" .env
+          docker compose pull
+          docker compose up -d --remove-orphans
+          docker compose top
+
