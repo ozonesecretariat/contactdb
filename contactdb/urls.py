@@ -9,7 +9,7 @@ from django.contrib.auth import views as auth_views
 from two_factor.urls import urlpatterns as tf_urls
 
 from accounts.views import RedirectLoginView
-from core.views import HomepageView
+from core.views import HomepageView, RecordDetailView
 
 urlpatterns = [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
@@ -41,6 +41,7 @@ urlpatterns = [
     path("", include(tf_urls)),
     path("account/logout/", LogoutView.as_view(), name="logout"),
     path("", HomepageView.as_view(), name="home"),
+    path("contacts/<pk>", RecordDetailView.as_view(), name="contact-detail"),
 ]
 
 if settings.DEBUG:
