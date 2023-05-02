@@ -48,6 +48,35 @@ body{
     margin-right: 3rem;
 }
 
+.icon-wrapper{
+    width: 120px;
+    min-width: 120px;
+    height: 120px;
+    background: var(--main-color)
+}
+
+.icon-wrapper i{
+    font-size:  80px;
+}
+
+.label{
+    font-size: 0.8rem;
+    color: var(--main-color);
+}
+
+.fit-content{
+    width: fit-content;
+    max-width: 100%;
+}
+
+.fit-content-width{
+    width: fit-content;
+}
+
+.fit-content-height{
+    height: fit-content;
+}
+
 @media (max-width: 991px){
     .logout-btn{
         margin-left: -10px !important;

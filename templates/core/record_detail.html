@@ -59,11 +59,10 @@
             {% if request.user.can_edit %}
                 <hr class="my-5" />
 
-            <div class="mx-auto fit-content flex-nowrap">
 
-                <a href="/" type="button" class="btn btn-warning me-4 button-warning-shadow"><i class="bi bi-pencil me-1"></i>Edit</a>
-                <a href="/" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
-
+            <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                <a href="/" type="button" class="btn btn-warning button-warning-shadow"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
             </div>
             {% endif %}
 
@@ -76,7 +75,7 @@
                     <div class="fs-2">
                         Contact Id
                     </div>
-                    <div>
+                    <div class="text-break">
                         {% if object.contact_id %}
                             {{ object.contact_id }}
                         {% else %}
