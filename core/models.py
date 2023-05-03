@@ -47,6 +47,9 @@ class Organization(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ["name"]
+
 
 class Record(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
