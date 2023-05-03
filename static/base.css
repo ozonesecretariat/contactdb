@@ -77,6 +77,29 @@ body{
     height: fit-content;
 }
 
+.select2-container--default .select2-selection--single{
+    border-color: #ced4da !important;
+    width: 100%;
+}
+
+.select2-selection {
+  -webkit-box-shadow: 0;
+  box-shadow: 0;
+  background-color: #fff;
+  outline: 0;
+  min-height: 38px;
+  text-align: left;
+  width: 100%;
+}
+
+.select2-selection__rendered {
+  margin: .3rem;
+}
+
+.select2-selection__arrow {
+  margin: .3rem;
+}
+
 @media (max-width: 991px){
     .logout-btn{
         margin-left: -10px !important;
