@@ -22,6 +22,14 @@
     padding-right: 2rem;
 }
 
+.text-toggle[aria-expanded=false] .text-expanded {
+  display: none;
+}
+
+.text-toggle[aria-expanded=true] .text-collapsed {
+  display: none;
+}
+
 
 @media (max-width: 1300px){
     .contact-container{

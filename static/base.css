@@ -1,6 +1,8 @@
 :root {
   --main-color: #417690;
   --main-color-hover: #325b70;
+  --complementary-color: #905B41;
+  --complementary-color-transparent: #EBDBD3;
 }
 
 body{
@@ -9,6 +11,14 @@ body{
 
 .main-color{
     background: var(--main-color) !important;
+}
+
+.complementary-color{
+    background: var(--complementary-color) ! important;
+}
+
+.complementary-color-transparent{
+    background: var(--complementary-color-transparent) ! important;
 }
 
 .btn-main-color{
@@ -52,15 +62,16 @@ body{
     width: 120px;
     min-width: 120px;
     height: 120px;
-    background: var(--main-color)
+    background: white;
 }
 
 .icon-wrapper i{
     font-size:  80px;
+    color: var(--main-color);
 }
 
 .label{
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: var(--main-color);
 }
 

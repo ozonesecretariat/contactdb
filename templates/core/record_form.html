@@ -13,54 +13,105 @@
     <form method="post" novalidate>{% csrf_token %}
 
         <div class="contact-container">
-            <div class="left-section shadow  p-5 bg-white fit-content-height">
-                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
-                    <i class="bi bi-person-lines-fill text-white"></i>
-                </div>
-                <hr class="my-5" />
-
-                <div class="mx-auto ">
-
-                    <div class="">
-
-                        <div class="">
-                            <div class="label">
-                                Title
-                            </div>
-                            <div class="mb-3">
-                                {{ form.title|add_classes:'form-control' }}
-                                {% for error in form.title.errors %}
-                                    <div class="text-danger my-1">
-                                        {{ error|escape }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-
-                        <div class="">
-                            <div class="label">
-                                First Name
-                            </div>
-                            <div class="mb-3">
-                                {{ form.first_name|add_classes:'form-control' }}
-                                {% for error in form.first_name.errors %}
-                                    <div class="text-danger my-1">
-                                        {{ error|escape }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
+            <div class="left-section fit-content-height">
+                <div class="complementary-color-transparent  mb-4 p-5 shadow">
+                    <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+                        <i class="bi bi-person-lines-fill"></i>
                     </div>
+                    <hr class="my-5" />
+
+                    <div class="mx-auto ">
+
+                        <div class="">
+
+                            <div class="">
+                                <div class="label">
+                                    Title
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.title|add_classes:'form-control' }}
+                                    {% for error in form.title.errors %}
+                                        <div class="text-danger my-1">
+                                            {{ error|escape }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
 
 
-                    <div class="">
+                            <div class="">
+                                <div class="label">
+                                    First Name
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.first_name|add_classes:'form-control' }}
+                                    {% for error in form.first_name.errors %}
+                                        <div class="text-danger my-1">
+                                            {{ error|escape }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="">
+                            <div class="label">
+                                Last Name
+                            </div>
+                            <div class="mb-3">
+                                {{ form.last_name|add_classes:'form-control' }}
+                                {% for error in form.last_name.errors %}
+                                    <div class="text-danger my-1">
+                                        {{ error|escape }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="complementary-color-transparent  mb-4 p-5 shadow">
+
+                    <div class="my-3">
+                        <div class="fs-2">
+                            Position
+                        </div>
                         <div class="label">
-                            Last Name
+                            Designation
+                        </div>
+                        <div>
+                            {{ form.designation|add_classes:'form-control' }}
                         </div>
                         <div class="mb-3">
-                            {{ form.last_name|add_classes:'form-control' }}
-                            {% for error in form.last_name.errors %}
+                            {% for error in form.designation.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                         <div class="label">
+                            Department
+                        </div>
+                        <div >
+                            {{ form.department|add_classes:'form-control' }}
+                        </div>
+                        <div class="mb-3">
+                            {% for error in form.department.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="label">
+                            Affiliation
+                        </div>
+                        <div>
+                            {{ form.affiliation|add_classes:'form-control' }}
+                        </div>
+                        <div class="mb-3">
+                            {% for error in form.affiliation.errors %}
                                 <div class="text-danger my-1">
                                     {{ error|escape }}
                                 </div>
@@ -68,6 +119,24 @@
                         </div>
                     </div>
 
+
+                    <hr class="my-4">
+
+                    <div class="my-3">
+                        <div class="fs-2 mb-3">
+                            Organization<span class="text-danger">*</span>
+                        </div>
+                        <div>
+                            {{ form.organization|add_classes:'organization ' }}
+                        </div>
+                        <div>
+                            {% for error in form.organization.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -101,70 +170,6 @@
                             {% endfor %}
                         </div>
                     </div>
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4">
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Organization<span class="text-danger">*</span>
-                        </div>
-                        <div>
-                            {{ form.organization|add_classes:'organization ' }}
-                        </div>
-                        <div>
-                            {% for error in form.organization.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Designation
-                        </div>
-                        <div>
-                            {{ form.designation|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.designation.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Department
-                        </div>
-                        <div>
-                            {{ form.department|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.department.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Affiliation
-                        </div>
-                        <div>
-                            {{ form.affiliation|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.affiliation.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4">
@@ -292,10 +297,10 @@
                             <div class="label">
                                 Address
                             </div>
-                            <div class="mb-1">
+                            <div >
                                 {{ form.address|add_classes:'form-control' }}
                             </div>
-                            <div>
+                            <div class="mb-3">
                             {% for error in form.address.errors %}
                                 <div class="text-danger my-1">
                                     {{ error|escape }}
@@ -306,10 +311,10 @@
                             <div class="label">
                                 City
                             </div>
-                            <div class="mb-1">
+                            <div >
                                 {{ form.city|add_classes:'form-control' }}
                             </div>
-                            <div>
+                            <div class="mb-3">
                             {% for error in form.city.errors %}
                                 <div class="text-danger my-1">
                                     {{ error|escape }}
@@ -320,10 +325,10 @@
                             <div class="label">
                                 State
                             </div>
-                            <div class="mb-1">
+                            <div >
                                 {{ form.state|add_classes:'form-control' }}
                             </div>
-                            <div>
+                            <div class="mb-3">
                             {% for error in form.state.errors %}
                                 <div class="text-danger my-1">
                                     {{ error|escape }}
@@ -335,10 +340,10 @@
                                 Country
                             </div>
 
-                            <div class="mb-1">
+                            <div >
                                 {{ form.country|add_classes:'form-control' }}
                             </div>
-                            <div>
+                            <div class="mb-3">
                             {% for error in form.country.errors %}
                                 <div class="text-danger my-1">
                                     {{ error|escape }}

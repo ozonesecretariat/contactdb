@@ -11,62 +11,216 @@
 {% block content %}
 
     <div class="contact-container">
-        <div class="left-section shadow  p-5 bg-white fit-content-height">
-            <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
-                <i class="bi bi-person-lines-fill text-white"></i>
-            </div>
-            <hr class="my-5" />
+        <div class="left-section fit-content-height">
+            <div class="complementary-color-transparent  mb-4 p-5 shadow">
+                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+                    <i class="bi bi-person-lines-fill"></i>
+                </div>
+                <hr class="my-5" />
 
-            <div class="mx-auto fit-content">
+                <div class="mx-auto fit-content">
 
-                <div class="d-flex flex-wrap fit-content">
-                    {% if object.title %}
-                        <div class="me-4 fit-content">
+                    <div class="d-flex flex-wrap fit-content">
+                        {% if object.title %}
+                            <div class="me-4 fit-content">
+                                <div class="label">
+                                    Title
+                                </div>
+                                <div class="fs-2 mb-3">
+                                    {{ object.title }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if object.first_name %}
+                            <div class="fit-content">
+                                <div class="label">
+                                    First Name
+                                </div>
+                                <div class="fs-2 mb-3">
+                                    {{ object.first_name }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if object.last_name %}
+                        <div class="fit-content">
                             <div class="label">
-                                Title
+                                Last Name
                             </div>
                             <div class="fs-2 mb-3">
-                                {{ object.title }}
+                                {{ object.last_name }}
                             </div>
                         </div>
                     {% endif %}
 
-                    {% if object.first_name %}
-                        <div class="fit-content">
-                            <div class="label">
-                                First Name
+                </div>
+
+                {% if request.user.can_edit %}
+                    <hr class="my-5" />
+
+
+                <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    <a href="{% url 'contact-update' object.pk %}" type="button" class="btn btn-main-color"><i class="bi bi-pencil me-1"></i>Edit</a>
+                    <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="p-5 shadow complementary-color-transparent ">
+
+                <div class="m-3">
+                    <div class="fs-2">
+                        Position
+                    </div>
+                    {% if object.designation or object.department or object.affiliation %}
+                        {% if object.designation %}
+                            <div class="mb-2">
+                                <div class="label">
+                                    Designation
+                                </div>
+                                <div>
+                                    {{ object.designation }}
+                                </div>
                             </div>
-                            <div class="fs-2 mb-3">
-                                {{ object.first_name }}
+                        {% endif %}
+                        {% if object.department %}
+                            <div class="mb-2">
+                                 <div class="label">
+                                    Department
+                                </div>
+                                <div>
+                                    {{ object.department }}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
+                        {% if object.affiliation %}
+                            <div class="mb-2">
+                                <div class="label">
+                                    Affiliation
+                                </div>
+                                <div>
+                                    {{ object.affiliation }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted">None</span>
                     {% endif %}
                 </div>
 
-                {% if object.last_name %}
-                    <div class="fit-content">
-                        <div class="label">
-                            Last Name
-                        </div>
-                        <div class="fs-2 mb-3">
-                            {{ object.last_name }}
-                        </div>
+                <hr class="my-4">
+
+                <div class="mx-3 mb-3">
+                    <div class="fs-2">
+                        Organization
                     </div>
-                {% endif %}
+                    {% if object.organization %}
+                        {% if object.organization.name %}
+                            <div class="mb-2">
+                                <div class="label">
+                                    Name
+                                </div>
+                                <div>
+                                    {{ object.organization.name }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="collapse" id="collapseOrg">
 
+                            {% if object.organization.organization_id %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Organization Id
+                                    </div>
+                                    <div class="text-break">
+                                        {{ object.organization.organization_id }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.acronym %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Acronym
+                                    </div>
+                                    <div>
+                                        {{ object.organization.acronym }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.organization_type_id %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Organization Type Id
+                                    </div>
+                                    <div class="text-break">
+                                        {{ object.organization.organization_type_id }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.organization_type %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Organization Type
+                                    </div>
+                                    <div>
+                                        {{ object.organization.organization_type }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.government %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Government
+                                    </div>
+                                    <div>
+                                        {{ object.organization.government }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.government_name %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Government Name
+                                    </div>
+                                    <div>
+                                        {{ object.organization.government_name }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.country %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Country
+                                    </div>
+                                    <div>
+                                        {{ object.organization.country }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.country_name %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Country Name
+                                    </div>
+                                    <div>
+                                        {{ object.organization.country_name }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+                            <button class="btn btn-main-color text-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrg" aria-expanded="false" aria-controls="collapseOrg">
+                                <span class="text-collapsed">More info</span>
+                                <span class="text-expanded">Less info</span>
+                            </button>
+                        </div>
+                    {% else %}
+                        <span class="text-muted">None</span>
+                    {% endif %}
+                </div>
             </div>
-
-            {% if request.user.can_edit %}
-                <hr class="my-5" />
-
-
-            <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-                <a href="{% url 'contact-update' object.pk %}" type="button" class="btn btn-warning button-warning-shadow"><i class="bi bi-pencil me-1"></i>Edit</a>
-                <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
-            </div>
-            {% endif %}
-
-
         </div>
 
         <div class="right-section fit-content-height">
@@ -85,57 +239,57 @@
                 </div>
             </div>
 
-            <div class="py-5 shadow  details-container bg-white mb-4">
-                <div class="m-3">
-                    <div class="fs-2">
-                        Organization
-                    </div>
-                    <div>
-                        {% if object.organization %}
-                            {{ object.organization }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Designation
-                    </div>
-                    <div>
-                        {% if object.designation %}
-                            {{ object.designation }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                     <div class="fs-2">
-                        Department
-                    </div>
-                    <div>
-                        {% if object.department %}
-                            {{ object.department }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Affiliation
-                    </div>
-                    <div>
-                        {% if object.affiliation %}
-                            {{ object.affiliation }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
+<!--            <div class="py-5 shadow  details-container bg-white mb-4">-->
+<!--                <div class="m-3">-->
+<!--                    <div class="fs-2">-->
+<!--                        Organization-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        {% if object.organization %}-->
+<!--                            {{ object.organization }}-->
+<!--                        {% else %}-->
+<!--                            <span class="text-muted">None</span>-->
+<!--                        {% endif %}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="m-3">-->
+<!--                    <div class="fs-2">-->
+<!--                        Designation-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        {% if object.designation %}-->
+<!--                            {{ object.designation }}-->
+<!--                        {% else %}-->
+<!--                            <span class="text-muted">None</span>-->
+<!--                        {% endif %}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="m-3">-->
+<!--                     <div class="fs-2">-->
+<!--                        Department-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        {% if object.department %}-->
+<!--                            {{ object.department }}-->
+<!--                        {% else %}-->
+<!--                            <span class="text-muted">None</span>-->
+<!--                        {% endif %}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="m-3">-->
+<!--                    <div class="fs-2">-->
+<!--                        Affiliation-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        {% if object.affiliation %}-->
+<!--                            {{ object.affiliation }}-->
+<!--                        {% else %}-->
+<!--                            <span class="text-muted">None</span>-->
+<!--                        {% endif %}-->
+<!--                    </div>-->
+<!--                </div>-->
 
-            </div>
+<!--            </div>-->
 
             <div class="py-5 shadow  details-container bg-white mb-4">
                 <div class="m-3">
@@ -238,7 +392,7 @@
                                 <div class="label">
                                     Address
                                 </div>
-                                <div class="mb-1">
+                                <div class="mb-2">
                                     {{ object.address }}
                                 </div>
                             {% endif %}
@@ -247,7 +401,7 @@
                                 <div class="label">
                                     City
                                 </div>
-                                <div class="mb-1">
+                                <div class="mb-2">
                                     {{ object.city }}
                                 </div>
                             {% endif %}
@@ -256,7 +410,7 @@
                                 <div class="label">
                                     State
                                 </div>
-                                <div class="mb-1">
+                                <div class="mb-2">
                                     {{ object.state }}
                                 </div>
                             {% endif %}
@@ -265,7 +419,7 @@
                                 <div class="label">
                                     Country
                                 </div>
-                                <div class="mb-1">
+                                <div class="mb-2">
                                     {{ object.country }}
                                 </div>
                             {% endif %}
