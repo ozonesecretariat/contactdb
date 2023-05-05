@@ -45,10 +45,12 @@ class Organization(models.Model):
     country_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
+        if self.country_name:
+            return self.name + ', ' + self.country_name
         return self.name
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["name", "country_name"]
 
 
 class Record(models.Model):

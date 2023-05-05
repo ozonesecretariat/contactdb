@@ -49,6 +49,10 @@ body{
     box-shadow: 0 0 1rem rgba(220, 53, 69, .55);
 }
 
+.button-success-shadow:hover{
+    box-shadow: 0 0 1rem rgba(25, 135, 84, .55);
+}
+
 .logout-btn:hover{
     color: var(--main-color) !important;
 }

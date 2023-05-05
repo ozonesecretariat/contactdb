@@ -239,58 +239,6 @@
                 </div>
             </div>
 
-<!--            <div class="py-5 shadow  details-container bg-white mb-4">-->
-<!--                <div class="m-3">-->
-<!--                    <div class="fs-2">-->
-<!--                        Organization-->
-<!--                    </div>-->
-<!--                    <div>-->
-<!--                        {% if object.organization %}-->
-<!--                            {{ object.organization }}-->
-<!--                        {% else %}-->
-<!--                            <span class="text-muted">None</span>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="m-3">-->
-<!--                    <div class="fs-2">-->
-<!--                        Designation-->
-<!--                    </div>-->
-<!--                    <div>-->
-<!--                        {% if object.designation %}-->
-<!--                            {{ object.designation }}-->
-<!--                        {% else %}-->
-<!--                            <span class="text-muted">None</span>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="m-3">-->
-<!--                     <div class="fs-2">-->
-<!--                        Department-->
-<!--                    </div>-->
-<!--                    <div>-->
-<!--                        {% if object.department %}-->
-<!--                            {{ object.department }}-->
-<!--                        {% else %}-->
-<!--                            <span class="text-muted">None</span>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="m-3">-->
-<!--                    <div class="fs-2">-->
-<!--                        Affiliation-->
-<!--                    </div>-->
-<!--                    <div>-->
-<!--                        {% if object.affiliation %}-->
-<!--                            {{ object.affiliation }}-->
-<!--                        {% else %}-->
-<!--                            <span class="text-muted">None</span>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--            </div>-->
-
             <div class="py-5 shadow  details-container bg-white mb-4">
                 <div class="m-3">
                     <div class="fs-2">
@@ -336,7 +284,7 @@
                 </div>
                 <div class="m-3">
                     <div class="fs-2">
-                        Email ccs
+                        Email Ccs
                     </div>
                     <div>
                         {% if object.email_ccs|length > 0 %}
@@ -364,7 +312,7 @@
                 </div>
             </div>
 
-            <div class="py-5 shadow  details-container bg-white">
+            <div class="py-5 shadow  details-container bg-white mb-4">
                 <div class="m-3">
                     <div class="fs-2">
                         Is in mailing list
@@ -452,7 +400,7 @@
                 </div>
                 <div class="m-3">
                      <div class="fs-2">
-                        Birth date
+                        Birth Date
                     </div>
                     <div>
                         {% if object.birth_date %}
@@ -463,8 +411,90 @@
                     </div>
                 </div>
 
-
             </div>
+
+             <div class="py-5 shadow bg-white">
+                <div class="">
+                    <div class="fs-2 mx-5">
+                        Registration statuses
+                    </div>
+                    <div class="registrations-container flex-wrap mt-4">
+                        {% for registration_status in object.registrationstatus_set.all %}
+                            <div class="m-3 p-3 bg-light rounded position-relative shadow">
+                                <i class="bi bi-circle-fill position-absolute decorative-circle"></i>
+                                <div class="ms-5">
+                                    <div class="label">Event Id</div>
+                                    <div class="text-break">{{ registration_status.event_id }}</div>
+                                </div>
+                                <hr/>
+                                <div class="registration-details-container" style="grid-column-template: 50% 50%">
+                                    <div class="fit-content m-2">
+                                        <div class="label ">Code</div>
+                                        <div class="text-break">
+                                            {% if registration_status.code %}
+                                                {{ registration_status.code }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+
+                                    <div class="fit-content m-2">
+                                        <div class="label">Status</div>
+                                        <div>
+                                            {% if registration_status.status %}
+                                                {{ registration_status.status }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="fit-content m-2">
+                                        <div class="label">Is funded</div>
+                                        <div class="{% if registration_status.is_funded %} text-success {% else %} text-danger {% endif %}">{{ registration_status.is_funded }}</div>
+                                    </div>
+                                    <div class="fit-content m-2">
+                                        <div class="label">Role</div>
+                                        <div class="text-break">
+                                            {% if registration_status.role %}
+                                                {{ registration_status.role }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="fit-content m-2">
+                                        <div class="label">Priority Pass Code</div>
+                                        <div class="text-break">
+                                            {% if registration_status.priority_pass_code %}
+                                                {{ registration_status.priority_pass_code }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="fit-content m-2">
+                                        <div class="label">Tags</div>
+                                        {% if registration_status.tags|length == 0 %}
+                                            <div  class="text-muted">None</div>
+                                        {% else %}
+                                            <div>{% for tag in registration_status.tags %}{{ tag }}, {% endfor %}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="label fs-6 text-center"> {{ registration_status.date }}</div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+
+
+                </div>
+             </div>
         </div>
     </div>
 
