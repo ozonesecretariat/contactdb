@@ -12,7 +12,7 @@
 
     <div class="contact-container">
         <div class="left-section fit-content-height">
-            <div class="complementary-color-transparent  mb-4 p-5 shadow">
+            <div class="main-color-light  mb-4 p-5 shadow">
                 <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
                     <i class="bi bi-person-lines-fill"></i>
                 </div>
@@ -68,7 +68,7 @@
                 {% endif %}
             </div>
 
-            <div class="p-5 shadow complementary-color-transparent ">
+            <div class="p-5 shadow main-color-light ">
 
                 <div class="m-3">
                     <div class="fs-2">
@@ -418,6 +418,7 @@
                     <div class="fs-2 mx-5">
                         Registration statuses
                     </div>
+
                     <div class="registrations-container flex-wrap mt-4">
                         {% for registration_status in object.registrationstatus_set.all %}
                             <div class="m-3 p-3 bg-light rounded position-relative shadow">

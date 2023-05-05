@@ -1,8 +1,7 @@
 :root {
   --main-color: #417690;
   --main-color-hover: #325b70;
-  --complementary-color: #905B41;
-  --complementary-color-transparent: #EBDBD3;
+  --main-color-light: #C4D9E4;
 }
 
 body{
@@ -13,12 +12,8 @@ body{
     background: var(--main-color) !important;
 }
 
-.complementary-color{
-    background: var(--complementary-color) ! important;
-}
-
-.complementary-color-transparent{
-    background: var(--complementary-color-transparent) ! important;
+.main-color-light{
+    background: var(--main-color-light) !important;
 }
 
 .btn-main-color{
