@@ -16,8 +16,10 @@ class RecordDetailView(LoginRequiredMixin, DetailView):
 
 class RecordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Record
-    permission_required = "user.can_edit"
     form_class = RecordUpdateForm
+
+    def has_permission(self):
+        return self.request.user.can_edit
 
     def get_success_url(self):
         return reverse("contact-detail", kwargs={"pk": self.object.pk})
@@ -25,5 +27,7 @@ class RecordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 class RecordDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Record
-    permission_required = "user.can_edit"
     success_url = "/"
+
+    def has_permission(self):
+        return self.request.user.can_edit
