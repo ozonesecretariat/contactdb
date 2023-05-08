@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Contacts{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'contacts.css' %}">
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+  <h1>{% trans "Contacts" %}</h1>
+
+  <form hx-get="{% url 'contact-list' %}"
+        hx-target="div.table-container"
+        hx-swap="outerHTML"
+        hx-indicator=".progress"
+        class="form-inline"
+  >
+    <div class="d-flex flex-column justify-content-around height-190">
+      <h4>{% trans "Filter by:" %}</h4>
+      <div class="d-flex flex-row align-items-center">
+        <div>{% trans "Is in mailing list:" %}</div>
+        <div class="width-100 ml-15">
+          {{ filter.form.is_in_mailing_list }}
+        </div>
+        <div class="ml-10">{% trans "Is using organization mail:" %}</div>
+        <div class="width-100 ml-15">
+          {{ filter.form.is_use_organization_address }}
+        </div>
+      </div>
+
+      <div class="d-flex flex-row align-items-center">
+        <div>{% trans "Organization:" %}</div>
+        <div class="width-430 ml-15">
+          {{ filter.form.organization }}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary width-100">{% trans "Apply" %}</button>
+    </div>
+
+    <br>
+    <div class="d-flex flex-column justify-content-around height-190">
+      <h4>{% trans "Search by:" %}</h4>
+
+      <div>
+        <div class="d-flex flex-row justify-content-between width-530">
+          <div>
+            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="name" name="select-search" checked="checked">
+            <label class="form-check-label" for="name">{% trans "Name" %}</label>
+          </div>
+          <div>
+            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="department" name="select-search">
+            <label class="form-check-label" for="department">{% trans "Department" %}</label>
+          </div>
+          <div>
+            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="designation" name="select-search">
+            <label class="form-check-label" for="designation">{% trans "Designation" %}</label>
+          </div>
+          <div>
+            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="emails" name="select-search">
+            <label class="form-check-label" for="emails">{% trans "Emails" %}</label>
+          </div>
+          <div>
+            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="phones-faxes" name="select-search">
+            <label class="form-check-label" for="phones-faxes">{% trans "Phones/Faxes" %}</label>
+          </div>
+        </div>
+
+          <div id="search-name">
+                {{ filter.form.name }}
+          </div>
+          <div id="search-department" style="display: none">
+                {{ filter.form.department }}
+          </div>
+          <div id="search-designation" style="display: none">
+                {{ filter.form.designation }}
+          </div>
+          <div id="search-emails" style="display: none">
+                {{ filter.form.emails }}
+          </div>
+          <div id="search-phones-faxes" style="display: none">
+                {{ filter.form.phones_faxes }}
+          </div>
+      </div>
+      <button type="submit" class="btn btn-primary width-100">{% trans "Search" %}</button>
+    </div>
+
+  </form>
+
+  <div class="progress">
+    <div class="indeterminate"></div>
+  </div>
+
+  <br>
+  {% render_table table %}
+
+  <script>
+    function showInput() {
+      if (document.getElementById("name").checked) {
+        document.getElementById("search-name").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-name").style.display = "none";
+        document.getElementById("id_name").value = "";
+      }
+      if (document.getElementById("department").checked) {
+        document.getElementById("search-department").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-department").style.display = "none";
+        document.getElementById("id_department").value = "";
+      }
+      if (document.getElementById("designation").checked) {
+        document.getElementById("search-designation").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-designation").style.display = "none";
+        document.getElementById("id_designation").value = "";
+      }
+      if (document.getElementById("emails").checked) {
+        document.getElementById("search-emails").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-emails").style.display = "none";
+        document.getElementById("id_emails").value = "";
+      }
+      if (document.getElementById("phones-faxes").checked) {
+        document.getElementById("search-phones-faxes").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-phones-faxes").style.display = "none";
+        document.getElementById("id_phones_faxes").value = "";
+      }
+    }
+  </script>
+{% endblock %}
+
