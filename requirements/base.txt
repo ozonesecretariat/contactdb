@@ -5,9 +5,12 @@ django-ckeditor
 django-constance[database]
 django-environ
 django-extensions
+django-filter
+django-htmx
 django_redis
 django-rq
 django-task
+django-tables2
 django-two-factor-auth[phonenumbers]
 psycopg[binary]
 sentry-sdk[django]

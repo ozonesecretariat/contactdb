@@ -14,6 +14,7 @@ from core.views import (
     RecordDetailView,
     RecordDeleteView,
     RecordUpdateView,
+    ContactListView
 )
 
 urlpatterns = [
@@ -46,6 +47,7 @@ urlpatterns = [
     path("", include(tf_urls)),
     path("account/logout/", LogoutView.as_view(), name="logout"),
     path("", HomepageView.as_view(), name="home"),
+    path("contacts/", ContactListView.as_view(), name="contact-list"),
     path("contacts/<pk>", RecordDetailView.as_view(), name="contact-detail"),
     path("contacts/<pk>/delete", RecordDeleteView.as_view(), name="contact-delete"),
     path("contacts/<pk>/update", RecordUpdateView.as_view(), name="contact-update"),

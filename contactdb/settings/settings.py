@@ -71,6 +71,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "django_htmx",
+    "django_filters",
     "django_otp",
     "django_otp.plugins.otp_static",
     "django_otp.plugins.otp_totp",
@@ -79,6 +81,7 @@ INSTALLED_APPS = [
     "two_factor",
     "django_rq",
     "django_task",
+    "django_tables2",
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
@@ -93,6 +96,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_otp.middleware.OTPMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = "contactdb.urls"
@@ -109,6 +113,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django_admin_env_notice.context_processors.from_settings",
+                "django.template.context_processors.request",
             ],
         },
     },
