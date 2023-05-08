@@ -36,15 +36,15 @@ def test_edit_record_no_perm(login_user_no_perm, contact, snd_organization):
         "state": "",
         "country": "ro",
         "postal_code": "6675",
-        "birth_date": "1995-10-20"
+        "birth_date": "1995-10-20",
     }
 
-    url = reverse("contact-update", kwargs={'pk': contact.pk})
+    url = reverse("contact-update", kwargs={"pk": contact.pk})
     response = client.post(
         url,
         urllib.parse.urlencode(data),
         content_type="application/x-www-form-urlencoded",
-        follow=True
+        follow=True,
     )
     assert response.status_code == 403
 
@@ -78,15 +78,15 @@ def test_edit_record_can_edit(login_user_can_edit, contact, snd_organization):
         "state": "",
         "country": "ro",
         "postal_code": "6675",
-        "birth_date": "1995-10-20"
+        "birth_date": "1995-10-20",
     }
 
-    url = reverse("contact-update", kwargs={'pk': contact.pk})
+    url = reverse("contact-update", kwargs={"pk": contact.pk})
     response = client.post(
         url,
         urllib.parse.urlencode(data),
         content_type="application/x-www-form-urlencoded",
-        follow=True
+        follow=True,
     )
 
     assert response.status_code == 200
@@ -101,10 +101,10 @@ def test_edit_record_can_edit(login_user_can_edit, contact, snd_organization):
     assert contact.designation == data["designation"]
     assert contact.department == data["department"]
     assert contact.affiliation == data["affiliation"]
-    assert contact.phones[0] == data["phones"].split(',')[0]
-    assert contact.mobiles[0] == data["mobiles"].split(',')[0]
+    assert contact.phones[0] == data["phones"].split(",")[0]
+    assert contact.mobiles[0] == data["mobiles"].split(",")[0]
     assert len(contact.faxes) == 0
-    assert contact.emails[0] == data["emails"].split(',')[0]
+    assert contact.emails[0] == data["emails"].split(",")[0]
     assert len(contact.email_ccs) == 0
     assert contact.notes == data["notes"]
     assert contact.is_use_organization_address == data["is_use_organization_address"]
@@ -114,7 +114,9 @@ def test_edit_record_can_edit(login_user_can_edit, contact, snd_organization):
     assert contact.state == data["state"]
     assert contact.country == data["country"]
     assert contact.postal_code == data["postal_code"]
-    assert contact.birth_date == datetime.strptime(data["birth_date"], "%Y-%m-%d").date()
+    assert (
+        contact.birth_date == datetime.strptime(data["birth_date"], "%Y-%m-%d").date()
+    )
 
 
 def test_delete_record_no_perms(login_user_no_perm, contact):
@@ -124,12 +126,12 @@ def test_delete_record_no_perms(login_user_no_perm, contact):
     data = {}
     found_contact = Record.objects.filter(pk=contact.pk).first()
     assert found_contact == contact
-    url = reverse("contact-delete", kwargs={'pk': contact.pk})
+    url = reverse("contact-delete", kwargs={"pk": contact.pk})
     response = client.post(
         url,
         urllib.parse.urlencode(data),
         content_type="application/x-www-form-urlencoded",
-        follow=True
+        follow=True,
     )
     assert response.status_code == 403
     found_contact = Record.objects.filter(pk=contact.pk).first()
@@ -147,12 +149,12 @@ def test_delete_record_can_edit(login_user_can_edit, contact):
     found_contact = Record.objects.filter(pk=contact.pk).first()
     assert found_contact == contact
 
-    url = reverse("contact-delete", kwargs={'pk': contact.pk})
+    url = reverse("contact-delete", kwargs={"pk": contact.pk})
     response = client.post(
         url,
         urllib.parse.urlencode(data),
         content_type="application/x-www-form-urlencoded",
-        follow=True
+        follow=True,
     )
 
     assert response.status_code == 200

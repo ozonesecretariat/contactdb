@@ -46,7 +46,7 @@ class Organization(models.Model):
 
     def __str__(self):
         if self.country_name:
-            return self.name + ', ' + self.country_name
+            return self.name + ", " + self.country_name
         return self.name
 
     class Meta:

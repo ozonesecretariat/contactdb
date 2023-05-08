@@ -5,15 +5,15 @@ from core.models import Record, Organization
 
 @pytest.fixture
 def test_password():
-    return 'parolA12!'
+    return "parolA12!"
 
 
 @pytest.fixture
 def create_user(db, django_user_model, test_password):
     def make_user(**kwargs):
-        kwargs['password'] = test_password
-        if 'email' not in kwargs:
-            kwargs['email'] = 'user@example.com'
+        kwargs["password"] = test_password
+        if "email" not in kwargs:
+            kwargs["email"] = "user@example.com"
         return django_user_model.objects.create_user(**kwargs)
 
     return make_user
@@ -39,20 +39,20 @@ def login_user_can_edit(db, client, create_user, test_password):
 @pytest.fixture
 def first_organization(db):
     return Organization(
-        organization_id='3baa33cc079ab1d4ff5e27be727613ef',
-        name='Organization 1',
-        organization_type_id='e6a17cabcbdd10e53f24e8bab0221af2',
-        organization_type='BIZ',
+        organization_id="3baa33cc079ab1d4ff5e27be727613ef",
+        name="Organization 1",
+        organization_type_id="e6a17cabcbdd10e53f24e8bab0221af2",
+        organization_type="BIZ",
     )
 
 
 @pytest.fixture
 def snd_organization(db):
     return Organization(
-        organization_id='4baa53cc079ab1d4ff5e27be727613ef',
-        name='Organization 2',
-        organization_type_id='e6a17cabcbdd10e53f24e8bab0221af2',
-        organization_type='BIZ',
+        organization_id="4baa53cc079ab1d4ff5e27be727613ef",
+        name="Organization 2",
+        organization_type_id="e6a17cabcbdd10e53f24e8bab0221af2",
+        organization_type="BIZ",
     )
 
 
@@ -60,7 +60,7 @@ def snd_organization(db):
 def contact(db, first_organization):
     return Record(
         organization=first_organization,
-        contact_id='500d0202abb6fba28c50d61fa4979a28',
+        contact_id="500d0202abb6fba28c50d61fa4979a28",
         phones=[],
         mobiles=[],
         faxes=[],
