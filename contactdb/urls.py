@@ -14,7 +14,7 @@ from core.views import (
     RecordDetailView,
     RecordDeleteView,
     RecordUpdateView,
-    ContactListView
+    ContactListView,
 )
 
 urlpatterns = [
