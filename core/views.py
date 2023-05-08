@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.views.generic import TemplateView, DetailView, DeleteView, UpdateView
 
 from core.forms import RecordUpdateForm
-from core.models import Record
 
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -34,7 +33,9 @@ class RecordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 class RecordDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Record
-    success_url = "/"
+
+    def get_success_url(self):
+        return reverse("contact-list")
 
     def has_permission(self):
         return self.request.user.can_edit
