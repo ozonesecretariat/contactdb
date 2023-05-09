@@ -1,4 +1,5 @@
 from django import template
+from django import forms
 
 register = template.Library()
 
@@ -11,6 +12,4 @@ def add_classes(value, arg):
     for a in args:
         classes.append(a)
     classes_string = default_classes + " ".join(classes)
-    return value.as_widget(
-        attrs={"class": classes_string, "placeholder": "Placeholder"}
-    )
+    return value.as_widget(attrs={"class": classes_string, "placeholder": ""})

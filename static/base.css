@@ -1,10 +1,19 @@
 :root {
   --main-color: #417690;
   --main-color-hover: #325b70;
+  --main-color-light: #C4D9E4;
+}
+
+body{
+    background: #f2f2f2;
 }
 
 .main-color{
     background: var(--main-color) !important;
+}
+
+.main-color-light{
+    background: var(--main-color-light) !important;
 }
 
 .btn-main-color{
@@ -27,6 +36,89 @@
     box-shadow: 0 0 1rem rgba(13, 110, 253, .55);
 }
 
+.button-warning-shadow:hover{
+    box-shadow: 0 0 1rem rgba(255, 193, 7, .55);
+}
+
+.button-danger-shadow:hover{
+    box-shadow: 0 0 1rem rgba(220, 53, 69, .55);
+}
+
+.button-success-shadow:hover{
+    box-shadow: 0 0 1rem rgba(25, 135, 84, .55);
+}
+
 .logout-btn:hover{
     color: var(--main-color) !important;
+}
+
+.page-margins{
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.icon-wrapper{
+    width: 120px;
+    min-width: 120px;
+    height: 120px;
+    background: white;
+}
+
+.icon-wrapper i{
+    font-size:  80px;
+    color: var(--main-color);
+}
+
+.label{
+    font-size: 0.9rem;
+    color: var(--main-color);
+}
+
+.fit-content{
+    width: fit-content;
+    max-width: 100%;
+}
+
+.fit-content-width{
+    width: fit-content;
+}
+
+.fit-content-height{
+    height: fit-content;
+}
+
+.select2-container--default .select2-selection--single{
+    border-color: #ced4da !important;
+    width: 100%;
+}
+
+.select2-selection {
+  -webkit-box-shadow: 0;
+  box-shadow: 0;
+  background-color: #fff;
+  outline: 0;
+  min-height: 38px;
+  text-align: left;
+  width: 100%;
+}
+
+.select2-selection__rendered {
+  margin: .3rem;
+}
+
+.select2-selection__arrow {
+  margin: .3rem;
+}
+
+@media (max-width: 991px){
+    .logout-btn{
+        margin-left: -10px !important;
+    }
+}
+
+@media (max-width: 650px){
+    .page-margins{
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
 }

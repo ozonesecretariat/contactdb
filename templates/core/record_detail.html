@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{ object }} | Contact{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="contact-container">
+        <div class="left-section fit-content-height">
+            <div class="main-color-light  mb-4 p-5 shadow">
+                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+                    <i class="bi bi-person-lines-fill"></i>
+                </div>
+                <hr class="my-5" />
+
+                <div class="mx-auto fit-content">
+
+                    <div class="d-flex flex-wrap fit-content">
+                        {% if object.title %}
+                            <div class="me-4 fit-content">
+                                <div class="label">
+                                    Title
+                                </div>
+                                <div class="fs-2 mb-3">
+                                    {{ object.title }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if object.first_name %}
+                            <div class="fit-content">
+                                <div class="label">
+                                    First Name
+                                </div>
+                                <div class="fs-2 mb-3">
+                                    {{ object.first_name }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if object.last_name %}
+                        <div class="fit-content">
+                            <div class="label">
+                                Last Name
+                            </div>
+                            <div class="fs-2 mb-3">
+                                {{ object.last_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                {% if request.user.can_edit %}
+                    <hr class="my-5" />
+
+
+                <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    <a href="{% url 'contact-update' object.pk %}" type="button" class="btn btn-main-color"><i class="bi bi-pencil me-1"></i>Edit</a>
+                    <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="p-5 shadow main-color-light ">
+
+                <div class="m-3">
+                    <div class="fs-2">
+                        Position
+                    </div>
+                    {% if object.designation or object.department or object.affiliation %}
+                        {% if object.designation %}
+                            <div class="mb-2">
+                                <div class="label">
+                                    Designation
+                                </div>
+                                <div>
+                                    {{ object.designation }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.department %}
+                            <div class="mb-2">
+                                 <div class="label">
+                                    Department
+                                </div>
+                                <div>
+                                    {{ object.department }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.affiliation %}
+                            <div class="mb-2">
+                                <div class="label">
+                                    Affiliation
+                                </div>
+                                <div>
+                                    {{ object.affiliation }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted">None</span>
+                    {% endif %}
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mx-3 mb-3">
+                    <div class="fs-2">
+                        Organization
+                    </div>
+                    {% if object.organization %}
+                        {% if object.organization.name %}
+                            <div class="mb-2">
+                                <div class="label">
+                                    Name
+                                </div>
+                                <div>
+                                    {{ object.organization.name }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="collapse" id="collapseOrg">
+
+                            {% if object.organization.organization_id %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Organization Id
+                                    </div>
+                                    <div class="text-break">
+                                        {{ object.organization.organization_id }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.acronym %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Acronym
+                                    </div>
+                                    <div>
+                                        {{ object.organization.acronym }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.organization_type_id %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Organization Type Id
+                                    </div>
+                                    <div class="text-break">
+                                        {{ object.organization.organization_type_id }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.organization_type %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Organization Type
+                                    </div>
+                                    <div>
+                                        {{ object.organization.organization_type }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.government %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Government
+                                    </div>
+                                    <div>
+                                        {{ object.organization.government }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.government_name %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Government Name
+                                    </div>
+                                    <div>
+                                        {{ object.organization.government_name }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.country %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Country
+                                    </div>
+                                    <div>
+                                        {{ object.organization.country }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if object.organization.country_name %}
+                                <div class="mb-2">
+                                    <div class="label">
+                                        Country Name
+                                    </div>
+                                    <div>
+                                        {{ object.organization.country_name }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+                            <button class="btn btn-main-color text-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrg" aria-expanded="false" aria-controls="collapseOrg">
+                                <span class="text-collapsed">More info</span>
+                                <span class="text-expanded">Less info</span>
+                            </button>
+                        </div>
+                    {% else %}
+                        <span class="text-muted">None</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="right-section fit-content-height">
+            <div class="p-5 shadow  bg-white mb-4">
+                <div class="">
+                    <div class="fs-2">
+                        Contact Id
+                    </div>
+                    <div class="text-break">
+                        {% if object.contact_id %}
+                            {{ object.contact_id }}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-5 shadow  details-container bg-white mb-4">
+                <div class="m-3">
+                    <div class="fs-2">
+                        Phones
+                    </div>
+                    <div>
+                        {% if object.phones|length > 0 %}
+                            {% for phone in object.phones %}
+                                <div class="d-block">{{ phone }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Mobiles
+                    </div>
+                    <div>
+                        {% if object.mobiles|length > 0 %}
+                            {% for mobile in object.mobiles %}
+                                <div class="d-block">{{ mobile }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Emails
+                    </div>
+                    <div>
+                        {% if object.emails|length > 0 %}
+                            {% for email in object.emails %}
+                                <a href="mailto:{{ email }}" class="text-decoration-none d-block">{{ email }}</a>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Email Ccs
+                    </div>
+                    <div>
+                        {% if object.email_ccs|length > 0 %}
+                            {% for email_cc in object.email_ccs %}
+                                <a href="mailto:{{ email_cc }}" class="text-decoration-none d-block">{{ email_cc }}</a>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Faxes
+                    </div>
+                    <div>
+                        {% if object.faxes|length > 0 %}
+                            {% for fax in object.faxes %}
+                                <div class="d-block">{{ fax }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-5 shadow  details-container bg-white mb-4">
+                <div class="m-3">
+                    <div class="fs-2">
+                        Is in mailing list
+                    </div>
+                    <div class="{% if object.is_in_mailing_list %} text-success {% else %} text-danger {% endif %}">
+                        {{ object.is_in_mailing_list }}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Is use organization address
+                    </div>
+                    <div class="{% if object.is_use_organization_address %} text-success {% else %} text-danger {% endif %}">
+                        {{ object.is_use_organization_address }}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Address
+                    </div>
+                    <div>
+                        {% if object.address or object.city or object.state or object.country or object.postal_code %}
+
+                            {% if object.address %}
+                                <div class="label">
+                                    Address
+                                </div>
+                                <div class="mb-2">
+                                    {{ object.address }}
+                                </div>
+                            {% endif %}
+
+                            {% if object.city %}
+                                <div class="label">
+                                    City
+                                </div>
+                                <div class="mb-2">
+                                    {{ object.city }}
+                                </div>
+                            {% endif %}
+
+                            {% if object.state %}
+                                <div class="label">
+                                    State
+                                </div>
+                                <div class="mb-2">
+                                    {{ object.state }}
+                                </div>
+                            {% endif %}
+
+                            {% if object.country %}
+                                <div class="label">
+                                    Country
+                                </div>
+                                <div class="mb-2">
+                                    {{ object.country }}
+                                </div>
+                            {% endif %}
+
+                            {% if object.postal_code %}
+                                <div class="label">
+                                    Postal Code
+                                </div>
+                                <div class="">
+                                    {{ object.postal_code }}
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="m-3">
+                    <div class="fs-2">
+                        Notes
+                    </div>
+                    <div>
+                        {% if object.notes %}
+                            {{ object.notes }}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="m-3">
+                     <div class="fs-2">
+                        Birth Date
+                    </div>
+                    <div>
+                        {% if object.birth_date %}
+                            {{ object.birth_date }}
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+             <div class="py-5 shadow bg-white">
+                <div class="">
+                    <div class="fs-2 mx-5">
+                        Registration statuses
+                    </div>
+
+                    <div class="registrations-container flex-wrap mt-4">
+                        {% for registration_status in object.registrationstatus_set.all %}
+                            <div class="m-3 p-3 bg-light rounded position-relative shadow">
+                                <i class="bi bi-circle-fill position-absolute decorative-circle"></i>
+                                <div class="ms-5">
+                                    <div class="label">Event Id</div>
+                                    <div class="text-break">{{ registration_status.event_id }}</div>
+                                </div>
+                                <hr/>
+                                <div class="registration-details-container" style="grid-column-template: 50% 50%">
+                                    <div class="fit-content m-2">
+                                        <div class="label ">Code</div>
+                                        <div class="text-break">
+                                            {% if registration_status.code %}
+                                                {{ registration_status.code }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+
+                                    <div class="fit-content m-2">
+                                        <div class="label">Status</div>
+                                        <div>
+                                            {% if registration_status.status %}
+                                                {{ registration_status.status }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="fit-content m-2">
+                                        <div class="label">Is funded</div>
+                                        <div class="{% if registration_status.is_funded %} text-success {% else %} text-danger {% endif %}">{{ registration_status.is_funded }}</div>
+                                    </div>
+                                    <div class="fit-content m-2">
+                                        <div class="label">Role</div>
+                                        <div class="text-break">
+                                            {% if registration_status.role %}
+                                                {{ registration_status.role }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="fit-content m-2">
+                                        <div class="label">Priority Pass Code</div>
+                                        <div class="text-break">
+                                            {% if registration_status.priority_pass_code %}
+                                                {{ registration_status.priority_pass_code }}
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="fit-content m-2">
+                                        <div class="label">Tags</div>
+                                        {% if registration_status.tags|length == 0 %}
+                                            <div  class="text-muted">None</div>
+                                        {% else %}
+                                            <div>{% for tag in registration_status.tags %}{{ tag }}, {% endfor %}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="label fs-6 text-center"> {{ registration_status.date }}</div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+
+
+                </div>
+             </div>
+        </div>
+    </div>
+
+{% endblock %}

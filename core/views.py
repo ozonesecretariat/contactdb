@@ -1,5 +1,8 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse
+from django.views.generic import TemplateView, DetailView, DeleteView, UpdateView
+
+from core.forms import RecordUpdateForm
 
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -10,7 +13,32 @@ from core.filters import RecordFilter
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
-    template_name = "home_page.html"
+    template_name = "core/home_page.html"
+
+
+class RecordDetailView(LoginRequiredMixin, DetailView):
+    model = Record
+
+
+class RecordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = Record
+    form_class = RecordUpdateForm
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_success_url(self):
+        return reverse("contact-detail", kwargs={"pk": self.object.pk})
+
+
+class RecordDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Record
+
+    def get_success_url(self):
+        return reverse("contact-list")
+
+    def has_permission(self):
+        return self.request.user.can_edit
 
 
 class ContactListView(LoginRequiredMixin, SingleTableMixin, FilterView):

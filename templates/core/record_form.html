@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% load static custom_tags %}
+
+{% block title %}{{ object }} | Update{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    <form method="post" novalidate>{% csrf_token %}
+
+        <div class="contact-container">
+            <div class="left-section fit-content-height">
+                <div class="main-color-light  mb-4 p-5 shadow">
+                    <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
+                    <hr class="my-5" />
+
+                    <div class="mx-auto ">
+
+                        <div class="">
+
+                            <div class="">
+                                <div class="label">
+                                    Title
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.title|add_classes:'form-control' }}
+                                    {% for error in form.title.errors %}
+                                        <div class="text-danger my-1">
+                                            {{ error|escape }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+
+                            <div class="">
+                                <div class="label">
+                                    First Name
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.first_name|add_classes:'form-control' }}
+                                    {% for error in form.first_name.errors %}
+                                        <div class="text-danger my-1">
+                                            {{ error|escape }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="">
+                            <div class="label">
+                                Last Name
+                            </div>
+                            <div class="mb-3">
+                                {{ form.last_name|add_classes:'form-control' }}
+                                {% for error in form.last_name.errors %}
+                                    <div class="text-danger my-1">
+                                        {{ error|escape }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="main-color-light  mb-4 p-5 shadow">
+
+                    <div class="my-3">
+                        <div class="fs-2">
+                            Position
+                        </div>
+                        <div class="label">
+                            Designation
+                        </div>
+                        <div>
+                            {{ form.designation|add_classes:'form-control' }}
+                        </div>
+                        <div class="mb-3">
+                            {% for error in form.designation.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                         <div class="label">
+                            Department
+                        </div>
+                        <div >
+                            {{ form.department|add_classes:'form-control' }}
+                        </div>
+                        <div class="mb-3">
+                            {% for error in form.department.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="label">
+                            Affiliation
+                        </div>
+                        <div>
+                            {{ form.affiliation|add_classes:'form-control' }}
+                        </div>
+                        <div class="mb-3">
+                            {% for error in form.affiliation.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+                    <hr class="my-4">
+
+                    <div class="my-3">
+                        <div class="fs-2 mb-3">
+                            Organization<span class="text-danger">*</span>
+                        </div>
+                        <div>
+                            {{ form.organization|add_classes:'organization ' }}
+                        </div>
+                        <div>
+                            {% for error in form.organization.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="right-section fit-content-height">
+                {% if form.errors %}
+                    <div class="p-5 shadow  bg-white mb-4">
+
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+
+                <div class="p-5 shadow  bg-white mb-4">
+                    <div class="">
+                        <div class="fs-2 mb-3">
+                            Contact Id<span class="text-danger">*</span>
+                        </div>
+                        <div class="">
+                            {{ form.contact_id|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.contact_id.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="py-5 shadow  details-container bg-white mb-4">
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Phones
+                        </div>
+                        <div>
+                            {{ form.phones|add_classes:'form-control' }}
+                            <div class="form-text">To add multiple phone numbers, use a comma as a separator.</div>
+                            <div>
+                            {% for error in form.phones.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Mobiles
+                        </div>
+                        <div>
+                            {{ form.mobiles|add_classes:'form-control' }}
+                            <div class="form-text">To add multiple mobile numbers, use a comma as a separator.</div>
+                            <div>
+                            {% for error in form.mobiles.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Emails
+                        </div>
+                        <div>
+                            {{ form.emails|add_classes:'form-control' }}
+                            <div class="form-text">To add multiple emails, use a comma as a separator.</div>
+                            <div>
+                            {% for error in form.emails.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Email Ccs
+                        </div>
+                        <div>
+                            {{ form.email_ccs|add_classes:'form-control' }}
+                            <div class="form-text">To add multiple email ccs, use a comma as a separator.</div>
+                            <div>
+                            {% for error in form.email_ccs.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Faxes
+                        </div>
+                        <div>
+                            {{ form.faxes|add_classes:'form-control' }}
+                            <div class="form-text">To add multiple faxes, use a comma as a separator.</div>
+                            <div>
+                            {% for error in form.faxes.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="py-5 shadow  details-container bg-white mb-4">
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Is in mailing list
+                        </div>
+                        <div>
+                            {{ form.is_in_mailing_list }}
+
+                        </div>
+                        <div>
+                            {% for error in form.is_in_mailing_list.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Is use organization address
+                        </div>
+                        <div>
+                            {{ form.is_use_organization_address }}
+                            <div>
+                            {% for error in form.is_use_organization_address.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2">
+                            Address
+                        </div>
+                        <div>
+
+                            <div class="label">
+                                Address
+                            </div>
+                            <div >
+                                {{ form.address|add_classes:'form-control' }}
+                            </div>
+                            <div class="mb-3">
+                            {% for error in form.address.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                            <div class="label">
+                                City
+                            </div>
+                            <div >
+                                {{ form.city|add_classes:'form-control' }}
+                            </div>
+                            <div class="mb-3">
+                            {% for error in form.city.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                            <div class="label">
+                                State
+                            </div>
+                            <div >
+                                {{ form.state|add_classes:'form-control' }}
+                            </div>
+                            <div class="mb-3">
+                            {% for error in form.state.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                            <div class="label">
+                                Country
+                            </div>
+
+                            <div >
+                                {{ form.country|add_classes:'form-control' }}
+                            </div>
+                            <div class="mb-3">
+                            {% for error in form.country.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                            <div class="label">
+                                Postal Code
+                            </div>
+                            <div class="">
+                                {{ form.postal_code|add_classes:'form-control' }}
+                            </div>
+                            <div>
+                            {% for error in form.postal_code.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Notes
+                        </div>
+                        <div>
+                            {{ form.notes|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.notes.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="m-3">
+                         <div class="fs-2 mb-3">
+                            Birth Date
+                        </div>
+                        <div>
+                            {{ form.birth_date|add_classes:'form-control fit-content' }}
+                        </div>
+                        <div>
+                            {% for error in form.birth_date.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="bg-white px-5 py-4 shadow">
+                    <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+                        <a class="btn btn-secondary button-gray-shadow " href="{% url 'contact-detail' object.pk %}">Cancel</a>
+                        <input class="btn btn-success button-success-shadow" type="submit" value="Update">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{% static 'js/record_form.js' %}"></script>
+{% endblock %}
