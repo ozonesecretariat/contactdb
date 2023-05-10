@@ -21,12 +21,9 @@ def create_user(db, django_user_model, test_password):
 
 @pytest.fixture
 def login_user_no_perm(db, client, create_user, test_password):
-    def make_auto_login():
-        user = create_user()
-        client.login(username=user.get_username(), password=test_password)
-        return client, user
-
-    return make_auto_login
+    user = create_user()
+    client.login(username=user.get_username(), password=test_password)
+    return client, user
 
 
 @pytest.fixture

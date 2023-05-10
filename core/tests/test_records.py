@@ -10,7 +10,7 @@ pytestmark = [pytest.mark.django_db]
 
 
 def test_edit_record_no_perm(login_user_no_perm, contact, snd_organization):
-    client, user = login_user_no_perm()
+    client, user = login_user_no_perm
     contact.organization.save()
     contact.save()
 
@@ -120,7 +120,7 @@ def test_edit_record_can_edit(login_user_can_edit, contact, snd_organization):
 
 
 def test_delete_record_no_perms(login_user_no_perm, contact):
-    client, user = login_user_no_perm()
+    client, user = login_user_no_perm
     contact.organization.save()
     contact.save()
     data = {}
