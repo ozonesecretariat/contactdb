@@ -14,3 +14,8 @@ class RecordTable(tables.Table):
             "department",
             "designation",
         )
+        row_attrs = {
+            "onClick": lambda record: "document.location.href='/contacts/{0}';".format(
+                record.id
+            )
+        }

@@ -1,3 +1,15 @@
+tr {
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background-color: #fafafa;
+}
+
+thead tr th:hover {
+    background-color: #f7f7f7;
+}
+
 .width-100 {
     width: 100px;
 }
