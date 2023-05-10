@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Q
-from core.models import Record, Organization
+from core.models import Record, Organization, RegistrationStatus
 from django import forms
 
 MAILING_LIST = (
@@ -68,3 +68,9 @@ class RecordFilter(django_filters.FilterSet):
             | Q(mobiles__icontains=value)
             | Q(faxes__icontains=value)
         )
+
+
+class RegistrationStatusFilter(django_filters.FilterSet):
+    class Meta:
+        model = RegistrationStatus
+        fields = ["contact", "role", "status", "is_funded", "date"]

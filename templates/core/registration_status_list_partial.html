@@ -1,0 +1,127 @@
+<div class="registrations-section">
+    <div class="registrations-container flex-wrap mt-4">
+        {% for registration_status in statuses %}
+
+             <div class="m-3 p-3 rounded position-relative ">
+                 <i class="bi bi-circle-fill position-absolute decorative-circle"></i>
+                 <div class="ms-5">
+                     <div class="label">Event Id</div>
+                     <div class="text-break">{{ registration_status.event_id }}</div>
+                 </div>
+                 <hr class="mx-3"/>
+                 <div class="registration-details-container" >
+                     <div>
+                         <div class="fit-content m-2">
+                             <div class="label ">Code</div>
+                             <div class="text-break">
+                                 {% if registration_status.code %}
+                                    {{ registration_status.code }}
+                                 {% else %}
+                                    <span class="text-muted">None</span>
+                                 {% endif %}
+                             </div>
+
+                         </div>
+                         <div class="fit-content m-2">
+                             <div class="label">Status</div>
+                             <div>
+                                 {% if registration_status.status %}
+                                 {{ registration_status.status }}
+                                 {% else %}
+                                 <span class="text-muted">None</span>
+                                 {% endif %}
+                             </div>
+                         </div>
+                     </div>
+
+
+                     <div>
+                         <div class="fit-content m-2">
+                             <div class="label">Is Funded</div>
+                             <div class="{% if registration_status.is_funded %} text-success {% else %} text-danger {% endif %}">{{ registration_status.is_funded }}</div>
+                         </div>
+                         <div class="fit-content m-2">
+                             <div class="label">Role</div>
+                             <div class="text-break">
+                                 {% if registration_status.role %}
+                                    {{ registration_status.role }}
+                                 {% else %}
+                                    <span class="text-muted">None</span>
+                                 {% endif %}
+                             </div>
+                         </div>
+                     </div>
+                     <div>
+                         <div class="fit-content m-2">
+                             <div class="label">Priority Pass Code</div>
+                             <div class="text-break">
+                                 {% if registration_status.priority_pass_code %}
+                                    {{ registration_status.priority_pass_code }}
+                                 {% else %}
+                                    <span class="text-muted">None</span>
+                                 {% endif %}
+                             </div>
+                         </div>
+
+                         <div class="fit-content m-2">
+                             <div class="label">Tags</div>
+                             {% if registration_status.tags|length == 0 %}
+                                <div  class="text-muted">None</div>
+                             {% else %}
+                                <div>{% for tag in registration_status.tags %}{{ tag }}, {% endfor %}</div>
+                             {% endif %}
+                         </div>
+                     </div>
+                 </div>
+                 <hr class="mx-3"/>
+                 <div class="label fs-6 text-center"> {{ registration_status.date }}</div>
+             </div>
+        {% endfor %}
+    </div>
+
+    <div class="progress my-4">
+        <div class="indeterminate"></div>
+    </div>
+
+    {% if paginator.num_pages > 1 %}
+        <nav class="fit-content mx-auto">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link text-main-color" role="button"
+                           hx-target="div.registrations-section"
+                           hx-trigger="click"
+                           hx-indicator=".progress"
+                           hx-get="{% url 'registration-status-list' %}?page={{ page_obj.previous_page_number }}&contact={{ request.GET.contact }}"
+                           hx-swap="outerHTML">Previous</a>
+                    </li>
+                {% endif %}
+                {% for i in pagination_range %}
+                    <li class="page-item">
+                        {% if page_obj.number == i %}
+                            <a class="page-link active">{{ i }}</a>
+                        {% else %}
+                            <a class="page-link text-main-color" {% if i != paginator.ELLIPSIS %}role="button"
+                               hx-target="div.registrations-section"
+                               hx-trigger="click"
+                               hx-indicator=".progress"
+                               hx-get="{% url 'registration-status-list' %}?page={{ i }}&contact={{ request.GET.contact }}"
+                               hx-swap="outerHTML"{% endif %}>{{ i }}</a>
+                        {% endif %}
+                    </li>
+
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link text-main-color" role="button"
+                           hx-target="div.registrations-section"
+                           hx-trigger="click"
+                           hx-indicator=".progress"
+                           hx-get="{% url 'registration-status-list' %}?page={{ page_obj.next_page_number }}&contact={{ request.GET.contact }}"
+                           hx-swap="outerHTML">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>

@@ -419,84 +419,18 @@
                         Registration statuses
                     </div>
 
-                    <div class="registrations-container flex-wrap mt-4">
-                        {% for registration_status in object.registrationstatus_set.all %}
-                            <div class="m-3 p-3 bg-light rounded position-relative shadow">
-                                <i class="bi bi-circle-fill position-absolute decorative-circle"></i>
-                                <div class="ms-5">
-                                    <div class="label">Event Id</div>
-                                    <div class="text-break">{{ registration_status.event_id }}</div>
-                                </div>
-                                <hr/>
-                                <div class="registration-details-container" style="grid-column-template: 50% 50%">
-                                    <div class="fit-content m-2">
-                                        <div class="label ">Code</div>
-                                        <div class="text-break">
-                                            {% if registration_status.code %}
-                                                {{ registration_status.code }}
-                                            {% else %}
-                                                <span class="text-muted">None</span>
-                                            {% endif %}
-                                        </div>
+                    <div class="registrations-section" hx-trigger="load" hx-swap="outerHTML" hx-indicator=".progress"
+                         hx-get="{% url 'registration-status-list' %}?page=1&contact={{ object.pk }}">
 
-                                    </div>
-
-                                    <div class="fit-content m-2">
-                                        <div class="label">Status</div>
-                                        <div>
-                                            {% if registration_status.status %}
-                                                {{ registration_status.status }}
-                                            {% else %}
-                                                <span class="text-muted">None</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-
-                                    <div class="fit-content m-2">
-                                        <div class="label">Is funded</div>
-                                        <div class="{% if registration_status.is_funded %} text-success {% else %} text-danger {% endif %}">{{ registration_status.is_funded }}</div>
-                                    </div>
-                                    <div class="fit-content m-2">
-                                        <div class="label">Role</div>
-                                        <div class="text-break">
-                                            {% if registration_status.role %}
-                                                {{ registration_status.role }}
-                                            {% else %}
-                                                <span class="text-muted">None</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-
-                                    <div class="fit-content m-2">
-                                        <div class="label">Priority Pass Code</div>
-                                        <div class="text-break">
-                                            {% if registration_status.priority_pass_code %}
-                                                {{ registration_status.priority_pass_code }}
-                                            {% else %}
-                                                <span class="text-muted">None</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="fit-content m-2">
-                                        <div class="label">Tags</div>
-                                        {% if registration_status.tags|length == 0 %}
-                                            <div  class="text-muted">None</div>
-                                        {% else %}
-                                            <div>{% for tag in registration_status.tags %}{{ tag }}, {% endfor %}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="label fs-6 text-center"> {{ registration_status.date }}</div>
-                            </div>
-
-                        {% endfor %}
                     </div>
-
 
                 </div>
              </div>
         </div>
     </div>
 
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
 {% endblock %}
