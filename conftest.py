@@ -69,3 +69,22 @@ def contact(db, first_organization):
         is_in_mailing_list=False,
         is_use_organization_address=False,
     )
+
+
+@pytest.fixture
+def other_contact(db, first_organization):
+    return Record(
+        first_name="Other",
+        last_name="Record",
+        department="Minister of Agriculture",
+        designation="President",
+        organization=first_organization,
+        contact_id="59f9be9bb0590106f4b4e3b2",
+        phones=["+40987654321"],
+        mobiles=[],
+        faxes=[],
+        emails=["other@test.com"],
+        email_ccs=[],
+        is_in_mailing_list=True,
+        is_use_organization_address=True,
+    )
