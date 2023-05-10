@@ -142,7 +142,8 @@
             </div>
 
             <div class="right-section fit-content-height">
-                {% if form.errors %}
+                {{ form.non_field_errors }}
+                {% if form.form.non_field_errors|length > 0 %}
                     <div class="p-5 shadow  bg-white mb-4">
 
                         {% for error in form.non_field_errors %}
