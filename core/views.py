@@ -68,6 +68,7 @@ class RegistrationStatusListView(LoginRequiredMixin, FilterView, ListView):
     context_object_name = "statuses"
     filterset_class = RegistrationStatusFilter
     paginate_by = 10
+    ordering = ["-date"]
 
     def get_template_names(self):
         if self.request.htmx:
