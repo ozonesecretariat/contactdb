@@ -15,6 +15,7 @@ from core.views import (
     RecordDeleteView,
     RecordUpdateView,
     ContactListView,
+    RegistrationStatusListView,
 )
 
 urlpatterns = [
@@ -51,6 +52,11 @@ urlpatterns = [
     path("contacts/<pk>", RecordDetailView.as_view(), name="contact-detail"),
     path("contacts/<pk>/delete", RecordDeleteView.as_view(), name="contact-delete"),
     path("contacts/<pk>/update", RecordUpdateView.as_view(), name="contact-update"),
+    path(
+        "registration-statuses/",
+        RegistrationStatusListView.as_view(),
+        name="registration-status-list",
+    ),
 ]
 
 if settings.DEBUG:

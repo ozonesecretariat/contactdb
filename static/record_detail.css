@@ -24,14 +24,15 @@
 
 .registrations-container{
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 100%;
     padding-left: 2rem;
     padding-right: 2rem;
 }
 
 .registration-details-container{
-    display: grid;
-    grid-template-columns: 50% 50%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -45,9 +46,10 @@
 }
 
 .decorative-circle{
-    top: 1.7rem;
-    left: 1.7rem;
+    top: 1.8rem;
+    left: 1.8rem;
     color: var(--main-color);
+    font-size: 0.8rem;
 }
 
 
@@ -56,9 +58,6 @@
         grid-template-columns: 35% 65%;
     }
 
-    .registrations-container{
-        grid-template-columns: 100%;
-    }
 }
 
 @media (max-width: 950px){
