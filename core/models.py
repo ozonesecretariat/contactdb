@@ -99,3 +99,14 @@ class RegistrationStatus(models.Model):
 
     class Meta:
         verbose_name_plural = "registration statuses"
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=250, null=False, blank=False)
+    description = models.TextField(blank=True, null=True)
+    contacts = models.ManyToManyField(Record, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name

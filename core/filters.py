@@ -74,3 +74,18 @@ class RegistrationStatusFilter(django_filters.FilterSet):
     class Meta:
         model = RegistrationStatus
         fields = ["contact", "role", "status", "is_funded", "date"]
+
+
+class GroupFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(
+        method="name_search", widget=forms.TextInput(attrs={"class": "form-control"})
+    )
+
+    class Meta:
+        model = Record
+        fields = ["name"]
+
+    def name_search(self, queryset, name, value):
+        for term in value.split():
+            queryset = queryset.filter(Q(name__icontains=term))
+        return queryset

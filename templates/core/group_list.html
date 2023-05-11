@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Groups{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'groups.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="bg-white shadow p-5 my-4">
+        <h1>{% trans "Groups" %}</h1>
+        <hr />
+        <div class="mt-4">
+            <div class="label my-2">{% trans "Search group:" %}</div>
+            <form hx-get="{% url 'group-list' %}"
+                hx-target="div.table-container"
+                hx-swap="outerHTML"
+                hx-indicator=".progress"
+                class="form-inline d-flex mb-4"
+            >
+
+                <div id="name" class="me-2">
+                    {{ filter.form.name }}
+                </div>
+
+                <button type="submit" class="btn btn-main-color width-100 ms-2">{% trans "Search" %}</button>
+
+            </form>
+        </div>
+
+
+        <div class="progress">
+            <div class="indeterminate"></div>
+        </div>
+
+        <br>
+        {% render_table table %}
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+{% endblock %}

@@ -16,6 +16,7 @@ from core.views import (
     RecordUpdateView,
     ContactListView,
     RegistrationStatusListView,
+    GroupListView,
 )
 
 urlpatterns = [
@@ -57,6 +58,7 @@ urlpatterns = [
         RegistrationStatusListView.as_view(),
         name="registration-status-list",
     ),
+    path("groups/", GroupListView.as_view(), name="group-list"),
 ]
 
 if settings.DEBUG:

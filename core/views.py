@@ -14,9 +14,9 @@ from core.forms import RecordUpdateForm
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 
-from core.models import Record, RegistrationStatus
-from core.tables import RecordTable
-from core.filters import RecordFilter, RegistrationStatusFilter
+from core.models import Record, RegistrationStatus, Group
+from core.tables import RecordTable, GroupTable
+from core.filters import RecordFilter, RegistrationStatusFilter, GroupFilter
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
@@ -92,3 +92,18 @@ class RegistrationStatusListView(LoginRequiredMixin, FilterView, ListView):
             number=page, on_each_side=1, on_ends=1
         )
         return context
+
+
+class GroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = GroupTable
+    queryset = Group.objects.all()
+    filterset_class = GroupFilter
+    paginate_by = 30
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/group_list_partial.html"
+        else:
+            template_name = "core/group_list.html"
+
+        return template_name
