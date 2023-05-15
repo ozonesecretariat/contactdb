@@ -10,25 +10,28 @@
 {% endblock %}
 
 {% block content %}
-    <div class="bg-white shadow p-5 my-4">
-        <h1>{% trans "Groups" %}</h1>
-        <hr />
-        <div class="mt-4">
-            <div class="label my-2">{% trans "Search group:" %}</div>
-            <form hx-get="{% url 'group-list' %}"
-                hx-target="div.table-container"
-                hx-swap="outerHTML"
-                hx-indicator=".progress"
-                class="form-inline d-flex mb-4"
-            >
 
-                <div id="name" class="me-2">
-                    {{ filter.form.name }}
-                </div>
+    <div class="bg-white p-5 shadow">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 ">
 
-                <button type="submit" class="btn btn-main-color width-100 ms-2">{% trans "Search" %}</button>
+            <h1 class="mt-2 me-3">{% trans "Groups" %} </h1>
+            <div class="">
+                <div class="label mb-1">{% trans "Search group:" %}</div>
+                <form hx-get="{% url 'group-list' %}"
+                    hx-target="div.table-container"
+                    hx-swap="outerHTML"
+                    hx-indicator=".progress"
+                    class="form-inline d-flex "
+                >
 
-            </form>
+                    <div id="name" class="me-2">
+                        {{ filter.form.name }}
+                    </div>
+
+                    <button type="submit" class="btn btn-main-color width-100 ms-2">{% trans "Search" %}</button>
+
+                </form>
+            </div>
         </div>
 
 

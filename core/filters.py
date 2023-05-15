@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Q
-from core.models import Record, Organization, RegistrationStatus
+from core.models import Record, Organization, RegistrationStatus, Group
 from django import forms
 
 MAILING_LIST = (
@@ -89,3 +89,11 @@ class GroupFilter(django_filters.FilterSet):
         for term in value.split():
             queryset = queryset.filter(Q(name__icontains=term))
         return queryset
+
+
+class GroupMembersFilter(django_filters.FilterSet):
+    class Meta:
+        model = Record
+        fields = [
+            "group"
+        ]

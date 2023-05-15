@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block title %} {{ object.name }} | Group {% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'group_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="contact-container">
+        <div class="left-section fit-content-height">
+            <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+                    <i class="bi bi-buildings-fill"></i>
+                </div>
+                <hr class="my-5" />
+
+                <div class="mx-auto fit-content">
+
+                    <div class="fit-content">
+                        <div class="label">
+                            Name
+                        </div>
+                        <div class="fs-2 mb-3">
+                            {{ object.name }}
+                        </div>
+                    </div>
+
+
+                </div>
+
+                {% if request.user.can_edit %}
+                    <hr class="my-5" />
+
+
+                <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    <a href="{% url 'contact-update' object.pk %}" type="button" class="btn btn-main-color"><i class="bi bi-pencil me-1"></i>Edit</a>
+                    <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="right-section fit-content-height">
+            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+                 <div class="">
+                    <div class="fs-2">
+                        Description
+                    </div>
+                    <div class="">
+                        {{ object.description }}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+                 <div class="">
+                    <div class="fs-2">
+                        Members
+                    </div>
+                    <div class="">
+                        <div class="progress">
+                            <div class="indeterminate"></div>
+                        </div>
+
+                        <br>
+
+                        <div hx-get="{% url 'group-members' %}?group={{ group.pk }}"
+                             hx-trigger="load"
+                             hx-target="div.table-container"
+                             hx-swap="outerHTML"
+                             hx-indicator=".progress"
+                             style="cursor: pointer;"
+                             class="table-container"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+{% endblock %}

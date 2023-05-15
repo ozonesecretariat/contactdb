@@ -15,8 +15,8 @@ from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 
 from core.models import Record, RegistrationStatus, Group
-from core.tables import RecordTable, GroupTable
-from core.filters import RecordFilter, RegistrationStatusFilter, GroupFilter
+from core.tables import RecordTable, GroupTable, GroupMemberTable
+from core.filters import RecordFilter, RegistrationStatusFilter, GroupFilter, GroupMembersFilter
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
@@ -107,3 +107,28 @@ class GroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
             template_name = "core/group_list.html"
 
         return template_name
+
+
+class GroupDetailView(LoginRequiredMixin, DetailView):
+    model = Group
+
+
+class GroupMembersView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = GroupMemberTable
+    queryset = Record.objects.all()
+    filterset_class = GroupMembersFilter
+    paginate_by = 20
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/group_members_partial.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404

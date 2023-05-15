@@ -1,0 +1,61 @@
+{% extends "django_tables2/bootstrap4.html" %}
+{% load django_tables2 %}
+{%  load static %}
+{% load i18n %}
+
+{% block table.thead %}
+  {% if table.show_header %}
+      <thead {{ table.attrs.thead.as_html }}>
+      <tr>
+          {% for column in table.columns %}
+              <th {{ column.attrs.th.as_html }}>
+                  {{ column.header }}
+              </th>
+          {% endfor %}
+      </tr>
+      </thead>
+  {% endif %}
+{% endblock table.thead %}
+
+{% block pagination.previous %}
+    <li class="previous page-item">
+        <div role="button"
+             hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ table.page.previous_page_number }}"
+             hx-trigger="click"
+             hx-target="div.table-container"
+             hx-swap="outerHTML"
+             hx-indicator=".progress"
+             class="page-link text-main-color">
+            <span aria-hidden="true">&laquo;</span>
+            {% trans 'previous' %}
+        </div>
+    </li>
+{% endblock pagination.previous %}
+{% block pagination.range %}
+    {% for p in table.page|table_page_range:table.paginator %}
+        <li class="page-item">
+            <div class="page-link {% if table.page.number == p %} active {% else %} text-main-color {% endif %}"
+                 {% if p != '...' %}hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ p }}" role="button"{% endif %}
+                 hx-trigger="click"
+                 hx-target="div.table-container"
+                 hx-swap="outerHTML"
+                 hx-indicator=".progress">
+                {{ p }}
+            </div>
+        </li>
+    {% endfor %}
+{% endblock pagination.range %}
+{% block pagination.next %}
+    <li class="next page-item">
+        <div role="button"
+             hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ table.page.next_page_number }}"
+             hx-trigger="click"
+             hx-target="div.table-container"
+             hx-swap="outerHTML"
+             hx-indicator=".progress"
+             class="page-link text-main-color">
+            {% trans 'next' %}
+            <span aria-hidden="true">&raquo;</span>
+        </div>
+    </li>
+{% endblock pagination.next %}

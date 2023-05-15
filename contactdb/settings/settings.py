@@ -300,3 +300,5 @@ if SENTRY_DSN:
             DjangoIntegration(),
         ],
     )
+
+DJANGO_TABLES2_PAGE_RANGE = int(env.str("DJANGO_TABLES2_PAGE_RANGE", default=7))
