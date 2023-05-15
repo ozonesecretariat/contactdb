@@ -94,6 +94,4 @@ class GroupFilter(django_filters.FilterSet):
 class GroupMembersFilter(django_filters.FilterSet):
     class Meta:
         model = Record
-        fields = [
-            "group"
-        ]
+        fields = ["group"]

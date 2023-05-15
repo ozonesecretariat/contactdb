@@ -16,7 +16,12 @@ from django_filters.views import FilterView
 
 from core.models import Record, RegistrationStatus, Group
 from core.tables import RecordTable, GroupTable, GroupMemberTable
-from core.filters import RecordFilter, RegistrationStatusFilter, GroupFilter, GroupMembersFilter
+from core.filters import (
+    RecordFilter,
+    RegistrationStatusFilter,
+    GroupFilter,
+    GroupMembersFilter,
+)
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
@@ -132,3 +137,13 @@ class GroupMembersView(LoginRequiredMixin, SingleTableMixin, FilterView):
             return super().get(request, *args, **kwargs)
         else:
             raise Http404
+
+
+class GroupDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Group
+
+    def get_success_url(self):
+        return reverse("group-list")
+
+    def has_permission(self):
+        return self.request.user.can_edit
