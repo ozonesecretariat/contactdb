@@ -19,7 +19,7 @@ from core.views import (
     GroupListView,
     GroupDetailView,
     GroupMembersView,
-    GroupDeleteView,
+    GroupDeleteView, GroupUpdateView,
 )
 
 urlpatterns = [
@@ -65,6 +65,7 @@ urlpatterns = [
     path("groups/<pk>", GroupDetailView.as_view(), name="group-detail"),
     path("groups/members/", GroupMembersView.as_view(), name="group-members"),
     path("groups/<pk>/delete", GroupDeleteView.as_view(), name="group-delete"),
+    path("groups/<pk>/update", GroupUpdateView.as_view(), name="group-update"),
 ]
 
 if settings.DEBUG:

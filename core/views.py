@@ -147,3 +147,14 @@ class GroupDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
     def has_permission(self):
         return self.request.user.can_edit
+
+
+class GroupUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = Group
+    fields = "__all__"
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_success_url(self):
+        return reverse("group-detail", kwargs={"pk": self.object.pk})
