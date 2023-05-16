@@ -9,7 +9,7 @@ from django.views.generic import (
     ListView,
 )
 
-from core.forms import RecordUpdateForm
+from core.forms import RecordUpdateForm, GroupUpdateForm
 
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -151,7 +151,7 @@ class GroupDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 class GroupUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Group
-    fields = "__all__"
+    form_class = GroupUpdateForm
 
     def has_permission(self):
         return self.request.user.can_edit

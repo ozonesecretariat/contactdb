@@ -19,7 +19,8 @@ from core.views import (
     GroupListView,
     GroupDetailView,
     GroupMembersView,
-    GroupDeleteView, GroupUpdateView,
+    GroupDeleteView,
+    GroupUpdateView,
 )
 
 urlpatterns = [
