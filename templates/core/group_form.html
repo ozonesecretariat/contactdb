@@ -2,7 +2,7 @@
 {% load static custom_tags %}
 
 
-{% block title %} {{ object.name }} | Group {% endblock %}
+{% block title %} {{ object.name }} | Update Group {% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'record_detail.css' %}">
@@ -86,7 +86,7 @@
 
                 <div class="bg-white px-5 py-4 shadow rounded-2">
                     <div class="text-muted"><span class="text-danger">*</span> Required field</div>
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-2">
                         <a class="btn btn-secondary button-gray-shadow " href="{% url 'group-detail' object.pk %}">Cancel</a>
                         <input class="btn btn-success button-success-shadow" type="submit" value="Update">
 

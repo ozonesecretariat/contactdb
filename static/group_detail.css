@@ -5,3 +5,25 @@ tbody tr {
 tbody tr:hover {
     background-color: #fafafa;
 }
+
+.contact-icon {
+    color: var(--main-color);
+    font-size: 1.2rem;
+}
+
+.contact-icon-wrapper{
+    width: 15px;
+    height: 15px;
+}
+
+.contact-result{
+    cursor: pointer;
+}
+
+.contact-result:hover{
+    background-color: #fafafa;
+}
+
+.contact-result.active{
+    background-color: var(--main-color-light);
+}

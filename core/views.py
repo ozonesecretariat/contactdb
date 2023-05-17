@@ -8,8 +8,9 @@ from django.views.generic import (
     UpdateView,
     ListView,
 )
+from django.views.generic.edit import FormMixin
 
-from core.forms import RecordUpdateForm, GroupUpdateForm
+from core.forms import RecordUpdateForm, GroupUpdateForm, AddGroupMemberForm
 
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -20,7 +21,7 @@ from core.filters import (
     RecordFilter,
     RegistrationStatusFilter,
     GroupFilter,
-    GroupMembersFilter,
+    GroupMembersFilter, SearchContactFilter,
 )
 
 
@@ -158,3 +159,52 @@ class GroupUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("group-detail", kwargs={"pk": self.object.pk})
+
+
+class SearchContactView(LoginRequiredMixin, FilterView, ListView):
+    model = Record
+    filterset_class = SearchContactFilter
+    context_object_name = "contacts"
+    ordering = ["first_name", "last_name"]
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/select_member_list.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+
+class AddGroupMemberView(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, DetailView):
+    template_name = "core/add_group_member.html"
+    form_class = AddGroupMemberForm
+    model = Group
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_success_url(self):
+        return reverse("group-detail", kwargs={"pk": self.object.pk})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        self.object = self.get_object()
+
+        if form.is_valid():
+            self.new_member = Record.objects.filter(pk=form.cleaned_data["new_member_id"]).first()
+            if self.new_member is not None:
+                return self.form_valid(form)
+
+        return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.object.contacts.add(self.new_member)
+        self.object.save()
+        return super().form_valid(form)

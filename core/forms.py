@@ -1,5 +1,7 @@
 from django import forms
-from django.forms import ModelForm
+from django.db.models import CharField, Value
+from django.db.models.functions import Concat
+from django.forms import ModelForm, Form
 
 from core.models import Record, Group
 from core.widgets import RemoveGroupMembers
@@ -17,3 +19,7 @@ class GroupUpdateForm(ModelForm):
         model = Group
         fields = "__all__"
         widgets = {"contacts": RemoveGroupMembers()}
+
+
+class AddGroupMemberForm(Form):
+    new_member_id = forms.CharField()

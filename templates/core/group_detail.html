@@ -40,10 +40,24 @@
                     <a href="{% url 'group-update' object.pk %}" type="button" class="btn btn-main-color"><i class="bi bi-pencil me-1"></i>Edit</a>
                     <a href="{% url 'group-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"><i class="bi bi-trash me-1"></i>Delete</a>
                 </div>
+                <div class="d-grid d-md-flex justify-content-md-center mt-3">
+                    <a href="{% url 'group-add-member' object.pk %}" type="button" class="btn btn-success button-success-shadow"><i class="bi bi-person-fill-add me-1"></i>Add member</a>
+                </div>
                 {% endif %}
             </div>
         </div>
         <div class="right-section fit-content-height">
+            {% if form.form.non_field_errors|length > 0 %}
+                <div class="p-5 shadow  bg-white mb-4 rounded-2">
+
+                {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <div class="bg-white  mb-4 p-5 shadow rounded-2">
                  <div class="">
                     <div class="fs-2">
