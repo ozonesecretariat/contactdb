@@ -17,7 +17,9 @@ class RecordTable(tables.Table):
         row_attrs = {
             "onClick": lambda record: "document.location.href='/contacts/{0}';".format(
                 record.id
-            )
+            ),
+            "data-id": lambda record: record.id,
+
         }
 
 

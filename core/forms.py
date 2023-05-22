@@ -1,6 +1,4 @@
 from django import forms
-from django.db.models import CharField, Value
-from django.db.models.functions import Concat
 from django.forms import ModelForm, Form
 
 from core.models import Record, Group
@@ -23,3 +21,15 @@ class GroupUpdateForm(ModelForm):
 
 class AddGroupMemberForm(Form):
     new_member_id = forms.CharField()
+
+
+class AddMultipleGroupMembersForm(Form):
+    members = forms.MultipleChoiceField(
+        choices=Record.objects.all().values_list("id", "first_name"),
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    groups = forms.MultipleChoiceField(
+        choices=Group.objects.all().values_list("id", "name"),
+        widget=forms.SelectMultiple
+    )
