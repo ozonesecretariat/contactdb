@@ -2,7 +2,7 @@
 {% load static custom_tags %}
 
 
-{% block title %} {{ object.name }} | Update Group {% endblock %}
+{% block title %} Create Group {% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'record_detail.css' %}">
@@ -66,29 +66,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white  mb-4 p-5 shadow rounded-2">
-
-                     <div class="">
-                        <div class="fs-2">
-                            Remove Members
-                        </div>
-                        <div class="">
-                            {{ form.contacts|add_classes:'form-control' }}
-                            {% for error in form.contacts.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-
-                        </div>
-                    </div>
-                </div>
 
                 <div class="bg-white px-5 py-4 shadow rounded-2">
                     <div class="text-muted"><span class="text-danger">*</span> Required field</div>
                     <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-2">
-                        <a class="btn btn-secondary button-gray-shadow " href="{% url 'group-detail' object.pk %}">Cancel</a>
-                        <input class="btn btn-success button-success-shadow" type="submit" value="Update">
+                        <a class="btn btn-secondary button-gray-shadow " href="{% url 'group-list' %}">Cancel</a>
+                        <input class="btn btn-success button-success-shadow" type="submit" value="Add group">
 
                     </div>
 
@@ -100,5 +83,4 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
 {% endblock %}

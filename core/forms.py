@@ -24,12 +24,17 @@ class AddGroupMemberForm(Form):
 
 
 class AddMultipleGroupMembersForm(Form):
+
     members = forms.MultipleChoiceField(
         choices=Record.objects.all().values_list("id", "first_name"),
         widget=forms.CheckboxSelectMultiple
     )
 
     groups = forms.MultipleChoiceField(
-        choices=Group.objects.all().values_list("id", "name"),
+        choices=Group.objects.values_list("id", "name"),
         widget=forms.SelectMultiple
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['groups'].choices = tuple(Group.objects.values_list("id", "name"))

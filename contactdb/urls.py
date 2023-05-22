@@ -20,7 +20,7 @@ from core.views import (
     GroupDetailView,
     GroupMembersView,
     GroupDeleteView,
-    GroupUpdateView, AddGroupMemberView, SearchContactView, AddMultipleGroupMembersView,
+    GroupUpdateView, AddGroupMemberView, SearchContactView, AddMultipleGroupMembersView, GroupCreateView,
 )
 
 urlpatterns = [
@@ -63,6 +63,7 @@ urlpatterns = [
         name="registration-status-list",
     ),
     path("groups/", GroupListView.as_view(), name="group-list"),
+    path("groups/create/", GroupCreateView.as_view(), name="group-create"),
     path("groups/<pk>", GroupDetailView.as_view(), name="group-detail"),
     path("groups/members/", GroupMembersView.as_view(), name="group-members"),
     path("groups/<pk>/delete", GroupDeleteView.as_view(), name="group-delete"),

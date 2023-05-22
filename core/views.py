@@ -12,7 +12,7 @@ from django.views.generic import (
     UpdateView,
     ListView,
 )
-from django.views.generic.edit import FormMixin, FormView
+from django.views.generic.edit import FormMixin, FormView, CreateView
 
 from core.forms import RecordUpdateForm, GroupUpdateForm, AddGroupMemberForm, AddMultipleGroupMembersForm
 
@@ -113,7 +113,7 @@ class GroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_class = GroupTable
     queryset = Group.objects.all()
     filterset_class = GroupFilter
-    paginate_by = 1
+    paginate_by = 30
 
     def get_template_names(self):
         if self.request.htmx:
@@ -126,6 +126,18 @@ class GroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
 class GroupDetailView(LoginRequiredMixin, DetailView):
     model = Group
+
+
+class GroupCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Group
+    fields = ["name", "description"]
+    template_name = "core/group_create_form.html"
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_success_url(self):
+        return reverse("group-detail", kwargs={"pk": self.object.pk})
 
 
 class GroupMembersView(LoginRequiredMixin, SingleTableMixin, FilterView):
