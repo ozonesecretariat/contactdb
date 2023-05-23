@@ -124,12 +124,12 @@ class ImportData(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
             sheet_obj = opx.load_workbook(excel_file).active
         except OSError:
             messages.info(request, "File is not Excel like!")
-            return redirect(request.path)
+            return redirect(reverse("import-contacts"))
         except django.utils.datastructures.MultiValueDictKeyError:
             messages.info(
                 request, "Please select a file then press the 'Import' button."
             )
-            return redirect(request.path)
+            return redirect(reverse("import-contacts"))
 
         for row in sheet_obj.iter_rows(min_row=2):
             first_name = row[8].value
@@ -196,7 +196,7 @@ class ImportData(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
                 contact.save()
 
         messages.success(request, "Successfully imported contacts.")
-        return redirect(request.path)
+        return redirect(reverse("import-contacts"))
 
 
 class ExportExcel(LoginRequiredMixin, View):
