@@ -92,9 +92,20 @@ class GroupFilter(django_filters.FilterSet):
 
 
 class GroupMembersFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(
+        method="name_search", widget=forms.TextInput(attrs={"class": "form-control"})
+    )
+
     class Meta:
         model = Record
-        fields = ["group"]
+        fields = ["group", "name"]
+
+    def name_search(self, queryset, name, value):
+        for term in value.split():
+            queryset = queryset.filter(
+                Q(first_name__icontains=term) | Q(last_name__icontains=term)
+            )
+        return queryset
 
 
 class SearchContactFilter(django_filters.FilterSet):

@@ -20,7 +20,7 @@
 {% block pagination.previous %}
     <li class="previous page-item">
         <div role="button"
-             hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ table.page.previous_page_number }}"
+             hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ table.page.previous_page_number }}&name={{ request.GET.name }}"
              hx-trigger="click"
              hx-target="div.table-container"
              hx-swap="outerHTML"
@@ -35,7 +35,7 @@
     {% for p in table.page|table_page_range:table.paginator %}
         <li class="page-item">
             <div class="page-link {% if table.page.number == p %} active {% else %} text-main-color {% endif %}"
-                 {% if p != '...' %}hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ p }}" role="button"{% endif %}
+                 {% if p != '...' %}hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ p }}&name={{ request.GET.name }}" role="button"{% endif %}
                  hx-trigger="click"
                  hx-target="div.table-container"
                  hx-swap="outerHTML"
@@ -48,7 +48,7 @@
 {% block pagination.next %}
     <li class="next page-item">
         <div role="button"
-             hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ table.page.next_page_number }}"
+             hx-get="{% url 'group-members' %}?group={{ request.GET.group }}&page={{ table.page.next_page_number }}&name={{ request.GET.name }}"
              hx-trigger="click"
              hx-target="div.table-container"
              hx-swap="outerHTML"
