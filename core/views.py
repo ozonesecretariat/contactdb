@@ -14,7 +14,12 @@ from django.views.generic import (
 )
 from django.views.generic.edit import FormMixin, FormView, CreateView
 
-from core.forms import RecordUpdateForm, GroupUpdateForm, AddGroupMemberForm, AddMultipleGroupMembersForm
+from core.forms import (
+    RecordUpdateForm,
+    GroupUpdateForm,
+    AddGroupMemberForm,
+    AddMultipleGroupMembersForm,
+)
 
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -25,7 +30,8 @@ from core.filters import (
     RecordFilter,
     RegistrationStatusFilter,
     GroupFilter,
-    GroupMembersFilter, SearchContactFilter,
+    GroupMembersFilter,
+    SearchContactFilter,
 )
 
 
@@ -203,7 +209,9 @@ class SearchContactView(LoginRequiredMixin, FilterView, ListView):
             raise Http404
 
 
-class AddGroupMemberView(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, DetailView):
+class AddGroupMemberView(
+    LoginRequiredMixin, PermissionRequiredMixin, FormMixin, DetailView
+):
     template_name = "core/add_group_member.html"
     form_class = AddGroupMemberForm
     model = Group
@@ -219,7 +227,9 @@ class AddGroupMemberView(LoginRequiredMixin, PermissionRequiredMixin, FormMixin,
         self.object = self.get_object()
 
         if form.is_valid():
-            self.new_member = Record.objects.filter(pk=form.cleaned_data["new_member_id"]).first()
+            self.new_member = Record.objects.filter(
+                pk=form.cleaned_data["new_member_id"]
+            ).first()
             if self.new_member is not None:
                 return self.form_valid(form)
 
@@ -231,10 +241,12 @@ class AddGroupMemberView(LoginRequiredMixin, PermissionRequiredMixin, FormMixin,
         return super().form_valid(form)
 
 
-class AddMultipleGroupMembersView(LoginRequiredMixin, PermissionRequiredMixin, FilterView, FormMixin):
+class AddMultipleGroupMembersView(
+    LoginRequiredMixin, PermissionRequiredMixin, FilterView, FormMixin
+):
     form_class = AddMultipleGroupMembersForm
     model = Record
-    template_name = 'core/add_multiple_group_members.html'
+    template_name = "core/add_multiple_group_members.html"
     filterset_class = RecordFilter
 
     def has_permission(self):
@@ -273,4 +285,10 @@ class AddMultipleGroupMembersView(LoginRequiredMixin, PermissionRequiredMixin, F
         member_ids = form.cleaned_data.get("members")
         if member_ids and len(member_ids) > 0:
             previously_selected_members = Record.objects.filter(id__in=member_ids)
-        return self.render_to_response(self.get_context_data(form=form, filter=f, previously_selected_members=previously_selected_members))
+        return self.render_to_response(
+            self.get_context_data(
+                form=form,
+                filter=f,
+                previously_selected_members=previously_selected_members,
+            )
+        )

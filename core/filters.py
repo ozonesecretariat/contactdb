@@ -110,10 +110,7 @@ class SearchContactFilter(django_filters.FilterSet):
 
     class Meta:
         model = Record
-        fields = [
-            "name",
-            "group"
-        ]
+        fields = ["name", "group"]
 
     def name_search(self, queryset, name, value):
         for term in value.split():
@@ -123,6 +120,4 @@ class SearchContactFilter(django_filters.FilterSet):
         return queryset
 
     def not_in_group(self, queryset, name, value):
-        return queryset.filter(
-            ~Q(group=value)
-        )
+        return queryset.filter(~Q(group=value))

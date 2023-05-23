@@ -19,7 +19,6 @@ class RecordTable(tables.Table):
                 record.id
             ),
             "data-id": lambda record: record.id,
-
         }
 
 
