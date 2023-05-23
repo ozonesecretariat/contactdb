@@ -16,6 +16,9 @@ from core.views import (
     RecordUpdateView,
     ContactListView,
     RegistrationStatusListView,
+    ImportData,
+    ExportExcel,
+    ExportDoc,
 )
 
 urlpatterns = [
@@ -57,6 +60,9 @@ urlpatterns = [
         RegistrationStatusListView.as_view(),
         name="registration-status-list",
     ),
+    path("import-contacts/", ImportData.as_view(), name="import-contacts"),
+    path("export-xlsx/", ExportExcel.as_view(), name="export-excel"),
+    path("export-docx/", ExportDoc.as_view(), name="export-docx"),
 ]
 
 if settings.DEBUG:
