@@ -1,7 +1,5 @@
 import io
-import json
 
-from urllib.parse import parse_qs
 import django.utils.datastructures
 import openpyxl as opx
 from docx import Document
@@ -12,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404, HttpResponse
 from django.urls import reverse
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import (
     View,
     TemplateView,
@@ -21,7 +18,7 @@ from django.views.generic import (
     UpdateView,
     ListView,
 )
-from django.views.generic.edit import FormMixin, FormView, CreateView
+from django.views.generic.edit import FormMixin, CreateView
 
 from core.forms import (
     RecordUpdateForm,
@@ -93,8 +90,6 @@ class ContactListView(
         return template_name
 
     def get(self, request, *args, **kwargs):
-        print(self.get_filterset(self.get_filterset_class()).qs)
-
         return super().get(request, *args, **kwargs)
 
 
