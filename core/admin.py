@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_task.admin import TaskAdmin
 
-from core.models import SendMailTask, Organization, RegistrationStatus, Record
+from core.models import SendMailTask, Organization, RegistrationStatus, Record, Group
 
 
 @admin.register(SendMailTask)
@@ -59,3 +59,8 @@ class RecordAdmin(admin.ModelAdmin):
         "organization__name",
     ]
     list_filter = ["is_in_mailing_list", "is_use_organization_address"]
+
+
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
+    search_fields = ["name"]

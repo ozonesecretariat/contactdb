@@ -76,3 +76,21 @@
         grid-template-columns: 100%;
     }
 }
+
+.group-icon {
+    color: var(--main-color);
+    font-size: 1.2rem;
+}
+
+.group-icon-wrapper{
+    width: 15px;
+    height: 15px;
+}
+
+.group-container{
+    background: white;
+}
+
+.group-container:hover{
+    background-color: #E8E8E8;
+}
