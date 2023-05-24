@@ -1,4 +1,4 @@
-# Ozone Contact DB
+# Ozone Contact DB (test)
 
 [![Test Suite](https://github.com/ozonesecretariat/contactdb/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ozonesecretariat/contactdb/actions/workflows/tests.yml)
 [![Code Style](https://github.com/ozonesecretariat/contactdb/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/ozonesecretariat/contactdb/actions/workflows/lint.yml)
