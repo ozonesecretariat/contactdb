@@ -28,9 +28,7 @@ class AddMultipleGroupMembersForm(Form):
         widget=forms.CheckboxSelectMultiple,
     )
 
-    groups = forms.MultipleChoiceField(
-        widget=forms.SelectMultiple
-    )
+    groups = forms.MultipleChoiceField(widget=forms.SelectMultiple)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
