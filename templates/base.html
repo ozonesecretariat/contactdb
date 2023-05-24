@@ -26,7 +26,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url "contact-list" %}">Contacts</a>
+                            <a class="nav-link" aria-current="page" href="{% url 'contact-list' %}">Contacts</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{% url 'group-list' %}">Groups</a>
                         </li>
 
                         <li class="nav-item">
@@ -59,7 +63,7 @@
         </div>
     </nav>
 
-    <div class="my-5 page-margins">
+    <div class="my-4 page-margins">
         {% block content %}
 
         {% endblock %}

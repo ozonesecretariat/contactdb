@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static custom_tags %}
+{% load i18n %}
+
+{% block title %}Add contacts to groups{% endblock %}
+
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="{% static 'contacts.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  <div class="bg-white rounded-2 shadow p-5 mb-4">
+    <div class="fs-2">{% trans "Select contacts" %}<span class="text-danger">*</span></div>
+
+    <form hx-get="{% url 'groups-add-multiple-members' %}"
+          hx-target="div.selected-contacts"
+          hx-swap="outerHTML"
+          hx-indicator=".progress"
+          class="form-inline"
+    >
+      <div class="d-flex flex-column justify-content-around height-190">
+        <div class="fw-bold">{% trans "Filter by:" %}</div>
+        <div class="d-flex flex-row align-items-center">
+          <div>{% trans "Is in mailing list:" %}</div>
+          <div class="width-100 ml-15">
+            {{ filter.form.is_in_mailing_list }}
+          </div>
+          <div class="ml-10">{% trans "Is using organization mail:" %}</div>
+          <div class="width-100 ml-15">
+            {{ filter.form.is_use_organization_address }}
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center">
+          <div>{% trans "Organization:" %}</div>
+          <div class="width-430 ml-15">
+            {{ filter.form.organization }}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-main-color width-100">{% trans "Apply" %}</button>
+      </div>
+
+      <br>
+      <div class="d-flex flex-column justify-content-around height-190">
+        <div class="fw-bold">{% trans "Search by:" %}</div>
+
+        <div>
+          <div class="d-flex flex-row justify-content-between width-530">
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="name" name="select-search" checked="checked">
+              <label class="form-check-label" for="name">{% trans "Name" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="department" name="select-search">
+              <label class="form-check-label" for="department">{% trans "Department" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="designation" name="select-search">
+              <label class="form-check-label" for="designation">{% trans "Designation" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="emails" name="select-search">
+              <label class="form-check-label" for="emails">{% trans "Emails" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="phones-faxes" name="select-search">
+              <label class="form-check-label" for="phones-faxes">{% trans "Phones/Faxes" %}</label>
+            </div>
+          </div>
+
+            <div id="search-name">
+                  {{ filter.form.name }}
+            </div>
+            <div id="search-department" style="display: none">
+                  {{ filter.form.department }}
+            </div>
+            <div id="search-designation" style="display: none">
+                  {{ filter.form.designation }}
+            </div>
+            <div id="search-emails" style="display: none">
+                  {{ filter.form.emails }}
+            </div>
+            <div id="search-phones-faxes" style="display: none">
+                  {{ filter.form.phones_faxes }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-main-color width-100">{% trans "Search" %}</button>
+      </div>
+
+    </form>
+  </div>
+  <form method="post" novalidate>{% csrf_token %}
+
+    <div class="bg-white rounded-2 shadow p-5 mb-4">
+
+      <div class="progress">
+        <div class="indeterminate"></div>
+      </div>
+
+      <br>
+
+      <div class="selected-contacts">
+
+        {% if previously_selected_members|length > 0 %}
+
+          <div class="overflow-scroll border rounded-2 p-3 selected-contacts" style="max-height: 500px;">
+              {% for contact in previously_selected_members %}
+                  <div class="border-bottom p-2">
+                      <input id="contact_{{ contact.id }}" type="checkbox" value="{{ contact.id }}" name="members" checked>
+                      <label for="contact_{{ contact.id }}"><span class="fw-bold">{{ contact }}</span> - {{ contact.organization.name }}</label>
+                  </div>
+
+              {% endfor %}
+          </div>
+        {% else %}
+          No contact selected
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {% for error in form.members.errors %}
+          <div class="text-danger my-1">
+            {{ error|escape }}
+          </div>
+        {% endfor %}
+      </div>
+
+
+  </div>
+
+  <div class="bg-white rounded-2 shadow p-5 mb-4">
+      <div class="fs-2">
+        {% trans "Select groups" %}<span class="text-danger">*</span>
+      </div>
+      <div class="mt-2">
+        {{ form.groups|add_classes:'contact-groups' }}
+      </div>
+      <div class="mb-3">
+        {% for error in form.groups.errors %}
+          <div class="text-danger my-1">
+            {{ error|escape }}
+          </div>
+        {% endfor %}
+      </div>
+  </div>
+
+     <div class="bg-white px-5 py-4 shadow rounded-2">
+       <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+       <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+         <a class="btn btn-secondary button-gray-shadow " href="{% url 'group-list' %}">Cancel</a>
+         <input class="btn btn-success button-success-shadow" type="submit" value="Update">
+
+       </div>
+
+     </div>
+
+  </form>
+
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script>
+    function showInput() {
+      if (document.getElementById("name").checked) {
+        document.getElementById("search-name").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-name").style.display = "none";
+        document.getElementById("id_name").value = "";
+      }
+      if (document.getElementById("department").checked) {
+        document.getElementById("search-department").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-department").style.display = "none";
+        document.getElementById("id_department").value = "";
+      }
+      if (document.getElementById("designation").checked) {
+        document.getElementById("search-designation").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-designation").style.display = "none";
+        document.getElementById("id_designation").value = "";
+      }
+      if (document.getElementById("emails").checked) {
+        document.getElementById("search-emails").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-emails").style.display = "none";
+        document.getElementById("id_emails").value = "";
+      }
+      if (document.getElementById("phones-faxes").checked) {
+        document.getElementById("search-phones-faxes").style.display = "inline";
+      }
+      else {
+        document.getElementById("search-phones-faxes").style.display = "none";
+        document.getElementById("id_phones_faxes").value = "";
+      }
+    }
+
+    $(document).ready(function() {
+        $('.contact-groups').select2({width: '100%'});
+    });
+
+  </script>
+{% endblock %}

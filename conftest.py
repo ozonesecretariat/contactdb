@@ -1,6 +1,6 @@
 import pytest
 
-from core.models import Record, Organization
+from core.models import Record, Organization, Group
 
 
 @pytest.fixture
@@ -85,3 +85,13 @@ def other_contact(db, first_organization):
         is_in_mailing_list=True,
         is_use_organization_address=True,
     )
+
+
+@pytest.fixture
+def group(db, contact, other_contact):
+    return Group(name="Group1", description="This is a test description")
+
+
+@pytest.fixture
+def other_group(db):
+    return Group(name="Group2", description="This is a test description2")

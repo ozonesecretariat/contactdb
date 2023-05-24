@@ -14,7 +14,7 @@
 
         <div class="contact-container">
             <div class="left-section fit-content-height">
-                <div class="main-color-light  mb-4 p-5 shadow">
+                <div class="main-color-light  mb-4 p-5 shadow rounded-2">
                     <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
                         <i class="bi bi-person-lines-fill"></i>
                     </div>
@@ -72,7 +72,7 @@
                     </div>
                 </div>
 
-                <div class="main-color-light  mb-4 p-5 shadow">
+                <div class="main-color-light  mb-4 p-5 shadow rounded-2">
 
                     <div class="my-3">
                         <div class="fs-2">
@@ -142,9 +142,8 @@
             </div>
 
             <div class="right-section fit-content-height">
-                {{ form.non_field_errors }}
                 {% if form.form.non_field_errors|length > 0 %}
-                    <div class="p-5 shadow  bg-white mb-4">
+                    <div class="p-5 shadow  bg-white mb-4 rounded-2">
 
                         {% for error in form.non_field_errors %}
                             <div class="alert alert-danger">
@@ -155,7 +154,7 @@
                     </div>
                 {% endif %}
 
-                <div class="p-5 shadow  bg-white mb-4">
+                <div class="p-5 shadow  bg-white mb-4 rounded-2">
                     <div class="">
                         <div class="fs-2 mb-3">
                             Contact Id<span class="text-danger">*</span>
@@ -173,7 +172,7 @@
                     </div>
                 </div>
 
-                <div class="py-5 shadow  details-container bg-white mb-4">
+                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
                         <div class="fs-2 mb-3">
                             Phones
@@ -257,7 +256,7 @@
                     </div>
                 </div>
 
-                <div class="py-5 shadow  details-container bg-white mb-4">
+                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
                         <div class="fs-2 mb-3">
                             Is in mailing list
@@ -402,7 +401,7 @@
 
                 </div>
 
-                <div class="bg-white px-5 py-4 shadow">
+                <div class="bg-white px-5 py-4 shadow rounded-2">
                     <div class="text-muted"><span class="text-danger">*</span> Required field</div>
                     <div class="d-grid gap-3 d-md-flex justify-content-md-end">
                         <a class="btn btn-secondary button-gray-shadow " href="{% url 'contact-detail' object.pk %}">Cancel</a>

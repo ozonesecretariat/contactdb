@@ -1,0 +1,36 @@
+<div class="d-flex gap-3 flex-wrap select-contact-list">
+    {% for contact in contacts %}
+        <div class="white p-3 shadow fit-content rounded-2 contact-result"
+             data-title="{{ contact.title }}"
+             data-first-name="{{ contact.first_name }}"
+             data-last-name="{{ contact.last_name }}"
+             data-contact-id="{{ contact.contact_id }}"
+             id="contact_{{ contact.id }}"
+             onclick="selectContact({{ contact.id }})"
+        >
+            <div class="d-flex flex-nowrap align-items-center justify-content-center">
+                <div class="me-3 p-3 rounded-circle d-flex align-items-center justify-content-center contact-icon-wrapper">
+                    <i class="bi bi-person-lines-fill contact-icon"></i>
+                </div>
+
+                    {% if contact.first_name %}
+                        <div class="me-1 fit-content">
+                            <div class=" ">
+                                {{ contact.first_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if contact.last_name %}
+                        <div class="fit-content ">
+                            <div class=" ">
+                                {{ contact.last_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+            </div>
+
+        </div>
+    {% endfor %}
+
+</div>

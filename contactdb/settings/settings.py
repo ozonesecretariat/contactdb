@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
+    "django.forms",
 ]
 
 MIDDLEWARE = [
@@ -300,3 +301,6 @@ if SENTRY_DSN:
             DjangoIntegration(),
         ],
     )
+
+DJANGO_TABLES2_PAGE_RANGE = int(env.str("DJANGO_TABLES2_PAGE_RANGE", default=7))
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Groups{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'groups.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="bg-white p-5 shadow">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 ">
+
+            <h1 class="mt-2 me-3">{% trans "Groups" %} </h1>
+            <div class="">
+                <div class="label mb-1">{% trans "Search group:" %}</div>
+                <form hx-get="{% url 'group-list' %}"
+                    hx-target="div.table-container"
+                    hx-swap="outerHTML"
+                    hx-indicator=".progress"
+                    class="form-inline d-flex "
+                >
+
+                    <div id="name" class="me-2">
+                        {{ filter.form.name }}
+                    </div>
+
+                    <button type="submit" class="btn btn-main-color width-100 ms-2">{% trans "Search" %}</button>
+
+                </form>
+            </div>
+        </div>
+        {% if request.user.can_edit %}
+            <div class="d-grid gap-3 d-md-flex mb-2">
+                <a class="btn btn-success button-success-shadow" href="{% url 'group-create' %}"><i class="bi bi-plus-circle-fill me-1"></i>Add group</a>
+                <a class="btn btn-main-color" href="{% url 'groups-add-multiple-members' %}"><i class="bi bi-person-fill-add me-1"></i>Add contacts to groups</a>
+            </div>
+        {% endif %}
+
+
+
+        <div class="progress">
+            <div class="indeterminate"></div>
+        </div>
+
+        <br>
+        {% render_table table %}
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+{% endblock %}
