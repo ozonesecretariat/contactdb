@@ -104,7 +104,7 @@ class RegistrationStatus(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=250, null=False, blank=False)
     description = models.TextField(blank=True, null=True)
-    contacts = models.ManyToManyField(Record, null=True, blank=True)
+    contacts = models.ManyToManyField(Record, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
