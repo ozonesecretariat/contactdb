@@ -31,8 +31,10 @@ def test_import_excel(login_user_can_import, contact):
     response = client.post(
         url,
         {
-            "uploaded-excel": SimpleUploadedFile(name="test_file", content=excel_file.getvalue())
-        }
+            "uploaded-excel": SimpleUploadedFile(
+                name="test_file", content=excel_file.getvalue()
+            )
+        },
     )
     assert response.status_code == 302
     assert Record.objects.get(first_name="Other", last_name="Contact")
