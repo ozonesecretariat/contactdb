@@ -1,0 +1,12 @@
+{% extends "two_factor/core/setup.html" %}
+{% load i18n %}
+
+{% block extra_media %}
+  {{ form.media }}
+{% endblock %}
+
+{% block content %}
+  <div class="bg-white rounded-2 p-5 shadow">
+      {{ block.super }}
+  </div>
+{% endblock %}

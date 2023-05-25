@@ -1,11 +1,18 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import (
+    LogoutView,
+    PasswordResetView,
+    PasswordResetDoneView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView,
+    PasswordChangeView,
+    PasswordChangeDoneView,
+)
 from django.urls import include
 from django.urls import path
 from django.views.generic import RedirectView
-from django.contrib.auth import views as auth_views
 from two_factor.urls import urlpatterns as tf_urls
 
 from accounts.views import RedirectLoginView
@@ -35,23 +42,27 @@ urlpatterns = [
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     path("django_task/", include("django_task.urls", namespace="django_task")),
     path(
-        "admin/password_reset/",
-        auth_views.PasswordResetView.as_view(),
-        name="admin_password_reset",
+        "account/password-change/", PasswordChangeView.as_view(), name="password_change"
     ),
     path(
-        "admin/password_reset/done/",
-        auth_views.PasswordResetDoneView.as_view(),
+        "account/password-change/done/",
+        PasswordChangeDoneView.as_view(),
+        name="password_change_done",
+    ),
+    path("account/password-reset/", PasswordResetView.as_view(), name="password_reset"),
+    path(
+        "account/password-reset/done/",
+        PasswordResetDoneView.as_view(),
         name="password_reset_done",
     ),
     path(
-        "admin/reset/<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(),
+        "account/reset/<uidb64>/<token>/",
+        PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
     path(
-        "admin/reset/done/",
-        auth_views.PasswordResetCompleteView.as_view(),
+        "account/reset/done/",
+        PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
     path("admin/", admin.site.urls),
