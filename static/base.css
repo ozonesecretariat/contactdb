@@ -6,6 +6,7 @@
 
 body{
     background: #f2f2f2;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .main-color{
@@ -28,23 +29,23 @@ body{
 
 }
 
-.button-gray-shadow:hover{
+.btn-secondary:hover{
     box-shadow: 0 0 1rem rgba(0,0,0, .35);
 }
 
-.button-primary-shadow:hover{
+.btn-primary:hover{
     box-shadow: 0 0 1rem rgba(13, 110, 253, .55);
 }
 
-.button-warning-shadow:hover{
+.btn-warning:hover{
     box-shadow: 0 0 1rem rgba(255, 193, 7, .55);
 }
 
-.button-danger-shadow:hover{
+.btn-danger:hover{
     box-shadow: 0 0 1rem rgba(220, 53, 69, .55);
 }
 
-.button-success-shadow:hover{
+.btn-success:hover{
     box-shadow: 0 0 1rem rgba(25, 135, 84, .55);
 }
 
@@ -73,6 +74,17 @@ body{
     font-size: 0.9rem;
     color: var(--main-color);
 }
+
+.fs-09{
+    font-size: 0.9rem;
+}
+
+.form-help-text ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+
 
 .fit-content{
     width: fit-content;
