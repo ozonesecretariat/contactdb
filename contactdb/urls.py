@@ -25,6 +25,9 @@ from core.views import (
     SearchContactView,
     AddMultipleGroupMembersView,
     GroupCreateView,
+    ImportData,
+    ExportExcel,
+    ExportDoc,
 )
 
 urlpatterns = [
@@ -81,6 +84,9 @@ urlpatterns = [
         AddMultipleGroupMembersView.as_view(),
         name="groups-add-multiple-members",
     ),
+    path("import-contacts/", ImportData.as_view(), name="import-contacts"),
+    path("export-xlsx/", ExportExcel.as_view(), name="export-excel"),
+    path("export-docx/", ExportDoc.as_view(), name="export-docx"),
 ]
 
 if settings.DEBUG:

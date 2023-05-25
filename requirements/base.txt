@@ -12,5 +12,7 @@ django-rq
 django-task
 django-tables2
 django-two-factor-auth[phonenumbers]
+openpyxl
 psycopg[binary]
+python-docx
 sentry-sdk[django]

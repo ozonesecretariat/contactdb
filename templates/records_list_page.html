@@ -13,11 +13,26 @@
 {% block content %}
   <h1>{% trans "Contacts" %}</h1>
 
+  <div class="position-absolute" style="right:0; margin-right:48px; margin-top:-50px; width:300px;">
+    <div class="d-flex flex-row justify-content-between">
+      <a id="href-docx" href="{% url 'export-docx' %}">
+        <button class="btn btn-primary">{% trans "Export as .docx" %}</button>
+      </a>
+      <a id="href-xlsx" href="{% url 'export-excel' %}">
+        <button class="btn btn-success">{% trans "Export as .xlsx" %}</button>
+      </a>
+    </div>
+    <p class="fst-italic" style="font-size:12px; opacity: 0.5;">
+      {% trans "Contacts present in the table will be exported. To export all contacts, reset filters." %}
+    </p>
+  </div>
+
   <form hx-get="{% url 'contact-list' %}"
         hx-target="div.table-container"
         hx-swap="outerHTML"
         hx-indicator=".progress"
         class="form-inline"
+        onsubmit="getFilteredContacts()"
   >
     <div class="d-flex flex-column justify-content-around height-190">
       <h4>{% trans "Filter by:" %}</h4>
@@ -134,6 +149,11 @@
         document.getElementById("search-phones-faxes").style.display = "none";
         document.getElementById("id_phones_faxes").value = "";
       }
+    }
+    function getFilteredContacts() {
+      let filtered_url = new URLSearchParams(new FormData(document.forms[1])).toString()
+      document.getElementById("href-docx").href='{% url "export-docx" %}' + "?" + filtered_url
+      document.getElementById("href-xlsx").href='{% url "export-excel" %}' + "?" + filtered_url
     }
   </script>
 {% endblock %}

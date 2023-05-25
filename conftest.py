@@ -34,6 +34,13 @@ def login_user_can_edit(db, client, create_user, test_password):
 
 
 @pytest.fixture
+def login_user_can_import(db, client, create_user, test_password):
+    user = create_user(can_import=True)
+    client.login(username=user.get_username(), password=test_password)
+    return client, user
+
+
+@pytest.fixture
 def first_organization(db):
     return Organization(
         organization_id="3baa33cc079ab1d4ff5e27be727613ef",
