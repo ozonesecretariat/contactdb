@@ -33,6 +33,23 @@ class SendMailTask(TaskRQ):
         return SendMailJob
 
 
+class LoadKronosEventsTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 60
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    class Meta:
+        get_latest_by = "created_on"
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import LoadKronosEvents
+
+        return LoadKronosEvents
+
+
 class Organization(models.Model):
     organization_id = models.CharField(max_length=250, unique=True)
     name = models.CharField(max_length=250)
@@ -125,3 +142,20 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class KronosEvent(models.Model):
+    event_id = models.CharField(max_length=150, blank=False, null=False, unique=True)
+    code = models.CharField(max_length=50, blank=False, null=False)
+    title = models.CharField(max_length=255, blank=False, null=False)
+    start_date = models.DateTimeField(null=False)
+    end_date = models.DateTimeField(null=False)
+    venue_country = models.CharField(max_length=50)
+    venue_city = models.CharField(max_length=150)
+    dates = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "kronos events"

@@ -1,5 +1,5 @@
 import django_tables2 as tables
-from core.models import Record, Group
+from core.models import Record, Group, LoadKronosEventsTask
 
 
 class RecordTable(tables.Table):
@@ -52,3 +52,18 @@ class GroupTable(tables.Table):
                 record.id
             )
         }
+
+
+class LoadKronosEventsTable(tables.Table):
+    class Meta:
+        model = LoadKronosEventsTask
+        template_name = "core/kronos_events_table.html"
+        fields = (
+            "job_id",
+            "description",
+            "created_by",
+            "started_on",
+            "completed_on",
+            "status",
+            "failure_reason",
+        )

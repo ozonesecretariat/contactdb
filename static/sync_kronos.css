@@ -1,0 +1,11 @@
+.table{
+    display: table;
+    overflow-x: auto;
+}
+
+@media (max-width: 1200px){
+    .table{
+        display: block;
+    }
+
+}

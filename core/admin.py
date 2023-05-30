@@ -1,7 +1,15 @@
 from django.contrib import admin
 from django_task.admin import TaskAdmin
 
-from core.models import SendMailTask, Organization, RegistrationStatus, Record, Group
+from core.models import (
+    SendMailTask,
+    Organization,
+    RegistrationStatus,
+    Record,
+    Group,
+    LoadKronosEventsTask,
+    KronosEvent,
+)
 
 
 @admin.register(SendMailTask)
@@ -14,6 +22,17 @@ class SendMailTaskAdmin(TaskAdmin):
         "__str__",
         "recipient",
         "subject",
+        "created_on",
+        "duration_display",
+        "status_display",
+    ]
+    ordering = ("-created_on",)
+
+
+@admin.register(LoadKronosEventsTask)
+class LoadKronosEventsTaskAdmin(TaskAdmin):
+    list_display = [
+        "__str__",
         "created_on",
         "duration_display",
         "status_display",
@@ -64,3 +83,19 @@ class RecordAdmin(admin.ModelAdmin):
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     search_fields = ["name"]
+
+
+@admin.register(KronosEvent)
+class KronosEventAdmin(admin.ModelAdmin):
+    search_fields = ["event_id", "title"]
+    list_display = [
+        "event_id",
+        "title",
+        "code",
+        "start_date",
+        "end_date",
+        "venue_country",
+        "venue_city",
+        "dates",
+    ]
+    list_filter = ["venue_country", "start_date", "end_date"]

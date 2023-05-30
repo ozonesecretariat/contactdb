@@ -1,0 +1,39 @@
+<div class="d-grid gap-3 d-md-flex justify-content-md-start align-items-md-center mt-2 kronos-events-form"
+     {% if kronos_events_importing %}
+         hx-get="{% url 'kronos-events-import' %}"
+         hx-target="div.kronos-events-form"
+         hx-swap="outerHTML"
+         hx-trigger="load delay:10000ms"
+     {% endif %}
+>
+    <div>
+        <form method="post" novalidate
+              hx-post="{% url 'kronos-events-import' %}"
+              hx-target="div.kronos-events-form"
+              hx-swap="outerHTML">{% csrf_token %}
+            <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+                <input class="btn btn-main-color " type="submit" value="Import events from Kronos" {% if kronos_events_importing %} disabled {% endif %}>
+            </div>
+
+        </form>
+
+    </div>
+    {% if form.non_field_errors|length > 0 %}
+        <div class="">
+
+            {% for error in form.non_field_errors %}
+                <div class="text-danger fs-09">
+                    {{ error|escape }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if kronos_events_importing %}
+        <div class="d-flex gap-2 flex-nowrap align-items-center">
+            <div class="loader fit-content" ></div>
+            <div class="text-muted fst-italic">
+                Importing events from Kronos...
+            </div>
+        </div>
+    {% endif %}
+</div>

@@ -16,3 +16,4 @@ openpyxl
 psycopg[binary]
 python-docx
 sentry-sdk[django]
+requests

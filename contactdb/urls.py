@@ -35,6 +35,9 @@ from core.views import (
     ImportData,
     ExportExcel,
     ExportDoc,
+    SyncKronosView,
+    RunKronosEventsImport,
+    LoadKronosEventsView,
 )
 
 urlpatterns = [
@@ -98,6 +101,17 @@ urlpatterns = [
     path("import-contacts/", ImportData.as_view(), name="import-contacts"),
     path("export-xlsx/", ExportExcel.as_view(), name="export-excel"),
     path("export-docx/", ExportDoc.as_view(), name="export-docx"),
+    path("sync-kronos/", SyncKronosView.as_view(), name="sync-kronos"),
+    path(
+        "kronos-events-import/",
+        RunKronosEventsImport.as_view(),
+        name="kronos-events-import",
+    ),
+    path(
+        "kronos-events-history/",
+        LoadKronosEventsView.as_view(),
+        name="kronos-events-import-history",
+    ),
 ]
 
 if settings.DEBUG:

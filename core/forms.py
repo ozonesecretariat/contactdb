@@ -1,7 +1,8 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form
 
-from core.models import Record, Group
+from core.models import Record, Group, LoadKronosEventsTask
 from core.widgets import RemoveGroupMembers
 
 
@@ -36,3 +37,15 @@ class AddMultipleGroupMembersForm(Form):
         self.fields["members"].choices = tuple(
             Record.objects.all().values_list("id", "first_name")
         )
+
+
+class KronosEventsImportForm(Form):
+    def clean(self):
+        running_tasks = LoadKronosEventsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            print("Task already running")
+            raise ValidationError("Task already running")
+
+        return super().clean()
