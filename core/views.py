@@ -40,7 +40,13 @@ from core.models import (
     LoadKronosParticipantsTask,
     KronosEvent,
 )
-from core.tables import RecordTable, GroupTable, GroupMemberTable, LoadKronosEventsTable
+from core.tables import (
+    RecordTable,
+    GroupTable,
+    GroupMemberTable,
+    LoadKronosEventsTable,
+    LoadKronosParticipantsTable,
+)
 from core.filters import (
     RecordFilter,
     RegistrationStatusFilter,
@@ -695,3 +701,23 @@ class RunKronosParticipantsImport(
         task.kronos_events.set(events)
         task.run(is_async=True)
         return super().form_valid(form)
+
+
+class LoadKronosParticipantsView(LoginRequiredMixin, SingleTableView):
+    table_class = LoadKronosParticipantsTable
+    queryset = LoadKronosParticipantsTask.objects.all().order_by("-started_on")
+    paginate_by = 10
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/kronos_participants_tasks_partial.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404

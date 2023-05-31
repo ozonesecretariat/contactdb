@@ -20,9 +20,9 @@
 {% block pagination.previous %}
     <li class="previous page-item">
         <div role="button"
-             hx-get="{% url 'kronos-events-import-history' %}?page={{ table.page.previous_page_number }}"
+             hx-get="{% url 'kronos-participants-import-history' %}?page={{ table.page.previous_page_number }}"
              hx-trigger="click"
-             hx-target="div.events-imports div.table-container"
+             hx-target="div.participants-imports div.table-container"
              hx-swap="outerHTML"
              hx-indicator=".progress"
              class="page-link text-main-color">
@@ -35,9 +35,9 @@
     {% for p in table.page|table_page_range:table.paginator %}
         <li class="page-item">
             <div class="page-link {% if table.page.number == p %} active {% else %} text-main-color {% endif %}"
-                 {% if p != '...' %}hx-get="{% url 'kronos-events-import-history' %}?page={{ p }}" role="button"{% endif %}
+                 {% if p != '...' %}hx-get="{% url 'kronos-participants-import-history' %}?page={{ p }}" role="button"{% endif %}
                  hx-trigger="click"
-                 hx-target="div.events-imports div.table-container"
+                 hx-target="div.participants-imports div.table-container"
                  hx-swap="outerHTML"
                  hx-indicator=".progress">
                 {{ p }}
@@ -48,9 +48,9 @@
 {% block pagination.next %}
     <li class="next page-item">
         <div role="button"
-             hx-get="{% url 'kronos-events-import-history' %}?page={{ table.page.next_page_number }}"
+             hx-get="{% url 'kronos-participants-import-history' %}?page={{ table.page.next_page_number }}"
              hx-trigger="click"
-             hx-target="div.events-imports div.table-container"
+             hx-target="div.participants-imports div.table-container"
              hx-swap="outerHTML"
              hx-indicator=".progress"
              class="page-link text-main-color">

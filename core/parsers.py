@@ -113,7 +113,6 @@ class KronosParticipantsParser:
                     contact_id=contact_dict.get("contactId")
                 ).first()
                 if contact:
-                    print("ok")
                     TemporaryContact.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),
                         organization=organization,

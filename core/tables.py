@@ -67,3 +67,18 @@ class LoadKronosEventsTable(tables.Table):
             "status",
             "failure_reason",
         )
+
+
+class LoadKronosParticipantsTable(tables.Table):
+    class Meta:
+        model = LoadKronosEventsTask
+        template_name = "core/kronos_participants_table.html"
+        fields = (
+            "job_id",
+            "description",
+            "created_by",
+            "started_on",
+            "completed_on",
+            "status",
+            "failure_reason",
+        )

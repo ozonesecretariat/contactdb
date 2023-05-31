@@ -56,6 +56,10 @@ class LoadKronosParticipants(Job):
             create_temporary_table()
             parser = KronosParticipantsParser(task=task)
             parser.parse_contact_list(response.get("records"))
+            task.description = (
+                f"Imported participants from the next events: {' '.join(event_ids)}."
+            )
+            task.save()
 
         except Exception as e:
             task.log(logging.ERROR, e)

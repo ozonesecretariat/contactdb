@@ -39,6 +39,7 @@ from core.views import (
     RunKronosEventsImport,
     LoadKronosEventsView,
     RunKronosParticipantsImport,
+    LoadKronosParticipantsView,
 )
 
 urlpatterns = [
@@ -117,6 +118,11 @@ urlpatterns = [
         "kronos-participants-import/",
         RunKronosParticipantsImport.as_view(),
         name="kronos-participants-import",
+    ),
+    path(
+        "kronos-participants-history/",
+        LoadKronosParticipantsView.as_view(),
+        name="kronos-participants-import-history",
     ),
 ]
 
