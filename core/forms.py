@@ -2,7 +2,13 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form
 
-from core.models import Record, Group, LoadKronosEventsTask
+from core.models import (
+    Record,
+    Group,
+    LoadKronosEventsTask,
+    LoadKronosParticipantsTask,
+    KronosEvent,
+)
 from core.widgets import RemoveGroupMembers
 
 
@@ -43,6 +49,28 @@ class KronosEventsImportForm(Form):
     def clean(self):
         running_tasks = LoadKronosEventsTask.objects.filter(
             status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            print("Task already running")
+            raise ValidationError("Task already running")
+
+        return super().clean()
+
+
+class KronosParticipantsImportForm(Form):
+    events = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["events"].choices = tuple(
+            KronosEvent.objects.annotate().values_list("id", "title")
+        )
+
+    def clean(self):
+        running_tasks = LoadKronosParticipantsTask.objects.filter(
+            status__in=LoadKronosParticipantsTask.TASK_STATUS_PENDING_VALUES
         )
         if len(running_tasks) > 0:
             print("Task already running")

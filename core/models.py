@@ -159,3 +159,22 @@ class KronosEvent(models.Model):
 
     class Meta:
         verbose_name_plural = "kronos events"
+
+
+class LoadKronosParticipantsTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 60
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    kronos_events = models.ManyToManyField(KronosEvent)
+
+    class Meta:
+        get_latest_by = "created_on"
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import LoadKronosParticipants
+
+        return LoadKronosParticipants

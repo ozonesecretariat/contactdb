@@ -1,0 +1,50 @@
+<div class=" mt-2 kronos-participants-form"
+     {% if kronos_participants_importing %}
+         hx-get="{% url 'kronos-participants-import' %}"
+         hx-target="div.kronos-participants-form"
+         hx-swap="outerHTML"
+         hx-trigger="load delay:10000ms"
+     {% endif %}
+>
+    <div>
+        <form method="post" novalidate
+              hx-post="{% url 'kronos-participants-import' %}"
+              hx-target="div.kronos-participants-form"
+              hx-swap="outerHTML">{% csrf_token %}
+            <div class="label">Select events<span class="text-danger">*</span></div>
+            <div class="overflow-scroll border rounded-2 p-5" style="max-height: 500px;">
+                {{ form.events }}
+            </div>
+            {% for error in form.events.errors %}
+                <div class="text-danger my-1">
+                    {{ error|escape }}
+                </div>
+            {% endfor %}
+
+            <div class="d-grid gap-3 d-md-flex justify-content-md-start mt-3">
+                <input class="btn btn-main-color " type="submit" value="Import contacts from Kronos" {% if kronos_participants_importing %} disabled {% endif %}>
+                {% if form.non_field_errors|length > 0 %}
+                    <div class="">
+
+                        {% for error in form.non_field_errors %}
+                            <div class="text-danger fs-09">
+                                {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if kronos_participants_importing %}
+                    <div class="d-flex gap-2 flex-nowrap align-items-center">
+                        <div class="loader fit-content" ></div>
+                        <div class="text-muted fst-italic">
+                            Importing contacts from Kronos...
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

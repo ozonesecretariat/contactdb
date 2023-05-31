@@ -9,6 +9,7 @@ from core.models import (
     Group,
     LoadKronosEventsTask,
     KronosEvent,
+    LoadKronosParticipantsTask,
 )
 
 
@@ -31,6 +32,22 @@ class SendMailTaskAdmin(TaskAdmin):
 
 @admin.register(LoadKronosEventsTask)
 class LoadKronosEventsTaskAdmin(TaskAdmin):
+    list_display = [
+        "__str__",
+        "created_on",
+        "duration_display",
+        "status_display",
+    ]
+    ordering = ("-created_on",)
+
+    def get_list_display(self, request):
+        fields = super().get_list_display(request)
+        fields.remove("log_link_display")
+        return fields
+
+
+@admin.register(LoadKronosParticipantsTask)
+class LoadKronosParticipantsTaskAdmin(TaskAdmin):
     list_display = [
         "__str__",
         "created_on",

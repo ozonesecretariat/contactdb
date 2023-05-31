@@ -26,12 +26,20 @@ from core.forms import (
     AddGroupMemberForm,
     AddMultipleGroupMembersForm,
     KronosEventsImportForm,
+    KronosParticipantsImportForm,
 )
 
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 
-from core.models import Record, RegistrationStatus, Group, LoadKronosEventsTask
+from core.models import (
+    Record,
+    RegistrationStatus,
+    Group,
+    LoadKronosEventsTask,
+    LoadKronosParticipantsTask,
+    KronosEvent,
+)
 from core.tables import RecordTable, GroupTable, GroupMemberTable, LoadKronosEventsTable
 from core.filters import (
     RecordFilter,
@@ -644,3 +652,46 @@ class LoadKronosEventsView(LoginRequiredMixin, SingleTableView):
             return super().get(request, *args, **kwargs)
         else:
             raise Http404
+
+
+class RunKronosParticipantsImport(
+    LoginRequiredMixin, PermissionRequiredMixin, FormView
+):
+    form_class = KronosParticipantsImportForm
+
+    def get_success_url(self):
+        return reverse("kronos-participants-import")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        running_tasks = LoadKronosParticipantsTask.objects.filter(
+            status__in=LoadKronosParticipantsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            context["kronos_participants_importing"] = True
+        return context
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/import_kronos_participants.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        event_ids = form.cleaned_data.get("events")
+        events = KronosEvent.objects.filter(id__in=event_ids)
+        task = LoadKronosParticipantsTask.objects.create(created_by=self.request.user)
+        task.kronos_events.set(events)
+        task.run(is_async=True)
+        return super().form_valid(form)

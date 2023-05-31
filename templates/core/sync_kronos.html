@@ -55,6 +55,26 @@
 
     </div>
 
+    <div class="bg-white shadow p-5 rounded-2 mb-4">
+        <div class="fs-2">
+            Import Kronos participants
+        </div>
+        <div>
+            <div class="kronos-participants-form"
+                 hx-get="{% url 'kronos-participants-import' %}"
+                 hx-target="div.kronos-participants-form"
+                 hx-swap="outerHTML"
+                 hx-trigger="load">
+            </div>
+
+        </div>
+    </div>
+
+    <div class="bg-white px-5 py-4 shadow rounded-2">
+        <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+
+    </div>
+
 {% endblock %}
 
 

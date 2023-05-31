@@ -3,6 +3,10 @@
     overflow-x: auto;
 }
 
+#id_events div{
+    margin-bottom: 1rem;
+}
+
 @media (max-width: 1200px){
     .table{
         display: block;

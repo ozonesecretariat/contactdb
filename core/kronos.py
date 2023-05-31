@@ -48,10 +48,10 @@ class Client:
     def get_meetings(self):
         return self._send_kronos(path="/api/v2018/events")
 
-    def get_participants(self, event_id):
+    def get_participants(self, event_ids):
         qparams = {
-            "eventIds": [f"{event_id}"],
-            "registrationStatusForEventIds": [f"{event_id}"],
+            "eventIds": [f"{event_id}" for event_id in event_ids],
+            "registrationStatusForEventIds": [f"{event_id}" for event_id in event_ids],
         }
         return self._send_kronos(
             path="/api/v2018/contacts",
