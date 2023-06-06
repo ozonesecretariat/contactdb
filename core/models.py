@@ -115,35 +115,6 @@ class Record(models.Model):
         return self.first_name + " " + self.last_name
 
 
-class RegistrationStatus(models.Model):
-    contact = models.ForeignKey(Record, on_delete=models.CASCADE)
-    event_id = models.CharField(max_length=150)
-    code = models.CharField(max_length=100)
-    status = models.IntegerField()
-    date = models.DateTimeField()
-    is_funded = models.BooleanField()
-    role = models.IntegerField(null=True)
-    priority_pass_code = models.CharField(max_length=150, blank=True)
-    tags = ArrayField(base_field=models.TextField(), blank=True)
-
-    def __str__(self):
-        return self.event_id
-
-    class Meta:
-        verbose_name_plural = "registration statuses"
-
-
-class Group(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False)
-    description = models.TextField(blank=True, null=True)
-    contacts = models.ManyToManyField(Record, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-
 class KronosEvent(models.Model):
     event_id = models.CharField(max_length=150, blank=False, null=False, unique=True)
     code = models.CharField(max_length=50, blank=False, null=False)
@@ -159,6 +130,35 @@ class KronosEvent(models.Model):
 
     class Meta:
         verbose_name_plural = "kronos events"
+
+
+class RegistrationStatus(models.Model):
+    contact = models.ForeignKey(Record, on_delete=models.CASCADE)
+    event = models.ForeignKey(KronosEvent, on_delete=models.CASCADE)
+    code = models.CharField(max_length=100)
+    status = models.IntegerField()
+    date = models.DateTimeField()
+    is_funded = models.BooleanField()
+    role = models.IntegerField(null=True)
+    priority_pass_code = models.CharField(max_length=150, blank=True)
+    tags = ArrayField(base_field=models.TextField(), blank=True)
+
+    def __str__(self):
+        return self.event.event_id
+
+    class Meta:
+        verbose_name_plural = "registration statuses"
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=250, null=False, blank=False)
+    description = models.TextField(blank=True, null=True)
+    contacts = models.ManyToManyField(Record, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 
 class LoadKronosParticipantsTask(TaskRQ):

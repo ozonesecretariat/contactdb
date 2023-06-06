@@ -79,9 +79,14 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 @admin.register(RegistrationStatus)
 class RegistrationStatusAdmin(admin.ModelAdmin):
-    search_fields = ["event_id", "status", "contact__first_name", "contact__last_name"]
-    list_display = ("contact", "event_id")
-    list_filter = ["is_funded", "status", "role"]
+    search_fields = [
+        "event__event_id",
+        "status",
+        "contact__first_name",
+        "contact__last_name",
+    ]
+    list_display = ("contact", "event")
+    list_filter = ["is_funded", "status", "role", "event"]
 
 
 @admin.register(Record)

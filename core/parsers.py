@@ -98,79 +98,74 @@ class KronosParticipantsParser:
         for contact_dict in contact_list:
             try:
                 organization_dict = contact_dict.get("organization")
+                organization_defaults = {
+                    "organization_id": organization_dict.get("organizationId"),
+                    "name": organization_dict.get("name"),
+                    "acronym": organization_dict.get("acronym"),
+                    "organization_type_id": organization_dict.get("organizationTypeId"),
+                    "organization_type": organization_dict.get("organizationType"),
+                    "government": check_field(organization_dict, "government"),
+                    "government_name": check_field(organization_dict, "governmentName"),
+                    "country": check_field(organization_dict, "country"),
+                    "country_name": check_field(organization_dict, "countryName"),
+                }
                 organization, _ = Organization.objects.get_or_create(
                     organization_id=organization_dict.get("organizationId"),
-                    name=organization_dict.get("name"),
-                    acronym=organization_dict.get("acronym"),
-                    organization_type_id=organization_dict.get("organizationTypeId"),
-                    organization_type=organization_dict.get("organizationType"),
-                    government=check_field(organization_dict, "government"),
-                    government_name=check_field(organization_dict, "governmentName"),
-                    country=check_field(organization_dict, "country"),
-                    country_name=check_field(organization_dict, "countryName"),
+                    defaults=organization_defaults,
                 )
                 contact = Record.objects.filter(
                     contact_id=contact_dict.get("contactId")
                 ).first()
+                contact_defaults = {
+                    "contact_id": contact_dict.get("contactId"),
+                    "organization": organization,
+                    "title": contact_dict.get("title"),
+                    "first_name": contact_dict.get("firstName"),
+                    "last_name": contact_dict.get("lastName"),
+                    "designation": contact_dict.get("designation"),
+                    "department": contact_dict.get("department"),
+                    "affiliation": contact_dict.get("affiliation"),
+                    "phones": contact_dict.get("phones"),
+                    "mobiles": contact_dict.get("mobiles"),
+                    "faxes": contact_dict.get("faxes"),
+                    "emails": contact_dict.get("emails"),
+                    "email_ccs": contact_dict.get("emailCcs"),
+                    "notes": contact_dict.get("notes"),
+                    "is_in_mailing_list": contact_dict.get("isInMailingList"),
+                    "is_use_organization_address": contact_dict.get(
+                        "isUseOrganizationAddress"
+                    ),
+                    "address": check_field(contact_dict, "address"),
+                    "city": check_field(contact_dict, "city"),
+                    "state": check_field(contact_dict, "state"),
+                    "country": check_field(contact_dict, "country"),
+                    "postal_code": check_field(contact_dict, "postalCode"),
+                    "birth_date": check_field(contact_dict, "dateOfBirth"),
+                }
                 if contact:
+                    self.task.log(
+                        logging.INFO,
+                        f"Contact {contact_dict.get('contact_id')} is already in database;"
+                        f" adding it to  the temporary tabel for conflict resolution",
+                    )
                     TemporaryContact.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),
-                        organization=organization,
-                        title=contact_dict.get("title"),
-                        first_name=contact_dict.get("firstName"),
-                        last_name=contact_dict.get("lastName"),
-                        designation=contact_dict.get("designation"),
-                        department=contact_dict.get("department"),
-                        affiliation=contact_dict.get("affiliation"),
-                        phones=contact_dict.get("phones"),
-                        mobiles=contact_dict.get("mobiles"),
-                        faxes=contact_dict.get("faxes"),
                         emails=contact_dict.get("emails"),
-                        email_ccs=contact_dict.get("emailCcs"),
-                        notes=contact_dict.get("notes"),
-                        is_in_mailing_list=contact_dict.get("isInMailingList"),
-                        is_use_organization_address=contact_dict.get(
-                            "isUseOrganizationAddress"
-                        ),
-                        address=check_field(contact_dict, "address"),
-                        city=check_field(contact_dict, "city"),
-                        state=check_field(contact_dict, "state"),
-                        country=check_field(contact_dict, "country"),
-                        postal_code=check_field(contact_dict, "postalCode"),
-                        birth_date=check_field(contact_dict, "dateOfBirth"),
+                        defaults=contact_defaults,
                     )
                 else:
                     contact, _ = Record.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),
-                        organization=organization,
-                        title=contact_dict.get("title"),
-                        first_name=contact_dict.get("firstName"),
-                        last_name=contact_dict.get("lastName"),
-                        designation=contact_dict.get("designation"),
-                        department=contact_dict.get("department"),
-                        affiliation=contact_dict.get("affiliation"),
-                        phones=contact_dict.get("phones"),
-                        mobiles=contact_dict.get("mobiles"),
-                        faxes=contact_dict.get("faxes"),
                         emails=contact_dict.get("emails"),
-                        email_ccs=contact_dict.get("emailCcs"),
-                        notes=contact_dict.get("notes"),
-                        is_in_mailing_list=contact_dict.get("isInMailingList"),
-                        is_use_organization_address=contact_dict.get(
-                            "isUseOrganizationAddress"
-                        ),
-                        address=check_field(contact_dict, "address"),
-                        city=check_field(contact_dict, "city"),
-                        state=check_field(contact_dict, "state"),
-                        country=check_field(contact_dict, "country"),
-                        postal_code=check_field(contact_dict, "postalCode"),
-                        birth_date=check_field(contact_dict, "dateOfBirth"),
+                        defaults=contact_defaults,
                     )
                 for registration in contact_dict["registrationStatuses"]:
                     if registration is not None:
                         RegistrationStatus.objects.get_or_create(
                             contact=contact,
-                            event_id=registration.get("eventId"),
+                            event=KronosEvent.objects.filter(
+                                event_id=registration.get("eventId")
+                            ).first(),
                             code=registration.get("code"),
                             status=registration.get("status"),
                             date=registration.get("date"),
@@ -183,11 +178,10 @@ class KronosParticipantsParser:
                         )
 
             except Exception as e:
-                print(e)
                 try:
                     self.task.log(
                         logging.WARN,
-                        f"Failed to save contact: {contact_dict.get('contact_id')}",
+                        f"The next error occurred while trying to save contact {contact_dict.get('contact_id')}: {e}",
                     )
                 except:
                     pass
