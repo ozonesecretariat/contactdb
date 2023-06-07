@@ -114,7 +114,9 @@ class KronosParticipantsParser:
                     defaults=organization_defaults,
                 )
                 contact = Record.objects.filter(
-                    contact_id=contact_dict.get("contactId")
+                    emails=contact_dict.get("emails"),
+                    first_name=contact_dict.get("firstName"),
+                    last_name=contact_dict.get("lastName"),
                 ).first()
                 contact_defaults = {
                     "contact_id": contact_dict.get("contactId"),
@@ -145,9 +147,10 @@ class KronosParticipantsParser:
                 if contact:
                     self.task.log(
                         logging.INFO,
-                        f"Contact {contact_dict.get('contact_id')} is already in database;"
-                        f" adding it to  the temporary tabel for conflict resolution",
+                        f"A contact with the same name and emails as {contact_dict.get('contact_id')} is already in database;"
+                        f" adding it to the temporary table for conflict resolution",
                     )
+                    contact_defaults["record"] = contact
                     TemporaryContact.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),
                         emails=contact_dict.get("emails"),

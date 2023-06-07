@@ -1,10 +1,11 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import connection, models
 
-from core.models import Organization
+from core.models import Organization, Record
 
 
 class TemporaryContact(models.Model):
+    record = models.ForeignKey(Record, on_delete=models.SET_NULL)
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
     contact_id = models.CharField(max_length=250, default="", blank=True)
     title = models.CharField(max_length=30, blank=True)

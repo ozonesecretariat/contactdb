@@ -54,6 +54,7 @@ from core.filters import (
     GroupMembersFilter,
     SearchContactFilter,
 )
+from core.temp_models import db_table_exists, TemporaryContact
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
@@ -675,6 +676,12 @@ class RunKronosParticipantsImport(
         )
         if len(running_tasks) > 0:
             context["kronos_participants_importing"] = True
+
+        if db_table_exists("core_temporarycontact"):
+            conflicts = TemporaryContact.objects.count()
+            if conflicts > 0:
+                context["conflicts"] = True
+
         return context
 
     def has_permission(self):
@@ -721,3 +728,12 @@ class LoadKronosParticipantsView(LoginRequiredMixin, SingleTableView):
             return super().get(request, *args, **kwargs)
         else:
             raise Http404
+
+
+class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = TemporaryContact
+    template_name = "core/resolve_conflicts.html"
+    queryset = TemporaryContact.objects.select_related("record", "organization", "record__organization")
+
+    def has_permission(self):
+        return self.request.user.can_import

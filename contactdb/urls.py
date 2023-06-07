@@ -39,7 +39,7 @@ from core.views import (
     RunKronosEventsImport,
     LoadKronosEventsView,
     RunKronosParticipantsImport,
-    LoadKronosParticipantsView,
+    LoadKronosParticipantsView, ResolveConflictsView,
 )
 
 urlpatterns = [
@@ -124,6 +124,11 @@ urlpatterns = [
         LoadKronosParticipantsView.as_view(),
         name="kronos-participants-import-history",
     ),
+    path(
+        "sync-kronos/conflict-resolution/",
+        ResolveConflictsView.as_view(),
+        name="conflict-resolution"
+    )
 ]
 
 if settings.DEBUG:

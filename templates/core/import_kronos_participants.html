@@ -6,6 +6,17 @@
          hx-trigger="load delay:10000ms"
      {% endif %}
 >
+        {% if conflicts %}
+            <div class="mb-4">
+                <div class="text-warning">
+                    Conflicts from past imports found
+                </div>
+                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+                    <a class="btn btn-warning" href="{% url 'conflict-resolution' %}">Resolve conflicts</a>
+                </div>
+            </div>
+
+        {% endif %}
     <div>
         <form method="post" novalidate
               hx-post="{% url 'kronos-participants-import' %}"
