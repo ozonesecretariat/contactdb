@@ -732,8 +732,24 @@ class LoadKronosParticipantsView(LoginRequiredMixin, SingleTableView):
 
 class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = TemporaryContact
-    template_name = "core/resolve_conflicts.html"
-    queryset = TemporaryContact.objects.select_related("record", "organization", "record__organization")
+    queryset = TemporaryContact.objects.select_related(
+        "record", "organization", "record__organization"
+    )
+    paginate_by = 20
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        page = self.request.GET.get("page", 1)
+        paginator = context["paginator"]
+        context["pagination_range"] = paginator.get_elided_page_range(
+            number=page, on_each_side=1, on_ends=1
+        )
+        return context
 
     def has_permission(self):
         return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return "core/resolve_conflicts_partial.html"
+        return "core/resolve_conflicts.html"
