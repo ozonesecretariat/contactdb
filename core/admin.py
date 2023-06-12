@@ -10,6 +10,7 @@ from core.models import (
     LoadKronosEventsTask,
     KronosEvent,
     LoadKronosParticipantsTask,
+    ResolveAllConflictsTask,
 )
 
 
@@ -48,6 +49,22 @@ class LoadKronosEventsTaskAdmin(TaskAdmin):
 
 @admin.register(LoadKronosParticipantsTask)
 class LoadKronosParticipantsTaskAdmin(TaskAdmin):
+    list_display = [
+        "__str__",
+        "created_on",
+        "duration_display",
+        "status_display",
+    ]
+    ordering = ("-created_on",)
+
+    def get_list_display(self, request):
+        fields = super().get_list_display(request)
+        fields.remove("log_link_display")
+        return fields
+
+
+@admin.register(ResolveAllConflictsTask)
+class ResolveAllConflictsTaskAdmin(TaskAdmin):
     list_display = [
         "__str__",
         "created_on",

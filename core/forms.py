@@ -9,6 +9,8 @@ from core.models import (
     LoadKronosParticipantsTask,
     KronosEvent,
 )
+from core.temp_models import TemporaryContact, db_table_exists
+from core.utils import ConflictResolutionMethods
 from core.widgets import RemoveGroupMembers
 
 
@@ -77,3 +79,29 @@ class KronosParticipantsImportForm(Form):
             raise ValidationError("Task already running")
 
         return super().clean()
+
+
+class ResolveConflictForm(Form):
+    incoming_contact = forms.ChoiceField(
+        widget=forms.RadioSelect,
+    )
+    method = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=ConflictResolutionMethods.choices
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if db_table_exists("core_temporarycontact"):
+            self.fields["incoming_contact"].choices = tuple(
+                TemporaryContact.objects.annotate().values_list("id", "last_name")
+            )
+        else:
+            self.fields["incoming_contacts"].choices = tuple()
+
+
+class ResolveAllConflictsForm(Form):
+    method = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=ConflictResolutionMethods.choices,
+        required=True,
+    )

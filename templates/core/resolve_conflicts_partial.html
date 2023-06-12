@@ -1,5 +1,5 @@
 
-<div class="list-container">
+<div class="list-container" data-page="{{ page_obj.number }}">
     {% for conflict in object_list %}
         <div class="border rounded my-4 " id="id_container_{{ conflict.id }}">
                 <div class="overflow-scroll">
@@ -17,6 +17,19 @@
                             <div class="d-grid border-bottom rounded-bottom overflow-hidden" style="grid-template-columns: 50% 50%">
                                 <div class="main-color-light border-end p-2">
                                     <div class="mx-2">
+                                        <div class="my-2">
+                                            <div class="label">
+                                                Contact id
+                                            </div>
+                                            <div class="fw-bold {% if conflict.record.contact_id != conflict.contact_id %} text-danger {% else %} text-success {% endif %}">
+                                                {% if conflict.record.contact_id %}
+                                                    {{ conflict.record.contact_id }}
+                                                {% else %}
+                                                    <span class="fst-italic">None</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
                                             <div class="my-2">
                                                 <div class="label">
                                                    Title
@@ -406,6 +419,19 @@
                                 </div>
                                 <div class="p-2">
                                     <div class="mx-2">
+                                        <div class="my-2">
+                                            <div class="label">
+                                                Contact id
+                                            </div>
+                                            <div class="fw-bold {% if conflict.record.contact_id != conflict.contact_id %} text-danger {% else %} text-success {% endif %}">
+                                                {% if conflict.record.contact_id %}
+                                                    {{ conflict.record.contact_id }}
+                                                {% else %}
+                                                    <span class="fst-italic">None</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
                                             <div class="my-2">
                                                 <div class="label">
                                                    Title
@@ -801,12 +827,12 @@
 
 
                 <div class="d-grid gap-3 p-2 d-md-flex justify-content-md-between">
-                    <button class="btn btn-main-color" href="{% url 'conflict-resolution' %}">Keep old data</button>
+                    <button class="btn btn-main-color" onclick="openDialog('keep_old_data', {{ conflict.id }})">Keep old data</button>
                     <button class="btn btn-light text-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#id_collapse_{{ conflict.id }}" aria-expanded="false" aria-controls="id_collapse_{{ conflict.id }}" onclick="scrollToElement('id_container_{{ conflict.id }}')">
                                 <span class="text-collapsed">Show details</span>
                                 <span class="text-expanded">Hide details</span>
                             </button>
-                    <button class="btn btn-secondary" href="{% url 'conflict-resolution' %}">Save incoming data</button>
+                    <button class="btn btn-secondary" onclick="openDialog('save_incoming_data', {{ conflict.id }})">Save incoming data</button>
                 </div>
 
             </div>

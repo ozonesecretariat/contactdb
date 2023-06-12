@@ -41,6 +41,12 @@ from core.views import (
     RunKronosParticipantsImport,
     LoadKronosParticipantsView,
     ResolveConflictsView,
+    ResolveAllConflictsFormView,
+    ConflictsResolvedView,
+    ResolveConflictsFormView,
+    AllConflictsResolvedView,
+    ConflictsResolvingView,
+    NoConflictsView,
 )
 
 urlpatterns = [
@@ -129,6 +135,36 @@ urlpatterns = [
         "sync-kronos/conflict-resolution/",
         ResolveConflictsView.as_view(),
         name="conflict-resolution",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/resolve-all",
+        ResolveAllConflictsFormView.as_view(),
+        name="resolve-all-conflicts",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/resolve-conflict",
+        ResolveConflictsFormView.as_view(),
+        name="resolve-conflict",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/conflicts-resolved",
+        ConflictsResolvedView.as_view(),
+        name="conflict-resolved",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/all-conflicts-resolved",
+        AllConflictsResolvedView.as_view(),
+        name="all-conflicts-resolved",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/conflicts-resolving",
+        ConflictsResolvingView.as_view(),
+        name="conflicts-resolving",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/no-conflicts",
+        NoConflictsView.as_view(),
+        name="no-conflicts",
     ),
 ]
 

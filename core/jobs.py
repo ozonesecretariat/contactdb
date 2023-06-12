@@ -1,13 +1,16 @@
 import json
 import logging
 import time
+from copy import copy
 
+from django.db import connection
 from django_task.job import Job
 from django.core.mail import send_mail
 
 from core import kronos
 from core.parsers import KronosEventsParser, KronosParticipantsParser
-from core.temp_models import create_temporary_table, TemporaryContact
+from core.temp_models import create_temporary_table, TemporaryContact, db_table_exists
+from core.utils import ConflictResolutionMethods, update_object
 
 
 class SendMailJob(Job):
@@ -67,3 +70,44 @@ class LoadKronosParticipants(Job):
     @staticmethod
     def on_complete(job, task):
         task.log(logging.INFO, "Participants loaded")
+
+
+class ResolveAllConflicts(Job):
+    @staticmethod
+    def execute(job, task):
+        task.log(logging.INFO, "Resolving conflicts")
+        try:
+            if db_table_exists("core_temporarycontact"):
+                if task.method == ConflictResolutionMethods.KEEP_OLD_DATA:
+                    cursor = connection.cursor()
+                    cursor.execute("DROP TABLE core_temporarycontact")
+                elif task.method == ConflictResolutionMethods.SAVE_INCOMING_DATA:
+                    incoming_contacts = TemporaryContact.objects.select_related(
+                        "record"
+                    ).all()
+                    for incoming_contact in incoming_contacts:
+                        try:
+                            task.log(
+                                logging.INFO,
+                                f"Resolving conflict for {incoming_contact}",
+                            )
+                            record = incoming_contact.record
+                            update_values = copy(vars(incoming_contact))
+                            update_values.pop("record_id")
+                            update_values.pop("id")
+                            update_object(record, update_values)
+                            TemporaryContact.objects.filter(
+                                pk=incoming_contact.id
+                            ).first().delete()
+                        except Exception as e:
+                            task.log(logging.ERROR, e)
+                    if TemporaryContact.objects.count() == 0:
+                        cursor = connection.cursor()
+                        cursor.execute("DROP TABLE core_temporarycontact")
+
+        except Exception as e:
+            task.log(logging.ERROR, e)
+
+    @staticmethod
+    def on_complete(job, task):
+        task.log(logging.INFO, "Conflicts resolved")

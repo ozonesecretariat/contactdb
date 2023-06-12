@@ -2,6 +2,7 @@ import io
 
 import django.utils.datastructures
 import openpyxl as opx
+from django.db import connection
 from docx import Document
 from docx.shared import Pt, RGBColor
 from docx.enum.style import WD_STYLE_TYPE
@@ -27,6 +28,8 @@ from core.forms import (
     AddMultipleGroupMembersForm,
     KronosEventsImportForm,
     KronosParticipantsImportForm,
+    ResolveAllConflictsForm,
+    ResolveConflictForm,
 )
 
 from django_tables2 import SingleTableMixin, SingleTableView
@@ -39,6 +42,7 @@ from core.models import (
     LoadKronosEventsTask,
     LoadKronosParticipantsTask,
     KronosEvent,
+    ResolveAllConflictsTask,
 )
 from core.tables import (
     RecordTable,
@@ -55,6 +59,7 @@ from core.filters import (
     SearchContactFilter,
 )
 from core.temp_models import db_table_exists, TemporaryContact
+from core.utils import ConflictResolutionMethods, update_object
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
@@ -735,7 +740,8 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
     queryset = TemporaryContact.objects.select_related(
         "record", "organization", "record__organization"
     )
-    paginate_by = 20
+    paginate_by = 30
+    ordering = ["first_name", "last_name"]
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
@@ -753,3 +759,216 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
         if self.request.htmx:
             return "core/resolve_conflicts_partial.html"
         return "core/resolve_conflicts.html"
+
+    def get(self, request, *args, **kwargs):
+        running_tasks = ResolveAllConflictsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            return redirect(reverse("conflicts-resolving"))
+        if not db_table_exists("core_temporarycontact"):
+            return redirect(reverse("no-conflicts"))
+        return super().get(request, *args, **kwargs)
+
+
+class ResolveConflictsFormView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    form_class = ResolveConflictForm
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        if self.request.GET.get("conflict"):
+            contact = TemporaryContact.objects.filter(
+                id=self.request.GET.get("conflict")
+            ).first()
+            if contact:
+                context["contact"] = contact
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            context["KEEP_OLD_DATA"] = True
+        elif (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            context["SAVE_INCOMING_DATA"] = True
+        return context
+
+    def get_success_url(self):
+        return reverse("conflict-resolved")
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/resolve_conflict.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if self.request.GET.get("conflict"):
+            initial["incoming_contact"] = self.request.GET.get("conflict")
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.KEEP_OLD_DATA.value
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        if db_table_exists("core_temporarycontact"):
+            if (
+                form.cleaned_data.get("method")
+                == ConflictResolutionMethods.KEEP_OLD_DATA
+            ):
+                incoming_contact_id = form.cleaned_data.get("incoming_contact")
+                TemporaryContact.objects.filter(id=incoming_contact_id).delete()
+            elif (
+                form.cleaned_data.get("method")
+                == ConflictResolutionMethods.SAVE_INCOMING_DATA
+            ):
+                incoming_contact_id = form.cleaned_data.get("incoming_contact")
+                incoming_contact = (
+                    TemporaryContact.objects.filter(id=incoming_contact_id)
+                    .select_related("record")
+                    .first()
+                )
+                try:
+                    record = incoming_contact.record
+                    update_values = vars(incoming_contact)
+                    incoming_contact.delete()
+                    update_values.pop("record_id")
+                    update_values.pop("id")
+                    update_object(record, update_values)
+
+                except Exception as e:
+                    print(e)
+        return super().form_valid(form)
+
+
+class ConflictsResolvedView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "core/conflict_resolved.html"
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+
+class ResolveAllConflictsFormView(
+    LoginRequiredMixin, PermissionRequiredMixin, FormView
+):
+    form_class = ResolveAllConflictsForm
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            context["KEEP_OLD_DATA"] = True
+        elif (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            context["SAVE_INCOMING_DATA"] = True
+        return context
+
+    def get_success_url(self):
+        return reverse("all-conflicts-resolved")
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/resolve_all_conflicts.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.KEEP_OLD_DATA.value
+        elif (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        ResolveAllConflictsTask.objects.create(
+            method=form.cleaned_data.get("method")
+        ).run(is_async=True)
+        return super().form_valid(form)
+
+
+class AllConflictsResolvedView(
+    LoginRequiredMixin, PermissionRequiredMixin, TemplateView
+):
+    template_name = "core/all_conflicts_resolved.html"
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+
+class ConflictsResolvingView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        running_tasks = ResolveAllConflictsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            context["conflicts_resolving"] = True
+        return context
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/conflicts_resolving_partial.html"
+        else:
+            template_name = "core/conflicts_resolving.html"
+
+        return template_name
+
+
+class NoConflictsView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "core/no_conflicts.html"
+
+    def has_permission(self):
+        return self.request.user.can_import

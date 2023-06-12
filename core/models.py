@@ -2,6 +2,8 @@ from django.db import models
 from django_task.models import TaskRQ
 from django.contrib.postgres.fields import ArrayField
 
+from core.utils import ConflictResolutionMethods
+
 
 class SendMailTask(TaskRQ):
     """Can be used to send email asynchronously. Example usage:
@@ -178,3 +180,22 @@ class LoadKronosParticipantsTask(TaskRQ):
         from .jobs import LoadKronosParticipants
 
         return LoadKronosParticipants
+
+
+class ResolveAllConflictsTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 60
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    method = models.CharField(max_length=60, choices=ConflictResolutionMethods.choices)
+
+    class Meta:
+        get_latest_by = "created_on"
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import ResolveAllConflicts
+
+        return ResolveAllConflicts

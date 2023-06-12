@@ -5,7 +5,7 @@ from core.models import Organization, Record
 
 
 class TemporaryContact(models.Model):
-    record = models.ForeignKey(Record, on_delete=models.SET_NULL)
+    record = models.ForeignKey(Record, on_delete=models.SET_NULL, null=True)
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
     contact_id = models.CharField(max_length=250, default="", blank=True)
     title = models.CharField(max_length=30, blank=True)
@@ -48,6 +48,9 @@ class TemporaryContact(models.Model):
 
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+    class Meta:
+        managed = False
 
 
 def db_table_exists(table_name):
