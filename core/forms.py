@@ -1,8 +1,9 @@
 from django import forms
 from django.forms import ModelForm, Form
 
-from core.models import Record, Group
+from core.models import Record, Group, Emails
 from core.widgets import RemoveGroupMembers
+from ckeditor.widgets import CKEditorWidget
 
 
 class RecordUpdateForm(ModelForm):
@@ -35,4 +36,28 @@ class AddMultipleGroupMembersForm(Form):
         self.fields["groups"].choices = tuple(Group.objects.values_list("id", "name"))
         self.fields["members"].choices = tuple(
             Record.objects.all().values_list("id", "first_name")
+        )
+
+
+class SendEmailForm(Form):
+    members = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
+    groups = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
+    title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "id": "title"}))
+    content = forms.CharField(widget=CKEditorWidget())
+
+    class Meta:
+        model = Emails
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["members"].choices = tuple(
+            Record.objects.all().values_list("id", "first_name")
+        )
+        self.fields["groups"].choices = tuple(
+            Group.objects.all().values_list("id", "name")
         )
