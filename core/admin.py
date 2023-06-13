@@ -1,7 +1,14 @@
 from django.contrib import admin
 from django_task.admin import TaskAdmin
 
-from core.models import SendMailTask, Organization, RegistrationStatus, Record, Group, Emails
+from core.models import (
+    SendMailTask,
+    Organization,
+    RegistrationStatus,
+    Record,
+    Group,
+    Emails,
+)
 
 
 @admin.register(SendMailTask)

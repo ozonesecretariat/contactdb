@@ -46,7 +46,9 @@ class SendEmailForm(Form):
     groups = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
     )
-    title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "id": "title"}))
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control", "id": "title"})
+    )
     content = forms.CharField(widget=CKEditorWidget())
 
     class Meta:

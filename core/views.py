@@ -606,7 +606,9 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
                 from_email=None,
                 recipient_list=recipients,
             )
-            self.log_sent_email(form.cleaned_data["title"], form.cleaned_data["content"], contacts)
+            self.log_sent_email(
+                form.cleaned_data["title"], form.cleaned_data["content"], contacts
+            )
             messages.success(request, "Successfully sent emails!.")
             return redirect(reverse("emails-page"))
         except KeyError:
@@ -623,7 +625,9 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
                 from_email=None,
                 recipient_list=recipients,
             )
-            self.log_sent_email(form.cleaned_data["title"], form.cleaned_data["content"], contacts)
+            self.log_sent_email(
+                form.cleaned_data["title"], form.cleaned_data["content"], contacts
+            )
             messages.success(request, "Successfully sent emails!.")
             return redirect(reverse("emails-page"))
         except KeyError:
