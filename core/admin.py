@@ -1,7 +1,14 @@
 from django.contrib import admin
 from django_task.admin import TaskAdmin
 
-from core.models import SendMailTask, Organization, RegistrationStatus, Record, Group
+from core.models import (
+    SendMailTask,
+    Organization,
+    RegistrationStatus,
+    Record,
+    Group,
+    Emails,
+)
 
 
 @admin.register(SendMailTask)
@@ -64,3 +71,29 @@ class RecordAdmin(admin.ModelAdmin):
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     search_fields = ["name"]
+
+
+@admin.register(Emails)
+class EmailsAdmin(admin.ModelAdmin):
+    list_display = ["title", "created_at"]
+    ordering = ["-created_at"]
+    readonly_fields = ("created_at",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "recipients",
+                    "cc",
+                    "title",
+                    "content",
+                    "created_at",
+                )
+            },
+        ),
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("recipients", "cc", "title")
+        return self.readonly_fields
