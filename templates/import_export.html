@@ -22,4 +22,11 @@
       {% endfor %}
     </div>
   {% endif %}
+
+  <div>
+    <h1>{% trans "Sync with Kronos" %}</h1>
+    <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+      <a class="btn btn-primary" href="{% url 'sync-kronos' %}">Import from Kronos</a>
+    </div>
+  </div>
 {% endblock %}
