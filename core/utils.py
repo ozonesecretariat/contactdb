@@ -19,3 +19,12 @@ def update_object(obj, update_dict):
     for key, value in update_dict.items():
         setattr(obj, key, value)
     obj.save()
+
+
+def check_diff(obj, dictionary):
+    for key, value in dictionary.items():
+        if getattr(obj, key) != value:
+            print(key, value)
+            print(getattr(obj, key))
+            return True
+    return False

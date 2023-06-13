@@ -5,7 +5,7 @@ from django.utils.timezone import make_aware
 
 from core.models import KronosEvent, Organization, RegistrationStatus, Record
 from core.temp_models import TemporaryContact
-from core.utils import check_field
+from core.utils import check_field, check_diff
 
 
 class KronosEventsParser:
@@ -142,20 +142,30 @@ class KronosParticipantsParser:
                     "state": check_field(contact_dict, "state"),
                     "country": check_field(contact_dict, "country"),
                     "postal_code": check_field(contact_dict, "postalCode"),
-                    "birth_date": check_field(contact_dict, "dateOfBirth"),
+                    "birth_date": datetime.strptime(
+                        check_field(contact_dict, "dateOfBirth"), "%Y-%m-%d"
+                    ).date()
+                    if check_field(contact_dict, "dateOfBirth")
+                    else check_field(contact_dict, "dateOfBirth"),
                 }
                 if contact:
-                    self.task.log(
-                        logging.INFO,
-                        f"A contact with the same name and emails as {contact_dict.get('contact_id')} is already in database;"
-                        f" adding it to the temporary table for conflict resolution",
-                    )
-                    contact_defaults["record"] = contact
-                    TemporaryContact.objects.get_or_create(
-                        contact_id=contact_dict.get("contactId"),
-                        emails=contact_dict.get("emails"),
-                        defaults=contact_defaults,
-                    )
+                    if check_diff(contact, contact_defaults):
+                        self.task.log(
+                            logging.INFO,
+                            f"A contact with the same name and emails as {contact_dict.get('contactId')} is already in database;"
+                            f" adding it to the temporary table for conflict resolution",
+                        )
+                        contact_defaults["record"] = contact
+                        TemporaryContact.objects.get_or_create(
+                            contact_id=contact_dict.get("contactId"),
+                            emails=contact_dict.get("emails"),
+                            defaults=contact_defaults,
+                        )
+                    else:
+                        self.task.log(
+                            logging.INFO,
+                            f"A contact with the same data as {contact_dict.get('contactId')} is already in database;",
+                        )
                 else:
                     contact, _ = Record.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),
