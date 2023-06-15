@@ -149,12 +149,17 @@ class KronosParticipantsParser:
                     else check_field(contact_dict, "dateOfBirth"),
                 }
                 if contact:
+                    print("okokokkookokoko")
                     if check_diff(contact, contact_defaults):
-                        self.task.log(
-                            logging.INFO,
-                            f"A contact with the same name and emails as {contact_dict.get('contactId')} is already in database;"
-                            f" adding it to the temporary table for conflict resolution",
-                        )
+                        try:
+                            self.task.log(
+                                logging.INFO,
+                                f"A contact with the same name and emails as {contact_dict.get('contactId')} is already in database;"
+                                f" adding it to the temporary table for conflict resolution",
+                            )
+                        except:
+                            pass
+                        print("okokokkookokoko")
                         contact_defaults["record"] = contact
                         TemporaryContact.objects.get_or_create(
                             contact_id=contact_dict.get("contactId"),
@@ -162,10 +167,13 @@ class KronosParticipantsParser:
                             defaults=contact_defaults,
                         )
                     else:
-                        self.task.log(
-                            logging.INFO,
-                            f"A contact with the same data as {contact_dict.get('contactId')} is already in database;",
-                        )
+                        try:
+                            self.task.log(
+                                logging.INFO,
+                                f"A contact with the same data as {contact_dict.get('contactId')} is already in database;",
+                            )
+                        except:
+                            pass
                 else:
                     contact, _ = Record.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),

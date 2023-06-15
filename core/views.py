@@ -696,7 +696,7 @@ class RunKronosParticipantsImport(
         if self.request.htmx:
             template_name = "core/import_kronos_participants.html"
         else:
-            template_name = ""
+            template_name = "404.html"
 
         return template_name
 
@@ -930,7 +930,7 @@ class ResolveAllConflictsFormView(
 
     def form_valid(self, form):
         ResolveAllConflictsTask.objects.create(
-            method=form.cleaned_data.get("method")
+            created_by=self.request.user, method=form.cleaned_data.get("method")
         ).run(is_async=True)
         return super().form_valid(form)
 

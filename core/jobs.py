@@ -1,6 +1,4 @@
-import json
 import logging
-import time
 from copy import copy
 
 from django.db import connection
@@ -55,7 +53,9 @@ class LoadKronosParticipants(Job):
             kronos_client = kronos.Client()
             kronos_client.login()
             event_ids = task.kronos_events.values_list("event_id", flat=True)
+            print(event_ids)
             response = kronos_client.get_participants(event_ids)
+            print(response)
             create_temporary_table()
             parser = KronosParticipantsParser(task=task)
             parser.parse_contact_list(response.get("records"))
