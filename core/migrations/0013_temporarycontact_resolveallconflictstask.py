@@ -10,7 +10,7 @@ import uuid
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("core", "0011_remove_registrationstatus_event_id_and_more"),
+        ("core", "0012_remove_registrationstatus_event_id_and_more"),
     ]
 
     operations = [

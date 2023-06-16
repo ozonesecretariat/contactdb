@@ -6,7 +6,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0010_loadkronosparticipantstask"),
+        ("core", "0011_loadkronosparticipantstask"),
     ]
 
     operations = [

@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0007_loadkronoseventstask"),
+        ("core", "0008_loadkronoseventstask"),
     ]
 
     operations = [

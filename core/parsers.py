@@ -60,7 +60,6 @@ class KronosEventsParser:
                 elif attr_changes:
                     count_updated += 1
                     try:
-                        print(attr_changes)
                         self.task.log(
                             logging.INFO, f"Event updated: {event_dict.get('title')}"
                         )
@@ -68,7 +67,6 @@ class KronosEventsParser:
                         pass
 
             except Exception as e:
-                print(e)
                 try:
                     self.task.log(
                         logging.WARN, f"Failed to save event: {event_dict.get('title')}"
@@ -154,7 +152,6 @@ class KronosParticipantsParser:
                     else check_field(contact_dict, "dateOfBirth"),
                 }
                 if contact:
-                    print("okokokkookokoko")
                     if check_diff(contact, contact_defaults):
                         try:
                             self.task.log(
@@ -164,7 +161,6 @@ class KronosParticipantsParser:
                             )
                         except:
                             pass
-                        print("okokokkookokoko")
                         contact_defaults["record"] = contact
                         TemporaryContact.objects.get_or_create(
                             contact_id=contact_dict.get("contactId"),

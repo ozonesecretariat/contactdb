@@ -9,7 +9,7 @@ import uuid
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("core", "0009_alter_kronosevent_end_date_and_more"),
+        ("core", "0010_alter_kronosevent_end_date_and_more"),
     ]
 
     operations = [

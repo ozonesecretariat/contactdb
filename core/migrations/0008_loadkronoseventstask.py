@@ -9,7 +9,7 @@ import uuid
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("core", "0006_record_focal_point_record_honorific_record_org_head_and_more"),
+        ("core", "0007_emails"),
     ]
 
     operations = [
