@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "django_admin_env_notice",
     # "django.contrib.admin",
     "contactdb.site.ContactDBAdminConfig",
+    "ckeditor",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

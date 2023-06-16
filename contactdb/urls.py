@@ -35,6 +35,7 @@ from core.views import (
     ImportData,
     ExportExcel,
     ExportDoc,
+    EmailPage,
     SyncKronosView,
     RunKronosEventsImport,
     LoadKronosEventsView,
@@ -110,6 +111,7 @@ urlpatterns = [
     path("import-contacts/", ImportData.as_view(), name="import-contacts"),
     path("export-xlsx/", ExportExcel.as_view(), name="export-excel"),
     path("export-docx/", ExportDoc.as_view(), name="export-docx"),
+    path("emails/", EmailPage.as_view(), name="emails-page"),
     path("sync-kronos/", SyncKronosView.as_view(), name="sync-kronos"),
     path(
         "kronos-events-import/",

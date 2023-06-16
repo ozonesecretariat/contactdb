@@ -6,6 +6,7 @@ from docx import Document
 from docx.shared import Pt, RGBColor
 from docx.enum.style import WD_STYLE_TYPE
 from django.shortcuts import redirect
+from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404, HttpResponse
@@ -25,6 +26,7 @@ from core.forms import (
     GroupUpdateForm,
     AddGroupMemberForm,
     AddMultipleGroupMembersForm,
+    SendEmailForm,
     KronosEventsImportForm,
     KronosParticipantsImportForm,
     ResolveAllConflictsForm,
@@ -38,6 +40,7 @@ from core.models import (
     Record,
     RegistrationStatus,
     Group,
+    Emails,
     LoadKronosEventsTask,
     LoadKronosParticipantsTask,
     KronosEvent,
@@ -590,6 +593,69 @@ class AddMultipleGroupMembersView(
                 previously_selected_members=previously_selected_members,
             )
         )
+
+
+class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterView):
+    template_name = "send_emails.html"
+    form_class = SendEmailForm
+    filterset_class = RecordFilter
+
+    def has_permission(self):
+        return self.request.user.can_send_mail
+
+    def log_sent_email(self, title, content, recipients):
+        email = Emails.objects.create(
+            title=title,
+            content=content,
+        )
+        email.recipients.set(recipients)
+        email.save()
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        form.is_valid()
+
+        try:
+            groups = Group.objects.filter(id__in=form.cleaned_data["groups"])
+            contacts = Record.objects.filter(group__in=groups)
+            recipients = []
+            for contact in contacts:
+                recipients += contact.emails
+            send_mail(
+                subject=form.cleaned_data["title"],
+                message=form.cleaned_data["content"],
+                from_email=None,
+                recipient_list=recipients,
+            )
+            self.log_sent_email(
+                form.cleaned_data["title"], form.cleaned_data["content"], contacts
+            )
+            messages.success(request, "Successfully sent emails!.")
+            return redirect(reverse("emails-page"))
+        except KeyError:
+            pass
+
+        try:
+            contacts = Record.objects.filter(id__in=form.cleaned_data["members"])
+            recipients = []
+            for contact in contacts:
+                recipients += contact.emails
+            send_mail(
+                subject=form.cleaned_data["title"],
+                message=form.cleaned_data["content"],
+                from_email=None,
+                recipient_list=recipients,
+            )
+            self.log_sent_email(
+                form.cleaned_data["title"], form.cleaned_data["content"], contacts
+            )
+            messages.success(request, "Successfully sent emails!.")
+            return redirect(reverse("emails-page"))
+        except KeyError:
+            pass
+
+        messages.info(request, "No contact selected!")
+        return redirect(reverse("emails-page"))
 
 
 class SyncKronosView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):

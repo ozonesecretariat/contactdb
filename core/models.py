@@ -1,5 +1,6 @@
 from django.db import models
 from django_task.models import TaskRQ
+from ckeditor.fields import RichTextField
 from django.contrib.postgres.fields import ArrayField
 
 from core.utils import ConflictResolutionMethods
@@ -161,6 +162,20 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Emails(models.Model):
+    recipients = models.ManyToManyField(Record, related_name="recipients")
+    cc = models.ManyToManyField(Record, related_name="cc", verbose_name="CC")
+    title = models.TextField()
+    content = RichTextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "e-mails"
 
 
 class LoadKronosParticipantsTask(TaskRQ):
