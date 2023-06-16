@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from django.db.models.functions import Trim, Lower
 from django.utils.timezone import make_aware
 
 from core.models import (
@@ -116,11 +117,18 @@ class KronosParticipantsParser:
                     organization_id=organization_dict.get("organizationId"),
                     defaults=organization_defaults,
                 )
-                contact = Record.objects.filter(
-                    emails=contact_dict.get("emails"),
-                    first_name=contact_dict.get("firstName"),
-                    last_name=contact_dict.get("lastName"),
-                ).first()
+                contact = (
+                    Record.objects.annotate(
+                        trim_first_name=Lower(Trim("first_name")),
+                        trim_last_name=Lower(Trim("last_name")),
+                    )
+                    .filter(
+                        emails=contact_dict.get("emails"),
+                        trim_first_name=contact_dict.get("firstName").strip().lower(),
+                        trim_last_name=contact_dict.get("lastName").strip().lower(),
+                    )
+                    .first()
+                )
                 contact_defaults = {
                     "contact_id": contact_dict.get("contactId"),
                     "organization": organization,
