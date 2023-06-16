@@ -2,7 +2,6 @@ import io
 
 import django.utils.datastructures
 import openpyxl as opx
-from django.db import connection
 from docx import Document
 from docx.shared import Pt, RGBColor
 from docx.enum.style import WD_STYLE_TYPE
@@ -43,6 +42,7 @@ from core.models import (
     LoadKronosParticipantsTask,
     KronosEvent,
     ResolveAllConflictsTask,
+    TemporaryContact,
 )
 from core.tables import (
     RecordTable,
@@ -58,7 +58,6 @@ from core.filters import (
     GroupMembersFilter,
     SearchContactFilter,
 )
-from core.temp_models import db_table_exists, TemporaryContact
 from core.utils import ConflictResolutionMethods, update_object
 
 
@@ -682,10 +681,9 @@ class RunKronosParticipantsImport(
         if len(running_tasks) > 0:
             context["kronos_participants_importing"] = True
 
-        if db_table_exists("core_temporarycontact"):
-            conflicts = TemporaryContact.objects.count()
-            if conflicts > 0:
-                context["conflicts"] = True
+        conflicts = TemporaryContact.objects.count()
+        if conflicts > 0:
+            context["conflicts"] = True
 
         return context
 
@@ -766,7 +764,7 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
         )
         if len(running_tasks) > 0:
             return redirect(reverse("conflicts-resolving"))
-        if not db_table_exists("core_temporarycontact"):
+        if TemporaryContact.objects.count() == 0:
             return redirect(reverse("no-conflicts"))
         return super().get(request, *args, **kwargs)
 
@@ -836,33 +834,30 @@ class ResolveConflictsFormView(LoginRequiredMixin, PermissionRequiredMixin, Form
             raise Http404
 
     def form_valid(self, form):
-        if db_table_exists("core_temporarycontact"):
-            if (
-                form.cleaned_data.get("method")
-                == ConflictResolutionMethods.KEEP_OLD_DATA
-            ):
-                incoming_contact_id = form.cleaned_data.get("incoming_contact")
-                TemporaryContact.objects.filter(id=incoming_contact_id).delete()
-            elif (
-                form.cleaned_data.get("method")
-                == ConflictResolutionMethods.SAVE_INCOMING_DATA
-            ):
-                incoming_contact_id = form.cleaned_data.get("incoming_contact")
-                incoming_contact = (
-                    TemporaryContact.objects.filter(id=incoming_contact_id)
-                    .select_related("record")
-                    .first()
-                )
-                try:
-                    record = incoming_contact.record
-                    update_values = vars(incoming_contact)
-                    incoming_contact.delete()
-                    update_values.pop("record_id")
-                    update_values.pop("id")
-                    update_object(record, update_values)
+        if form.cleaned_data.get("method") == ConflictResolutionMethods.KEEP_OLD_DATA:
+            incoming_contact_id = form.cleaned_data.get("incoming_contact")
+            TemporaryContact.objects.filter(id=incoming_contact_id).delete()
+        elif (
+            form.cleaned_data.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA
+        ):
+            incoming_contact_id = form.cleaned_data.get("incoming_contact")
+            incoming_contact = (
+                TemporaryContact.objects.filter(id=incoming_contact_id)
+                .select_related("record")
+                .first()
+            )
+            try:
+                record = incoming_contact.record
+                update_values = vars(incoming_contact)
+                incoming_contact.delete()
+                update_values.pop("record_id")
+                update_values.pop("id")
+                update_object(record, update_values)
 
-                except Exception as e:
-                    print(e)
+            except Exception as e:
+                print(e)
+
         return super().form_valid(form)
 
 

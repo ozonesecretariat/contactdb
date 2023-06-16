@@ -9,9 +9,9 @@ from core.models import (
     RegistrationStatus,
     Organization,
     ResolveAllConflictsTask,
+    TemporaryContact,
 )
 from core.parsers import KronosParticipantsParser, KronosEventsParser
-from core.temp_models import create_temporary_table, TemporaryContact
 from core.utils import ConflictResolutionMethods
 
 pytestmark = [pytest.mark.django_db]
@@ -213,8 +213,6 @@ def test_kronos_participants_parser_conflict(
     other_contact.save()
     kronos_event.save()
 
-    create_temporary_table()
-
     contact_list = [
         {
             "organization": {
@@ -356,7 +354,6 @@ def test_create_resolve_all_conflicts_task(login_user_can_import, mocker):
 
 
 def test_resolve_all_conflicts_task_keep_old_data(
-    create_temporary_contact_table_and_drop_trigger,
     first_organization,
     other_contact,
     temporary_contact,
@@ -388,7 +385,6 @@ def test_resolve_all_conflicts_task_keep_old_data(
 
 
 def test_resolve_all_conflicts_task_save_incoming_data(
-    create_temporary_contact_table_and_drop_trigger,
     first_organization,
     other_contact,
     temporary_contact,
@@ -421,7 +417,6 @@ def test_resolve_all_conflicts_task_save_incoming_data(
 
 def test_resolve_conflict_keep_old_data(
     login_user_can_import,
-    create_temporary_contact_table_and_drop_trigger,
     first_organization,
     other_contact,
     temporary_contact,
@@ -452,7 +447,6 @@ def test_resolve_conflict_keep_old_data(
 
 def test_resolve_conflict_save_incoming_data(
     login_user_can_import,
-    create_temporary_contact_table_and_drop_trigger,
     first_organization,
     other_contact,
     temporary_contact,

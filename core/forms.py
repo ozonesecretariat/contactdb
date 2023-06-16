@@ -8,8 +8,8 @@ from core.models import (
     LoadKronosEventsTask,
     LoadKronosParticipantsTask,
     KronosEvent,
+    TemporaryContact,
 )
-from core.temp_models import TemporaryContact, db_table_exists
 from core.utils import ConflictResolutionMethods
 from core.widgets import RemoveGroupMembers
 
@@ -91,12 +91,9 @@ class ResolveConflictForm(Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if db_table_exists("core_temporarycontact"):
-            self.fields["incoming_contact"].choices = tuple(
-                TemporaryContact.objects.annotate().values_list("id", "last_name")
-            )
-        else:
-            self.fields["incoming_contacts"].choices = tuple()
+        self.fields["incoming_contact"].choices = tuple(
+            TemporaryContact.objects.annotate().values_list("id", "last_name")
+        )
 
 
 class ResolveAllConflictsForm(Form):

@@ -4,8 +4,7 @@ import pytest
 from django.db import connection
 from django.utils.timezone import make_aware
 
-from core.models import Record, Organization, Group, KronosEvent
-from core.temp_models import TemporaryContact, create_temporary_table, db_table_exists
+from core.models import Record, Organization, Group, KronosEvent, TemporaryContact
 
 
 @pytest.fixture
@@ -184,25 +183,3 @@ def snd_temporary_contact(db, snd_organization, third_contact):
         is_in_mailing_list=True,
         is_use_organization_address=True,
     )
-
-
-@pytest.fixture
-def create_temporary_contact_table_and_drop_trigger():
-    table_name = "core_temporarycontact"
-    create_temporary_table()
-    disable_triggers(table_name)
-
-    yield
-
-    if db_table_exists(table_name):
-        enable_triggers(table_name)
-
-
-def disable_triggers(table_name):
-    with connection.cursor() as cursor:
-        cursor.execute(f"ALTER TABLE {table_name} DISABLE TRIGGER ALL")
-
-
-def enable_triggers(table_name):
-    with connection.cursor() as cursor:
-        cursor.execute(f"ALTER TABLE {table_name} ENABLE TRIGGER ALL")

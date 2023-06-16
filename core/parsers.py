@@ -3,8 +3,13 @@ from datetime import datetime
 
 from django.utils.timezone import make_aware
 
-from core.models import KronosEvent, Organization, RegistrationStatus, Record
-from core.temp_models import TemporaryContact
+from core.models import (
+    KronosEvent,
+    Organization,
+    RegistrationStatus,
+    Record,
+    TemporaryContact,
+)
 from core.utils import check_field, check_diff
 
 
