@@ -27,10 +27,9 @@ class Client:
             json=json_data or {},
             params=params or {},
         )
-        if resp.ok:
-            return resp.json()
-        else:
-            resp.raise_for_status()
+
+        resp.raise_for_status()
+        return resp.json()
 
     def login(self):
         data = self._send_kronos(

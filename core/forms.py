@@ -79,9 +79,8 @@ class KronosEventsImportForm(Form):
     def clean(self):
         running_tasks = LoadKronosEventsTask.objects.filter(
             status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
-        )
-        if len(running_tasks) > 0:
-            print("Task already running")
+        ).exists()
+        if running_tasks:
             raise ValidationError("Task already running")
 
         return super().clean()
@@ -95,7 +94,7 @@ class KronosParticipantsImportForm(Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["events"].choices = tuple(
-            KronosEvent.objects.annotate().values_list("id", "title")
+            KronosEvent.objects.values_list("id", "title")
         )
 
     def clean(self):
@@ -103,7 +102,6 @@ class KronosParticipantsImportForm(Form):
             status__in=LoadKronosParticipantsTask.TASK_STATUS_PENDING_VALUES
         )
         if len(running_tasks) > 0:
-            print("Task already running")
             raise ValidationError("Task already running")
 
         return super().clean()
@@ -120,7 +118,7 @@ class ResolveConflictForm(Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["incoming_contact"].choices = tuple(
-            TemporaryContact.objects.annotate().values_list("id", "last_name")
+            TemporaryContact.objects.values_list("id", "last_name")
         )
 
 

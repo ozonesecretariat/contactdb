@@ -11,7 +11,7 @@ from core.models import (
     Record,
     TemporaryContact,
 )
-from core.utils import check_field, check_diff
+from core.utils import check_diff
 
 
 class KronosEventsParser:
@@ -23,12 +23,10 @@ class KronosEventsParser:
         count_updated = 0
         for event_dict in event_list:
             try:
-                try:
+                if self.task:
                     self.task.log(
                         logging.INFO, f"Saving event: {event_dict.get('title')}"
                     )
-                except:
-                    pass
 
                 d = {
                     "event_id": event_dict.get("eventId"),
@@ -52,28 +50,22 @@ class KronosEventsParser:
 
                 if created:
                     count_created += 1
-                    try:
+                    if self.task:
                         self.task.log(
                             logging.INFO, f"New event added: {event_dict.get('title')}"
                         )
-                    except:
-                        pass
                 elif attr_changes:
                     count_updated += 1
-                    try:
+                    if self.task:
                         self.task.log(
                             logging.INFO, f"Event updated: {event_dict.get('title')}"
                         )
-                    except:
-                        pass
 
             except Exception as e:
-                try:
+                if self.task:
                     self.task.log(
                         logging.WARN, f"Failed to save event: {event_dict.get('title')}"
                     )
-                except:
-                    pass
         return count_created, count_updated
 
     @staticmethod
@@ -83,14 +75,14 @@ class KronosEventsParser:
         ).first()
         new_event, created = KronosEvent.objects.update_or_create(
             event_id=event_dict["event_id"],
-            defaults=dict(event_dict),
+            defaults=event_dict,
         )
 
         attr_changes = {}
-        for attr, value in [(k, v) for (k, v) in event_dict.items()]:
+        for attr, value in event_dict.items():
             old_value = getattr(old_event, str(attr), None)
             if str(value) != str(old_value):
-                attr_changes.update({attr: (old_value, value)})
+                attr_changes[attr] = (old_value, value)
         return created, attr_changes
 
 
@@ -108,10 +100,10 @@ class KronosParticipantsParser:
                     "acronym": organization_dict.get("acronym"),
                     "organization_type_id": organization_dict.get("organizationTypeId"),
                     "organization_type": organization_dict.get("organizationType"),
-                    "government": check_field(organization_dict, "government"),
-                    "government_name": check_field(organization_dict, "governmentName"),
-                    "country": check_field(organization_dict, "country"),
-                    "country_name": check_field(organization_dict, "countryName"),
+                    "government": organization_dict.get("government", ""),
+                    "government_name": organization_dict.get("governmentName", ""),
+                    "country": organization_dict.get("country", ""),
+                    "country_name": organization_dict.get("countryName", ""),
                 }
                 organization, _ = Organization.objects.get_or_create(
                     organization_id=organization_dict.get("organizationId"),
@@ -124,11 +116,17 @@ class KronosParticipantsParser:
                     )
                     .filter(
                         emails=contact_dict.get("emails"),
-                        trim_first_name=contact_dict.get("firstName").strip().lower(),
-                        trim_last_name=contact_dict.get("lastName").strip().lower(),
+                        trim_first_name=contact_dict["firstName"].strip().lower(),
+                        trim_last_name=contact_dict["lastName"].strip().lower(),
                     )
                     .first()
                 )
+                birth_date_string = contact_dict.get("dateOfBirth", "")
+                if birth_date_string:
+                    birth_date = datetime.strptime(birth_date_string, "%Y-%m-%d").date()
+                else:
+                    birth_date = None
+
                 contact_defaults = {
                     "contact_id": contact_dict.get("contactId"),
                     "organization": organization,
@@ -148,27 +146,21 @@ class KronosParticipantsParser:
                     "is_use_organization_address": contact_dict.get(
                         "isUseOrganizationAddress"
                     ),
-                    "address": check_field(contact_dict, "address"),
-                    "city": check_field(contact_dict, "city"),
-                    "state": check_field(contact_dict, "state"),
-                    "country": check_field(contact_dict, "country"),
-                    "postal_code": check_field(contact_dict, "postalCode"),
-                    "birth_date": datetime.strptime(
-                        check_field(contact_dict, "dateOfBirth"), "%Y-%m-%d"
-                    ).date()
-                    if check_field(contact_dict, "dateOfBirth")
-                    else check_field(contact_dict, "dateOfBirth"),
+                    "address": contact_dict.get("address", ""),
+                    "city": contact_dict.get("city", ""),
+                    "state": contact_dict.get("state", ""),
+                    "country": contact_dict.get("country", ""),
+                    "postal_code": contact_dict.get("postalCode", ""),
+                    "birth_date": birth_date,
                 }
                 if contact:
                     if check_diff(contact, contact_defaults):
-                        try:
+                        if self.task:
                             self.task.log(
                                 logging.INFO,
                                 f"A contact with the same name and emails as {contact_dict.get('contactId')} is already in database;"
                                 f" adding it to the temporary table for conflict resolution",
                             )
-                        except:
-                            pass
                         contact_defaults["record"] = contact
                         TemporaryContact.objects.get_or_create(
                             contact_id=contact_dict.get("contactId"),
@@ -176,13 +168,11 @@ class KronosParticipantsParser:
                             defaults=contact_defaults,
                         )
                     else:
-                        try:
+                        if self.task:
                             self.task.log(
                                 logging.INFO,
                                 f"A contact with the same data as {contact_dict.get('contactId')} is already in database;",
                             )
-                        except:
-                            pass
                 else:
                     contact, _ = Record.objects.get_or_create(
                         contact_id=contact_dict.get("contactId"),
@@ -200,18 +190,14 @@ class KronosParticipantsParser:
                             status=registration.get("status"),
                             date=registration.get("date"),
                             is_funded=registration.get("isFunded"),
-                            role=check_field(registration, "role"),
-                            priority_pass_code=check_field(
-                                registration, "priorityPassCode"
-                            ),
-                            tags=check_field(registration, "tags"),
+                            role=registration.get("role", None),
+                            priority_pass_code=registration.get("priorityPassCode", ""),
+                            tags=registration.get("tags", []),
                         )
 
             except Exception as e:
-                try:
+                if self.task:
                     self.task.log(
                         logging.WARN,
                         f"The next error occurred while trying to save contact {contact_dict.get('contact_id')}: {e}",
                     )
-                except:
-                    pass

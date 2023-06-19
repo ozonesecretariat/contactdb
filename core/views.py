@@ -682,8 +682,8 @@ class RunKronosEventsImport(LoginRequiredMixin, PermissionRequiredMixin, FormVie
         context = super().get_context_data()
         running_tasks = LoadKronosEventsTask.objects.filter(
             status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
-        )
-        if len(running_tasks) > 0:
+        ).exists()
+        if running_tasks:
             context["kronos_events_importing"] = True
         return context
 
@@ -743,12 +743,11 @@ class RunKronosParticipantsImport(
         context = super().get_context_data()
         running_tasks = LoadKronosParticipantsTask.objects.filter(
             status__in=LoadKronosParticipantsTask.TASK_STATUS_PENDING_VALUES
-        )
-        if len(running_tasks) > 0:
+        ).exists()
+        if running_tasks:
             context["kronos_participants_importing"] = True
 
-        conflicts = TemporaryContact.objects.count()
-        if conflicts > 0:
+        if TemporaryContact.objects.exists():
             context["conflicts"] = True
 
         return context
@@ -804,7 +803,7 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
     queryset = TemporaryContact.objects.select_related(
         "record", "organization", "record__organization"
     )
-    paginate_by = 30
+    paginate_by = 1
     ordering = ["first_name", "last_name"]
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -827,10 +826,10 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
     def get(self, request, *args, **kwargs):
         running_tasks = ResolveAllConflictsTask.objects.filter(
             status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
-        )
-        if len(running_tasks) > 0:
+        ).exists()
+        if running_tasks:
             return redirect(reverse("conflicts-resolving"))
-        if TemporaryContact.objects.count() == 0:
+        if not TemporaryContact.objects.exists():
             return redirect(reverse("no-conflicts"))
         return super().get(request, *args, **kwargs)
 
@@ -913,16 +912,12 @@ class ResolveConflictsFormView(LoginRequiredMixin, PermissionRequiredMixin, Form
                 .select_related("record")
                 .first()
             )
-            try:
-                record = incoming_contact.record
-                update_values = vars(incoming_contact)
-                incoming_contact.delete()
-                update_values.pop("record_id")
-                update_values.pop("id")
-                update_object(record, update_values)
-
-            except Exception as e:
-                print(e)
+            record = incoming_contact.record
+            update_values = vars(incoming_contact)
+            incoming_contact.delete()
+            update_values.pop("record_id")
+            update_values.pop("id")
+            update_object(record, update_values)
 
         return super().form_valid(form)
 

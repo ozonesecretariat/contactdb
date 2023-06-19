@@ -53,9 +53,7 @@ class LoadKronosParticipants(Job):
             kronos_client = kronos.Client()
             kronos_client.login()
             event_ids = task.kronos_events.values_list("event_id", flat=True)
-            print(event_ids)
             response = kronos_client.get_participants(event_ids)
-            print(response)
             parser = KronosParticipantsParser(task=task)
             parser.parse_contact_list(response.get("records"))
             task.description = (
