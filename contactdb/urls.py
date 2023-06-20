@@ -36,6 +36,18 @@ from core.views import (
     ExportExcel,
     ExportDoc,
     EmailPage,
+    SyncKronosView,
+    RunKronosEventsImport,
+    LoadKronosEventsView,
+    RunKronosParticipantsImport,
+    LoadKronosParticipantsView,
+    ResolveConflictsView,
+    ResolveAllConflictsFormView,
+    ConflictsResolvedView,
+    ResolveConflictsFormView,
+    AllConflictsResolvedView,
+    ConflictsResolvingView,
+    NoConflictsView,
 )
 
 urlpatterns = [
@@ -100,6 +112,62 @@ urlpatterns = [
     path("export-xlsx/", ExportExcel.as_view(), name="export-excel"),
     path("export-docx/", ExportDoc.as_view(), name="export-docx"),
     path("emails/", EmailPage.as_view(), name="emails-page"),
+    path("sync-kronos/", SyncKronosView.as_view(), name="sync-kronos"),
+    path(
+        "kronos-events-import/",
+        RunKronosEventsImport.as_view(),
+        name="kronos-events-import",
+    ),
+    path(
+        "kronos-events-history/",
+        LoadKronosEventsView.as_view(),
+        name="kronos-events-import-history",
+    ),
+    path(
+        "kronos-participants-import/",
+        RunKronosParticipantsImport.as_view(),
+        name="kronos-participants-import",
+    ),
+    path(
+        "kronos-participants-history/",
+        LoadKronosParticipantsView.as_view(),
+        name="kronos-participants-import-history",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/",
+        ResolveConflictsView.as_view(),
+        name="conflict-resolution",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/resolve-all",
+        ResolveAllConflictsFormView.as_view(),
+        name="resolve-all-conflicts",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/resolve-conflict",
+        ResolveConflictsFormView.as_view(),
+        name="resolve-conflict",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/conflicts-resolved",
+        ConflictsResolvedView.as_view(),
+        name="conflict-resolved",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/all-conflicts-resolved",
+        AllConflictsResolvedView.as_view(),
+        name="all-conflicts-resolved",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/conflicts-resolving",
+        ConflictsResolvingView.as_view(),
+        name="conflicts-resolving",
+    ),
+    path(
+        "sync-kronos/conflict-resolution/no-conflicts",
+        NoConflictsView.as_view(),
+        name="no-conflicts",
+    ),
 ]
 
 if settings.DEBUG:

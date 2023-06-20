@@ -1,7 +1,17 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form
 
-from core.models import Record, Group, Emails
+from core.models import (
+    Record,
+    Group,
+    Emails,
+    LoadKronosEventsTask,
+    LoadKronosParticipantsTask,
+    KronosEvent,
+    TemporaryContact,
+)
+from core.utils import ConflictResolutionMethods
 from core.widgets import RemoveGroupMembers
 from ckeditor.widgets import CKEditorWidget
 
@@ -63,3 +73,58 @@ class SendEmailForm(Form):
         self.fields["groups"].choices = tuple(
             Group.objects.all().values_list("id", "name")
         )
+
+
+class KronosEventsImportForm(Form):
+    def clean(self):
+        running_tasks = LoadKronosEventsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        ).exists()
+        if running_tasks:
+            raise ValidationError("Task already running")
+
+        return super().clean()
+
+
+class KronosParticipantsImportForm(Form):
+    events = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["events"].choices = tuple(
+            KronosEvent.objects.values_list("id", "title")
+        )
+
+    def clean(self):
+        running_tasks = LoadKronosParticipantsTask.objects.filter(
+            status__in=LoadKronosParticipantsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            raise ValidationError("Task already running")
+
+        return super().clean()
+
+
+class ResolveConflictForm(Form):
+    incoming_contact = forms.ChoiceField(
+        widget=forms.RadioSelect,
+    )
+    method = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=ConflictResolutionMethods.choices
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["incoming_contact"].choices = tuple(
+            TemporaryContact.objects.values_list("id", "last_name")
+        )
+
+
+class ResolveAllConflictsForm(Form):
+    method = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=ConflictResolutionMethods.choices,
+        required=True,
+    )

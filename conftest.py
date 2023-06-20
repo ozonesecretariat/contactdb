@@ -1,6 +1,10 @@
-import pytest
+from datetime import datetime
 
-from core.models import Record, Organization, Group
+import pytest
+from django.db import connection
+from django.utils.timezone import make_aware
+
+from core.models import Record, Organization, Group, KronosEvent, TemporaryContact
 
 
 @pytest.fixture
@@ -95,6 +99,25 @@ def other_contact(db, first_organization):
 
 
 @pytest.fixture
+def third_contact(db, snd_organization):
+    return Record(
+        first_name="Third",
+        last_name="Record",
+        department="Department",
+        designation="Designation",
+        organization=snd_organization,
+        contact_id="89f9be1bb0590106f4b4e334",
+        phones=["+50987666328"],
+        mobiles=[],
+        faxes=[],
+        emails=["third@test.com"],
+        email_ccs=[],
+        is_in_mailing_list=True,
+        is_use_organization_address=True,
+    )
+
+
+@pytest.fixture
 def group(db, contact, other_contact):
     return Group(name="Group1", description="This is a test description")
 
@@ -102,3 +125,61 @@ def group(db, contact, other_contact):
 @pytest.fixture
 def other_group(db):
     return Group(name="Group2", description="This is a test description2")
+
+
+@pytest.fixture
+def kronos_event(db):
+    return KronosEvent(
+        event_id="52000000cbd0495c00001879",
+        code="005639",
+        title="59th Meeting of the Implementation Committee Under the Non-Compliance Procedure of the Montreal Protocol (UNEP Ozone Secretariat)",
+        start_date=make_aware(
+            datetime.strptime("2017-11-18T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
+        ),
+        end_date=make_aware(
+            datetime.strptime("2017-11-18T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
+        ),
+        venue_country="ca",
+        venue_city="Montreal",
+        dates="18 November 2017",
+    )
+
+
+@pytest.fixture
+def temporary_contact(first_organization, other_contact):
+    return TemporaryContact(
+        record=other_contact,
+        first_name=other_contact.first_name,
+        last_name=other_contact.last_name,
+        department="Minister of Defence",
+        designation="Secretary",
+        organization=first_organization,
+        contact_id="59f9be9bb0590106f4b4e3b2",
+        phones=["+40987654321"],
+        mobiles=["+409876324567"],
+        faxes=[],
+        emails=other_contact.emails,
+        email_ccs=["email@test.com"],
+        is_in_mailing_list=True,
+        is_use_organization_address=True,
+    )
+
+
+@pytest.fixture
+def snd_temporary_contact(db, snd_organization, third_contact):
+    return TemporaryContact(
+        record=third_contact,
+        first_name=third_contact.first_name,
+        last_name=third_contact.last_name,
+        department="New Department",
+        designation="New Designation",
+        organization=snd_organization,
+        contact_id="89f9be1bb0590106f4b4e334",
+        phones=["+50987666328"],
+        mobiles=[],
+        faxes=[],
+        emails=third_contact.emails,
+        email_ccs=["email2@test.com"],
+        is_in_mailing_list=True,
+        is_use_organization_address=True,
+    )

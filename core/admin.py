@@ -8,6 +8,10 @@ from core.models import (
     Record,
     Group,
     Emails,
+    LoadKronosEventsTask,
+    KronosEvent,
+    LoadKronosParticipantsTask,
+    ResolveAllConflictsTask,
 )
 
 
@@ -21,6 +25,49 @@ class SendMailTaskAdmin(TaskAdmin):
         "__str__",
         "recipient",
         "subject",
+        "created_on",
+        "duration_display",
+        "status_display",
+    ]
+    ordering = ("-created_on",)
+
+
+@admin.register(LoadKronosEventsTask)
+class LoadKronosEventsTaskAdmin(TaskAdmin):
+    list_display = [
+        "__str__",
+        "created_on",
+        "duration_display",
+        "status_display",
+    ]
+    ordering = ("-created_on",)
+
+    def get_list_display(self, request):
+        fields = super().get_list_display(request)
+        fields.remove("log_link_display")
+        return fields
+
+
+@admin.register(LoadKronosParticipantsTask)
+class LoadKronosParticipantsTaskAdmin(TaskAdmin):
+    list_display = [
+        "__str__",
+        "created_on",
+        "duration_display",
+        "status_display",
+    ]
+    ordering = ("-created_on",)
+
+    def get_list_display(self, request):
+        fields = super().get_list_display(request)
+        fields.remove("log_link_display")
+        return fields
+
+
+@admin.register(ResolveAllConflictsTask)
+class ResolveAllConflictsTaskAdmin(TaskAdmin):
+    list_display = [
+        "__str__",
         "created_on",
         "duration_display",
         "status_display",
@@ -50,9 +97,14 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 @admin.register(RegistrationStatus)
 class RegistrationStatusAdmin(admin.ModelAdmin):
-    search_fields = ["event_id", "status", "contact__first_name", "contact__last_name"]
-    list_display = ("contact", "event_id")
-    list_filter = ["is_funded", "status", "role"]
+    search_fields = [
+        "event__event_id",
+        "status",
+        "contact__first_name",
+        "contact__last_name",
+    ]
+    list_display = ("contact", "event")
+    list_filter = ["is_funded", "status", "role", "event"]
 
 
 @admin.register(Record)
@@ -97,3 +149,19 @@ class EmailsAdmin(admin.ModelAdmin):
         if obj:
             return self.readonly_fields + ("recipients", "cc", "title")
         return self.readonly_fields
+
+
+@admin.register(KronosEvent)
+class KronosEventAdmin(admin.ModelAdmin):
+    search_fields = ["event_id", "title"]
+    list_display = [
+        "event_id",
+        "title",
+        "code",
+        "start_date",
+        "end_date",
+        "venue_country",
+        "venue_city",
+        "dates",
+    ]
+    list_filter = ["venue_country", "start_date", "end_date"]

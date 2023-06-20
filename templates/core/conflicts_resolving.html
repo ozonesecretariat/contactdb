@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+     <link rel="stylesheet" href="{% static 'resolve_conflicts.css' %}">
+{% endblock %}
+
+{% block title %}
+    Conflicts resolving
+{% endblock %}
+
+{% block content %}
+    <div class="bg-white rounded shadow p-5">
+        <div class="fs-2 ">
+            Resolve conflicts
+        </div>
+        <hr/>
+        <div class="conflicts-resolving"
+             {% if conflicts_resolving %}
+                 hx-get="{% url 'conflicts-resolving' %}"
+                 hx-target="div.conflicts-resolving"
+                 hx-swap="outerHTML"
+                 hx-trigger="load delay:10000ms"
+             {% endif %}
+        >
+            {% if conflicts_resolving %}
+                <div class="d-flex gap-2 flex-nowrap align-items-center">
+                    <div class="loader fit-content" ></div>
+                    <div class="text-muted fst-italic">
+                        Conflict resolution task running...
+                    </div>
+                </div>
+
+            {% else %}
+                <div>Conflict resolution task ended</div>
+                <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+                    <a class="btn btn-secondary" href="{% url 'conflict-resolution' %}">Done</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/resolve_conflicts.js' %}"></script>
+{% endblock %}

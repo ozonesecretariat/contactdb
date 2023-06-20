@@ -305,3 +305,10 @@ if SENTRY_DSN:
 
 DJANGO_TABLES2_PAGE_RANGE = int(env.str("DJANGO_TABLES2_PAGE_RANGE", default=7))
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+
+ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
+KRONOS_HOST = env.str("KRONOS_HOST", default="")
+
+# Ozone
+KRONOS_USERNAME = env.str("KRONOS_USERNAME", default="")
+KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")

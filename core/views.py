@@ -19,7 +19,7 @@ from django.views.generic import (
     UpdateView,
     ListView,
 )
-from django.views.generic.edit import FormMixin, CreateView
+from django.views.generic.edit import FormMixin, CreateView, FormView
 
 from core.forms import (
     RecordUpdateForm,
@@ -27,13 +27,33 @@ from core.forms import (
     AddGroupMemberForm,
     AddMultipleGroupMembersForm,
     SendEmailForm,
+    KronosEventsImportForm,
+    KronosParticipantsImportForm,
+    ResolveAllConflictsForm,
+    ResolveConflictForm,
 )
 
-from django_tables2 import SingleTableMixin
+from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 
-from core.models import Record, RegistrationStatus, Group, Emails
-from core.tables import RecordTable, GroupTable, GroupMemberTable
+from core.models import (
+    Record,
+    RegistrationStatus,
+    Group,
+    Emails,
+    LoadKronosEventsTask,
+    LoadKronosParticipantsTask,
+    KronosEvent,
+    ResolveAllConflictsTask,
+    TemporaryContact,
+)
+from core.tables import (
+    RecordTable,
+    GroupTable,
+    GroupMemberTable,
+    LoadKronosEventsTable,
+    LoadKronosParticipantsTable,
+)
 from core.filters import (
     RecordFilter,
     RegistrationStatusFilter,
@@ -41,6 +61,7 @@ from core.filters import (
     GroupMembersFilter,
     SearchContactFilter,
 )
+from core.utils import ConflictResolutionMethods, update_object
 
 
 class HomepageView(LoginRequiredMixin, TemplateView):
@@ -635,3 +656,375 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
 
         messages.info(request, "No contact selected!")
         return redirect(reverse("emails-page"))
+
+
+class SyncKronosView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "core/sync_kronos.html"
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["load_kronos_events_tasks"] = LoadKronosEventsTask.objects.order_by(
+            "-created_on"
+        )
+        return context
+
+
+class RunKronosEventsImport(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    form_class = KronosEventsImportForm
+
+    def get_success_url(self):
+        return reverse("kronos-events-import")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        running_tasks = LoadKronosEventsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        ).exists()
+        if running_tasks:
+            context["kronos_events_importing"] = True
+        return context
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/import_kronos_events.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        LoadKronosEventsTask.objects.create(created_by=self.request.user).run(
+            is_async=True
+        )
+        return super().form_valid(form)
+
+
+class LoadKronosEventsView(LoginRequiredMixin, SingleTableView):
+    table_class = LoadKronosEventsTable
+    queryset = LoadKronosEventsTask.objects.all().order_by("-started_on")
+    paginate_by = 10
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/kronos_events_tasks_partial.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+
+class RunKronosParticipantsImport(
+    LoginRequiredMixin, PermissionRequiredMixin, FormView
+):
+    form_class = KronosParticipantsImportForm
+
+    def get_success_url(self):
+        return reverse("kronos-participants-import")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        running_tasks = LoadKronosParticipantsTask.objects.filter(
+            status__in=LoadKronosParticipantsTask.TASK_STATUS_PENDING_VALUES
+        ).exists()
+        if running_tasks:
+            context["kronos_participants_importing"] = True
+
+        if TemporaryContact.objects.exists():
+            context["conflicts"] = True
+
+        return context
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/import_kronos_participants.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        event_ids = form.cleaned_data.get("events")
+        events = KronosEvent.objects.filter(id__in=event_ids)
+        task = LoadKronosParticipantsTask.objects.create(created_by=self.request.user)
+        task.kronos_events.set(events)
+        task.run(is_async=True)
+        return super().form_valid(form)
+
+
+class LoadKronosParticipantsView(LoginRequiredMixin, SingleTableView):
+    table_class = LoadKronosParticipantsTable
+    queryset = LoadKronosParticipantsTask.objects.all().order_by("-started_on")
+    paginate_by = 10
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/kronos_participants_tasks_partial.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+
+class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = TemporaryContact
+    queryset = TemporaryContact.objects.select_related(
+        "record", "organization", "record__organization"
+    )
+    paginate_by = 30
+    ordering = ["first_name", "last_name"]
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        page = self.request.GET.get("page", 1)
+        paginator = context["paginator"]
+        context["pagination_range"] = paginator.get_elided_page_range(
+            number=page, on_each_side=1, on_ends=1
+        )
+        return context
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return "core/resolve_conflicts_partial.html"
+        return "core/resolve_conflicts.html"
+
+    def get(self, request, *args, **kwargs):
+        running_tasks = ResolveAllConflictsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        ).exists()
+        if running_tasks:
+            return redirect(reverse("conflicts-resolving"))
+        if not TemporaryContact.objects.exists() and not self.request.htmx:
+            return redirect(reverse("no-conflicts"))
+        return super().get(request, *args, **kwargs)
+
+
+class ResolveConflictsFormView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    form_class = ResolveConflictForm
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        if self.request.GET.get("conflict"):
+            contact = TemporaryContact.objects.filter(
+                id=self.request.GET.get("conflict")
+            ).first()
+            if contact:
+                context["contact"] = contact
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            context["KEEP_OLD_DATA"] = True
+        elif (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            context["SAVE_INCOMING_DATA"] = True
+        return context
+
+    def get_success_url(self):
+        return reverse("conflict-resolved")
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/resolve_conflict.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if self.request.GET.get("conflict"):
+            initial["incoming_contact"] = self.request.GET.get("conflict")
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.KEEP_OLD_DATA.value
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        if form.cleaned_data.get("method") == ConflictResolutionMethods.KEEP_OLD_DATA:
+            incoming_contact_id = form.cleaned_data.get("incoming_contact")
+            TemporaryContact.objects.filter(id=incoming_contact_id).delete()
+        elif (
+            form.cleaned_data.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA
+        ):
+            incoming_contact_id = form.cleaned_data.get("incoming_contact")
+            incoming_contact = (
+                TemporaryContact.objects.filter(id=incoming_contact_id)
+                .select_related("record")
+                .first()
+            )
+            record = incoming_contact.record
+            update_values = vars(incoming_contact)
+            incoming_contact.delete()
+            update_values.pop("record_id")
+            update_values.pop("id")
+            update_object(record, update_values)
+
+        return super().form_valid(form)
+
+
+class ConflictsResolvedView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "core/conflict_resolved.html"
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+
+class ResolveAllConflictsFormView(
+    LoginRequiredMixin, PermissionRequiredMixin, FormView
+):
+    form_class = ResolveAllConflictsForm
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            context["KEEP_OLD_DATA"] = True
+        elif (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            context["SAVE_INCOMING_DATA"] = True
+        return context
+
+    def get_success_url(self):
+        return reverse("all-conflicts-resolved")
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/resolve_all_conflicts.html"
+        else:
+            template_name = ""
+
+        return template_name
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        if (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.KEEP_OLD_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.KEEP_OLD_DATA.value
+        elif (
+            self.request.GET.get("method")
+            == ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+        ):
+            initial["method"] = ConflictResolutionMethods.SAVE_INCOMING_DATA.value
+
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        ResolveAllConflictsTask.objects.create(
+            created_by=self.request.user, method=form.cleaned_data.get("method")
+        ).run(is_async=True)
+        return super().form_valid(form)
+
+
+class AllConflictsResolvedView(
+    LoginRequiredMixin, PermissionRequiredMixin, TemplateView
+):
+    template_name = "core/all_conflicts_resolved.html"
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+
+class ConflictsResolvingView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        running_tasks = ResolveAllConflictsTask.objects.filter(
+            status__in=LoadKronosEventsTask.TASK_STATUS_PENDING_VALUES
+        )
+        if len(running_tasks) > 0:
+            context["conflicts_resolving"] = True
+        return context
+
+    def has_permission(self):
+        return self.request.user.can_import
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/conflicts_resolving_partial.html"
+        else:
+            template_name = "core/conflicts_resolving.html"
+
+        return template_name
+
+
+class NoConflictsView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "core/no_conflicts.html"
+
+    def has_permission(self):
+        return self.request.user.can_import
