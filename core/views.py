@@ -803,7 +803,7 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
     queryset = TemporaryContact.objects.select_related(
         "record", "organization", "record__organization"
     )
-    paginate_by = 1
+    paginate_by = 30
     ordering = ["first_name", "last_name"]
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -829,7 +829,7 @@ class ResolveConflictsView(LoginRequiredMixin, PermissionRequiredMixin, ListView
         ).exists()
         if running_tasks:
             return redirect(reverse("conflicts-resolving"))
-        if not TemporaryContact.objects.exists():
+        if not TemporaryContact.objects.exists() and not self.request.htmx:
             return redirect(reverse("no-conflicts"))
         return super().get(request, *args, **kwargs)
 
