@@ -173,6 +173,41 @@
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+                     <div class="m-3">
+                         <div class="fs-2 mb-3">
+                            Honorific
+                        </div>
+                        <div>
+                            {{ form.honorific|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.honorific.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    <div class="m-3">
+                         <div class="fs-2 mb-3">
+                            Respectful
+                        </div>
+                        <div>
+                            {{ form.respectful|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.respectful.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
                         <div class="fs-2 mb-3">
                             Phones
@@ -257,6 +292,88 @@
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+                    <div class="m-3">
+                         <div class="fs-2 mb-3">
+                            Primary language
+                        </div>
+                        <div>
+                            {{ form.primary_lang|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.primary_lang.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="m-3">
+                         <div class="fs-2 mb-3">
+                            Second language
+                        </div>
+                        <div>
+                            {{ form.second_lang|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.second_lang.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="m-3">
+                         <div class="fs-2 mb-3">
+                            Third language
+                        </div>
+                        <div>
+                            {{ form.third_lang|add_classes:'form-control' }}
+                        </div>
+                        <div>
+                            {% for error in form.third_lang.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Focal point
+                        </div>
+                        <div>
+                            {{ form.focal_point }}
+
+                        </div>
+                        <div>
+                            {% for error in form.focal_point.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="m-3">
+                        <div class="fs-2 mb-3">
+                            Head of organization
+                        </div>
+                        <div>
+                            {{ form.org_head }}
+
+                        </div>
+                        <div>
+                            {% for error in form.org_head.errors %}
+                                <div class="text-danger my-1">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
                     <div class="m-3">
                         <div class="fs-2 mb-3">
                             Is in mailing list

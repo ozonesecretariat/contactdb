@@ -35,3 +35,15 @@ def conflict_field(obj, compare_obj, field_name, label):
         context["is_list"] = True
 
     return render_to_string("conflict_field.html", context)
+
+
+@register.simple_tag
+def record_detail_field(field, label, is_email=False):
+    context = {"field_name": label, "field": field, "is_email": is_email}
+
+    if isinstance(field, list):
+        context["is_list"] = True
+    elif isinstance(field, bool):
+        context["is_bool"] = True
+
+    return render_to_string("record_detail_field.html", context)

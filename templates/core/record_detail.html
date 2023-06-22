@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}{{ object }} | Contact{% endblock %}
 
@@ -259,112 +259,44 @@
             {% endwith %}
         </div>
 
+
+
         <div class="right-section fit-content-height">
+
             <div class="p-5 shadow  bg-white mb-4 rounded-2">
-                <div class="">
-                    <div class="fs-2">
-                        Contact Id
-                    </div>
-                    <div class="text-break">
-                        {% if object.contact_id %}
-                            {{ object.contact_id }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
+                {% record_detail_field object.contact_id "Contact Id" %}
+            </div>
+
+            <div class="p-5 shadow details-container bg-white mb-4 rounded-2">
+
+                {% record_detail_field object.honorific "Honorific" %}
+
+                {% record_detail_field object.respectful "Respectful" %}
+
             </div>
 
             <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    <div class="fs-2">
-                        Phones
-                    </div>
-                    <div>
-                        {% if object.phones|length > 0 %}
-                            {% for phone in object.phones %}
-                                <div class="d-block">{{ phone }}</div>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Mobiles
-                    </div>
-                    <div>
-                        {% if object.mobiles|length > 0 %}
-                            {% for mobile in object.mobiles %}
-                                <div class="d-block">{{ mobile }}</div>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Emails
-                    </div>
-                    <div>
-                        {% if object.emails|length > 0 %}
-                            {% for email in object.emails %}
-                                <a href="mailto:{{ email }}" class="text-decoration-none d-block">{{ email }}</a>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Email Ccs
-                    </div>
-                    <div>
-                        {% if object.email_ccs|length > 0 %}
-                            {% for email_cc in object.email_ccs %}
-                                <a href="mailto:{{ email_cc }}" class="text-decoration-none d-block">{{ email_cc }}</a>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Faxes
-                    </div>
-                    <div>
-                        {% if object.faxes|length > 0 %}
-                            {% for fax in object.faxes %}
-                                <div class="d-block">{{ fax }}</div>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
+
+                {% record_detail_field object.phones "Phones" %}
+                {% record_detail_field object.mobiles "Mobiles" %}
+                {% record_detail_field object.emails "Emails" True %}
+                {% record_detail_field object.email_ccs "Email Ccs" True %}
+                {% record_detail_field object.faxes "Faxes" %}
+            </div>
+
+
+            <div class="p-5 shadow details-container bg-white mb-4 rounded-2">
+                {% record_detail_field object.primary_lang "Primary language" %}
+                {% record_detail_field object.second_lang "Second language" %}
+                {% record_detail_field object.third_lang "Third language" %}
             </div>
 
             <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    <div class="fs-2">
-                        Is in mailing list
-                    </div>
-                    <div class="{% if object.is_in_mailing_list %} text-success {% else %} text-danger {% endif %}">
-                        {{ object.is_in_mailing_list }}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Is use organization address
-                    </div>
-                    <div class="{% if object.is_use_organization_address %} text-success {% else %} text-danger {% endif %}">
-                        {{ object.is_use_organization_address }}
-                    </div>
-                </div>
+                {% record_detail_field object.focal_point "Focal point" %}
+                {% record_detail_field object.org_head "Head of organization" %}
+                {% record_detail_field object.is_in_mailing_list "Is in mailing list" %}
+                {% record_detail_field object.is_use_organization_address "Is use organization address" %}
+
                 <div class="m-3">
                     <div class="fs-2">
                         Address
@@ -422,30 +354,9 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Notes
-                    </div>
-                    <div>
-                        {% if object.notes %}
-                            {{ object.notes }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                     <div class="fs-2">
-                        Birth Date
-                    </div>
-                    <div>
-                        {% if object.birth_date %}
-                            {{ object.birth_date }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
+
+                {% record_detail_field object.notes "Notes" %}
+                {% record_detail_field object.birth_date "Birth Date" %}
 
             </div>
 
