@@ -17,6 +17,24 @@ from ckeditor.widgets import CKEditorWidget
 
 
 class RecordUpdateForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[
+            "phones"
+        ].help_text = "To add multiple phone numbers, use a comma as a separator."
+        self.fields[
+            "mobiles"
+        ].help_text = "To add multiple mobiles numbers, use a comma as a separator."
+        self.fields[
+            "faxes"
+        ].help_text = "To add multiple fax numbers, use a comma as a separator."
+        self.fields[
+            "emails"
+        ].help_text = "To add multiple emails, use a comma as a separator."
+        self.fields[
+            "email_ccs"
+        ].help_text = "To add multiple cc emails, use a comma as a separator."
+
     class Meta:
         model = Record
         fields = "__all__"

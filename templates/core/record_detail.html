@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}{{ object }} | Contact{% endblock %}
 
@@ -23,22 +23,16 @@
                     <div class="d-flex flex-wrap fit-content">
                         {% if object.title %}
                             <div class="me-4 fit-content">
-                                <div class="label">
-                                    Title
-                                </div>
-                                <div class="fs-2 mb-3">
-                                    {{ object.title }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.title "Title" False "fs-2" True %}
                                 </div>
                             </div>
                         {% endif %}
 
                         {% if object.first_name %}
                             <div class="fit-content">
-                                <div class="label">
-                                    First Name
-                                </div>
-                                <div class="fs-2 mb-3">
-                                    {{ object.first_name }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.first_name "First Name" False "fs-2" True %}
                                 </div>
                             </div>
                         {% endif %}
@@ -46,11 +40,8 @@
 
                     {% if object.last_name %}
                         <div class="fit-content">
-                            <div class="label">
-                                Last Name
-                            </div>
-                            <div class="fs-2 mb-3">
-                                {{ object.last_name }}
+                            <div class="mb-3">
+                                {% record_detail_field object.last_name "Last Name" False "fs-2" True %}
                             </div>
                         </div>
                     {% endif %}
@@ -77,32 +68,17 @@
                     {% if object.designation or object.department or object.affiliation %}
                         {% if object.designation %}
                             <div class="mb-2">
-                                <div class="label">
-                                    Designation
-                                </div>
-                                <div>
-                                    {{ object.designation }}
-                                </div>
+                                {% record_detail_field object.designation "Designation" False "" True %}
                             </div>
                         {% endif %}
                         {% if object.department %}
                             <div class="mb-2">
-                                 <div class="label">
-                                    Department
-                                </div>
-                                <div>
-                                    {{ object.department }}
-                                </div>
+                                {% record_detail_field object.department "Department" False "" True %}
                             </div>
                         {% endif %}
                         {% if object.affiliation %}
                             <div class="mb-2">
-                                <div class="label">
-                                    Affiliation
-                                </div>
-                                <div>
-                                    {{ object.affiliation }}
-                                </div>
+                                {% record_detail_field object.affiliation "Affiliation" False "" True %}
                             </div>
                         {% endif %}
                     {% else %}
@@ -119,94 +95,49 @@
                     {% if object.organization %}
                         {% if object.organization.name %}
                             <div class="mb-2">
-                                <div class="label">
-                                    Name
-                                </div>
-                                <div>
-                                    {{ object.organization.name }}
-                                </div>
+                                {% record_detail_field object.organization.name "Name" False "" True %}
                             </div>
                         {% endif %}
                         <div class="collapse" id="collapseOrg">
 
                             {% if object.organization.organization_id %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Organization Id
-                                    </div>
-                                    <div class="text-break">
-                                        {{ object.organization.organization_id }}
-                                    </div>
+                                    {% record_detail_field object.organization.organization_id "Organization Id" False "text-break" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.acronym %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Acronym
-                                    </div>
-                                    <div>
-                                        {{ object.organization.acronym }}
-                                    </div>
+                                    {% record_detail_field object.organization.acronym "Acronym" False "" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.organization_type_id %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Organization Type Id
-                                    </div>
-                                    <div class="text-break">
-                                        {{ object.organization.organization_type_id }}
-                                    </div>
+                                    {% record_detail_field object.organization.organization_type_id "Organization Type Id" False "text-break" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.organization_type %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Organization Type
-                                    </div>
-                                    <div>
-                                        {{ object.organization.organization_type }}
-                                    </div>
+                                    {% record_detail_field object.organization.organization_type "Organization Type" False "" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.government %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Government
-                                    </div>
-                                    <div>
-                                        {{ object.organization.government }}
-                                    </div>
+                                    {% record_detail_field object.organization.government "Government" False "" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.government_name %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Government Name
-                                    </div>
-                                    <div>
-                                        {{ object.organization.government_name }}
-                                    </div>
+                                    {% record_detail_field object.organization.government_name "Government Name" False "" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.country %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Country
-                                    </div>
-                                    <div>
-                                        {{ object.organization.country }}
-                                    </div>
+                                    {% record_detail_field object.organization.country "Country" False "" True %}
                                 </div>
                             {% endif %}
                             {% if object.organization.country_name %}
                                 <div class="mb-2">
-                                    <div class="label">
-                                        Country Name
-                                    </div>
-                                    <div>
-                                        {{ object.organization.country_name }}
-                                    </div>
+                                    {% record_detail_field object.organization.country_name "Country Name" False "" True %}
                                 </div>
                             {% endif %}
                         </div>
@@ -259,112 +190,72 @@
             {% endwith %}
         </div>
 
+
+
         <div class="right-section fit-content-height">
-            <div class="p-5 shadow  bg-white mb-4 rounded-2">
-                <div class="">
-                    <div class="fs-2">
-                        Contact Id
-                    </div>
-                    <div class="text-break">
-                        {% if object.contact_id %}
-                            {{ object.contact_id }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+
+            <div class="py-5 shadow  details-container  bg-white mb-4 rounded-2">
+                <div class="m-3">
+                    {% record_detail_field object.contact_id "Contact Id" %}
+                </div>
+            </div>
+
+            <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+
+                <div class="m-3">
+                    {% record_detail_field object.honorific "Honorific" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.respectful "Respectful" %}
+                </div>
+
+            </div>
+
+            <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+                <div class="m-3">
+                    {% record_detail_field object.phones "Phones" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.mobiles "Mobiles" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.emails "Emails" True %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.email_ccs "Email Ccs" True %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.faxes "Faxes" %}
+                </div>
+            </div>
+
+
+            <div class="p-5 shadow details-container bg-white mb-4 rounded-2">
+                <div class="m-3">
+                    {% record_detail_field object.primary_lang "Primary language" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.second_lang "Second language" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.third_lang "Third language" %}
                 </div>
             </div>
 
             <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                 <div class="m-3">
-                    <div class="fs-2">
-                        Phones
-                    </div>
-                    <div>
-                        {% if object.phones|length > 0 %}
-                            {% for phone in object.phones %}
-                                <div class="d-block">{{ phone }}</div>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+                    {% record_detail_field object.focal_point "Focal point" %}
                 </div>
                 <div class="m-3">
-                    <div class="fs-2">
-                        Mobiles
-                    </div>
-                    <div>
-                        {% if object.mobiles|length > 0 %}
-                            {% for mobile in object.mobiles %}
-                                <div class="d-block">{{ mobile }}</div>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+                    {% record_detail_field object.org_head "Head of organization" %}
                 </div>
                 <div class="m-3">
-                    <div class="fs-2">
-                        Emails
-                    </div>
-                    <div>
-                        {% if object.emails|length > 0 %}
-                            {% for email in object.emails %}
-                                <a href="mailto:{{ email }}" class="text-decoration-none d-block">{{ email }}</a>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+                    {% record_detail_field object.is_in_mailing_list "Is in mailing list" %}
                 </div>
                 <div class="m-3">
-                    <div class="fs-2">
-                        Email Ccs
-                    </div>
-                    <div>
-                        {% if object.email_ccs|length > 0 %}
-                            {% for email_cc in object.email_ccs %}
-                                <a href="mailto:{{ email_cc }}" class="text-decoration-none d-block">{{ email_cc }}</a>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+                    {% record_detail_field object.is_use_organization_address "Is use organization address" %}
                 </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Faxes
-                    </div>
-                    <div>
-                        {% if object.faxes|length > 0 %}
-                            {% for fax in object.faxes %}
-                                <div class="d-block">{{ fax }}</div>
-                            {% endfor %}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
 
-            <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    <div class="fs-2">
-                        Is in mailing list
-                    </div>
-                    <div class="{% if object.is_in_mailing_list %} text-success {% else %} text-danger {% endif %}">
-                        {{ object.is_in_mailing_list }}
-                    </div>
-                </div>
-                <div class="m-3">
-                    <div class="fs-2">
-                        Is use organization address
-                    </div>
-                    <div class="{% if object.is_use_organization_address %} text-success {% else %} text-danger {% endif %}">
-                        {{ object.is_use_organization_address }}
-                    </div>
-                </div>
                 <div class="m-3">
                     <div class="fs-2">
                         Address
@@ -373,47 +264,32 @@
                         {% if object.address or object.city or object.state or object.country or object.postal_code %}
 
                             {% if object.address %}
-                                <div class="label">
-                                    Address
-                                </div>
-                                <div class="mb-2">
-                                    {{ object.address }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.address "Address" False "" True %}
                                 </div>
                             {% endif %}
 
                             {% if object.city %}
-                                <div class="label">
-                                    City
-                                </div>
-                                <div class="mb-2">
-                                    {{ object.city }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.city "City" False "" True %}
                                 </div>
                             {% endif %}
 
                             {% if object.state %}
-                                <div class="label">
-                                    State
-                                </div>
-                                <div class="mb-2">
-                                    {{ object.state }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.state "State" False "" True %}
                                 </div>
                             {% endif %}
 
                             {% if object.country %}
-                                <div class="label">
-                                    Country
-                                </div>
-                                <div class="mb-2">
-                                    {{ object.country }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.country "Country" False "" True %}
                                 </div>
                             {% endif %}
 
                             {% if object.postal_code %}
-                                <div class="label">
-                                    Postal Code
-                                </div>
-                                <div class="">
-                                    {{ object.postal_code }}
+                                <div class="mb-3">
+                                    {% record_detail_field object.postal_code "Postal Code" False "" True %}
                                 </div>
                             {% endif %}
 
@@ -423,28 +299,10 @@
                     </div>
                 </div>
                 <div class="m-3">
-                    <div class="fs-2">
-                        Notes
-                    </div>
-                    <div>
-                        {% if object.notes %}
-                            {{ object.notes }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+                    {% record_detail_field object.notes "Notes" %}
                 </div>
                 <div class="m-3">
-                     <div class="fs-2">
-                        Birth Date
-                    </div>
-                    <div>
-                        {% if object.birth_date %}
-                            {{ object.birth_date }}
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
+                    {% record_detail_field object.birth_date "Birth Date" %}
                 </div>
 
             </div>
@@ -452,7 +310,7 @@
              <div class="py-5 shadow bg-white rounded-2">
                 <div class="">
                     <div class="fs-2 mx-5">
-                        Registration statuses
+                        Registration Statuses
                     </div>
 
                     <div class="registrations-section" hx-trigger="load" hx-swap="outerHTML" hx-indicator=".progress"
