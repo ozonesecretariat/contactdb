@@ -1,16 +1,16 @@
 
-<div class="m-3">
-    <div class="fs-2">
-        {{ field_name }}
+
+    <div class="{% if small_label %}label{% else %}fs-2 mb-3{% endif %}">
+        {{ field_name|title }}
     </div>
     {% if is_list %}
         <div>
             {% if field|length > 0 %}
                 {% for item in field %}
                     {% if is_email %}
-                        <a href="mailto:{{ item }}" class="text-decoration-none d-block">{{ item }}</a>
+                        <a href="mailto:{{ item }}" class="text-decoration-none d-block {{ class_names }}">{{ item }}</a>
                     {% else %}
-                        <div class="d-block">{{ item }}</div>
+                        <div class="d-block {{ class_names }}">{{ item }}</div>
                     {% endif %}
                 {% endfor %}
             {% else %}
@@ -18,16 +18,16 @@
             {% endif %}
         </div>
     {% elif is_bool %}
-        <div class="{% if field %} text-success {% else %} text-danger {% endif %}">
+        <div class="{% if field %} text-success {% else %} text-danger {% endif %} {{ class_names }}">
             {{ field }}
         </div>
     {% else %}
         <div class="text-break">
             {% if field %}
-                {{ field }}
+                <div class="{{ class_names }}">{{ field }}</div>
             {% else %}
                 <span class="text-muted">None</span>
             {% endif %}
         </div>
     {% endif %}
-</div>
+

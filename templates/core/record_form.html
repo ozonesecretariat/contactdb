@@ -25,48 +25,16 @@
                         <div class="">
 
                             <div class="">
-                                <div class="label">
-                                    Title
-                                </div>
-                                <div class="mb-3">
-                                    {{ form.title|add_classes:'form-control' }}
-                                    {% for error in form.title.errors %}
-                                        <div class="text-danger my-1">
-                                            {{ error|escape }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% record_form_field form.title 'form-control' False True %}
                             </div>
 
-
                             <div class="">
-                                <div class="label">
-                                    First Name
-                                </div>
-                                <div class="mb-3">
-                                    {{ form.first_name|add_classes:'form-control' }}
-                                    {% for error in form.first_name.errors %}
-                                        <div class="text-danger my-1">
-                                            {{ error|escape }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% record_form_field form.first_name 'form-control' False True %}
                             </div>
                         </div>
 
-
                         <div class="">
-                            <div class="label">
-                                Last Name
-                            </div>
-                            <div class="mb-3">
-                                {{ form.last_name|add_classes:'form-control' }}
-                                {% for error in form.last_name.errors %}
-                                    <div class="text-danger my-1">
-                                        {{ error|escape }}
-                                    </div>
-                                {% endfor %}
-                            </div>
+                            {% record_form_field form.last_name 'form-control' False True %}
                         </div>
 
                     </div>
@@ -78,44 +46,15 @@
                         <div class="fs-2">
                             Position
                         </div>
-                        <div class="label">
-                            Designation
+                        <div class="my-3">
+                            {% record_form_field form.designation 'form-control' False True %}
                         </div>
-                        <div>
-                            {{ form.designation|add_classes:'form-control' }}
+
+                        <div class="my-3">
+                            {% record_form_field form.department 'form-control' False True %}
                         </div>
-                        <div class="mb-3">
-                            {% for error in form.designation.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                         <div class="label">
-                            Department
-                        </div>
-                        <div >
-                            {{ form.department|add_classes:'form-control' }}
-                        </div>
-                        <div class="mb-3">
-                            {% for error in form.department.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <div class="label">
-                            Affiliation
-                        </div>
-                        <div>
-                            {{ form.affiliation|add_classes:'form-control' }}
-                        </div>
-                        <div class="mb-3">
-                            {% for error in form.affiliation.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
+                        <div class="my-3">
+                            {% record_form_field form.affiliation 'form-control' False True %}
                         </div>
                     </div>
 
@@ -123,19 +62,7 @@
                     <hr class="my-4">
 
                     <div class="my-3">
-                        <div class="fs-2 mb-3">
-                            Organization<span class="text-danger">*</span>
-                        </div>
-                        <div>
-                            {{ form.organization|add_classes:'organization ' }}
-                        </div>
-                        <div>
-                            {% for error in form.organization.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                        {% record_form_field form.organization 'organization' True %}
                     </div>
                 </div>
 
@@ -154,365 +81,94 @@
                     </div>
                 {% endif %}
 
-                <div class="p-5 shadow  bg-white mb-4 rounded-2">
-                    <div class="">
-                        <div class="fs-2 mb-3">
-                            Contact Id<span class="text-danger">*</span>
-                        </div>
-                        <div class="">
-                            {{ form.contact_id|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.contact_id.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                     <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Honorific
-                        </div>
-                        <div>
-                            {{ form.honorific|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.honorific.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                    </div>
+                <div class="py-5 shadow details-container  bg-white mb-4 rounded-2">
                     <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Respectful
-                        </div>
-                        <div>
-                            {{ form.respectful|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.respectful.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
+                        {% record_form_field form.contact_id 'form-control' %}
                     </div>
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Phones
-                        </div>
-                        <div>
-                            {{ form.phones|add_classes:'form-control' }}
-                            <div class="form-text">To add multiple phone numbers, use a comma as a separator.</div>
-                            <div>
-                            {% for error in form.phones.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                        </div>
+                        {% record_form_field form.honorific 'form-control' %}
                     </div>
                     <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Mobiles
-                        </div>
-                        <div>
-                            {{ form.mobiles|add_classes:'form-control' }}
-                            <div class="form-text">To add multiple mobile numbers, use a comma as a separator.</div>
-                            <div>
-                            {% for error in form.mobiles.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Emails
-                        </div>
-                        <div>
-                            {{ form.emails|add_classes:'form-control' }}
-                            <div class="form-text">To add multiple emails, use a comma as a separator.</div>
-                            <div>
-                            {% for error in form.emails.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Email Ccs
-                        </div>
-                        <div>
-                            {{ form.email_ccs|add_classes:'form-control' }}
-                            <div class="form-text">To add multiple email ccs, use a comma as a separator.</div>
-                            <div>
-                            {% for error in form.email_ccs.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Faxes
-                        </div>
-                        <div>
-                            {{ form.faxes|add_classes:'form-control' }}
-                            <div class="form-text">To add multiple faxes, use a comma as a separator.</div>
-                            <div>
-                            {% for error in form.faxes.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        </div>
+                        {% record_form_field form.respectful 'form-control' %}
                     </div>
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Primary language
-                        </div>
-                        <div>
-                            {{ form.primary_lang|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.primary_lang.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                        {% record_form_field form.phones 'form-control' %}
                     </div>
                     <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Second language
-                        </div>
-                        <div>
-                            {{ form.second_lang|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.second_lang.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                        {% record_form_field form.mobiles 'form-control' %}
                     </div>
                     <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Third language
-                        </div>
-                        <div>
-                            {{ form.third_lang|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.third_lang.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                        {% record_form_field form.emails 'form-control' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.email_ccs 'form-control' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.faxes 'form-control' %}
                     </div>
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Focal point
-                        </div>
-                        <div>
-                            {{ form.focal_point }}
+                        {% record_form_field form.primary_lang 'form-control' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.second_lang 'form-control' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.third_lang 'form-control' %}
+                    </div>
 
-                        </div>
-                        <div>
-                            {% for error in form.focal_point.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                </div>
+
+                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+                    <div class="m-3">
+                        {% record_form_field form.focal_point 'form-check-input' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.org_head 'form-check-input' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.is_in_mailing_list 'form-check-input' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.is_use_organization_address 'form-check-input' %}
                     </div>
 
                     <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Head of organization
-                        </div>
-                        <div>
-                            {{ form.org_head }}
-
-                        </div>
-                        <div>
-                            {% for error in form.org_head.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Is in mailing list
-                        </div>
-                        <div>
-                            {{ form.is_in_mailing_list }}
-
-                        </div>
-                        <div>
-                            {% for error in form.is_in_mailing_list.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Is use organization address
-                        </div>
-                        <div>
-                            {{ form.is_use_organization_address }}
-                            <div>
-                            {% for error in form.is_use_organization_address.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        <div class="fs-2">
+                        <div class=" fs-2">
                             Address
                         </div>
                         <div>
-
-                            <div class="label">
-                                Address
-                            </div>
-                            <div >
-                                {{ form.address|add_classes:'form-control' }}
-                            </div>
-                            <div class="mb-3">
-                            {% for error in form.address.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                            <div class="label">
-                                City
-                            </div>
-                            <div >
-                                {{ form.city|add_classes:'form-control' }}
-                            </div>
-                            <div class="mb-3">
-                            {% for error in form.city.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                            <div class="label">
-                                State
-                            </div>
-                            <div >
-                                {{ form.state|add_classes:'form-control' }}
-                            </div>
-                            <div class="mb-3">
-                            {% for error in form.state.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                            <div class="label">
-                                Country
+                            <div class="my-3">
+                                {% record_form_field form.address 'form-control' False True %}
                             </div>
 
-                            <div >
-                                {{ form.country|add_classes:'form-control' }}
+                            <div class="my-3">
+                                {% record_form_field form.city 'form-control' False True %}
                             </div>
-                            <div class="mb-3">
-                            {% for error in form.country.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                            <div class="label">
-                                Postal Code
+                            <div class="my-3">
+                                {% record_form_field form.state 'form-control' False True %}
                             </div>
-                            <div class="">
-                                {{ form.postal_code|add_classes:'form-control' }}
+                            <div class="my-3">
+                                {% record_form_field form.country 'form-control' False True %}
                             </div>
-                            <div>
-                            {% for error in form.postal_code.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                            <div class="my-3">
+                                {% record_form_field form.postal_code 'form-control' False True %}
+                            </div>
                         </div>
                     </div>
                     <div class="m-3">
-                        <div class="fs-2 mb-3">
-                            Notes
-                        </div>
-                        <div>
-                            {{ form.notes|add_classes:'form-control' }}
-                        </div>
-                        <div>
-                            {% for error in form.notes.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                        {% record_form_field form.notes 'form-control' %}
                     </div>
                     <div class="m-3">
-                         <div class="fs-2 mb-3">
-                            Birth Date
-                        </div>
-                        <div>
-                            {{ form.birth_date|add_classes:'form-control fit-content' }}
-                        </div>
-                        <div>
-                            {% for error in form.birth_date.errors %}
-                                <div class="text-danger my-1">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-
+                        {% record_form_field form.birth_date 'form-control fit-content' %}
                     </div>
 
 

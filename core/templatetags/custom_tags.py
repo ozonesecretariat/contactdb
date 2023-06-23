@@ -38,8 +38,16 @@ def conflict_field(obj, compare_obj, field_name, label):
 
 
 @register.simple_tag
-def record_detail_field(field, label, is_email=False):
-    context = {"field_name": label, "field": field, "is_email": is_email}
+def record_detail_field(
+    field, label, is_email=False, class_names: str = None, small_label=False
+):
+    context = {
+        "field_name": label,
+        "field": field,
+        "is_email": is_email,
+        "class_names": class_names,
+        "small_label": small_label,
+    }
 
     if isinstance(field, list):
         context["is_list"] = True
@@ -47,3 +55,17 @@ def record_detail_field(field, label, is_email=False):
         context["is_bool"] = True
 
     return render_to_string("record_detail_field.html", context)
+
+
+@register.simple_tag
+def record_form_field(
+    field, class_names: str = None, is_required: bool = False, small_label=False
+):
+    context = {
+        "field": field,
+        "is_required": is_required,
+        "class_names": class_names,
+        "small_label": small_label,
+    }
+
+    return render_to_string("record_form_field.html", context)
