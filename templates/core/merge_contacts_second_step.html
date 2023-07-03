@@ -1,0 +1,71 @@
+{% load custom_tags %}
+<div class="form-container">
+    <div class="fs-4">Step 2: Merge the contacts</div>
+    <div>Choose one of the contacts as the main contact, the other(s) will be saved as secondary contacts</div>
+
+    <form method="post" novalidate
+          hx-post="{% url 'merge-second-step' %}?ids={% for contact in contacts %}{{ contact.id }}{% if not forloop.last %},{% endif %}{% endfor %}"
+          hx-target="div.form-container"
+          hx-swap="outerHTML"
+          class="my-4"
+    >{% csrf_token %}
+        {% if form.non_field_errors|length > 0 %}
+            <div class="my-3">
+                {% for error in form.non_field_errors %}
+                    <div class="text-danger fs-09">
+                        {{ error|escape }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% for contact in contacts %}
+            <div class="border rounded-2 p-2 my-3" >
+                <div class=" d-grid gap-3 d-md-flex justify-content-md-between align-items-md-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="contact" id="id_{{ contact }}" value="{{ contact.id }}">
+                        <label class="form-check-label fw-bold" for="id_{{ contact }}">
+                            {{ contact }}
+                        </label>
+                    </div>
+
+                    <button class="btn btn-light text-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#id_collapse_{{ contact.id }}" aria-expanded="false" aria-controls="id_collapse_{{ contact.id }}">
+                        <span class="text-collapsed">Show details</span>
+                        <span class="text-expanded">Hide details</span>
+                    </button>
+                </div>
+                <div class="collapse" id="id_collapse_{{ contact.id }}">
+                    <hr />
+                    <div class="px-2">
+                        {% for field in contact|get_fields %}
+
+                            {% merge_contact_field contact field.name field.verbose_name %}
+
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+        <div>
+            {% for error in form.contact.errors %}
+                <div class="text-danger my-1">
+                    {{ error|escape }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="d-grid gap-3 my-3 d-md-flex justify-content-md-end">
+            <button class="btn btn-secondary"
+                    type="button"
+                    hx-get="{% url 'merge-first-step' %}"
+                    hx-target="div.form-container"
+                    hx-swap="outerHTML"
+                    hx-trigger="click"
+            >Back</button>
+            <input class="btn btn-main-color " type="submit" value="Merge contacts">
+        </div>
+    </form>
+</div>

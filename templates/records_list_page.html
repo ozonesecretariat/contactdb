@@ -13,6 +13,8 @@
 {% block content %}
   <h1>{% trans "Contacts" %}</h1>
 
+
+
   <div class="position-absolute" style="right:0; margin-right:48px; margin-top:-50px; width:300px;">
     <div class="d-flex flex-row justify-content-between">
       <a id="href-docx" href="{% url 'export-docx' %}">
@@ -25,6 +27,12 @@
     <p class="fst-italic" style="font-size:12px; opacity: 0.5;">
       {% trans "Contacts present in the table will be exported. To export all contacts, reset filters." %}
     </p>
+  </div>
+
+  <div class="my-4" >
+    <a href="{% url 'merge-contacts' %}" class="btn btn-main-color">
+      Merge contacts
+    </a>
   </div>
 
   <form hx-get="{% url 'contact-list' %}"

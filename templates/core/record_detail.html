@@ -59,6 +59,20 @@
                 {% endif %}
             </div>
 
+            {% if object.is_secondary %}
+                <div class="p-5 shadow main-color-light mb-4 rounded-2">
+
+                    <div class="m-3">
+                        <div class="fs-2">
+                            This is a secondary contact
+                        </div>
+                        <div>Click the link below to see the main information</div>
+                        <br>
+                        {% record_detail_field object.main_contact "Main Contact" False "" True True %}
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="p-5 mb-4 shadow main-color-light rounded-2">
 
                 <div class="m-3">
@@ -155,7 +169,7 @@
 
             {% with object.group_set.all as groups %}
                 {% if groups|length > 0 %}
-                    <div class="p-5 shadow main-color-light rounded-2">
+                    <div class="p-5 shadow main-color-light rounded-2 mb-4">
                         <div class="m-3">
                             <div class="fs-2">
                                 Groups
@@ -184,6 +198,26 @@
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% with object.record_set.all as secondary_contacts %}
+                {% if secondary_contacts|length > 0 %}
+                    <div class="p-5 shadow main-color-light rounded-2">
+                        <div class="m-3">
+                            <div class="fs-2">
+                                Secondary contacts
+                            </div>
+                            <div class="mt-3">
+                                {% for contact in secondary_contacts %}
+                                    <a href="{% url 'contact-detail' contact.id %}"
+                                       class="text-decoration-none d-block my-1">
+                                        {{ contact }}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 {% endif %}
@@ -230,7 +264,7 @@
             </div>
 
 
-            <div class="p-5 shadow details-container bg-white mb-4 rounded-2">
+            <div class="py-5 shadow details-container bg-white mb-4 rounded-2">
                 <div class="m-3">
                     {% record_detail_field object.primary_lang "Primary language" %}
                 </div>

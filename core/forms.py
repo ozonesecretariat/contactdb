@@ -1,5 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Value
+from django.db.models.functions import Concat
 from django.forms import ModelForm, Form
 
 from core.models import (
@@ -146,3 +148,30 @@ class ResolveAllConflictsForm(Form):
         choices=ConflictResolutionMethods.choices,
         required=True,
     )
+
+
+class MergeContactsFirstStepForm(Form):
+    contacts = forms.MultipleChoiceField(
+        widget=forms.SelectMultiple,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["contacts"].choices = tuple(
+            Record.objects.annotate(
+                name=Concat("first_name", Value(" "), "last_name")
+            ).values_list("id", "name")
+        )
+
+
+class MergeContactsSecondStepForm(Form):
+    contact = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        choices = kwargs.pop("choices", [])
+        super().__init__(*args, **kwargs)
+        self.fields["contact"].choices = choices

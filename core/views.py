@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import (
     View,
@@ -31,6 +31,8 @@ from core.forms import (
     KronosParticipantsImportForm,
     ResolveAllConflictsForm,
     ResolveConflictForm,
+    MergeContactsFirstStepForm,
+    MergeContactsSecondStepForm,
 )
 
 from django_tables2 import SingleTableMixin, SingleTableView
@@ -1028,3 +1030,131 @@ class NoConflictsView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView)
 
     def has_permission(self):
         return self.request.user.can_import
+
+
+class MergeContactsView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "core/merge_conflicts.html"
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+
+class MergeContactsFirstStepView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    form_class = MergeContactsFirstStepForm
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/merge_contacts_first_step.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        ids = form.cleaned_data["contacts"]
+        return HttpResponseRedirect(
+            reverse("merge-second-step")
+            + f"?ids={','.join(str(contact_id) for contact_id in ids)}"
+        )
+
+
+class MergeContactsSecondStepView(
+    LoginRequiredMixin, PermissionRequiredMixin, FormView
+):
+    form_class = MergeContactsSecondStepForm
+
+    def get_success_url(self):
+        return reverse("merge-success")
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["choices"] = self.get_form_contact_choices()
+        return kwargs
+
+    def get_form_contact_choices(self):
+        ids = self.request.GET.get("ids")
+
+        if ids:
+            ids = ids.split(",")
+            choices = [
+                (
+                    contact.get("id"),
+                    contact.get("first_name") + " " + contact.get("last_name"),
+                )
+                for contact in Record.objects.filter(id__in=ids).values(
+                    "id", "first_name", "last_name"
+                )
+            ]
+            return choices
+        return []
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        form = context.get("form")
+        if form:
+            contact_ids = [choice[0] for choice in form.fields["contact"].choices]
+            context["contacts"] = Record.objects.filter(id__in=contact_ids)
+        return context
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/merge_contacts_second_step.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def form_valid(self, form):
+        print(form.cleaned_data["contact"])
+        selected_contact = Record.objects.filter(
+            id=form.cleaned_data["contact"]
+        ).first()
+        secondary_ids = []
+        if self.request.GET.get("ids"):
+            secondary_ids = [
+                contact_id
+                for contact_id in self.request.GET.get("ids").split(",")
+                if int(contact_id) != int(form.cleaned_data["contact"])
+            ]
+        secondary_contacts = Record.objects.filter(id__in=secondary_ids)
+        for secondary_contact in secondary_contacts:
+            secondary_contact.main_contact = selected_contact
+            secondary_contact.save()
+        return super().form_valid(form)
+
+
+class MergeSuccessView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/merge_success.html"
+        else:
+            template_name = "404.html"
+
+        return template_name
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        else:
+            raise Http404

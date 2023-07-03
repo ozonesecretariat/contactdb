@@ -1,5 +1,3 @@
-
-
 <div class="my-2">
     <div class="label">
         {{ field_name|title }}
@@ -8,25 +6,26 @@
         <div>
             {% if field|length > 0 %}
                 {% for item in field %}
-                <div class="fw-bold {% if item not in compare_field %} text-danger {% else %} text-success {% endif %}">
+                <div class="">
                     {{ item }}
                 </div>
                 {% endfor %}
             {% else %}
-                <span class="fw-bold fst-italic {% if compare_field|length > 0 %} text-danger {% else %} text-success {% endif %}">None</span>
+                <span class="fw-bold fst-italic text-muted">None</span>
             {% endif %}
         </div>
     {% elif is_bool %}
-        <div class="fw-bold {% if field != compare_field %} text-danger {% else %} text-success {% endif %}">
+        <div class="{% if field %} text-success {% else %} text-danger {% endif %} ">
             {{ field }}
         </div>
     {% else %}
-        <div class="fw-bold {% if field != compare_field %} text-danger {% else %} text-success {% endif %}">
+        <div class="text-break">
             {% if field %}
                 {{ field }}
             {% else %}
-                <span class="fst-italic">None</span>
+                <span class="fst-italic text-muted">None</span>
             {% endif %}
         </div>
     {% endif %}
+
 </div>

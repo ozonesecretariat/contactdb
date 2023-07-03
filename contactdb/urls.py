@@ -48,6 +48,10 @@ from core.views import (
     AllConflictsResolvedView,
     ConflictsResolvingView,
     NoConflictsView,
+    MergeContactsSecondStepView,
+    MergeContactsView,
+    MergeContactsFirstStepView,
+    MergeSuccessView,
 )
 
 urlpatterns = [
@@ -167,6 +171,26 @@ urlpatterns = [
         "sync-kronos/conflict-resolution/no-conflicts",
         NoConflictsView.as_view(),
         name="no-conflicts",
+    ),
+    path(
+        "contacts/merge-contacts/",
+        MergeContactsView.as_view(),
+        name="merge-contacts",
+    ),
+    path(
+        "contacts/merge-contacts/first-step/",
+        MergeContactsFirstStepView.as_view(),
+        name="merge-first-step",
+    ),
+    path(
+        "contacts/merge-contacts/second-step/",
+        MergeContactsSecondStepView.as_view(),
+        name="merge-second-step",
+    ),
+    path(
+        "contacts/merge-contacts/success/",
+        MergeSuccessView.as_view(),
+        name="merge-success",
     ),
 ]
 
