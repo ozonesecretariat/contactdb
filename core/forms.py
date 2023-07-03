@@ -20,7 +20,12 @@ from ckeditor.widgets import CKEditorWidget
 
 class RecordUpdateForm(ModelForm):
     def __init__(self, *args, **kwargs):
+        main_contact_choices = kwargs.pop("main_contact_choices", [])
         super().__init__(*args, **kwargs)
+
+        if main_contact_choices:
+            self.fields["main_contact"].choices = main_contact_choices
+
         self.fields[
             "phones"
         ].help_text = "To add multiple phone numbers, use a comma as a separator."

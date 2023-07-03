@@ -40,6 +40,14 @@
                     </div>
                 </div>
 
+                {% if object %}
+                    <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+                        <div>
+                            {% record_form_field form.main_contact 'form-control' False True %}
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="main-color-light  mb-4 p-5 shadow rounded-2">
 
                     <div class="my-3">
@@ -177,7 +185,7 @@
                 <div class="bg-white px-5 py-4 shadow rounded-2">
                     <div class="text-muted"><span class="text-danger">*</span> Required field</div>
                     <div class="d-grid gap-3 d-md-flex justify-content-md-end">
-                        <a class="btn btn-secondary button-gray-shadow " href="{% url 'contact-detail' object.pk %}">Cancel</a>
+                        <a class="btn btn-secondary button-gray-shadow " href="{% if object %}{% url 'contact-detail' object.pk %}{% else %}{% url 'contact-list' %}{% endif %}">Cancel</a>
                         <input class="btn btn-success button-success-shadow" type="submit" value="Update">
 
                     </div>

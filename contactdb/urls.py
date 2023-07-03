@@ -52,6 +52,7 @@ from core.views import (
     MergeContactsView,
     MergeContactsFirstStepView,
     MergeSuccessView,
+    RecordCreateView,
 )
 
 urlpatterns = [
@@ -90,8 +91,9 @@ urlpatterns = [
     path("", HomepageView.as_view(), name="home"),
     path("contacts/", ContactListView.as_view(), name="contact-list"),
     path("contacts/<pk>", RecordDetailView.as_view(), name="contact-detail"),
-    path("contacts/<pk>/delete", RecordDeleteView.as_view(), name="contact-delete"),
-    path("contacts/<pk>/update", RecordUpdateView.as_view(), name="contact-update"),
+    path("contacts/<pk>/delete/", RecordDeleteView.as_view(), name="contact-delete"),
+    path("contacts/<pk>/update/", RecordUpdateView.as_view(), name="contact-update"),
+    path("contacts/create/", RecordCreateView.as_view(), name="contact-create"),
     path(
         "registration-statuses/",
         RegistrationStatusListView.as_view(),

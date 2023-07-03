@@ -3,30 +3,35 @@
 
 {% block title %}Import/Export{% endblock %}
 {% block content %}
-  <h1>{% trans "Import contacts" %}</h1>
+  <div class="bg-white shadow p-5 rounded-2 mb-4">
+    <div class="fs-2 mb-2">{% trans "Import contacts" %}</div>
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="uploaded-excel" class="form-label">{% trans "Import from Excel file:" %}</label>
-    <input type="file" class="form-control" name="uploaded-excel" id="uploaded-excel">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label for="uploaded-excel" class="form-label">{% trans "Import from Excel file:" %}</label>
+      <input type="file" class="form-control" name="uploaded-excel" id="uploaded-excel">
+
+      <br>
+      <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+        <button type="submit" class="btn btn-main-color">{% trans "Import" %}</button>
+      </div>
+    </form>
 
     <br>
-    <button type="submit" class="btn btn-primary">{% trans "Import" %}</button>
-  </form>
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <p {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
 
-  <br>
-  {% if messages %}
-    <div class="messages">
-      {% for message in messages %}
-        <p {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</p>
-      {% endfor %}
-    </div>
-  {% endif %}
 
-  <div>
-    <h1>{% trans "Sync with Kronos" %}</h1>
+  <div class="bg-white shadow p-5 rounded-2 mb-4">
+    <div class="fs-2 mb-2">{% trans "Sync with Kronos" %}</div>
     <div class="d-grid gap-3 d-md-flex justify-content-md-start">
-      <a class="btn btn-primary" href="{% url 'sync-kronos' %}">Import from Kronos</a>
+      <a class="btn btn-main-color" href="{% url 'sync-kronos' %}">Import from Kronos</a>
     </div>
   </div>
 {% endblock %}

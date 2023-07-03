@@ -84,6 +84,28 @@ class RecordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("contact-detail", kwargs={"pk": self.object.pk})
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.object.main_contact is not None:
+            kwargs["main_contact_choices"] = [
+                (None, "---------"),
+                (self.object.main_contact.id, self.object.main_contact),
+            ]
+        else:
+            kwargs["main_contact_choices"] = []
+        return kwargs
+
+
+class RecordCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Record
+    form_class = RecordUpdateForm
+
+    def has_permission(self):
+        return self.request.user.can_edit
+
+    def get_success_url(self):
+        return reverse("contact-detail", kwargs={"pk": self.object.pk})
+
 
 class RecordDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Record
@@ -1123,7 +1145,6 @@ class MergeContactsSecondStepView(
             raise Http404
 
     def form_valid(self, form):
-        print(form.cleaned_data["contact"])
         selected_contact = Record.objects.filter(
             id=form.cleaned_data["contact"]
         ).first()
