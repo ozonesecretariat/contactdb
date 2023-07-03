@@ -35,13 +35,17 @@
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="{% url 'group-list' %}">Groups</a>
                         </li>
+                        {% if request.user.can_import %}
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{% url "import-contacts" %}">Import</a>
+                            </li>
+                        {% endif %}
 
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url "import-contacts" %}">Import</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url "emails-page" %}">Emails</a>
-                        </li>
+                        {% if request.user.can_send_mail %}
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{% url "emails-page" %}">Emails</a>
+                            </li>
+                        {% endif %}
                     </ul>
 
 

@@ -11,114 +11,126 @@
 {% endblock %}
 
 {% block content %}
-  <h1>{% trans "Contacts" %}</h1>
-
-
-
-  <div class="position-absolute" style="right:0; margin-right:48px; margin-top:-50px; width:300px;">
-    <div class="d-flex flex-row justify-content-between">
-      <a id="href-docx" href="{% url 'export-docx' %}">
-        <button class="btn btn-primary">{% trans "Export as .docx" %}</button>
-      </a>
-      <a id="href-xlsx" href="{% url 'export-excel' %}">
-        <button class="btn btn-success">{% trans "Export as .xlsx" %}</button>
-      </a>
-    </div>
-    <p class="fst-italic" style="font-size:12px; opacity: 0.5;">
-      {% trans "Contacts present in the table will be exported. To export all contacts, reset filters." %}
-    </p>
-  </div>
-
-  <div class="my-4" >
-    <a href="{% url 'merge-contacts' %}" class="btn btn-main-color">
-      Merge contacts
-    </a>
-  </div>
-
-  <form hx-get="{% url 'contact-list' %}"
-        hx-target="div.table-container"
-        hx-swap="outerHTML"
-        hx-indicator=".progress"
-        class="form-inline"
-        onsubmit="getFilteredContacts()"
-  >
-    <div class="d-flex flex-column justify-content-around height-190">
-      <h4>{% trans "Filter by:" %}</h4>
-      <div class="d-flex flex-row align-items-center">
-        <div>{% trans "Is in mailing list:" %}</div>
-        <div class="width-100 ml-15">
-          {{ filter.form.is_in_mailing_list }}
-        </div>
-        <div class="ml-10">{% trans "Is using organization mail:" %}</div>
-        <div class="width-100 ml-15">
-          {{ filter.form.is_use_organization_address }}
-        </div>
-      </div>
-
-      <div class="d-flex flex-row align-items-center">
-        <div>{% trans "Organization:" %}</div>
-        <div class="width-455 ml-15">
-          {{ filter.form.organization }}
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary width-100">{% trans "Apply" %}</button>
-    </div>
-
-    <br>
-    <div class="d-flex flex-column justify-content-around height-190">
-      <h4>{% trans "Search by:" %}</h4>
+  <div class="bg-white p-5 rounded-2 shadow mb-4">
+    <div class="d-grid gap-3 d-md-flex justify-content-md-between ">
+      <div class="fs-1">{% trans "Contacts" %}</div>
 
       <div>
-        <div class="d-flex flex-row justify-content-between width-530">
-          <div>
-            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="name" name="select-search" checked="checked">
-            <label class="form-check-label" for="name">{% trans "Name" %}</label>
+        <div class="d-grid gap-3 d-md-flex justify-content-md-center align-items-md-center">
+          <a class="btn btn-primary" id="href-docx" href="{% url 'export-docx' %}">
+            {% trans "Export as .docx" %}
+          </a>
+          <a class="btn btn-success" id="href-xlsx" href="{% url 'export-excel' %}">
+            {% trans "Export as .xlsx" %}
+          </a>
+        </div>
+        <p class="fst-italic" style="font-size:12px; opacity: 0.5;">
+          {% trans "Contacts present in the table will be exported." %}
+          <br>
+          {% trans "To export all contacts, reset filters." %}
+        </p>
+      </div>
+    </div>
+
+    {% if request.user.can_edit %}
+      <div class=" d-grid gap-3 d-md-flex justify-content-md-start" >
+        <a href="{% url 'merge-contacts' %}" class="btn btn-main-color">
+          Merge contacts
+        </a>
+
+        <a href="{% url 'contact-create' %}" class="btn btn-success">Add contact</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="bg-white p-5 rounded-2 shadow mb-4">
+
+    <form hx-get="{% url 'contact-list' %}"
+          hx-target="div.table-container"
+          hx-swap="outerHTML"
+          hx-indicator=".progress"
+          class="form-inline"
+          onsubmit="getFilteredContacts()"
+    >
+      <div class="d-flex flex-column justify-content-around height-190">
+        <h4>{% trans "Filter by:" %}</h4>
+        <div class="d-flex flex-row align-items-center">
+          <div>{% trans "Is in mailing list:" %}</div>
+          <div class="width-100 ml-15">
+            {{ filter.form.is_in_mailing_list }}
           </div>
-          <div>
-            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="department" name="select-search">
-            <label class="form-check-label" for="department">{% trans "Department" %}</label>
-          </div>
-          <div>
-            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="designation" name="select-search">
-            <label class="form-check-label" for="designation">{% trans "Designation" %}</label>
-          </div>
-          <div>
-            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="emails" name="select-search">
-            <label class="form-check-label" for="emails">{% trans "Emails" %}</label>
-          </div>
-          <div>
-            <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="phones-faxes" name="select-search">
-            <label class="form-check-label" for="phones-faxes">{% trans "Phones/Faxes" %}</label>
+          <div class="ml-10">{% trans "Is using organization mail:" %}</div>
+          <div class="width-100 ml-15">
+            {{ filter.form.is_use_organization_address }}
           </div>
         </div>
 
-          <div id="search-name">
-                {{ filter.form.name }}
+        <div class="d-flex flex-row align-items-center">
+          <div>{% trans "Organization:" %}</div>
+          <div class="width-455 ml-15">
+            {{ filter.form.organization }}
           </div>
-          <div id="search-department" style="display: none">
-                {{ filter.form.department }}
-          </div>
-          <div id="search-designation" style="display: none">
-                {{ filter.form.designation }}
-          </div>
-          <div id="search-emails" style="display: none">
-                {{ filter.form.emails }}
-          </div>
-          <div id="search-phones-faxes" style="display: none">
-                {{ filter.form.phones_faxes }}
-          </div>
+        </div>
+        <button type="submit" class="btn btn-primary width-100">{% trans "Apply" %}</button>
       </div>
-      <button type="submit" class="btn btn-primary width-100">{% trans "Search" %}</button>
-    </div>
 
-  </form>
+      <br>
+      <div class="d-flex flex-column justify-content-around height-190">
+        <h4>{% trans "Search by:" %}</h4>
 
-  <div class="progress">
-    <div class="indeterminate"></div>
+        <div>
+          <div class="d-flex flex-row justify-content-between width-530">
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="name" name="select-search" checked="checked">
+              <label class="form-check-label" for="name">{% trans "Name" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="department" name="select-search">
+              <label class="form-check-label" for="department">{% trans "Department" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="designation" name="select-search">
+              <label class="form-check-label" for="designation">{% trans "Designation" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="emails" name="select-search">
+              <label class="form-check-label" for="emails">{% trans "Emails" %}</label>
+            </div>
+            <div>
+              <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="phones-faxes" name="select-search">
+              <label class="form-check-label" for="phones-faxes">{% trans "Phones/Faxes" %}</label>
+            </div>
+          </div>
+
+            <div id="search-name">
+                  {{ filter.form.name }}
+            </div>
+            <div id="search-department" style="display: none">
+                  {{ filter.form.department }}
+            </div>
+            <div id="search-designation" style="display: none">
+                  {{ filter.form.designation }}
+            </div>
+            <div id="search-emails" style="display: none">
+                  {{ filter.form.emails }}
+            </div>
+            <div id="search-phones-faxes" style="display: none">
+                  {{ filter.form.phones_faxes }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary width-100">{% trans "Search" %}</button>
+      </div>
+
+    </form>
   </div>
 
-  <br>
-  {% render_table table %}
+  <div class="bg-white p-5 rounded-2 shadow mb-4">
+    <div class="progress">
+      <div class="indeterminate"></div>
+    </div>
+    <br>
+    {% render_table table %}
+  </div>
 
   <script>
     function showInput() {
