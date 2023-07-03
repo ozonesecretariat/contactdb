@@ -13,6 +13,7 @@ class RecordTable(tables.Table):
             "organization",
             "department",
             "designation",
+            "is_secondary",
         )
         row_attrs = {
             "onClick": lambda record: "document.location.href='/contacts/{0}';".format(

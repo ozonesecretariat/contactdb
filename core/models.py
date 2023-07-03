@@ -113,9 +113,16 @@ class Record(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    main_contact = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+    @property
+    def is_secondary(self):
+        return self.main_contact is not None
 
 
 class KronosEvent(models.Model):

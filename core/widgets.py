@@ -14,7 +14,6 @@ class RemoveGroupMembers(SelectMultiple):
                 group[2],
             )
             if len(item[1]) > 0:
-                print(item)
                 new_groups.append(item)
 
         return new_groups
