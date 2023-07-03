@@ -13,7 +13,7 @@
 {% block content %}
   <div class="bg-white p-5 rounded-2 shadow mb-4">
     <div class="d-grid gap-3 d-md-flex justify-content-md-between ">
-      <div class="fs-2">{% trans "Contacts" %}</div>
+      <div class="fs-1">{% trans "Contacts" %}</div>
 
       <div>
         <div class="d-grid gap-3 d-md-flex justify-content-md-center align-items-md-center">
@@ -32,14 +32,15 @@
       </div>
     </div>
 
+    {% if request.user.can_edit %}
+      <div class=" d-grid gap-3 d-md-flex justify-content-md-start" >
+        <a href="{% url 'merge-contacts' %}" class="btn btn-main-color">
+          Merge contacts
+        </a>
 
-    <div class=" d-grid gap-3 d-md-flex justify-content-md-start" >
-      <a href="{% url 'merge-contacts' %}" class="btn btn-main-color">
-        Merge contacts
-      </a>
-
-      <a href="{% url 'contact-create' %}" class="btn btn-success">Add contact</a>
-    </div>
+        <a href="{% url 'contact-create' %}" class="btn btn-success">Add contact</a>
+      </div>
+    {% endif %}
   </div>
 
   <div class="bg-white p-5 rounded-2 shadow mb-4">

@@ -5,7 +5,7 @@
 {% block content %}
   <div class="bg-white shadow p-5 rounded-2 mb-4">
     <div class="fs-2 mb-2">{% trans "Import contacts" %}</div>
-
+    <hr/>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <label for="uploaded-excel" class="form-label">{% trans "Import from Excel file:" %}</label>
@@ -30,6 +30,7 @@
 
   <div class="bg-white shadow p-5 rounded-2 mb-4">
     <div class="fs-2 mb-2">{% trans "Sync with Kronos" %}</div>
+    <hr/>
     <div class="d-grid gap-3 d-md-flex justify-content-md-start">
       <a class="btn btn-main-color" href="{% url 'sync-kronos' %}">Import from Kronos</a>
     </div>
