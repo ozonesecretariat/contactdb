@@ -2,7 +2,7 @@
 
 {% load static custom_tags %}
 
-{% block title %}{{ object }} | Update{% endblock %}
+{% block title %}{% if object %} {{ object }} | Update {% else %} Create contact {% endif %}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'record_detail.css' %}">
@@ -40,7 +40,7 @@
                     </div>
                 </div>
 
-                {% if object %}
+                {% if object.main_contact %}
                     <div class="main-color-light  mb-4 p-5 shadow rounded-2">
                         <div>
                             {% record_form_field form.main_contact 'form-control' False True %}

@@ -92,7 +92,7 @@ class RecordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
                 (self.object.main_contact.id, self.object.main_contact),
             ]
         else:
-            kwargs["main_contact_choices"] = []
+            kwargs["main_contact_choices"] = [(None, "---------")]
         return kwargs
 
 
@@ -105,6 +105,11 @@ class RecordCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("contact-detail", kwargs={"pk": self.object.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["main_contact_choices"] = [(None, "---------")]
+        return kwargs
 
 
 class RecordDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
