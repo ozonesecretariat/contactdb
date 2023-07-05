@@ -1159,6 +1159,11 @@ class MergeContactsSecondStepView(
         for secondary_contact in secondary_contacts:
             secondary_contact.main_contact = selected_contact
             secondary_contact.save()
+            if secondary_contact.record_set.exists():
+                for contact in secondary_contact.record_set.all():
+                    contact.main_contact = selected_contact
+                    contact.save()
+
         return super().form_valid(form)
 
 
