@@ -1,5 +1,5 @@
 import django_tables2 as tables
-from core.models import Record, Group, LoadKronosEventsTask
+from core.models import Record, Group, LoadKronosEventsTask, Emails
 
 
 class RecordTable(tables.Table):
@@ -83,3 +83,15 @@ class LoadKronosParticipantsTable(tables.Table):
             "status",
             "failure_reason",
         )
+
+
+class EmailsTable(tables.Table):
+    class Meta:
+        model = Emails
+        template_name = "core/emails_table.html"
+        fields = ("title", "created_at")
+        row_attrs = {
+            "onClick": lambda record: "document.location.href='/emails/{0}'".format(
+                record.id
+            )
+        }

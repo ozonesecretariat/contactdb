@@ -62,6 +62,7 @@ from core.filters import (
     GroupFilter,
     GroupMembersFilter,
     SearchContactFilter,
+    EmailFilter,
 )
 from core.utils import ConflictResolutionMethods, update_object
 
@@ -1189,3 +1190,27 @@ class MergeSuccessView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView
             return super().get(request, *args, **kwargs)
         else:
             raise Http404
+
+
+class EmailListView(LoginRequiredMixin, FilterView, ListView):
+    model = Emails
+    paginate_by = 30
+    filterset_class = EmailFilter
+    ordering = ["-created_at"]
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        page = self.request.GET.get("page", 1)
+        paginator = context["paginator"]
+        context["pagination_range"] = paginator.get_elided_page_range(
+            number=page, on_each_side=1, on_ends=1
+        )
+        return context
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/email_list.html"
+        else:
+            template_name = "core/emails_history.html"
+
+        return template_name
