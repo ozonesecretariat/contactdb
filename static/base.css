@@ -33,6 +33,10 @@ body{
     box-shadow: 0 0 1rem rgba(0,0,0, .35);
 }
 
+.btn-light:hover{
+    box-shadow: 0 0 1rem rgba(0,0,0, .25);
+}
+
 .btn-primary:hover{
     box-shadow: 0 0 1rem rgba(13, 110, 253, .55);
 }

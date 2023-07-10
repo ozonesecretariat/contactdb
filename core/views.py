@@ -1214,3 +1214,8 @@ class EmailListView(LoginRequiredMixin, FilterView, ListView):
             template_name = "core/emails_history.html"
 
         return template_name
+
+
+class ContactEmailsHistory(LoginRequiredMixin, DetailView):
+    model = Record
+    template_name = "core/contact_emails_history.html"
