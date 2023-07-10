@@ -633,11 +633,13 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
     def has_permission(self):
         return self.request.user.can_send_mail
 
-    def log_sent_email(self, title, content, recipients):
+    def log_sent_email(self, title, content, recipients, groups=None):
         email = Emails.objects.create(
             title=title,
             content=content,
         )
+        if groups:
+            email.groups.set(groups)
         email.recipients.set(recipients)
         email.save()
 
@@ -658,7 +660,10 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
                 recipient_list=recipients,
             )
             self.log_sent_email(
-                form.cleaned_data["title"], form.cleaned_data["content"], contacts
+                form.cleaned_data["title"],
+                form.cleaned_data["content"],
+                contacts,
+                groups,
             )
             messages.success(request, "Successfully sent emails!.")
             return redirect(reverse("emails-page"))
@@ -1219,3 +1224,8 @@ class EmailListView(LoginRequiredMixin, FilterView, ListView):
 class ContactEmailsHistory(LoginRequiredMixin, DetailView):
     model = Record
     template_name = "core/contact_emails_history.html"
+
+
+class GroupEmailsHistory(LoginRequiredMixin, DetailView):
+    model = Group
+    template_name = "core/group_emails_history.html"

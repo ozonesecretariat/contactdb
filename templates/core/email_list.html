@@ -38,7 +38,7 @@
                            hx-target="div.emails-section"
                            hx-trigger="click"
                            hx-indicator=".progress"
-                           hx-get="{% url 'emails-history' %}?page={{ page_obj.previous_page_number }}&contact={{ request.GET.contact }}"
+                           hx-get="{% url 'emails-history' %}?page={{ page_obj.previous_page_number }}&contact={{ request.GET.contact }}&group={{ request.GET.group }}"
                            hx-swap="outerHTML">Previous</a>
                     </li>
                 {% endif %}
@@ -51,7 +51,7 @@
                                hx-target="div.emails-section"
                                hx-trigger="click"
                                hx-indicator=".progress"
-                               hx-get="{% url 'emails-history' %}?page={{ i }}&contact={{ request.GET.contact }}"
+                               hx-get="{% url 'emails-history' %}?page={{ i }}&contact={{ request.GET.contact }}&group={{ request.GET.group }}"
                                hx-swap="outerHTML"{% endif %}>{{ i }}</a>
                         {% endif %}
                     </li>
@@ -63,7 +63,7 @@
                            hx-target="div.emails-section"
                            hx-trigger="click"
                            hx-indicator=".progress"
-                           hx-get="{% url 'emails-history' %}?page={{ page_obj.next_page_number }}&contact={{ request.GET.contact }}"
+                           hx-get="{% url 'emails-history' %}?page={{ page_obj.next_page_number }}&contact={{ request.GET.contact }}&group={{ request.GET.group }}"
                            hx-swap="outerHTML">Next</a>
                     </li>
                 {% endif %}

@@ -55,6 +55,7 @@ from core.views import (
     RecordCreateView,
     EmailListView,
     ContactEmailsHistory,
+    GroupEmailsHistory,
 )
 
 urlpatterns = [
@@ -109,6 +110,11 @@ urlpatterns = [
     path("groups/", GroupListView.as_view(), name="group-list"),
     path("groups/create/", GroupCreateView.as_view(), name="group-create"),
     path("groups/<pk>", GroupDetailView.as_view(), name="group-detail"),
+    path(
+        "groups/<pk>/emails-history",
+        GroupEmailsHistory.as_view(),
+        name="group-emails-history",
+    ),
     path("groups/members/", GroupMembersView.as_view(), name="group-members"),
     path("groups/<pk>/delete", GroupDeleteView.as_view(), name="group-delete"),
     path("groups/<pk>/update", GroupUpdateView.as_view(), name="group-update"),

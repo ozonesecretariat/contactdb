@@ -176,6 +176,7 @@ class Emails(models.Model):
     cc = models.ManyToManyField(Record, related_name="cc", verbose_name="CC")
     title = models.TextField()
     content = RichTextField()
+    groups = models.ManyToManyField(Group, blank=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
