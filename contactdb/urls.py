@@ -56,6 +56,7 @@ from core.views import (
     EmailListView,
     ContactEmailsHistory,
     GroupEmailsHistory,
+    EmailDetailView,
 )
 
 urlpatterns = [
@@ -208,6 +209,7 @@ urlpatterns = [
         name="merge-success",
     ),
     path("emails/history/", EmailListView.as_view(), name="emails-history"),
+    path("emails/<pk>", EmailDetailView.as_view(), name="email-detail"),
 ]
 
 if settings.DEBUG:

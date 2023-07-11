@@ -1229,3 +1229,8 @@ class ContactEmailsHistory(LoginRequiredMixin, DetailView):
 class GroupEmailsHistory(LoginRequiredMixin, DetailView):
     model = Group
     template_name = "core/group_emails_history.html"
+
+
+class EmailDetailView(LoginRequiredMixin, DetailView):
+    model = Emails
+    template_name = "core/email_detail.html"

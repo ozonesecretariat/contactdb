@@ -14,7 +14,7 @@
         </div>
         {% for email in object_list %}
             <div class="position-relative my-2 email-row">
-                <a class="stretched-link" href="{% url 'home' %}"></a>
+                <a class="stretched-link" href="{% url 'email-detail' email.pk %}"></a>
                 <div class="d-flex gap-3 flex-wrap justify-content-between p-2">
 
                     <div class="fit-content">{{ email }}</div>
