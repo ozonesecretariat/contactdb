@@ -1,6 +1,8 @@
 import django_filters
-from django.db.models import Q
-from core.models import Record, Organization, RegistrationStatus, Group
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+
+from core.models import Record, Organization, RegistrationStatus, Group, Emails
 from django import forms
 
 MAILING_LIST = (
@@ -132,3 +134,29 @@ class SearchContactFilter(django_filters.FilterSet):
 
     def not_in_group(self, queryset, name, value):
         return queryset.filter(~Q(group=value))
+
+
+class EmailFilter(django_filters.FilterSet):
+    contact = django_filters.ChoiceFilter(
+        method="filter_by_contact",
+        choices=Record.objects.annotate(
+            name=Concat("first_name", Value(" "), "last_name")
+        ).values_list("id", "name"),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    group = django_filters.ChoiceFilter(
+        method="filter_by_group",
+        choices=Group.objects.values_list("id", "name"),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    class Meta:
+        model = Emails
+        fields = ["contact"]
+
+    def filter_by_contact(self, queryset, name, value):
+        return queryset.filter(Q(recipients=value) or Q(cc=value))
+
+    def filter_by_group(self, queryset, name, value):
+        return queryset.filter(groups=value)

@@ -137,6 +137,7 @@ class EmailsAdmin(admin.ModelAdmin):
                 "fields": (
                     "recipients",
                     "cc",
+                    "groups",
                     "title",
                     "content",
                     "created_at",
@@ -147,7 +148,7 @@ class EmailsAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return self.readonly_fields + ("recipients", "cc", "title")
+            return self.readonly_fields + ("recipients", "cc", "groups", "title")
         return self.readonly_fields
 
 

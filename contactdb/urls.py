@@ -53,6 +53,10 @@ from core.views import (
     MergeContactsFirstStepView,
     MergeSuccessView,
     RecordCreateView,
+    EmailListView,
+    ContactEmailsHistory,
+    GroupEmailsHistory,
+    EmailDetailView,
 )
 
 urlpatterns = [
@@ -91,6 +95,11 @@ urlpatterns = [
     path("", HomepageView.as_view(), name="home"),
     path("contacts/", ContactListView.as_view(), name="contact-list"),
     path("contacts/<pk>", RecordDetailView.as_view(), name="contact-detail"),
+    path(
+        "contacts/<pk>/emails-history/",
+        ContactEmailsHistory.as_view(),
+        name="contact-emails-history",
+    ),
     path("contacts/<pk>/delete/", RecordDeleteView.as_view(), name="contact-delete"),
     path("contacts/<pk>/update/", RecordUpdateView.as_view(), name="contact-update"),
     path("contacts/create/", RecordCreateView.as_view(), name="contact-create"),
@@ -102,6 +111,11 @@ urlpatterns = [
     path("groups/", GroupListView.as_view(), name="group-list"),
     path("groups/create/", GroupCreateView.as_view(), name="group-create"),
     path("groups/<pk>", GroupDetailView.as_view(), name="group-detail"),
+    path(
+        "groups/<pk>/emails-history",
+        GroupEmailsHistory.as_view(),
+        name="group-emails-history",
+    ),
     path("groups/members/", GroupMembersView.as_view(), name="group-members"),
     path("groups/<pk>/delete", GroupDeleteView.as_view(), name="group-delete"),
     path("groups/<pk>/update", GroupUpdateView.as_view(), name="group-update"),
@@ -194,6 +208,8 @@ urlpatterns = [
         MergeSuccessView.as_view(),
         name="merge-success",
     ),
+    path("emails/history/", EmailListView.as_view(), name="emails-history"),
+    path("emails/<pk>", EmailDetailView.as_view(), name="email-detail"),
 ]
 
 if settings.DEBUG:

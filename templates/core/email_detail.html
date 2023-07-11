@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static custom_tags %}
+{% load i18n %}
+
+{% block title %} {{ object.title }} | Email {% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'group_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="contact-container">
+        <div class="left-section fit-content-height">
+            <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+                <hr class="my-5" />
+
+                <div class="mx-auto fit-content">
+
+                    <div class="fit-content">
+                        <div class="label">
+                            Subject
+                        </div>
+                        <div class="fs-2 mb-3">
+                            {{ object.title }}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5" />
+
+                <div class="mx-auto fit-content">
+
+                    <div class="fit-content">
+
+                        <div class="label">
+                            {{ object.created_at }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="right-section fit-content-height">
+
+            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+                 <div class="">
+                    <div class="fs-2">
+                        Recipients
+                    </div>
+                    <div class="mt-4">
+                        {% email_list_field object.recipients.all %}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+                 <div class="">
+                    <div class="fs-2">
+                        CC
+                    </div>
+                    <div class="mt-4">
+                       {% email_list_field object.cc.all %}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+                 <div class="">
+                    <div class="fs-2">
+                        Groups
+                    </div>
+                    <div class="mt-4">
+                        {% email_list_field object.groups.all True %}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+                <div class="fs-2">
+                    Content
+                </div>
+                <div class="mt-4">
+                    {% if object.content %}
+                        {{ object.content|safe }}
+                    {% else %}
+                        <span class="text-muted">None</span>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+{% endblock %}

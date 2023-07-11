@@ -104,3 +104,13 @@ def merge_contact_field(obj, field_name, label):
         context["is_bool"] = True
 
     return render_to_string("merge_contact_field.html", context)
+
+
+@register.simple_tag
+def email_list_field(field, is_group=False):
+    context = {
+        "field": field,
+        "is_group": is_group,
+    }
+
+    return render_to_string("email_list_field.html", context)

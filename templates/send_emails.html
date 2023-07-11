@@ -20,7 +20,11 @@
   {% endif %}
 
   <div class="bg-white rounded-2 shadow p-5 mb-4">
-    <h1> {% trans "Send e-mails" %}</h1>
+    <div class="d-grid gap-3 d-md-flex justify-content-md-between align-items-md-center">
+      <div class="fs-1"> {% trans "Send e-mails" %}</div>
+      <a class="btn btn-main-color" href="{% url 'emails-history' %}">Emails History</a>
+    </div>
+
     <br>
     <h4>{% trans "Select contacts by:" %}</h4>
     <div>

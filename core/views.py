@@ -62,6 +62,7 @@ from core.filters import (
     GroupFilter,
     GroupMembersFilter,
     SearchContactFilter,
+    EmailFilter,
 )
 from core.utils import ConflictResolutionMethods, update_object
 
@@ -632,11 +633,13 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
     def has_permission(self):
         return self.request.user.can_send_mail
 
-    def log_sent_email(self, title, content, recipients):
+    def log_sent_email(self, title, content, recipients, groups=None):
         email = Emails.objects.create(
             title=title,
             content=content,
         )
+        if groups:
+            email.groups.set(groups)
         email.recipients.set(recipients)
         email.save()
 
@@ -657,7 +660,10 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
                 recipient_list=recipients,
             )
             self.log_sent_email(
-                form.cleaned_data["title"], form.cleaned_data["content"], contacts
+                form.cleaned_data["title"],
+                form.cleaned_data["content"],
+                contacts,
+                groups,
             )
             messages.success(request, "Successfully sent emails!.")
             return redirect(reverse("emails-page"))
@@ -1189,3 +1195,42 @@ class MergeSuccessView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView
             return super().get(request, *args, **kwargs)
         else:
             raise Http404
+
+
+class EmailListView(LoginRequiredMixin, FilterView, ListView):
+    model = Emails
+    paginate_by = 30
+    filterset_class = EmailFilter
+    ordering = ["-created_at"]
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        page = self.request.GET.get("page", 1)
+        paginator = context["paginator"]
+        context["pagination_range"] = paginator.get_elided_page_range(
+            number=page, on_each_side=1, on_ends=1
+        )
+        return context
+
+    def get_template_names(self):
+        if self.request.htmx:
+            template_name = "core/email_list.html"
+        else:
+            template_name = "core/emails_history.html"
+
+        return template_name
+
+
+class ContactEmailsHistory(LoginRequiredMixin, DetailView):
+    model = Record
+    template_name = "core/contact_emails_history.html"
+
+
+class GroupEmailsHistory(LoginRequiredMixin, DetailView):
+    model = Group
+    template_name = "core/group_emails_history.html"
+
+
+class EmailDetailView(LoginRequiredMixin, DetailView):
+    model = Emails
+    template_name = "core/email_detail.html"
