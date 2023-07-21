@@ -3,10 +3,10 @@ from copy import copy
 
 from django.db import connection
 from django_task.job import Job
-from django.core.mail import send_mail
+from django.core.mail import send_mail, send_mass_mail
 
 from core import kronos
-from core.models import TemporaryContact
+from core.models import TemporaryContact, EmailTag
 from core.parsers import KronosEventsParser, KronosParticipantsParser
 from core.utils import ConflictResolutionMethods, update_object
 
@@ -14,14 +14,9 @@ from core.utils import ConflictResolutionMethods, update_object
 class SendMailJob(Job):
     @staticmethod
     def execute(job, task):
-        task.log(logging.INFO, "Sending email to: %s", task.recipient)
-
-        send_mail(
-            task.subject.strip(),
-            task.message,
-            None,
-            [task.recipient],
-        )
+        task.log(logging.INFO, "Sending email")
+        task.email.send()
+        task.email.save()
 
 
 class LoadKronosEvents(Job):

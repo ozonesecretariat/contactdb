@@ -4,6 +4,8 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import FieldDoesNotExist
 from django.template.loader import render_to_string
 
+from core.models import EmailTag
+
 register = template.Library()
 
 
@@ -114,3 +116,10 @@ def email_list_field(field, is_group=False):
     }
 
     return render_to_string("email_list_field.html", context)
+
+
+@register.simple_tag
+def email_tags():
+    context = {"email_tags": EmailTag.objects.all()}
+
+    return render_to_string("email_tags.html", context)

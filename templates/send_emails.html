@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block extra_css %}
-    <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
-    <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
     <link href="{% static 'contacts.css' %}" rel="stylesheet" />
 {% endblock %}
 
@@ -24,9 +23,12 @@
       <div class="fs-1"> {% trans "Send e-mails" %}</div>
       <a class="btn btn-main-color" href="{% url 'emails-history' %}">Emails History</a>
     </div>
+  </div>
 
-    <br>
-    <h4>{% trans "Select contacts by:" %}</h4>
+<div class="bg-white rounded-2 shadow p-5 mb-4">
+    <h4>{% trans "Recipients:" %}</h4>
+    <br/>
+    <div class="fw-bold">{% trans "Select contacts by:" %}</div>
     <div>
       <input type="radio" class="form-check-input" onclick="javascript:showSelection();" id="groups-radio" name="select-contacts" checked="checked">
       <label class="form-check-label" for="groups-radio">{% trans "Groups" %}</label>
@@ -35,11 +37,11 @@
       <input type="radio" class="form-check-input" onclick="javascript:showSelection();" id="man-sel-radio" name="select-contacts">
       <label class="form-check-label" for="man-sel-radio">{% trans "Manual selection" %}</label>
     </div>
-
-    <div id="manual-selection" style="display: none">
+    <br/>
+    <div id="recipients-manual-selection" style="display: none">
       <form hx-get="{% url 'groups-add-multiple-members' %}"
-            hx-target="div.selected-contacts"
-            hx-swap="outerHTML"
+            hx-target="div.recipients-selected-contacts"
+            hx-swap="innerHTML"
             hx-indicator=".progress"
             class="form-inline"
       >
@@ -114,20 +116,21 @@
 
       </form>
     </div>
-  </div>
-    <form class="d-flex flex-column" method="POST">
-      {% csrf_token %}
-      <div id="groups-selection" class="bg-white rounded-2 shadow p-5 mb-4">
-        <div class="overflow-scroll border rounded-2 p-3" style="max-height: 500px;">
-          {% for pk, choice in form.groups.field.widget.choices %}
-            <div class="border-bottom p-2">
-              <input id="id_{{form.groups.name}}_{{ forloop.counter0 }}" name="{{form.groups.name}}" type="{{form.groups.field.widget.input_type}}" value="{{pk}}" class="form-check-input"/>
-              <label for="id_{{form.groups.name}}_{{ forloop.counter0 }}" class="form-check-label fw-bold">{{ choice }}</label>
-            </div>
-          {% endfor %}
-        </div>
+
+
+  <div id="groups-selection" class="">
+    <br/>
+   <div class="overflow-scroll border rounded-2 p-3" style="max-height: 500px;">
+     {% for pk, choice in form.groups.field.widget.choices %}
+      <div class="border-bottom p-2">
+        <input id="id_{{form.groups.name}}_{{ forloop.counter0 }}" name="{{form.groups.name}}" type="{{form.groups.field.widget.input_type}}" value="{{pk}}" class="form-check-input " onclick="updateSelection()" />
+        <label for="id_{{form.groups.name}}_{{ forloop.counter0 }}" class="form-check-label fw-bold">{{ choice }}</label>
       </div>
-    <div class="bg-white rounded-2 shadow p-5 mb-4" id="contacts-card" style="display: none;">
+     {% endfor %}
+   </div>
+ </div>
+
+  <div class="" id="contacts-card" style="display: none;">
 
       <div class="progress">
         <div class="indeterminate"></div>
@@ -135,14 +138,14 @@
 
       <br>
 
-      <div class="selected-contacts">
+      <div class="recipients-selected-contacts">
 
         {% if previously_selected_members|length > 0 %}
 
           <div class="overflow-scroll border rounded-2 p-3 selected-contacts" style="max-height: 500px;">
               {% for contact in previously_selected_members %}
                   <div class="border-bottom p-2">
-                      <input id="contact_{{ contact.id }}" type="checkbox" value="{{ contact.id }}" name="members" checked>
+                      <input id="contact_{{ contact.id }}" type="checkbox" value="{{ contact.id }}" name="members" checked onclick="updateSelection()">
                       <label for="contact_{{ contact.id }}"><span class="fw-bold">{{ contact }}</span> - {{ contact.emails }}</label>
                   </div>
 
@@ -159,13 +162,188 @@
           </div>
         {% endfor %}
       </div>
+  </div>
+
+</div>
+
+<div class="bg-white rounded-2 shadow p-5 mb-4" id="cc-container">
+  <h4>{% trans "CC:" %}</h4>
+    <br/>
+    <div class="fw-bold">{% trans "Select contacts by:" %}</div>
+    <div>
+      <input type="radio" class="form-check-input" onclick="javascript:showSelectionCC();" id="cc-groups-radio" name="cc-select-contacts" checked="checked">
+      <label class="form-check-label" for="cc-groups-radio">{% trans "Groups" %}</label>
+    </div>
+    <div>
+      <input type="radio" class="form-check-input" onclick="javascript:showSelectionCC();" id="cc-man-sel-radio" name="cc-select-contacts">
+      <label class="form-check-label" for="cc-man-sel-radio">{% trans "Manual selection" %}</label>
+    </div>
+    <br/>
+
+     <div id="cc-manual-selection" style="display: none">
+      <form hx-get="{% url 'groups-add-multiple-members' %}"
+            hx-target="div.cc-selected-contacts"
+            hx-swap="innerHTML"
+            hx-indicator=".progress"
+            class="form-inline"
+      >
+        <div class="d-flex flex-column justify-content-around height-190">
+          <div class="fw-bold">{% trans "Filter by:" %}</div>
+          <div class="d-flex flex-row align-items-center">
+            <div>{% trans "Is in mailing list:" %}</div>
+            <div class="width-100 ml-15">
+              {{ filter.form.is_in_mailing_list }}
+            </div>
+            <div class="ml-10">{% trans "Is using organization mail:" %}</div>
+            <div class="width-100 ml-15">
+              {{ filter.form.is_use_organization_address }}
+            </div>
+          </div>
+
+          <div class="d-flex flex-row align-items-center">
+            <div>{% trans "Organization:" %}</div>
+            <div class="width-430 ml-15">
+              {{ filter.form.organization }}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-main-color width-100">{% trans "Apply" %}</button>
+        </div>
+
+        <br>
+        <div class="d-flex flex-column justify-content-around height-190">
+          <div class="fw-bold">{% trans "Search by:" %}</div>
+
+          <div>
+            <div class="d-flex flex-row justify-content-between width-530">
+              <div>
+                <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="name" name="select-search" checked="checked">
+                <label class="form-check-label" for="name">{% trans "Name" %}</label>
+              </div>
+              <div>
+                <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="department" name="select-search">
+                <label class="form-check-label" for="department">{% trans "Department" %}</label>
+              </div>
+              <div>
+                <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="designation" name="select-search">
+                <label class="form-check-label" for="designation">{% trans "Designation" %}</label>
+              </div>
+              <div>
+                <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="emails" name="select-search">
+                <label class="form-check-label" for="emails">{% trans "Emails" %}</label>
+              </div>
+              <div>
+                <input type="radio" class="form-check-input" onclick="javascript:showInput();" id="phones-faxes" name="select-search">
+                <label class="form-check-label" for="phones-faxes">{% trans "Phones/Faxes" %}</label>
+              </div>
+            </div>
+
+            <div id="search-name">
+                  {{ filter.form.name }}
+            </div>
+            <div id="search-department" style="display: none">
+                  {{ filter.form.department }}
+            </div>
+            <div id="search-designation" style="display: none">
+                  {{ filter.form.designation }}
+            </div>
+            <div id="search-emails" style="display: none">
+                  {{ filter.form.emails }}
+            </div>
+            <div id="search-phones-faxes" style="display: none">
+                  {{ filter.form.phones_faxes }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-main-color width-100">{% trans "Search" %}</button>
+        </div>
+
+      </form>
+    </div>
+
+  <div id="cc-groups-selection" class="">
+        <div class="overflow-scroll border rounded-2 p-3" style="max-height: 500px;">
+          {% for pk, choice in form.cc_groups.field.widget.choices %}
+            <div class="border-bottom p-2">
+              <input id="cc-id_{{form.cc_groups.name}}_{{ forloop.counter0 }}" name="{{form.cc_groups.name}}" type="{{form.cc_groups.field.widget.input_type}}" value="{{pk}}" class="form-check-input" onclick="updateSelectionCC()" />
+              <label for="cc-id_{{form.cc_groups.name}}_{{ forloop.counter0 }}" class="form-check-label fw-bold">{{ choice }}</label>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    <div class="" id="cc-contacts-card" style="display: none;">
+
+      <div class="progress">
+        <div class="indeterminate"></div>
+      </div>
+
+      <br>
+
+      <div class="cc-selected-contacts">
+
+        {% if previously_selected_members|length > 0 %}
+
+          <div class="overflow-scroll border rounded-2 p-3 selected-contacts" style="max-height: 500px;">
+              {% for contact in previously_selected_members %}
+                  <div class="border-bottom p-2">
+                      <input id="cc-contact_{{ contact.id }}" type="checkbox" value="{{ contact.id }}" name="cc" checked onclick="updateSelectionCC()">
+                      <label for="cc-contact_{{ contact.id }}"><span class="fw-bold">{{ contact }}</span> - {{ contact.emails }}</label>
+                  </div>
+
+              {% endfor %}
+          </div>
+        {% else %}
+          {% trans "No contact selected" %}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {% for error in form.cc.errors %}
+          <div class="text-danger my-1">
+            {{ error|escape }}
+          </div>
+        {% endfor %}
+      </div>
 
   </div>
+</div>
+
+
+
+<form class="d-flex flex-column" method="POST">
+      {% csrf_token %}
+
+    <div id="hidden-recipients-groups" hidden="hidden">
+
+    </div>
+
+    <div id="hidden-recipients-contacts" hidden="hidden" style="display: none;">
+
+    </div>
+
+    <div id="hidden-cc-groups" hidden="hidden">
+
+    </div>
+
+    <div id="hidden-cc-contacts" hidden="hidden" style="display: none;">
+
+    </div>
+
     <div class="bg-white rounded-2 shadow p-5 mb-4 d-flex flex-column">
-      <span class="form-check-label">{% trans "Title:" %}</span>
-      {{ form.title }}
-      <span class="form-check-label" style="margin-top:25px;">{% trans "Content:" %}</span>
-      {{ form.content }}
+      <span class="form-check-label">{% trans "Subject:" %}</span>
+      {{ form.subject }}
+      <div class="d-flex flex-wrap mt-4 gap-3">
+        <div>
+          <div class="form-check-label">{% trans "Content:" %}</div>
+          {{ form.content }}
+        </div>
+        <div>
+          <div class="form-check-label">{% trans "Send personalised emails:" %}</div>
+          <input type="checkbox" name="send_personalised_emails" onclick="showTags()" id="id_send_personalised_emails">
+          <div id="tags-container" hidden="hidden">
+            {% email_tags %}
+          </div>
+
+        </div>
+      </div>
+
       <input class="btn btn-success button-success-shadow width-100" type="submit" value="Send" style="margin-top:20px;">
     </div>
   </form>
@@ -174,24 +352,113 @@
 {% block extra_js %}
   <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/email.js' %}" ></script>
   <script>
+
+    function updateSelection(){
+        console.log("start updating selection")
+        if (document.getElementById("groups-radio").checked) {
+            const divElement = document.querySelector('#groups-selection');
+            const targetDiv = document.querySelector('#hidden-recipients-groups');
+            const inputElements = divElement.querySelectorAll('input');
+            targetDiv.innerHTML = '';
+            inputElements.forEach((input) => {
+              const inputCopy = input.cloneNode(true);
+              targetDiv.appendChild(inputCopy);
+            })
+        }
+        else if (document.getElementById("man-sel-radio").checked) {
+            const divElement = document.querySelector('#contacts-card');
+            const targetDiv = document.querySelector('#hidden-recipients-contacts');
+            const inputElements = divElement.querySelectorAll('input');
+            targetDiv.innerHTML = '';
+            inputElements.forEach((input) => {
+
+              const inputCopy = input.cloneNode(true);
+              targetDiv.appendChild(inputCopy);
+
+              input.addEventListener('click', updateSelection);
+            })
+        }
+    }
+
+    function updateSelectionCC(){
+        console.log("start updating selection cc")
+        if (document.getElementById("cc-groups-radio").checked) {
+            const divElement = document.querySelector('#cc-groups-selection');
+            const targetDiv = document.querySelector('#hidden-cc-groups');
+            const inputElements = divElement.querySelectorAll('input');
+            targetDiv.innerHTML = '';
+            inputElements.forEach((input) => {
+              const inputCopy = input.cloneNode(true);
+              targetDiv.appendChild(inputCopy);
+            })
+        }
+        else if (document.getElementById("cc-man-sel-radio").checked) {
+            const divElement = document.querySelector('#cc-contacts-card');
+            const targetDiv = document.querySelector('#hidden-cc-contacts');
+            const inputElements = divElement.querySelectorAll('input');
+            targetDiv.innerHTML = '';
+            inputElements.forEach((input) => {
+
+              const inputCopy = input.cloneNode(true);
+              inputCopy.name = 'cc'
+              targetDiv.appendChild(inputCopy);
+
+              input.addEventListener('click', updateSelectionCC);
+            })
+        }
+    }
+
     function showSelection() {
       if (document.getElementById("groups-radio").checked) {
         document.getElementById("groups-selection").style.display = "inline";
+        document.querySelector('#hidden-recipients-groups').style.display = "inline";
         document.getElementById("contacts-card").style.display = "none";
+        document.querySelector('#hidden-recipients-contacts').innerHTML = '';
+        document.querySelector('#hidden-recipients-contacts').style.display = "none";
       }
       else {
         document.getElementById("groups-selection").style.display = "none";
+        document.querySelector('#hidden-recipients-groups').innerHTML = '';
+        document.querySelector('#hidden-recipients-groups').style.display = "none";
         document.getElementById("contacts-card").style.display = "block";
+        document.querySelector('#hidden-recipients-contacts').style.display  = "block";
       }
       if (document.getElementById("man-sel-radio").checked) {
-        document.getElementById("manual-selection").style.display = "inline";
+        document.getElementById("recipients-manual-selection").style.display = "inline";
       }
       else {
-        document.getElementById("manual-selection").style.display = "none";
+        document.getElementById("recipients-manual-selection").style.display = "none";
       }
+      updateSelection();
     }
+
+    function showSelectionCC(){
+      if (document.getElementById("cc-groups-radio").checked) {
+        document.getElementById("cc-groups-selection").style.display = "inline";
+        document.getElementById("cc-contacts-card").style.display = "none";
+        document.querySelector('#hidden-cc-contacts').innerHTML = '';
+        document.querySelector('#hidden-cc-contacts').style.display = "none";
+      }
+      else {
+        document.getElementById("cc-groups-selection").style.display = "none";
+        document.querySelector('#hidden-cc-groups').innerHTML = '';
+        document.querySelector('#hidden-cc-groups').style.display = "none";
+        document.getElementById("cc-contacts-card").style.display = "block";
+      }
+      if (document.getElementById("cc-man-sel-radio").checked) {
+        document.getElementById("cc-manual-selection").style.display = "inline";
+      }
+      else {
+        document.getElementById("cc-manual-selection").style.display = "none";
+      }
+      updateSelectionCC();
+    }
+
 
     function showInput() {
       if (document.getElementById("name").checked) {
@@ -233,6 +500,16 @@
 
     $(document).ready(function() {
         $('.contact-groups').select2({width: '100%'});
+    });
+
+    document.addEventListener('htmx:afterSettle', function(evt) {
+
+        if(evt.target.classList.contains('recipients-selected-contacts')){
+            updateSelection();
+        }
+        else if(evt.target.classList.contains('cc-selected-contacts')){
+            updateSelectionCC();
+        }
     });
 
   </script>

@@ -78,13 +78,20 @@ class SendEmailForm(Form):
     members = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
     )
+    cc = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
     groups = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
     )
-    title = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control", "id": "title"})
+    cc_groups = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control", "id": "subject"})
     )
     content = forms.CharField(widget=CKEditorWidget())
+    send_personalised_emails = forms.BooleanField(required=False)
 
     class Meta:
         model = Emails
@@ -95,7 +102,13 @@ class SendEmailForm(Form):
         self.fields["members"].choices = tuple(
             Record.objects.all().values_list("id", "first_name")
         )
+        self.fields["cc"].choices = tuple(
+            Record.objects.all().values_list("id", "first_name")
+        )
         self.fields["groups"].choices = tuple(
+            Group.objects.all().values_list("id", "name")
+        )
+        self.fields["cc_groups"].choices = tuple(
             Group.objects.all().values_list("id", "name")
         )
 
