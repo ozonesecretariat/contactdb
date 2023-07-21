@@ -156,7 +156,8 @@ class EmailFilter(django_filters.FilterSet):
         fields = ["contact"]
 
     def filter_by_contact(self, queryset, name, value):
-        return queryset.filter(Q(recipients=value) or Q(cc=value))
+        print(value)
+        return queryset.filter(Q(recipients=value) | Q(cc=value)).distinct()
 
     def filter_by_group(self, queryset, name, value):
         return queryset.filter(groups=value)
