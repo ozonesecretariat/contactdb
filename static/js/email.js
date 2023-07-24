@@ -8,21 +8,19 @@ function addTagToEmailBody(tag){
     CKEDITOR.instances['id_content'].setData(data + tag);
 }
 
-function showTags(){
 
-    tags = document.getElementById("tags-container")
-    if (tags.hidden)
-    {
+const myCheckbox = document.getElementById('id_send_personalised_emails');
+
+myCheckbox.addEventListener('change', function() {
+  tags = document.getElementById("tags-container")
+  if (myCheckbox.checked) {
         document.querySelector('#hidden-cc-groups').innerHTML = '';
         document.querySelector('#hidden-cc-contacts').innerHTML = '';
         document.querySelector('#cc-container').style.display = 'none';
 
         tags.hidden = false;
-    }
-    else
-    {
-        document.querySelector('#cc-container').style.display = 'block';
+  } else {
+    document.querySelector('#cc-container').style.display = 'block';
         tags.hidden = true;
-    }
-
-}
+  }
+});
