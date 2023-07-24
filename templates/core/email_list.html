@@ -15,9 +15,9 @@
         {% for email in object_list %}
             <div class="position-relative my-2 email-row">
                 <a class="stretched-link" href="{% url 'email-detail' email.pk %}"></a>
-                <div class="d-flex gap-3 flex-wrap justify-content-between p-2">
+                <div class="d-flex gap-3 flex-nowrap justify-content-between p-2">
 
-                    <div class="fit-content">{{ email }}</div>
+                    <div class="fit-content text-truncate">{{ email }}</div>
                     <div class="fit-content text-muted date-column">
                         {{ email.created_at }}
                     </div>

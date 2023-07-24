@@ -1,39 +1,12 @@
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, send_mass_mail
 from django.db import models
+from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 from ckeditor.fields import RichTextField
 from django.contrib.postgres.fields import ArrayField
 
 from core.utils import ConflictResolutionMethods
-
-
-class SendMailTask(TaskRQ):
-    """Can be used to send email asynchronously. Example usage:
-
-    SendMailTask.objects.create(
-        recipient="test@example.com",
-        subject="[Test email] subject here",
-        message="Hello world",
-    ).run(is_async=True)
-    """
-
-    DEFAULT_VERBOSITY = 2
-    TASK_QUEUE = "default"
-    TASK_TIMEOUT = 60
-    LOG_TO_FIELD = True
-    LOG_TO_FILE = False
-
-    recipient = models.EmailField()
-    subject = models.CharField(max_length=1024)
-    message = models.TextField()
-
-    class Meta:
-        get_latest_by = "created_on"
-
-    @staticmethod
-    def get_jobclass():
-        from .jobs import SendMailJob
-
-        return SendMailJob
 
 
 class LoadKronosEventsTask(TaskRQ):
@@ -171,19 +144,102 @@ class Group(models.Model):
         return self.name
 
 
+class NoRecipients(Exception):
+    pass
+
+
 class Emails(models.Model):
     recipients = models.ManyToManyField(Record, related_name="recipients")
     cc = models.ManyToManyField(Record, related_name="cc", verbose_name="CC")
-    title = models.TextField()
+    subject = models.TextField()
     content = RichTextField()
-    groups = models.ManyToManyField(Group, blank=False, null=True)
+    groups = models.ManyToManyField(Group, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    send_personalised_emails = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return self.subject
+
+    def send(self):
+        if not self.recipients:
+            raise NoRecipients("No recipients found.")
+
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipients = []
+        cc = []
+
+        if not self.send_personalised_emails:
+            for contact in self.recipients.all():
+                recipients += contact.emails
+
+            for contact in self.cc.all():
+                cc += contact.emails
+            print(cc)
+            text_content = strip_tags(self.content)
+
+            email = EmailMultiAlternatives(
+                subject=self.subject,
+                from_email=from_email,
+                to=recipients,
+                cc=cc,
+                body=text_content,
+            )
+
+            email.attach_alternative(self.content, "text/html")
+            email.send()
+        else:
+            messages = []
+            for contact in self.recipients.all():
+                subject = self.subject.strip()
+                content = self.content.strip()
+
+                for tag in EmailTag.objects.all():
+                    subject = subject.replace(
+                        str(tag), getattr(contact, tag.field_name)
+                    )
+                    content = content.replace(
+                        str(tag), getattr(contact, tag.field_name)
+                    )
+
+                message = (
+                    subject,
+                    content,
+                    from_email,
+                    contact.emails,
+                )
+                messages.append(message)
+            send_mass_mail(messages, fail_silently=False)
 
     class Meta:
         verbose_name_plural = "e-mails"
+
+
+class SendMailTask(TaskRQ):
+    """Can be used to send email asynchronously. Example usage:
+
+    SendMailTask.objects.create(
+        recipient="test@example.com",
+        subject="[Test email] subject here",
+        message="Hello world",
+    ).run(is_async=True)
+    """
+
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 60
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    email = models.ForeignKey(Emails, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        get_latest_by = "created_on"
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import SendMailJob
+
+        return SendMailJob
 
 
 class LoadKronosParticipantsTask(TaskRQ):
@@ -268,3 +324,11 @@ class TemporaryContact(models.Model):
 
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+
+class EmailTag(models.Model):
+    name = models.CharField(max_length=20, blank=False, null=False)
+    field_name = models.CharField(max_length=20, blank=False, null=False)
+
+    def __str__(self):
+        return "{{ " + self.name + " }}"

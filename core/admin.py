@@ -12,22 +12,18 @@ from core.models import (
     KronosEvent,
     LoadKronosParticipantsTask,
     ResolveAllConflictsTask,
+    EmailTag,
 )
 
 
 @admin.register(SendMailTask)
 class SendMailTaskAdmin(TaskAdmin):
     search_fields = [
-        "subject",
-        "recipient",
+        "email",
     ]
     list_display = [
         "__str__",
-        "recipient",
-        "subject",
-        "created_on",
-        "duration_display",
-        "status_display",
+        "email",
     ]
     ordering = ("-created_on",)
 
@@ -127,7 +123,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(Emails)
 class EmailsAdmin(admin.ModelAdmin):
-    list_display = ["title", "created_at"]
+    list_display = ["subject", "created_at"]
     ordering = ["-created_at"]
     readonly_fields = ("created_at",)
     fieldsets = (
@@ -138,9 +134,9 @@ class EmailsAdmin(admin.ModelAdmin):
                     "recipients",
                     "cc",
                     "groups",
-                    "title",
+                    "subject",
                     "content",
-                    "created_at",
+                    "send_personalised_emals" "created_at",
                 )
             },
         ),
@@ -148,7 +144,7 @@ class EmailsAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return self.readonly_fields + ("recipients", "cc", "groups", "title")
+            return self.readonly_fields + ("recipients", "cc", "groups", "subject")
         return self.readonly_fields
 
 
@@ -166,3 +162,11 @@ class KronosEventAdmin(admin.ModelAdmin):
         "dates",
     ]
     list_filter = ["venue_country", "start_date", "end_date"]
+
+
+@admin.register(EmailTag)
+class EmailTagAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
+        "field_name",
+    ]

@@ -48,6 +48,7 @@ from core.models import (
     KronosEvent,
     ResolveAllConflictsTask,
     TemporaryContact,
+    SendMailTask,
 )
 from core.tables import (
     RecordTable,
@@ -633,61 +634,86 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
     def has_permission(self):
         return self.request.user.can_send_mail
 
-    def log_sent_email(self, title, content, recipients, groups=None):
+    def log_sent_email(
+        self,
+        subject,
+        content,
+        recipients,
+        cc,
+        send_personalised_emails=False,
+        groups=None,
+        cc_groups=None,
+    ):
         email = Emails.objects.create(
-            title=title,
+            subject=subject,
             content=content,
+            send_personalised_emails=send_personalised_emails,
         )
         if groups:
-            email.groups.set(groups)
-        email.recipients.set(recipients)
-        email.save()
+            email.groups.add(*groups)
 
-    def post(self, request, *args, **kwargs):
+        if cc_groups:
+            email.groups.add(*cc_groups)
+
+        email.recipients.set(recipients)
+        if cc:
+            email.cc.set(cc)
+
+        return email
+
+    def post(self, request, true=None, *args, **kwargs):
         form = self.get_form()
         form.is_valid()
 
-        try:
-            groups = Group.objects.filter(id__in=form.cleaned_data["groups"])
-            contacts = Record.objects.filter(group__in=groups)
-            recipients = []
-            for contact in contacts:
-                recipients += contact.emails
-            send_mail(
-                subject=form.cleaned_data["title"],
-                message=form.cleaned_data["content"],
-                from_email=None,
-                recipient_list=recipients,
-            )
-            self.log_sent_email(
-                form.cleaned_data["title"],
-                form.cleaned_data["content"],
-                contacts,
-                groups,
-            )
-            messages.success(request, "Successfully sent emails!.")
-            return redirect(reverse("emails-page"))
-        except KeyError:
-            pass
+        contacts = []
+        groups_ids = form.cleaned_data.get("groups")
+        members = form.cleaned_data.get("members")
+        groups = None
 
-        try:
-            contacts = Record.objects.filter(id__in=form.cleaned_data["members"])
-            recipients = []
-            for contact in contacts:
-                recipients += contact.emails
-            send_mail(
-                subject=form.cleaned_data["title"],
-                message=form.cleaned_data["content"],
-                from_email=None,
-                recipient_list=recipients,
-            )
-            self.log_sent_email(
-                form.cleaned_data["title"], form.cleaned_data["content"], contacts
-            )
-            messages.success(request, "Successfully sent emails!.")
+        if groups_ids:
+            groups = Group.objects.filter(id__in=groups_ids)
+            contacts = Record.objects.filter(group__in=groups)
+        elif members:
+            contacts = Record.objects.filter(id__in=members)
+
+        cc_contacts = []
+        cc_groups_ids = form.cleaned_data.get("cc_groups")
+        cc_ids = form.cleaned_data.get("cc")
+        print(cc_ids)
+        cc_groups = None
+
+        if cc_groups_ids:
+            cc_groups = Group.objects.filter(id__in=cc_groups_ids)
+            cc_contacts = Record.objects.filter(group__in=cc_groups)
+            print(cc_contacts)
+        elif cc_ids:
+            cc_contacts = Record.objects.filter(id__in=cc_ids)
+
+        if contacts:
+            if form.cleaned_data["send_personalised_emails"]:
+                email = self.log_sent_email(
+                    form.cleaned_data["subject"],
+                    form.cleaned_data["content"],
+                    contacts,
+                    None,
+                    form.cleaned_data["send_personalised_emails"],
+                    groups,
+                    None,
+                )
+            else:
+                email = self.log_sent_email(
+                    form.cleaned_data["subject"],
+                    form.cleaned_data["content"],
+                    contacts,
+                    cc_contacts,
+                    form.cleaned_data["send_personalised_emails"],
+                    groups,
+                    cc_groups,
+                )
+            SendMailTask.objects.create(email=email).run(is_async=true)
+
+            messages.success(request, "Successfully created task for sending emails!")
             return redirect(reverse("emails-page"))
-        except KeyError:
-            pass
 
         messages.info(request, "No contact selected!")
         return redirect(reverse("emails-page"))
