@@ -17,7 +17,7 @@
                                  {% if registration_status.code %}
                                     {{ registration_status.code }}
                                  {% else %}
-                                    <span class="text-muted">None</span>
+                                    <span class="text-muted">-------</span>
                                  {% endif %}
                              </div>
 
@@ -28,7 +28,7 @@
                                  {% if registration_status.status %}
                                  {{ registration_status.status }}
                                  {% else %}
-                                 <span class="text-muted">None</span>
+                                 <span class="text-muted">-------</span>
                                  {% endif %}
                              </div>
                          </div>
@@ -38,7 +38,13 @@
                      <div>
                          <div class="fit-content m-2">
                              <div class="label">Is Funded</div>
-                             <div class="{% if registration_status.is_funded %} text-success {% else %} text-danger {% endif %}">{{ registration_status.is_funded }}</div>
+                             <div class="{% if registration_status.is_funded %} text-success {% else %} text-danger {% endif %}">
+                                 {% if registration_status.is_funded %}
+                                    <i class="bi bi-check-lg fs-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg fs-5"></i>
+                                {% endif %}
+                             </div>
                          </div>
                          <div class="fit-content m-2">
                              <div class="label">Role</div>
@@ -46,7 +52,7 @@
                                  {% if registration_status.role %}
                                     {{ registration_status.role }}
                                  {% else %}
-                                    <span class="text-muted">None</span>
+                                    <span class="text-muted">-------</span>
                                  {% endif %}
                              </div>
                          </div>
@@ -58,7 +64,7 @@
                                  {% if registration_status.priority_pass_code %}
                                     {{ registration_status.priority_pass_code }}
                                  {% else %}
-                                    <span class="text-muted">None</span>
+                                    <span class="text-muted">-------</span>
                                  {% endif %}
                              </div>
                          </div>
@@ -66,7 +72,7 @@
                          <div class="fit-content m-2">
                              <div class="label">Tags</div>
                              {% if registration_status.tags|length == 0 %}
-                                <div  class="text-muted">None</div>
+                                <div  class="text-muted">-------</div>
                              {% else %}
                                 <div>{% for tag in registration_status.tags %}{{ tag }}, {% endfor %}</div>
                              {% endif %}

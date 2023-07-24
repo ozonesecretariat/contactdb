@@ -13,19 +13,23 @@
                 </div>
                 {% endfor %}
             {% else %}
-                <span class="fw-bold fst-italic {% if compare_field|length > 0 %} text-danger {% else %} text-success {% endif %}">None</span>
+                <span class="fw-bold fst-italic {% if compare_field|length > 0 %} text-danger {% else %} text-success {% endif %}">-------</span>
             {% endif %}
         </div>
     {% elif is_bool %}
         <div class="fw-bold {% if field != compare_field %} text-danger {% else %} text-success {% endif %}">
-            {{ field }}
+            {% if field %}
+                <i class="bi bi-check-lg fs-5"></i>
+            {% else %}
+                <i class="bi bi-x-lg fs-5"></i>
+            {% endif %}
         </div>
     {% else %}
         <div class="fw-bold {% if field != compare_field %} text-danger {% else %} text-success {% endif %}">
             {% if field %}
                 {{ field }}
             {% else %}
-                <span class="fst-italic">None</span>
+                <span class="fst-italic">-------</span>
             {% endif %}
         </div>
     {% endif %}

@@ -48,8 +48,12 @@
                 <div class="label">
                     Sent personalised emails
                 </div>
-                <div class="fs-4 mb-3">
-                    {{ object.send_personalised_emails }}
+                <div class="fs-4 ">
+                    {% if object.send_personalised_emails %}
+                        <i class="bi bi-check-lg fs-5 text-success"></i>
+                    {% else %}
+                        <i class="bi bi-x-lg fs-5 text-danger"></i>
+                    {% endif %}
                 </div>
             </div>
         </div>

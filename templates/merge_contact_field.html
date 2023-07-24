@@ -11,19 +11,23 @@
                 </div>
                 {% endfor %}
             {% else %}
-                <span class="fw-bold fst-italic text-muted">None</span>
+                <span class="fw-bold fst-italic text-muted">-------</span>
             {% endif %}
         </div>
     {% elif is_bool %}
         <div class="{% if field %} text-success {% else %} text-danger {% endif %} ">
-            {{ field }}
+            {% if field %}
+                <i class="bi bi-check-lg fs-5"></i>
+            {% else %}
+                <i class="bi bi-x-lg fs-5"></i>
+            {% endif %}
         </div>
     {% else %}
         <div class="text-break">
             {% if field %}
                 {{ field }}
             {% else %}
-                <span class="fst-italic text-muted">None</span>
+                <span class="fst-italic text-muted">-------</span>
             {% endif %}
         </div>
     {% endif %}
