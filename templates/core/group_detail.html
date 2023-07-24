@@ -67,9 +67,15 @@
                     <div class="fs-2">
                         Description
                     </div>
-                    <div class="">
-                        {{ object.description }}
-                    </div>
+                     {% if object.description %}
+                        <div class="">
+                            {{ object.description }}
+                        </div>
+                     {% else %}
+                        <div class="text-muted">
+                            -------
+                        </div>
+                     {% endif %}
                 </div>
             </div>
             <div class="bg-white  mb-4 p-5 shadow rounded-2">
