@@ -16,8 +16,13 @@ def add_classes(value, arg):
     args = arg.split(" ")
     for a in args:
         classes.append(a)
-    classes_string = default_classes + " ".join(classes)
+    classes_string = default_classes + " " + " ".join(classes)
     return value.as_widget(attrs={"class": classes_string, "placeholder": ""})
+
+
+@register.filter(name="add_id")
+def add_id(value, arg):
+    return value.as_widget(attrs={"id": arg})
 
 
 @register.filter(name="get_fields")

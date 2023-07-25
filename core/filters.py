@@ -2,7 +2,14 @@ import django_filters
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 
-from core.models import Record, Organization, RegistrationStatus, Group, Emails
+from core.models import (
+    Record,
+    Organization,
+    RegistrationStatus,
+    Group,
+    Emails,
+    KronosEvent,
+)
 from django import forms
 
 MAILING_LIST = (
@@ -29,7 +36,7 @@ class RecordFilter(django_filters.FilterSet):
     )
     organization = django_filters.ChoiceFilter(
         choices=Organization.objects.all().values_list("id", "name"),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "organization"}),
     )
     emails = django_filters.CharFilter(
         method="email_search", widget=forms.TextInput(attrs={"class": "form-control"})
@@ -37,6 +44,11 @@ class RecordFilter(django_filters.FilterSet):
     phones_faxes = django_filters.CharFilter(
         method="phone_faxes_search",
         widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    event = django_filters.ChoiceFilter(
+        choices=KronosEvent.objects.all().values_list("id", "title"),
+        widget=forms.Select(attrs={"class": "kronos-event"}),
+        method="kronos_event_filter",
     )
 
     class Meta:
@@ -50,6 +62,7 @@ class RecordFilter(django_filters.FilterSet):
             "organization",
             "emails",
             "phones_faxes",
+            "event",
         ]
 
     def name_search(self, queryset, name, value):
@@ -70,6 +83,9 @@ class RecordFilter(django_filters.FilterSet):
             | Q(mobiles__icontains=value)
             | Q(faxes__icontains=value)
         )
+
+    def kronos_event_filter(self, queryset, name, value):
+        return queryset.filter(registrationstatus__event_id=value)
 
 
 class RegistrationStatusFilter(django_filters.FilterSet):
