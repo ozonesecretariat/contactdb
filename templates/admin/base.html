@@ -9,11 +9,13 @@
 
 
 {% block userlinks %}
+  <a href="{% url 'home' %}">Main Site</a> /
   {% if user.has_usable_password %}
     <a href="{% url 'admin:password_change' %}">Change password</a> /
   {% endif %}
 
   <a href="{% url 'two_factor:profile' %}">Security</a> /
+
 
   <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
     {% csrf_token %}
