@@ -2,11 +2,12 @@ import logging
 from copy import copy
 
 from django.db import connection
+from django.db.models import Q
 from django_task.job import Job
 from django.core.mail import send_mail, send_mass_mail
 
 from core import kronos
-from core.models import TemporaryContact, EmailTag
+from core.models import TemporaryContact, EmailTag, Group, Record
 from core.parsers import KronosEventsParser, KronosParticipantsParser
 from core.utils import ConflictResolutionMethods, update_object
 
@@ -51,6 +52,27 @@ class LoadKronosParticipants(Job):
             response = kronos_client.get_participants(event_ids)
             parser = KronosParticipantsParser(task=task)
             parser.parse_contact_list(response.get("records"))
+
+            for event in task.kronos_events.all():
+                if event.group:
+                    participants = Record.objects.filter(
+                        Q(registrationstatus__event_id=event.id)
+                        & ~Q(group__id=event.group.id)
+                    )
+                    event.group.contacts.add(*participants)
+                    task.log(
+                        logging.INFO,
+                        f"Added {participants.count()} to {event.group} group",
+                    )
+                elif task.create_groups:
+                    task.log(logging.INFO, f"Create group for {event} event")
+                    group = Group.objects.create(name=event.title)
+                    group.contacts.set(
+                        Record.objects.filter(registrationstatus__event_id=event.id)
+                    )
+                    event.group = group
+                    event.save()
+
             task.description = (
                 f"Imported participants from the next events: {' '.join(event_ids)}."
             )

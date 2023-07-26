@@ -835,7 +835,10 @@ class RunKronosParticipantsImport(
     def form_valid(self, form):
         event_ids = form.cleaned_data.get("events")
         events = KronosEvent.objects.filter(id__in=event_ids)
-        task = LoadKronosParticipantsTask.objects.create(created_by=self.request.user)
+        task = LoadKronosParticipantsTask.objects.create(
+            created_by=self.request.user,
+            create_groups=form.cleaned_data.get("create_groups"),
+        )
         task.kronos_events.set(events)
         task.run(is_async=True)
         return super().form_valid(form)

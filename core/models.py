@@ -98,6 +98,17 @@ class Record(models.Model):
         return self.main_contact is not None
 
 
+class Group(models.Model):
+    name = models.CharField(max_length=250, null=False, blank=False)
+    description = models.TextField(blank=True, null=True)
+    contacts = models.ManyToManyField(Record, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class KronosEvent(models.Model):
     event_id = models.CharField(max_length=150, blank=False, null=False, unique=True)
     code = models.CharField(max_length=50, blank=False, null=False)
@@ -107,6 +118,7 @@ class KronosEvent(models.Model):
     venue_country = models.CharField(max_length=50)
     venue_city = models.CharField(max_length=150)
     dates = models.CharField(max_length=255)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, default=None, null=True)
 
     def __str__(self):
         return self.title
@@ -141,17 +153,6 @@ class RegistrationStatus(models.Model):
 
     class Meta:
         verbose_name_plural = "registration statuses"
-
-
-class Group(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False)
-    description = models.TextField(blank=True, null=True)
-    contacts = models.ManyToManyField(Record, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
 
 
 class NoRecipients(Exception):
@@ -260,6 +261,7 @@ class LoadKronosParticipantsTask(TaskRQ):
     LOG_TO_FILE = False
 
     kronos_events = models.ManyToManyField(KronosEvent)
+    create_groups = models.BooleanField(default=False)
 
     class Meta:
         get_latest_by = "created_on"

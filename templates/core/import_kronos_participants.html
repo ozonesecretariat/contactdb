@@ -55,6 +55,11 @@
                 </div>
             {% endfor %}
 
+            <div class="my-2">
+                {{ form.create_groups }}
+                {{ form.create_groups.label }}
+            </div>
+
             <div class="d-grid gap-3 d-md-flex justify-content-md-start mt-3">
                 <input class="btn btn-main-color " type="submit" value="Import contacts from Kronos" {% if kronos_participants_importing %} disabled {% endif %}>
                 {% if form.non_field_errors|length > 0 %}
