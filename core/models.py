@@ -111,6 +111,16 @@ class KronosEvent(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def imported_participants(self):
+        return self.loadkronosparticipantstask_set.exists()
+
+    @property
+    def latest_import(self):
+        if self.imported_participants:
+            return self.loadkronosparticipantstask_set.latest()
+        return None
+
     class Meta:
         verbose_name_plural = "kronos events"
 

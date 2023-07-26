@@ -811,6 +811,8 @@ class RunKronosParticipantsImport(
         if TemporaryContact.objects.exists():
             context["conflicts"] = True
 
+        context["events"] = KronosEvent.objects.all()
+
         return context
 
     def has_permission(self):

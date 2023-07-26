@@ -150,6 +150,11 @@ body{
     background-color: blue;
 }
 
+.square{
+    height: 1rem;
+    width: 1rem;
+}
+
 .progress .indeterminate:before {
     content: '';
     position: absolute;
