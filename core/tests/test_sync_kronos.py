@@ -1,6 +1,10 @@
+import datetime
+
 import pytest
 from django.urls import reverse
+from django.utils.timezone import make_aware
 
+from core.kronos import Client
 from core.models import (
     KronosEvent,
     LoadKronosEventsTask,
@@ -10,6 +14,7 @@ from core.models import (
     Organization,
     ResolveAllConflictsTask,
     TemporaryContact,
+    Group,
 )
 from core.parsers import KronosParticipantsParser, KronosEventsParser
 from core.utils import ConflictResolutionMethods
@@ -73,6 +78,81 @@ def test_kronos_events_parser():
     assert KronosEvent.objects.filter(event_id="52000000000000c00001607").count() == 1
 
 
+def test_create_groups_at_import(first_organization, kronos_event, contact, mocker):
+    first_organization.save()
+    kronos_event.save()
+    contact.save()
+    RegistrationStatus.objects.create(
+        contact=contact,
+        event=kronos_event,
+        is_funded=False,
+        code="OSA2W",
+        status=1,
+        date=make_aware(datetime.datetime.now()),
+        tags=[],
+    )
+
+    task = LoadKronosParticipantsTask(create_groups=True)
+    task.save()
+    task.kronos_events.add(kronos_event)
+
+    mocker.patch.object(Client, "login")
+    mocker.patch.object(Client, "get_participants")
+    mocker.patch.object(KronosParticipantsParser, "parse_contact_list")
+
+    task.run(is_async=False)
+
+    kronos_event.refresh_from_db()
+    Client.login.assert_called_once()
+    Client.get_participants.assert_called_once()
+    KronosParticipantsParser.parse_contact_list.assert_called_once()
+    assert Group.objects.count() == 1
+    assert Group.objects.first() == kronos_event.group
+    assert kronos_event.group.contacts.count() == 1
+    assert kronos_event.group.contacts.first() == contact
+
+
+def test_update_group_at_import(
+    first_organization, kronos_event, group, other_contact, contact, mocker
+):
+    first_organization.save()
+    group.save()
+    other_contact.save()
+    group.contacts.add(other_contact)
+    kronos_event.group = group
+    kronos_event.save()
+    contact.save()
+    RegistrationStatus.objects.create(
+        contact=contact,
+        event=kronos_event,
+        is_funded=False,
+        code="OSA2W",
+        status=1,
+        date=make_aware(datetime.datetime.now()),
+        tags=[],
+    )
+
+    task = LoadKronosParticipantsTask(create_groups=True)
+    task.save()
+    task.kronos_events.add(kronos_event)
+
+    mocker.patch.object(Client, "login")
+    mocker.patch.object(Client, "get_participants")
+    mocker.patch.object(KronosParticipantsParser, "parse_contact_list")
+
+    task.run(is_async=False)
+
+    kronos_event.refresh_from_db()
+    Client.login.assert_called_once()
+    Client.get_participants.assert_called_once()
+    KronosParticipantsParser.parse_contact_list.assert_called_once()
+    assert Group.objects.count() == 1
+    assert Group.objects.first() == kronos_event.group
+    assert kronos_event.group == group
+    assert kronos_event.group.contacts.count() == 2
+    assert [other_contact, contact] == list(kronos_event.group.contacts.all())
+
+
 def test_create_import_participants_task(login_user_can_import, kronos_event, mocker):
     client, user = login_user_can_import
 
@@ -110,7 +190,7 @@ def test_kronos_participants_parser(kronos_event):
             },
             "registrationStatuses": [
                 {
-                    "eventId": "52000000cbd0495c00001879",
+                    "eventId": "520345543cbd0495c00001879",
                     "code": "GGG-MOP-34",
                     "status": 4,
                     "date": "2022-10-31T13:54:47.914Z",
@@ -158,7 +238,7 @@ def test_kronos_participants_parser(kronos_event):
             },
             "registrationStatuses": [
                 {
-                    "eventId": "52000000cbd0495c00001879",
+                    "eventId": "520345543cbd0495c00001879",
                     "code": "OOOOO-MOP-34",
                     "status": 4,
                     "date": "2022-10-30T16:57:48.138Z",
@@ -228,7 +308,7 @@ def test_kronos_participants_parser_conflict(
             },
             "registrationStatuses": [
                 {
-                    "eventId": "52000000cbd0495c00001879",
+                    "eventId": "520345543cbd0495c00001879",
                     "code": "GGG-MOP-34",
                     "status": 4,
                     "date": "2022-10-31T13:54:47.914Z",
@@ -276,7 +356,7 @@ def test_kronos_participants_parser_conflict(
             },
             "registrationStatuses": [
                 {
-                    "eventId": "52000000cbd0495c00001879",
+                    "eventId": "520345543cbd0495c00001879",
                     "code": "OOOOO-MOP-34",
                     "status": 4,
                     "date": "2022-10-30T16:57:48.138Z",

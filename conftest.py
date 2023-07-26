@@ -118,7 +118,7 @@ def third_contact(db, snd_organization):
 
 
 @pytest.fixture
-def group(db, contact, other_contact):
+def group(db):
     return Group(name="Group1", description="This is a test description")
 
 
@@ -130,9 +130,9 @@ def other_group(db):
 @pytest.fixture
 def kronos_event(db):
     return KronosEvent(
-        event_id="52000000cbd0495c00001879",
+        event_id="520345543cbd0495c00001879",
         code="005639",
-        title="59th Meeting of the Implementation Committee Under the Non-Compliance Procedure of the Montreal Protocol (UNEP Ozone Secretariat)",
+        title="Event title",
         start_date=make_aware(
             datetime.strptime("2017-11-18T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
         ),
@@ -141,7 +141,7 @@ def kronos_event(db):
         ),
         venue_country="ca",
         venue_city="Montreal",
-        dates="18 November 2017",
+        dates="13 November 2010",
     )
 
 
