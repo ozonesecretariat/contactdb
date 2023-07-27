@@ -128,6 +128,9 @@ class KronosParticipantsImportForm(Form):
     events = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
     )
+    create_groups = forms.BooleanField(
+        label="Create a group for each event", required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -7,6 +7,7 @@
 {% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="{% static 'contacts.css' %}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
@@ -19,9 +20,9 @@
           hx-indicator=".progress"
           class="form-inline"
     >
-      <div class="d-flex flex-column justify-content-around height-190">
+      <div class="d-flex flex-column justify-content-around">
         <div class="fw-bold">{% trans "Filter by:" %}</div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="d-flex flex-row align-items-center my-2">
           <div>{% trans "Is in mailing list:" %}</div>
           <div class="width-100 ml-15">
             {{ filter.form.is_in_mailing_list }}
@@ -32,12 +33,20 @@
           </div>
         </div>
 
-        <div class="d-flex flex-row align-items-center">
+        <div class="d-flex flex-row align-items-center my-2">
           <div>{% trans "Organization:" %}</div>
-          <div class="width-430 ml-15">
+          <div class="width-455 ml-15">
             {{ filter.form.organization }}
           </div>
         </div>
+
+        <div class="d-flex flex-row align-items-center my-2">
+          <div>{% trans "Event:" %}</div>
+          <div class="width-455 ml-15">
+            {{ filter.form.event }}
+          </div>
+        </div>
+
         <button type="submit" class="btn btn-main-color width-100">{% trans "Apply" %}</button>
       </div>
 
@@ -163,6 +172,7 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/contact_filters.js' %}" ></script>
   <script>
     function showInput() {
       if (document.getElementById("name").checked) {

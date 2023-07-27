@@ -22,15 +22,43 @@
               hx-post="{% url 'kronos-participants-import' %}"
               hx-target="div.kronos-participants-form"
               hx-swap="outerHTML">{% csrf_token %}
-            <div class="label">Select events<span class="text-danger">*</span></div>
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
+                <div class="label">Select events<span class="text-danger">*</span></div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="square main-color-light">
+
+                    </div>
+                    <span class="label">
+                        Participants already imported
+                    </span>
+                </div>
+            </div>
+
             <div class="overflow-scroll border rounded-2 p-5" style="max-height: 500px;">
-                {{ form.events }}
+
+                {% for event in events %}
+                    <div class="my-1 p-2 {% if event.imported_participants %} main-color-light d-flex justify-content-between flex-wrap {% endif %}">
+
+                        <label for="id_events_{{ forloop.counter }}">
+                            <input type="checkbox" name="events" value="{{ event.id }}" id="id_events_{{ forloop.counter }}">
+
+                        {{ event.title }}</label>
+                        {% if event.imported_participants %}
+                            <span class="text-danger float-end"> Latest import on {{ event.latest_import.completed_on }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
             {% for error in form.events.errors %}
                 <div class="text-danger my-1">
                     {{ error|escape }}
                 </div>
             {% endfor %}
+
+            <div class="my-2">
+                {{ form.create_groups }}
+                {{ form.create_groups.label }}
+            </div>
 
             <div class="d-grid gap-3 d-md-flex justify-content-md-start mt-3">
                 <input class="btn btn-main-color " type="submit" value="Import contacts from Kronos" {% if kronos_participants_importing %} disabled {% endif %}>
