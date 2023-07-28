@@ -13,6 +13,7 @@ from core.models import (
     LoadKronosParticipantsTask,
     ResolveAllConflictsTask,
     EmailTag,
+    EmailTemplate,
 )
 
 
@@ -118,6 +119,12 @@ class RecordAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
+    search_fields = ["name"]
+
+
+@admin.register(EmailTemplate)
+class EmailTemplateAdmin(admin.ModelAdmin):
+    list_display = ["name"]
     search_fields = ["name"]
 
 

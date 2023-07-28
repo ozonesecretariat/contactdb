@@ -159,6 +159,14 @@ class NoRecipients(Exception):
     pass
 
 
+class EmailTemplate(models.Model):
+    name = models.CharField(max_length=100)
+    html_content = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
 class Emails(models.Model):
     recipients = models.ManyToManyField(Record, related_name="recipients")
     cc = models.ManyToManyField(Record, related_name="cc", verbose_name="CC")

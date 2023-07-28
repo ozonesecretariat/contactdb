@@ -49,6 +49,7 @@ from core.models import (
     ResolveAllConflictsTask,
     TemporaryContact,
     SendMailTask,
+    EmailTemplate,
 )
 from core.tables import (
     RecordTable,
@@ -633,6 +634,13 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
 
     def has_permission(self):
         return self.request.user.can_send_mail
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["email_templates"] = EmailTemplate.objects.all()
+
+        return context
 
     def log_sent_email(
         self,

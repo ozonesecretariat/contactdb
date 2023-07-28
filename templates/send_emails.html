@@ -361,10 +361,48 @@
 
         </div>
       </div>
+        <div class="d-grip gap-3 d-md-flex justify-content-md-between mt-4">
+            <input class="btn btn-secondary" type="button" value="Choose a template" onclick="openDialog()" >
+            <input class="btn btn-success button-success-shadow width-100" type="submit" value="Send">
+        </div>
 
-      <input class="btn btn-success button-success-shadow width-100" type="submit" value="Send" style="margin-top:20px;">
     </div>
   </form>
+
+
+    <dialog id="myDialog" class="rounded-2 shadow p-5">
+        <div >
+            <div class="fs-4">
+                Select a template for the email
+            </div>
+            <div class="label mt-4">
+                Email template
+            </div>
+
+                <select class="templates" id="emails_templates">
+                    {% for template in email_templates %}
+                        <option value="{{ template.id }}" >{{ template }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="label mt-4"> Preview</div>
+
+                <div class="p-4 rounded-2 border overflow-scroll" style="max-height: 500px">
+                    {% for template in email_templates %}
+                        <div id="template_html_{{ template.id }}" {% if not forloop.first %} hidden="hidden" {% endif %}>
+                            {{ template.html_content|safe }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+
+            <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-4">
+                <button class="btn btn-secondary" onclick="closeDialog()">Close</button>
+                <button class="btn btn-main-color" onclick="selectTemplate()">Select template</button>
+            </div>
+        </div>
+    </dialog>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -376,6 +414,20 @@
   <script src="{% static 'js/email.js' %}" ></script>
   <script src="{% static 'js/contact_filters.js' %}" ></script>
   <script>
+
+
+    function openDialog() {
+          var dialog = document.getElementById("myDialog");
+          dialog.showModal();
+          $('.templates').select2({width: '100%', dropdownParent: dialog});
+
+        }
+
+    function closeDialog() {
+          var dialog = document.getElementById("myDialog");
+
+          dialog.close();
+        }
 
     function updateSelection(){
 
@@ -530,6 +582,24 @@
             updateSelectionCC();
         }
     });
+
+    let selectedValue = $('#emails_templates').val();
+    $(document.body).on("change","#emails_templates",function(){
+       const preview_id = "#template_html_" + selectedValue;
+       $(preview_id).attr("hidden",true);
+
+       const current_preview_id = "#template_html_" + this.value;
+       $(current_preview_id).attr("hidden",false);
+
+       selectedValue = this.value;
+    });
+
+    function selectTemplate(){
+        const html_content_id = "#template_html_" + selectedValue;
+        CKEDITOR.instances['id_content'].setData($(html_content_id).html());
+
+        closeDialog();
+    }
 
   </script>
 {% endblock %}
