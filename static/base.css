@@ -260,3 +260,8 @@ body{
 .text-toggle[aria-expanded=true] .text-collapsed {
   display: none;
 }
+
+.dialog {
+    border: none;
+    max-width: 650px;
+}

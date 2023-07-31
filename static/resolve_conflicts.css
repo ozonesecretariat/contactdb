@@ -1,8 +1,3 @@
 .inner-container{
     min-width: 600px;
 }
-
-#myDialog{
-    border: none;
-    max-width: 650px;
-}
