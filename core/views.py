@@ -627,6 +627,44 @@ class AddMultipleGroupMembersView(
         )
 
 
+class EmailTemplateCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = EmailTemplate
+    fields = "__all__"
+
+    def has_permission(self):
+        return self.request.user.can_send_mail
+
+    def get_success_url(self):
+        return reverse("email-template-create-success")
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return "core/create_email_template.html"
+        return "404.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        raise Http404
+
+
+class EmailTemplateCreateSuccessView(
+    LoginRequiredMixin, PermissionRequiredMixin, TemplateView
+):
+    def has_permission(self):
+        return self.request.user.can_send_mail
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return "core/create_email_template_success.html"
+        return "404.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.htmx:
+            return super().get(request, *args, **kwargs)
+        raise Http404
+
+
 class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterView):
     template_name = "send_emails.html"
     form_class = SendEmailForm

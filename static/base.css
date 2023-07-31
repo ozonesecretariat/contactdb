@@ -261,7 +261,7 @@ body{
   display: none;
 }
 
-#myDialog{
+.dialog {
     border: none;
     max-width: 650px;
 }

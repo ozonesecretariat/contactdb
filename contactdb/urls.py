@@ -57,6 +57,8 @@ from core.views import (
     ContactEmailsHistory,
     GroupEmailsHistory,
     EmailDetailView,
+    EmailTemplateCreateView,
+    EmailTemplateCreateSuccessView,
 )
 
 urlpatterns = [
@@ -210,6 +212,16 @@ urlpatterns = [
     ),
     path("emails/history/", EmailListView.as_view(), name="emails-history"),
     path("emails/<pk>", EmailDetailView.as_view(), name="email-detail"),
+    path(
+        "email_templates/create/",
+        EmailTemplateCreateView.as_view(),
+        name="email-template-create",
+    ),
+    path(
+        "email_templates/create/success/",
+        EmailTemplateCreateSuccessView.as_view(),
+        name="email-template-create-success",
+    ),
 ]
 
 if settings.DEBUG:

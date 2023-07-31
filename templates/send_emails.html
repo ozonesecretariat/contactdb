@@ -361,8 +361,12 @@
 
         </div>
       </div>
-        <div class="d-grip gap-3 d-md-flex justify-content-md-between mt-4">
+        <div class="d-grip gap-3 d-md-flex justify-content-md-start mt-4">
             <input class="btn btn-secondary" type="button" value="Choose a template" onclick="openDialog()" >
+            <input class="btn btn-main-color" type="button" value="Save as template" onclick="openCreateTemplateDialog()" >
+        </div>
+        <div class="d-grip gap-3 d-md-flex justify-content-md-end mt-4">
+
             <input class="btn btn-success button-success-shadow width-100" type="submit" value="Send">
         </div>
 
@@ -370,7 +374,7 @@
   </form>
 
 
-    <dialog id="myDialog" class="rounded-2 shadow p-5">
+    <dialog id="myDialog" class="rounded-2 shadow p-5 dialog">
         <div >
             <div class="fs-4">
                 Select a template for the email
@@ -395,12 +399,15 @@
                     {% endfor %}
                 </div>
 
-
+            <hr class="my-4"/>
             <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-4">
                 <button class="btn btn-secondary" onclick="closeDialog()">Close</button>
                 <button class="btn btn-main-color" onclick="selectTemplate()">Select template</button>
             </div>
         </div>
+    </dialog>
+    <dialog id="createEmailTemplate" class="rounded-2 shadow p-5 dialog" data-url="{% url 'email-template-create' %}">
+        <div class="create-email-template"></div>
     </dialog>
 
 {% endblock %}
@@ -412,6 +419,7 @@
   <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/email.js' %}" ></script>
+  <script src="{% static 'js/create_email_template.js' %}" ></script>
   <script src="{% static 'js/contact_filters.js' %}" ></script>
   <script>
 
