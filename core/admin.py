@@ -14,6 +14,7 @@ from core.models import (
     ResolveAllConflictsTask,
     EmailTag,
     EmailTemplate,
+    EmailFile,
 )
 
 
@@ -125,6 +126,12 @@ class GroupAdmin(admin.ModelAdmin):
 @admin.register(EmailTemplate)
 class EmailTemplateAdmin(admin.ModelAdmin):
     list_display = ["name"]
+    search_fields = ["name"]
+
+
+@admin.register(EmailFile)
+class EmailFileAdmin(admin.ModelAdmin):
+    list_display = ["name", "email"]
     search_fields = ["name"]
 
 

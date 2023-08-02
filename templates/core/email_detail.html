@@ -57,11 +57,6 @@
                 </div>
             </div>
 
-            <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-                <div class="d-grip gap-3 d-md-flex justify-content-md-start mt-4">
-                    <input class="btn btn-main-color" type="button" value="Save as template" onclick="openCreateTemplateDialog(true)" >
-                </div>
-            </div>
         </div>
         <div class="right-section fit-content-height">
 
@@ -99,6 +94,7 @@
                 <div class="fs-2">
                     Content
                 </div>
+
                 <div class="mt-4">
                     <div id="email-content" class="p-4 border rounded-2">
                         {% if object.content %}
@@ -109,6 +105,10 @@
                             <span class="text-muted">-------</span>
                         {% endif %}
                     </div>
+                </div>
+
+                <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-2">
+                    <input class="btn btn-main-color" type="button" value="Save as template" onclick="openCreateTemplateDialog(true)" >
                 </div>
 
             </div>

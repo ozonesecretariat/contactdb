@@ -27,7 +27,7 @@
   </div>
 
 <div class="bg-white rounded-2 shadow p-5 mb-4">
-    <h4>{% trans "Recipients:" %}</h4>
+    <h4>{% trans "Recipients" %}<span class="text-danger">*</span></h4>
     <br/>
     <div class="fw-bold">{% trans "Select contacts by:" %}</div>
     <div>
@@ -176,7 +176,7 @@
 </div>
 
 <div class="bg-white rounded-2 shadow p-5 mb-4" id="cc-container">
-  <h4>{% trans "CC:" %}</h4>
+  <h4>{% trans "CC" %}</h4>
     <br/>
     <div class="fw-bold">{% trans "Select contacts by:" %}</div>
     <div>
@@ -325,7 +325,7 @@
 
 
 
-<form class="d-flex flex-column" method="POST">
+<form class="d-flex flex-column" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
 
     <div id="hidden-recipients-groups" hidden="hidden">
@@ -345,15 +345,15 @@
     </div>
 
     <div class="bg-white rounded-2 shadow p-5 mb-4 d-flex flex-column">
-      <span class="form-check-label">{% trans "Subject:" %}</span>
+      <span class="label">{% trans "Subject" %}<span class="text-danger">*</span></span>
       {{ form.subject }}
       <div class="d-flex flex-wrap mt-4 gap-3">
         <div>
-          <div class="form-check-label">{% trans "Content:" %}</div>
+          <div class="label">{% trans "Content" %}<span class="text-danger">*</span></div>
           {{ form.content }}
         </div>
         <div>
-          <div class="form-check-label">{% trans "Send personalised emails:" %}</div>
+          <div class="label">{% trans "Send personalised emails" %}</div>
           <input type="checkbox" name="send_personalised_emails" id="id_send_personalised_emails">
           <div id="tags-container" hidden="hidden">
             {% email_tags %}
@@ -361,13 +361,17 @@
 
         </div>
       </div>
-        <div class="d-grip gap-3 d-md-flex justify-content-md-start mt-4">
+        <div class="d-grid gap-3 d-md-flex justify-content-md-start mt-4">
             <input class="btn btn-secondary" type="button" value="Choose a template" onclick="openDialog()" >
             <input class="btn btn-main-color" type="button" value="Save as template" onclick="openCreateTemplateDialog()" >
         </div>
-        <div class="d-grip gap-3 d-md-flex justify-content-md-end mt-4">
+        <div class="mt-4">
+            <div class="label">{{ form.files.label }}</div>
+            {{ form.files|add_classes:'form-control' }}
+        </div>
+        <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-4">
 
-            <input class="btn btn-success button-success-shadow width-100" type="submit" value="Send">
+            <input class="btn btn-success" type="submit" value="Send">
         </div>
 
     </div>

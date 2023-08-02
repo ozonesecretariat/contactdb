@@ -50,6 +50,7 @@ from core.models import (
     TemporaryContact,
     SendMailTask,
     EmailTemplate,
+    EmailFile,
 )
 from core.tables import (
     RecordTable,
@@ -725,43 +726,61 @@ class EmailPage(LoginRequiredMixin, PermissionRequiredMixin, FormMixin, FilterVi
         cc_contacts = []
         cc_groups_ids = form.cleaned_data.get("cc_groups")
         cc_ids = form.cleaned_data.get("cc")
-        print(cc_ids)
+
         cc_groups = None
 
         if cc_groups_ids:
             cc_groups = Group.objects.filter(id__in=cc_groups_ids)
             cc_contacts = Record.objects.filter(group__in=cc_groups)
-            print(cc_contacts)
+
         elif cc_ids:
             cc_contacts = Record.objects.filter(id__in=cc_ids)
 
-        if contacts:
-            if form.cleaned_data["send_personalised_emails"]:
-                email = self.log_sent_email(
-                    form.cleaned_data["subject"],
-                    form.cleaned_data["content"],
-                    contacts,
-                    None,
-                    form.cleaned_data["send_personalised_emails"],
-                    groups,
-                    None,
-                )
-            else:
-                email = self.log_sent_email(
-                    form.cleaned_data["subject"],
-                    form.cleaned_data["content"],
-                    contacts,
-                    cc_contacts,
-                    form.cleaned_data["send_personalised_emails"],
-                    groups,
-                    cc_groups,
-                )
-            SendMailTask.objects.create(email=email).run(is_async=true)
+        subject = form.cleaned_data.get("subject")
+        content = form.cleaned_data.get("content")
+        files = form.cleaned_data.get("files")
 
-            messages.success(request, "Successfully created task for sending emails!")
+        if not contacts:
+            messages.info(request, "No contact selected!")
+            return redirect(reverse("emails-page"))
+        if not subject:
+            messages.info(request, "No subject selected!")
+            return redirect(reverse("emails-page"))
+        if not content:
+            messages.info(request, "No content selected!")
             return redirect(reverse("emails-page"))
 
-        messages.info(request, "No contact selected!")
+        if form.cleaned_data["send_personalised_emails"]:
+            email = self.log_sent_email(
+                form.cleaned_data["subject"],
+                form.cleaned_data["content"],
+                contacts,
+                None,
+                form.cleaned_data["send_personalised_emails"],
+                groups,
+                None,
+            )
+        else:
+            email = self.log_sent_email(
+                form.cleaned_data["subject"],
+                form.cleaned_data["content"],
+                contacts,
+                cc_contacts,
+                form.cleaned_data["send_personalised_emails"],
+                groups,
+                cc_groups,
+            )
+        if files:
+            for f in files:
+                print(f)
+                EmailFile.objects.create(
+                    name=f.name,
+                    file=f,
+                    email=email,
+                )
+        SendMailTask.objects.create(email=email).run(is_async=true)
+
+        messages.success(request, "Successfully created task for sending emails!")
         return redirect(reverse("emails-page"))
 
 

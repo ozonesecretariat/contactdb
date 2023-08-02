@@ -233,6 +233,15 @@ class Emails(models.Model):
         verbose_name_plural = "e-mails"
 
 
+class EmailFile(models.Model):
+    name = models.CharField(max_length=100)
+    file = models.FileField(upload_to="email_files/")
+    email = models.ForeignKey(Emails, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
 class SendMailTask(TaskRQ):
     """Can be used to send email asynchronously. Example usage:
 
