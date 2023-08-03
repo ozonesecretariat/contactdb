@@ -254,6 +254,10 @@ class EmailFile(models.Model):
     def path(self):
         return self.file.path
 
+    @property
+    def url(self):
+        return self.file.url
+
 
 class SendMailTask(TaskRQ):
     """Can be used to send email asynchronously. Example usage:
