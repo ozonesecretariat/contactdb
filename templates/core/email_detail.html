@@ -7,6 +7,7 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'record_detail.css' %}">
     <link rel="stylesheet" href="{% static 'group_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'email_detail.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -57,11 +58,6 @@
                 </div>
             </div>
 
-            <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-                <div class="d-grip gap-3 d-md-flex justify-content-md-start mt-4">
-                    <input class="btn btn-main-color" type="button" value="Save as template" onclick="openCreateTemplateDialog(true)" >
-                </div>
-            </div>
         </div>
         <div class="right-section fit-content-height">
 
@@ -96,9 +92,15 @@
                 </div>
             </div>
             <div class="bg-white  mb-4 p-5 shadow rounded-2">
-                <div class="fs-2">
-                    Content
+
+
+                <div class="d-grid gap-3 d-md-flex justify-content-md-between alin-items-md-center">
+                    <div class="fs-2">
+                        Content
+                    </div>
+                    <input class="btn btn-main-color" type="button" value="Save as template" onclick="openCreateTemplateDialog(true)" >
                 </div>
+
                 <div class="mt-4">
                     <div id="email-content" class="p-4 border rounded-2">
                         {% if object.content %}
@@ -110,6 +112,33 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if object.emailfile_set.exists %}
+                    <div class="mt-4">
+                        <div class="label">
+                            Attachments
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap mt-2">
+                            {% for file in object.emailfile_set.all %}
+                                <div class="main-color-light hover-main-color p-2 fit-content rounded-2 group-container position-relative shadow">
+                                    <a href="{{ file.url }}" class="stretched-link"></a>
+                                    <div class="d-flex flex-nowrap align-items-center justify-content-center">
+                                        <div class="mx-1 p-2 rounded-circle d-flex align-items-center justify-content-center group-icon-wrapper">
+                                            <i class="bi bi-paperclip group-icon "></i>
+                                        </div>
+
+
+                                        <div class="me-2 fit-content">
+                                            <div class=" ">
+                                                {{ file.name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                {% endif %}
 
             </div>
         </div>

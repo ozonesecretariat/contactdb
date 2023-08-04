@@ -1,10 +1,20 @@
+import os
 from datetime import datetime
 
 import pytest
-from django.db import connection
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.timezone import make_aware
 
-from core.models import Record, Organization, Group, KronosEvent, TemporaryContact
+from core.models import (
+    Record,
+    Organization,
+    Group,
+    KronosEvent,
+    TemporaryContact,
+    Emails,
+    EmailTag,
+    EmailFile,
+)
 
 
 @pytest.fixture
@@ -45,6 +55,13 @@ def login_user_can_import(db, client, create_user, test_password):
 
 
 @pytest.fixture
+def login_user_can_send_mail(db, client, create_user, test_password):
+    user = create_user(can_send_mail=True)
+    client.login(username=user.get_username(), password=test_password)
+    return client, user
+
+
+@pytest.fixture
 def first_organization(db):
     return Organization(
         organization_id="3baa33cc079ab1d4ff5e27be727613ef",
@@ -72,7 +89,7 @@ def contact(db, first_organization):
         phones=[],
         mobiles=[],
         faxes=[],
-        emails=[],
+        emails=["contact@test.com"],
         email_ccs=[],
         is_in_mailing_list=False,
         is_use_organization_address=False,
@@ -183,3 +200,30 @@ def snd_temporary_contact(db, snd_organization, third_contact):
         is_in_mailing_list=True,
         is_use_organization_address=True,
     )
+
+
+@pytest.fixture
+def email(db):
+    return Emails(
+        subject="Email subject",
+        content="<h1>Email content</h1><p>Test </p>",
+    )
+
+
+@pytest.fixture
+def email_tag_first_name(db):
+    return EmailTag(name="First name", field_name="first_name")
+
+
+@pytest.fixture
+def email_file(db, email):
+    email.save()
+    email_file = EmailFile.objects.create(
+        name="email_file.txt",
+        email=email,
+        file=SimpleUploadedFile("email_file.txt", b"these are the file contents!"),
+    )
+
+    yield email_file
+
+    os.remove(email_file.path)

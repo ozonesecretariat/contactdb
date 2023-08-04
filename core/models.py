@@ -193,21 +193,16 @@ class Emails(models.Model):
 
             for contact in self.cc.all():
                 cc += contact.emails
-            print(cc)
-            text_content = strip_tags(self.content)
 
-            email = EmailMultiAlternatives(
+            self.send_email(
                 subject=self.subject,
-                from_email=from_email,
-                to=recipients,
+                content=self.content,
+                recipients=recipients,
                 cc=cc,
-                body=text_content,
+                from_email=from_email,
+                attachments=self.emailfile_set.all(),
             )
-
-            email.attach_alternative(self.content, "text/html")
-            email.send()
         else:
-            messages = []
             for contact in self.recipients.all():
                 subject = self.subject.strip()
                 content = self.content.strip()
@@ -219,18 +214,49 @@ class Emails(models.Model):
                     content = content.replace(
                         str(tag), getattr(contact, tag.field_name)
                     )
-
-                message = (
-                    subject,
-                    content,
-                    from_email,
-                    contact.emails,
+                self.send_email(
+                    subject=subject,
+                    content=content,
+                    recipients=contact.emails,
+                    cc=[],
+                    from_email=from_email,
+                    attachments=self.emailfile_set.all(),
                 )
-                messages.append(message)
-            send_mass_mail(messages, fail_silently=False)
+
+    @staticmethod
+    def send_email(subject, content, recipients, cc, from_email, attachments):
+        text_content = strip_tags(content)
+        email = EmailMultiAlternatives(
+            subject=subject,
+            from_email=from_email,
+            to=recipients,
+            cc=cc,
+            body=text_content,
+        )
+        email.attach_alternative(content, "text/html")
+        for file in attachments:
+            email.attach_file(file.path)
+        email.send()
 
     class Meta:
         verbose_name_plural = "e-mails"
+
+
+class EmailFile(models.Model):
+    name = models.CharField(max_length=100)
+    file = models.FileField(upload_to="email_files/")
+    email = models.ForeignKey(Emails, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def path(self):
+        return self.file.path
+
+    @property
+    def url(self):
+        return self.file.url
 
 
 class SendMailTask(TaskRQ):
