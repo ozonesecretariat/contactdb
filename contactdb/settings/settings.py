@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     # "django.contrib.admin",
     "contactdb.site.ContactDBAdminConfig",
     "ckeditor",
+    "ckeditor_uploader",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -236,7 +237,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # https://docs.djangoproject.com/en/4.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development
 MEDIA_URL = "/media/"
 MEDIA_ROOT = FS_DIR / "media"
-
+CKEDITOR_UPLOAD_PATH = "uploads/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

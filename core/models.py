@@ -1,3 +1,4 @@
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, send_mass_mail
 from django.db import models
@@ -6,7 +7,7 @@ from django_task.models import TaskRQ
 from ckeditor.fields import RichTextField
 from django.contrib.postgres.fields import ArrayField
 
-from core.utils import ConflictResolutionMethods
+from core.utils import ConflictResolutionMethods, replace_relative_image_urls
 
 
 class LoadKronosEventsTask(TaskRQ):
@@ -161,7 +162,7 @@ class NoRecipients(Exception):
 
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=100)
-    html_content = models.TextField()
+    html_content = RichTextUploadingField()
 
     def __str__(self):
         return self.name
@@ -171,7 +172,7 @@ class Emails(models.Model):
     recipients = models.ManyToManyField(Record, related_name="recipients")
     cc = models.ManyToManyField(Record, related_name="cc", verbose_name="CC")
     subject = models.TextField()
-    content = RichTextField()
+    content = RichTextUploadingField()
     groups = models.ManyToManyField(Group, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     send_personalised_emails = models.BooleanField(default=False)
@@ -233,7 +234,7 @@ class Emails(models.Model):
             cc=cc,
             body=text_content,
         )
-        email.attach_alternative(content, "text/html")
+        email.attach_alternative(replace_relative_image_urls(content), "text/html")
         for file in attachments:
             email.attach_file(file.path)
         email.send()

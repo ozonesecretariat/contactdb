@@ -1,3 +1,9 @@
 .hover-main-color:hover .group-icon{
     color: black;
 }
+
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}

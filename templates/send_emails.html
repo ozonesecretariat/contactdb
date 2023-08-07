@@ -369,11 +369,16 @@
             <div class="label">{{ form.files.label }}</div>
             {{ form.files|add_classes:'form-control' }}
         </div>
-        <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-4">
 
-            <input class="btn btn-success" type="submit" value="Send">
+
+    </div>
+
+    <div class="bg-white shadow rounded-2 p-5">
+        <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+        <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+
+            <input class="btn btn-success" type="submit" value="Send email">
         </div>
-
     </div>
   </form>
 
