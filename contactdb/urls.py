@@ -222,6 +222,7 @@ urlpatterns = [
         EmailTemplateCreateSuccessView.as_view(),
         name="email-template-create-success",
     ),
+    path("ckeditor/", include("ckeditor_uploader.urls")),
 ]
 
 if settings.DEBUG:

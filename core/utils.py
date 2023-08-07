@@ -1,3 +1,7 @@
+import re
+
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -26,3 +30,19 @@ def check_diff(obj, dictionary):
         if getattr(obj, key) != value:
             return True
     return False
+
+
+def get_relative_image_urls(email_body):
+    img_tag_pattern = r'<img.*?src="(.*?)"'
+    relative_image_urls = re.findall(img_tag_pattern, email_body)
+    return list(set(relative_image_urls))
+
+
+def replace_relative_image_urls(email_body):
+    relative_urls = get_relative_image_urls(email_body)
+    domain = settings.PROTOCOL + settings.BACKEND_HOST[0]
+    for url in relative_urls:
+        absolute_url = domain + url
+        email_body = email_body.replace(url, absolute_url)
+
+    return email_body

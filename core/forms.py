@@ -1,3 +1,4 @@
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Value
@@ -109,7 +110,7 @@ class SendEmailForm(Form):
     subject = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control", "id": "subject"})
     )
-    content = forms.CharField(widget=CKEditorWidget(), required=True)
+    content = forms.CharField(widget=CKEditorUploadingWidget(), required=True)
     send_personalised_emails = forms.BooleanField(required=False)
     files = MultipleFileField(required=False)
 
