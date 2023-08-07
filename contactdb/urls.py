@@ -12,9 +12,11 @@ from django.contrib.auth.views import (
 )
 from django.urls import include
 from django.urls import path
+from django.views.decorators.cache import never_cache
 from django.views.generic import RedirectView
 from two_factor.urls import urlpatterns as tf_urls
-
+from django.contrib.auth.decorators import login_required
+from ckeditor_uploader import views
 from accounts.views import RedirectLoginView
 from core.views import (
     HomepageView,
@@ -222,7 +224,12 @@ urlpatterns = [
         EmailTemplateCreateSuccessView.as_view(),
         name="email-template-create-success",
     ),
-    path("ckeditor/", include("ckeditor_uploader.urls")),
+    path(r"ckeditor/upload/", login_required(views.upload), name="ckeditor_upload"),
+    path(
+        r"ckeditor/browse/",
+        never_cache(login_required(views.browse)),
+        name="ckeditor_browse",
+    ),
 ]
 
 if settings.DEBUG:
