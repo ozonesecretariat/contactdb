@@ -13,6 +13,10 @@ body{
     background: var(--main-color) !important;
 }
 
+.text-main-color{
+    color: var(--main-color) !important;
+}
+
 .hover-main-color:hover{
     background: var(--main-color) !important;
 }
