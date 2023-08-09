@@ -8,51 +8,63 @@
     <link rel="stylesheet" href="{% static 'group_detail.css' %}">
 {% endblock %}
 
-{% block content %}
-    <div class="bg-white rounded-2 shadow p-5 mb-4">
-        <div class=" text-muted">
-            Welcome to <span class="text-nowrap text-main-color fs-1">Ozone Contact DB</span>
+{% block inner_hero %}
+    <div class="pt-5 mt-5">
+        <div class="mt-5 pt-5 text-white text-center fs-2">
+            Welcome to
         </div>
-
     </div>
+{% endblock %}
+
+{% block outer_hero %}
+    <div class="pb-5">
+        <div class="pb-5 text-main-color text-center display-2">
+            Ozone Contact DB
+        </div>
+        <form hx-get="{% url 'search-contact' %}?link_page=True"
+            hx-target="div.select-contact-list"
+            hx-swap="outerHTML"
+            hx-indicator=".progress"
+            class="form-inline mx-auto py-5">
+
+            <div class="container py-5">
+                <div class="row d-flex justify-content-center align-items-center">
+                    <div class="col-md-8">
+                        <div class="search">
+                            <i class="bi bi-search"></i>
+                            <input type="text" name="name" id="id_name" class="form-control" placeholder="Search contact...">
+                            <button class="btn btn-main-color">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}
+
+{% block content %}
 
     <div class="home-container">
         <div class="left-section fit-content-height">
             <div class="bg-white shadow rounded-2 p-5">
-                <div class="fs-2 mb-3">
-                    Search contacts
-                </div>
-                <hr/>
-
-                <form hx-get="{% url 'search-contact' %}?link_page=True"
-                    hx-target="div.select-contact-list"
-                    hx-swap="outerHTML"
-                    hx-indicator=".progress"
-                    class="form-inline fit-content mx-auto my-5">
-
-                    <div class="label">Search for a contact</div>
-                    <div class="d-flex">
-                        <div id="name" class="me-2">
-                            <input type="text" name="name" class="form-control" id="id_name" >
-                        </div>
-
-                        <button type="submit" class="btn btn-main-color ms-2">Search</button>
-                    </div>
-
-                </form>
 
                 <div class="progress my-2">
                     <div class="indeterminate"></div>
                 </div>
 
                 <div class="select-contact-list p-5 border rounded-2">
-                    <div class="text-muted text-center">No contact</div>
+                    <div class="text-muted text-center">Search results</div>
                 </div>
             </div>
 
         </div>
         <div class="right-section fit-content-height">
             <div class="main-color-light shadow rounded-2 p-5">
+                <div class="fs-2 mb-3">
+                    Go to
+                </div>
+                <hr/>
                 <ol class="">
                     <li class="my-3">
                         <a class="text-decoration-none" href="{% url 'contact-list' %}">Contacts</a>
