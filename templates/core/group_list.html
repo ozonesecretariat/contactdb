@@ -11,7 +11,7 @@
 
 {% block content %}
 
-    <div class="bg-white p-5 shadow rounded-2">
+    <div class="bg-white p-5 shadow rounded-2 mb-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 ">
 
             <div class="fs-1 mt-2 me-3">{% trans "Groups" %} </div>
@@ -35,12 +35,13 @@
         </div>
         {% if request.user.can_edit %}
             <div class="d-grid gap-3 d-md-flex mb-2">
-                <a class="btn btn-success button-success-shadow" href="{% url 'group-create' %}">Add group</a>
                 <a class="btn btn-main-color" href="{% url 'groups-add-multiple-members' %}">Add contacts to groups</a>
+                <a class="btn btn-success button-success-shadow" href="{% url 'group-create' %}">Add group</a>
             </div>
         {% endif %}
 
-
+    </div>
+    <div class="bg-white p-5 shadow rounded-2">
 
         <div class="progress">
             <div class="indeterminate"></div>

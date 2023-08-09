@@ -1,7 +1,113 @@
 {% extends "base.html" %}
-
+{% load static custom_tags %}
 {% block title %}Home page{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'home_page.css' %}">
+    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'group_detail.css' %}">
+{% endblock %}
+
+{% block inner_hero %}
+    <div class="pt-5 mt-5">
+        <div class="mt-5 pt-5 text-white text-center fs-2">
+            Welcome to
+        </div>
+    </div>
+{% endblock %}
+
+{% block outer_hero %}
+    <div class="pb-5">
+        <div class="pb-5 text-main-color text-center display-2">
+            Ozone Contact DB
+        </div>
+        <form hx-get="{% url 'search-contact' %}?link_page=True"
+            hx-target="div.select-contact-list"
+            hx-swap="outerHTML"
+            hx-indicator=".progress"
+            class="form-inline mx-auto py-5">
+
+            <div class="container py-5">
+                <div class="row d-flex justify-content-center align-items-center">
+                    <div class="col-md-8">
+                        <div class="search">
+                            <i class="bi bi-search"></i>
+                            <input type="text" name="name" id="id_name" class="form-control" placeholder="Search contact...">
+                            <button class="btn btn-main-color">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}
+
 {% block content %}
-    <h1>Home page</h1>
+
+    <div class="home-container">
+        <div class="left-section fit-content-height">
+            <div class="bg-white shadow rounded-2 p-5">
+
+                <div class="progress my-2">
+                    <div class="indeterminate"></div>
+                </div>
+
+                <div class="select-contact-list p-5 border rounded-2">
+                    <div class="text-muted text-center">Search results</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="right-section fit-content-height">
+            <div class="main-color-light shadow rounded-2 p-5">
+                <div class="fs-2 mb-3">
+                    Go to
+                </div>
+                <hr/>
+                <ol class="">
+                    <li class="my-3">
+                        <a class="text-decoration-none" href="{% url 'contact-list' %}">Contacts</a>
+                        <ol class="sublist">
+                            {% if request.user.can_edit %}
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'contact-create' %}">Add contact</a></li>
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'merge-contacts' %}">Merge contacts</a></li>
+                            {% endif %}
+                        </ol>
+                    </li>
+                    <li class="my-3">
+                        <a class="text-decoration-none" href="{% url 'group-list' %}">Groups</a>
+                        <ol class="sublist">
+                            {% if request.user.can_edit %}
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'group-create' %}">Add group</a></li>
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'groups-add-multiple-members' %}">Add members to groups</a></li>
+                            {% endif %}
+                        </ol>
+                    </li>
+                    {% if request.user.can_import %}
+                        <li class="my-3">
+                            <a class="text-decoration-none" href="{% url 'import-contacts' %}">Import</a>
+                            <ol class="sublist">
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'sync-kronos' %}">Import from kronos</a></li>
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'conflict-resolution' %}">Resolve conflicts</a></li>
+                            </ol>
+                        </li>
+                    {% endif %}
+                    {% if request.user.can_send_mail %}
+                        <li class="my-3">
+                            <a class="text-decoration-none" href="{% url 'emails-page' %}">Email</a>
+                            <ol class="sublist">
+                                <li class="my-3"><a class="text-decoration-none " href="{% url 'emails-history' %}">Emails history</a></li>
+                            </ol>
+                        </li>
+                    {% endif %}
+
+                </ol>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
 {% endblock %}

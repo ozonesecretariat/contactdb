@@ -4,6 +4,11 @@
   --main-color-light: #C4D9E4;
 }
 
+.rounded-bottom-20{
+    border-bottom-left-radius: 20px 20px;
+    border-bottom-right-radius: 20px 20px;
+}
+
 body{
     background: #f2f2f2;
     font-family: 'Montserrat', sans-serif;
@@ -11,6 +16,10 @@ body{
 
 .main-color{
     background: var(--main-color) !important;
+}
+
+.text-main-color{
+    color: var(--main-color) !important;
 }
 
 .hover-main-color:hover{
