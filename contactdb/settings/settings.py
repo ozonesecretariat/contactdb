@@ -317,7 +317,7 @@ KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
 FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
 
 CKEDITOR_CONFIGS = {
-    'default': {
-        'width': "100%",
+    "default": {
+        "width": "100%",
     },
 }
