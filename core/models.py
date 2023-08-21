@@ -7,7 +7,11 @@ from django_task.models import TaskRQ
 from django.contrib.postgres.fields import ArrayField
 from phonenumbers import parse, geocoder, NumberParseException
 from phonenumbers.phonenumberutil import NumberParseException as NumException
-from core.utils import ConflictResolutionMethods, replace_relative_image_urls
+from core.utils import (
+    ConflictResolutionMethods,
+    replace_relative_image_urls,
+    get_country_code,
+)
 
 
 class LoadKronosEventsTask(TaskRQ):
@@ -108,9 +112,10 @@ class Record(models.Model):
                     phone_number, "en", region=None
                 )
                 prefix = "+" + str(phone_number.country_code)
-                phones.append((country, prefix, phone_number.national_number))
+                code = get_country_code(country)
+                phones.append((country, code, prefix, phone_number.national_number))
             except (NumberParseException, NumException):
-                phones.append(("", "", phone))
+                phones.append(("", "", "", phone))
 
         return phones
 
@@ -124,9 +129,10 @@ class Record(models.Model):
                     phone_number, "en", region=None
                 )
                 prefix = "+" + str(phone_number.country_code)
-                phones.append((country, prefix, phone_number.national_number))
+                code = get_country_code(country)
+                phones.append((country, code, prefix, phone_number.national_number))
             except (NumberParseException, NumException):
-                phones.append(("", "", phone))
+                phones.append(("", "", "", phone))
 
         return phones
 
@@ -138,9 +144,10 @@ class Record(models.Model):
                 phone_number = parse(phone, None)
                 country = geocoder.country_name_for_number(phone_number, "en")
                 prefix = "+" + str(phone_number.country_code)
-                phones.append((country, prefix, phone_number.national_number))
+                code = get_country_code(country)
+                phones.append((country, code, prefix, phone_number.national_number))
             except (NumberParseException, NumException):
-                phones.append(("", "", phone))
+                phones.append(("", "", "", phone))
 
         return phones
 

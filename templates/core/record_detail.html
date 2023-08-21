@@ -6,6 +6,10 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.9.2/css/flag-icons.min.css"
+    />
 {% endblock %}
 
 {% block content %}
@@ -368,5 +372,6 @@
 {% endblock %}
 
 {% block extra_js %}
+
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
 {% endblock %}
