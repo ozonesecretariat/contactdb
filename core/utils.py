@@ -1,5 +1,6 @@
 import re
 
+import pycountry
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
@@ -46,3 +47,11 @@ def replace_relative_image_urls(email_body):
         email_body = email_body.replace(url, absolute_url)
 
     return email_body
+
+
+def get_country_code(country_name):
+    try:
+        country = pycountry.countries.get(name=country_name)
+        return country.alpha_2
+    except (AttributeError, KeyError):
+        return ""

@@ -52,6 +52,7 @@ psycopg==3.1.8
 psycopg-binary==3.1.8
 ptyprocess==0.7.0
 pure-eval==0.2.2
+pycountry>=22.3.5
 Pygments==2.14.0
 pypng==0.20220715.0
 pytest==7.2.2

@@ -4,10 +4,14 @@ from django.core.mail import EmailMultiAlternatives, send_mass_mail
 from django.db import models
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
-from ckeditor.fields import RichTextField
 from django.contrib.postgres.fields import ArrayField
-
-from core.utils import ConflictResolutionMethods, replace_relative_image_urls
+from phonenumbers import parse, geocoder, NumberParseException
+from phonenumbers.phonenumberutil import NumberParseException as NumException
+from core.utils import (
+    ConflictResolutionMethods,
+    replace_relative_image_urls,
+    get_country_code,
+)
 
 
 class LoadKronosEventsTask(TaskRQ):
@@ -98,6 +102,55 @@ class Record(models.Model):
     def is_secondary(self):
         return self.main_contact is not None
 
+    @property
+    def phones_with_info(self):
+        phones = []
+        for phone in self.phones:
+            try:
+                phone_number = parse(phone, None)
+                country = geocoder.country_name_for_number(
+                    phone_number, "en", region=None
+                )
+                prefix = "+" + str(phone_number.country_code)
+                code = get_country_code(country)
+                phones.append((country, code, prefix, phone_number.national_number))
+            except (NumberParseException, NumException):
+                phones.append(("", "", "", phone))
+
+        return phones
+
+    @property
+    def mobiles_with_info(self):
+        phones = []
+        for phone in self.mobiles:
+            try:
+                phone_number = parse(phone, None)
+                country = geocoder.country_name_for_number(
+                    phone_number, "en", region=None
+                )
+                prefix = "+" + str(phone_number.country_code)
+                code = get_country_code(country)
+                phones.append((country, code, prefix, phone_number.national_number))
+            except (NumberParseException, NumException):
+                phones.append(("", "", "", phone))
+
+        return phones
+
+    @property
+    def faxes_with_info(self):
+        phones = []
+        for phone in self.faxes:
+            try:
+                phone_number = parse(phone, None)
+                country = geocoder.country_name_for_number(phone_number, "en")
+                prefix = "+" + str(phone_number.country_code)
+                code = get_country_code(country)
+                phones.append((country, code, prefix, phone_number.national_number))
+            except (NumberParseException, NumException):
+                phones.append(("", "", "", phone))
+
+        return phones
+
 
 class Group(models.Model):
     name = models.CharField(max_length=250, null=False, blank=False)
@@ -108,6 +161,16 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def members_count(self):
+        return self.contacts.count()
+
+    @property
+    def description_preview(self):
+        if len(str(self.description)) > 150:
+            return self.description[:150] + "..."
+        return self.description
 
 
 class KronosEvent(models.Model):

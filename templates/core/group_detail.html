@@ -78,7 +78,7 @@
                      {% endif %}
                 </div>
             </div>
-            <div class="bg-white  mb-4 p-5 shadow rounded-2">
+            <div class="bg-white  mb-4 p-5 shadow rounded-2" id="member-list">
                  <div class="">
                     <div >
                         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 ">
@@ -127,4 +127,16 @@
 
 {% block extra_js %}
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script>
+        let first = true;
+        document.addEventListener('htmx:afterSettle', function(evt) {
+            if(!first){
+                targetDiv = document.getElementById("member-list");
+                targetDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+            else{
+                first = false;
+            }
+        });
+    </script>
 {% endblock %}

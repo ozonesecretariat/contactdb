@@ -19,3 +19,16 @@ thead tr th:hover {
     content: '\0000a0\0025bc';
     float: right;
 }
+
+.table-container table td:nth-child(1) {
+    width: 45%;
+}
+
+.table-container table td:nth-child(2) {
+    width: 45%;
+}
+
+.table-container table td:nth-child(3) {
+    width: 10%;
+
+}

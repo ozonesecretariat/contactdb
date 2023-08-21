@@ -6,6 +6,10 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'record_detail.css' %}">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.9.2/css/flag-icons.min.css"
+    />
 {% endblock %}
 
 {% block content %}
@@ -20,31 +24,47 @@
 
                 <div class="mx-auto fit-content">
 
-                    <div class="d-flex flex-wrap fit-content">
+                    <div class="d-flex gap-3 flex-wrap justify-content-center fit-content">
                         {% if object.title %}
-                            <div class="me-4 fit-content">
-                                <div class="mb-3">
+                            <div class=" fit-content">
+                                <div class="">
                                     {% record_detail_field object.title "Title" False "fs-2" True %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.honorific %}
+                            <div class=" fit-content">
+                                <div class="">
+                                    {% record_detail_field object.honorific "Honorific" False "fs-2" True %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.respectful %}
+                            <div class=" fit-content">
+                                <div class="">
+                                    {% record_detail_field object.respectful "Respectful" False "fs-2" True %}
                                 </div>
                             </div>
                         {% endif %}
 
                         {% if object.first_name %}
-                            <div class="fit-content">
-                                <div class="mb-3">
+                            <div class=" fit-content ">
+                                <div class="">
                                     {% record_detail_field object.first_name "First Name" False "fs-2" True %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if object.last_name %}
+                            <div class="fit-content">
+                                <div class="">
+                                    {% record_detail_field object.last_name "Last Name" False "fs-2" True %}
                                 </div>
                             </div>
                         {% endif %}
                     </div>
 
-                    {% if object.last_name %}
-                        <div class="fit-content">
-                            <div class="mb-3">
-                                {% record_detail_field object.last_name "Last Name" False "fs-2" True %}
-                            </div>
-                        </div>
-                    {% endif %}
+
 
                 </div>
 
@@ -233,29 +253,16 @@
 
         <div class="right-section fit-content-height">
 
-            <div class="py-5 shadow  details-container  bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    {% record_detail_field object.contact_id "Contact Id" %}
-                </div>
-            </div>
-
-            <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-
-                <div class="m-3">
-                    {% record_detail_field object.honorific "Honorific" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.respectful "Respectful" %}
-                </div>
-
+            <div class="py-4 px-5 shadow bg-white mb-4 rounded-2 d-grid d-md-flex gap-3 justify-content-md-end">
+                <a class="btn btn-light" href="#registration-statuses">Go to registration statuses<i class="bi bi-arrow-bar-down ms-1"></i></a>
             </div>
 
             <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                 <div class="m-3">
-                    {% record_detail_field object.phones "Phones" %}
+                    {% record_detail_field object.phones_with_info "Phones" False None False False True %}
                 </div>
                 <div class="m-3">
-                    {% record_detail_field object.mobiles "Mobiles" %}
+                    {% record_detail_field object.mobiles_with_info "Mobiles" False None False False True %}
                 </div>
                 <div class="m-3">
                     {% record_detail_field object.emails "Emails" True %}
@@ -264,20 +271,7 @@
                     {% record_detail_field object.email_ccs "Email Ccs" True %}
                 </div>
                 <div class="m-3">
-                    {% record_detail_field object.faxes "Faxes" %}
-                </div>
-            </div>
-
-
-            <div class="py-5 shadow details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    {% record_detail_field object.primary_lang "Primary language" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.second_lang "Second language" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.third_lang "Third language" %}
+                    {% record_detail_field object.faxes_with_info "Faxes" False None False False True %}
                 </div>
             </div>
 
@@ -346,7 +340,19 @@
 
             </div>
 
-             <div class="py-5 shadow bg-white rounded-2">
+             <div class="py-5 shadow details-container bg-white mb-4 rounded-2">
+                <div class="m-3">
+                    {% record_detail_field object.primary_lang "Primary language" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.second_lang "Second language" %}
+                </div>
+                <div class="m-3">
+                    {% record_detail_field object.third_lang "Third language" %}
+                </div>
+            </div>
+
+             <div class="py-5 shadow bg-white rounded-2" id="registration-statuses">
                 <div class="">
                     <div class="fs-2 mx-5">
                         Registration Statuses <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
@@ -366,5 +372,6 @@
 {% endblock %}
 
 {% block extra_js %}
+
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
 {% endblock %}
