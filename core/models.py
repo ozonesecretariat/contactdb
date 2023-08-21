@@ -4,9 +4,9 @@ from django.core.mail import EmailMultiAlternatives, send_mass_mail
 from django.db import models
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
-from ckeditor.fields import RichTextField
 from django.contrib.postgres.fields import ArrayField
-
+from phonenumbers import parse, geocoder, NumberParseException
+from phonenumbers.phonenumberutil import NumberParseException as NumException
 from core.utils import ConflictResolutionMethods, replace_relative_image_urls
 
 
@@ -97,6 +97,52 @@ class Record(models.Model):
     @property
     def is_secondary(self):
         return self.main_contact is not None
+
+    @property
+    def phones_with_info(self):
+        phones = []
+        for phone in self.phones:
+            try:
+                phone_number = parse(phone, None)
+                country = geocoder.country_name_for_number(
+                    phone_number, "en", region=None
+                )
+                prefix = "+" + str(phone_number.country_code)
+                phones.append((country, prefix, phone_number.national_number))
+            except (NumberParseException, NumException):
+                phones.append(("", "", phone))
+
+        return phones
+
+    @property
+    def mobiles_with_info(self):
+        phones = []
+        for phone in self.mobiles:
+            try:
+                phone_number = parse(phone, None)
+                country = geocoder.country_name_for_number(
+                    phone_number, "en", region=None
+                )
+                prefix = "+" + str(phone_number.country_code)
+                phones.append((country, prefix, phone_number.national_number))
+            except (NumberParseException, NumException):
+                phones.append(("", "", phone))
+
+        return phones
+
+    @property
+    def faxes_with_info(self):
+        phones = []
+        for phone in self.faxes:
+            try:
+                phone_number = parse(phone, None)
+                country = geocoder.country_name_for_number(phone_number, "en")
+                prefix = "+" + str(phone_number.country_code)
+                phones.append((country, prefix, phone_number.national_number))
+            except (NumberParseException, NumException):
+                phones.append(("", "", phone))
+
+        return phones
 
 
 class Group(models.Model):

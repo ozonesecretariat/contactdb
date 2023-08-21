@@ -65,11 +65,13 @@ def record_detail_field(
     class_names: str = None,
     small_label=False,
     is_main_contact=False,
+    is_phone=False,
 ):
     context = {
         "field_name": label,
         "field": field,
         "is_email": is_email,
+        "is_phone": is_phone,
         "is_main_contact": is_main_contact,
         "class_names": class_names,
         "small_label": small_label,

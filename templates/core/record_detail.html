@@ -255,10 +255,10 @@
 
             <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                 <div class="m-3">
-                    {% record_detail_field object.phones "Phones" %}
+                    {% record_detail_field object.phones_with_info "Phones" False None False False True %}
                 </div>
                 <div class="m-3">
-                    {% record_detail_field object.mobiles "Mobiles" %}
+                    {% record_detail_field object.mobiles_with_info "Mobiles" False None False False True %}
                 </div>
                 <div class="m-3">
                     {% record_detail_field object.emails "Emails" True %}
@@ -267,7 +267,7 @@
                     {% record_detail_field object.email_ccs "Email Ccs" True %}
                 </div>
                 <div class="m-3">
-                    {% record_detail_field object.faxes "Faxes" %}
+                    {% record_detail_field object.faxes_with_info "Faxes" False None False False True %}
                 </div>
             </div>
 

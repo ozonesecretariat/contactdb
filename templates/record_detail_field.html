@@ -6,13 +6,19 @@
     {% if is_list %}
         <div>
             {% if field|length > 0 %}
-                {% for item in field %}
-                    {% if is_email %}
-                        <a href="mailto:{{ item }}" class="text-decoration-none d-block {{ class_names }}">{{ item }}</a>
-                    {% else %}
-                        <div class="d-block {{ class_names }}">{{ item }}</div>
-                    {% endif %}
-                {% endfor %}
+                {% if is_phone %}
+                    {% for country, prefix, number in field %}
+            <div class="d-block {{ class_names }}">{{ prefix }} <span class="fw-bold">{{ number }}</span> {% if country %}<span class="text-muted">({{ country }})</span>{% endif %}</div>
+                    {% endfor %}
+                {% else %}
+                    {% for item in field %}
+                        {% if is_email %}
+                            <a href="mailto:{{ item }}" class="text-decoration-none d-block {{ class_names }}">{{ item }}</a>
+                        {% else %}
+                            <div class="d-block {{ class_names }}">{{ item }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             {% else %}
                 <span class="text-muted">-------</span>
             {% endif %}
