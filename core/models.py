@@ -109,6 +109,16 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def members_count(self):
+        return self.contacts.count()
+
+    @property
+    def description_preview(self):
+        if len(str(self.description)) > 150:
+            return self.description[:150] + "..."
+        return self.description
+
 
 class KronosEvent(models.Model):
     event_id = models.CharField(max_length=150, blank=False, null=False, unique=True)

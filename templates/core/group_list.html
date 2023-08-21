@@ -41,7 +41,7 @@
         {% endif %}
 
     </div>
-    <div class="bg-white p-5 shadow rounded-2">
+    <div class="bg-white p-5 shadow rounded-2" id="group-list">
 
         <div class="progress">
             <div class="indeterminate"></div>
@@ -55,4 +55,11 @@
 
 {% block extra_js %}
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script>
+        document.addEventListener('htmx:afterSettle', function(evt) {
+            targetDiv = document.getElementById("group-list");
+            targetDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+
 {% endblock %}

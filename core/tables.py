@@ -7,7 +7,6 @@ class RecordTable(tables.Table):
         model = Record
         template_name = "table.html"
         fields = (
-            "id",
             "first_name",
             "last_name",
             "organization",
@@ -27,7 +26,6 @@ class GroupMemberTable(tables.Table):
         model = Record
         template_name = "core/group_members_table.html"
         fields = (
-            "id",
             "first_name",
             "last_name",
             "organization",
@@ -43,14 +41,11 @@ class GroupTable(tables.Table):
     class Meta:
         model = Group
         template_name = "table.html"
-        fields = (
-            "id",
-            "name",
-        )
+        fields = ("name", "description_preview", "members_count")
         row_attrs = {
             "onClick": lambda record: "document.location.href='/groups/{0}'".format(
                 record.id
-            )
+            ),
         }
 
 
