@@ -29,6 +29,13 @@
                             </div>
 
                             <div class="">
+                                {% record_form_field form.honorific 'form-control' False True %}
+                            </div>
+                            <div class="">
+                                {% record_form_field form.respectful 'form-control' False True %}
+                            </div>
+
+                            <div class="">
                                 {% record_form_field form.first_name 'form-control' False True %}
                             </div>
                         </div>
@@ -97,15 +104,6 @@
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
                     <div class="m-3">
-                        {% record_form_field form.honorific 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.respectful 'form-control' %}
-                    </div>
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                    <div class="m-3">
                         {% record_form_field form.phones 'form-control' %}
                     </div>
                     <div class="m-3">
@@ -120,19 +118,6 @@
                     <div class="m-3">
                         {% record_form_field form.faxes 'form-control' %}
                     </div>
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                    <div class="m-3">
-                        {% record_form_field form.primary_lang 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.second_lang 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.third_lang 'form-control' %}
-                    </div>
-
                 </div>
 
                 <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
@@ -179,6 +164,19 @@
                         {% record_form_field form.birth_date 'form-control fit-content' %}
                     </div>
 
+
+                </div>
+
+                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+                    <div class="m-3">
+                        {% record_form_field form.primary_lang 'form-control' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.second_lang 'form-control' %}
+                    </div>
+                    <div class="m-3">
+                        {% record_form_field form.third_lang 'form-control' %}
+                    </div>
 
                 </div>
 
