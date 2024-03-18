@@ -14,7 +14,7 @@ services:
     restart: always
 
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
     # Disables persistence for better performance
     command: ["redis-server", "--save", '""', "--appendonly", "no"]
     expose:

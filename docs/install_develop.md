@@ -6,9 +6,9 @@ This document describes installation steps required to install locally for devel
 
 ## Preparing environment
 
-- Install python and python-dev (>=3.11)
+- Install python and python-dev (>=3.12)
 - Install and start postgresql (>=15)
-- Install and start redis (>=6)
+- Install and start redis (>=7)
 - Create a postgresql database and user:
   ```shell
   sudo -u postgres createuser -Pds contactdb && sudo -u postgres createdb contactdb
