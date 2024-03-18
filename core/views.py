@@ -348,9 +348,9 @@ class ExportExcel(LoginRequiredMixin, View):
         response = HttpResponse(
             excel_file.getvalue(), content_type="application/ms-excel"
         )
-        response[
-            "Content-Disposition"
-        ] = f"attachment; filename*=UTF-8''{'Contacts.xlsx'}"
+        response["Content-Disposition"] = (
+            f"attachment; filename*=UTF-8''{'Contacts.xlsx'}"
+        )
         return response
 
 
@@ -443,9 +443,9 @@ class ExportDoc(LoginRequiredMixin, FilterView):
         doc_file = io.BytesIO()
         doc.save(doc_file)
         response = HttpResponse(doc_file.getvalue(), content_type="application/ms-word")
-        response[
-            "Content-Disposition"
-        ] = f"attachment; filename*=UTF-8''{'Contacts.docx'}"
+        response["Content-Disposition"] = (
+            f"attachment; filename*=UTF-8''{'Contacts.docx'}"
+        )
         return response
 
 

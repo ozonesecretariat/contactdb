@@ -27,21 +27,21 @@ class RecordUpdateForm(ModelForm):
         if main_contact_choices:
             self.fields["main_contact"].choices = main_contact_choices
 
-        self.fields[
-            "phones"
-        ].help_text = "To add multiple phone numbers, use a comma as a separator."
-        self.fields[
-            "mobiles"
-        ].help_text = "To add multiple mobiles numbers, use a comma as a separator."
-        self.fields[
-            "faxes"
-        ].help_text = "To add multiple fax numbers, use a comma as a separator."
-        self.fields[
-            "emails"
-        ].help_text = "To add multiple emails, use a comma as a separator."
-        self.fields[
-            "email_ccs"
-        ].help_text = "To add multiple cc emails, use a comma as a separator."
+        self.fields["phones"].help_text = (
+            "To add multiple phone numbers, use a comma as a separator."
+        )
+        self.fields["mobiles"].help_text = (
+            "To add multiple mobiles numbers, use a comma as a separator."
+        )
+        self.fields["faxes"].help_text = (
+            "To add multiple fax numbers, use a comma as a separator."
+        )
+        self.fields["emails"].help_text = (
+            "To add multiple emails, use a comma as a separator."
+        )
+        self.fields["email_ccs"].help_text = (
+            "To add multiple cc emails, use a comma as a separator."
+        )
 
     class Meta:
         model = Record

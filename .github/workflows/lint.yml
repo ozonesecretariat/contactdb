@@ -25,4 +25,4 @@ jobs:
           pip install -c requirements/constraints.txt black
       - name: "Lint backend code"
         run: |
-          black --extend-exclude=migrations --check .
+          black --check .
