@@ -26,6 +26,9 @@ class UserManager(BaseUserManager):
         user = self.create_user(email, password, **extra_fields)
         user.is_superuser = True
         user.is_staff = True
+        user.can_edit = True
+        user.can_import = True
+        user.can_send_mail = True
         user.save()
         return user
 
