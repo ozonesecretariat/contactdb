@@ -123,6 +123,11 @@ TEMPLATES = [
     },
 ]
 
+MAIN_FIXTURES_DIR = BASE_DIR / "fixtures"
+TEST_FIXTURES_DIR = MAIN_FIXTURES_DIR / "test"
+
+FIXTURE_DIRS = [MAIN_FIXTURES_DIR]
+
 WSGI_APPLICATION = "contactdb.wsgi.application"
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-AUTH_USER_MODEL
