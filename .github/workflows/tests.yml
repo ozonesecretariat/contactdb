@@ -17,7 +17,10 @@ jobs:
   suite:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: "Configure env"
         run: |
           cp .env.test .env
@@ -34,7 +37,13 @@ jobs:
       - name: "Install dev dependencies"
         run: |
           docker compose exec -T app pip install -c requirements/constraints.txt -r requirements/dev.txt
+          npm ci
       - name: "Backend tests"
-        id: "backendTests"
         run: |
           docker compose exec -T app pytest --cov
+      - name: "Seed DB"
+        run: |
+          docker compose exec -T app ./manage.py seed_db --no-input
+      - name: "E2E tests"
+        run: |
+          npm run test
