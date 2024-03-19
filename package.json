@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "cypress run",
+    "test:open": "cypress open --e2e"
+  },
+  "devDependencies": {
+    "cypress": "13.7.0"
+  }
+}
