@@ -30,11 +30,11 @@ This document describes installation steps required to install locally for devel
   ```shell
   ./manage.py migrate
   ```
-- Create superuser
+- Add some testing data to the DB:
   ```shell
-  ./manage.py createsuperuser
+  ./manage.py seed_db
   ```
-
+  
 ## Running the application
 
 - Start the backend with hot-reload
@@ -45,7 +45,8 @@ This document describes installation steps required to install locally for devel
   ```shell
   ./manage.py rqworker
   ```
-- Check backend is running correctly at http://localhost:8000 and login with the created credentials
+- Check backend is running correctly at http://localhost:8000 and login with credentials created with seed_db:
+  - admin@example.com / admin
 
 ## Updating the application
 
