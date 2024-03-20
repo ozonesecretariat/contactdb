@@ -150,7 +150,8 @@ class EmailsAdmin(admin.ModelAdmin):
                     "groups",
                     "subject",
                     "content",
-                    "send_personalised_emals" "created_at",
+                    "send_personalised_emails",
+                    "created_at",
                 )
             },
         ),
