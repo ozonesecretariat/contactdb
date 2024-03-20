@@ -5,9 +5,9 @@
 
   {% if wizard.form.errors %}
     {% for error in wizard.form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
+      <div class="alert alert-danger">
+        <strong>{{ error|escape }}</strong>
+      </div>
     {% endfor %}
   {% endif %}
 
@@ -15,17 +15,13 @@
     <div class="form-floating mb-4">
       {{ field|add_classes:'form-control' }}
       <label for="{{ field.auto_id }}">{{ field.label }}</label>
-        {% for error in field.errors %}
-            <div class="text-danger my-1">
-                {{ error|escape }}
-            </div>
-        {% endfor %}
+      {% for error in field.errors %}
+        <div class="text-danger my-1">{{ error|escape }}</div>
+      {% endfor %}
     </div>
-
   {% endfor %}
 
-    {% if wizard.steps.current == 'auth' %}
-      <a href="{% url 'password_reset' %}">Forgot your password?</a>
-    {% endif %}
-
+  {% if wizard.steps.current == 'auth' %}
+    <a href="{% url 'password_reset' %}">Forgot your password?</a>
+  {% endif %}
 </table>

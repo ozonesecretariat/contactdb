@@ -1,35 +1,30 @@
 <div class="my-2">
-    <div class="label">
-        {{ field_name|title }}
+  <div class="label">{{ field_name|title }}</div>
+  {% if is_list %}
+    <div>
+      {% if field|length > 0 %}
+        {% for item in field %}
+          <div class="">{{ item }}</div>
+        {% endfor %}
+      {% else %}
+        <span class="fw-bold fst-italic text-muted">-------</span>
+      {% endif %}
     </div>
-    {% if is_list %}
-        <div>
-            {% if field|length > 0 %}
-                {% for item in field %}
-                <div class="">
-                    {{ item }}
-                </div>
-                {% endfor %}
-            {% else %}
-                <span class="fw-bold fst-italic text-muted">-------</span>
-            {% endif %}
-        </div>
-    {% elif is_bool %}
-        <div class="{% if field %} text-success {% else %} text-danger {% endif %} ">
-            {% if field %}
-                <i class="bi bi-check-lg fs-5"></i>
-            {% else %}
-                <i class="bi bi-x-lg fs-5"></i>
-            {% endif %}
-        </div>
-    {% else %}
-        <div class="text-break">
-            {% if field %}
-                {{ field }}
-            {% else %}
-                <span class="fst-italic text-muted">-------</span>
-            {% endif %}
-        </div>
-    {% endif %}
-
+  {% elif is_bool %}
+    <div class="{% if field %}text-success{% else %}text-danger{% endif %} ">
+      {% if field %}
+        <i class="bi bi-check-lg fs-5"></i>
+      {% else %}
+        <i class="bi bi-x-lg fs-5"></i>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="text-break">
+      {% if field %}
+        {{ field }}
+      {% else %}
+        <span class="fst-italic text-muted">-------</span>
+      {% endif %}
+    </div>
+  {% endif %}
 </div>

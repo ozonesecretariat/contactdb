@@ -3,140 +3,127 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %} {{ object.name }} | Group {% endblock %}
+{% block title %}{{ object.name }} | Group{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
-    <link rel="stylesheet" href="{% static 'group_detail.css' %}">
+  <link rel="stylesheet" href="{% static 'record_detail.css' %}" />
+  <link rel="stylesheet" href="{% static 'group_detail.css' %}" />
 {% endblock %}
 
 {% block content %}
-    <div class="contact-container">
-        <div class="left-section fit-content-height">
-            <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
-                    <i class="bi bi-buildings-fill"></i>
-                </div>
-                <hr class="my-5" />
-
-                <div class="mx-auto fit-content">
-
-                    <div class="fit-content">
-                        <div class="label">
-                            Name
-                        </div>
-                        <div class="fs-2 mb-3">
-                            {{ object.name }}
-                        </div>
-                    </div>
-
-
-                </div>
-
-                {% if request.user.can_edit %}
-                    <hr class="my-5" />
-
-
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-                        <a href="{% url 'group-update' object.pk %}" type="button" class="btn btn-main-color">Edit</a>
-                        <a href="{% url 'group-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow">Delete</a>
-                    </div>
-                    <div class="d-grid d-md-flex justify-content-md-center mt-3">
-                        <a href="{% url 'group-add-member' object.pk %}" type="button" class="btn btn-success button-success-shadow">Add member</a>
-                    </div>
-                {% endif %}
-                <div class="d-grid gap-3 mt-3 d-md-flex justify-content-md-center">
-                    <a href="{% url 'group-emails-history' object.pk %}" type="button" class="btn btn-light">Emails history</a>
-                </div>
-            </div>
+  <div class="contact-container">
+    <div class="left-section fit-content-height">
+      <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+        <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+          <i class="bi bi-buildings-fill"></i>
         </div>
-        <div class="right-section fit-content-height">
-            {% if form.form.non_field_errors|length > 0 %}
-                <div class="p-5 shadow  bg-white mb-4 rounded-2">
+        <hr class="my-5" />
 
-                {% for error in form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            <strong>{{ error|escape }}</strong>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            <div class="bg-white  mb-4 p-5 shadow rounded-2">
-                 <div class="">
-                    <div class="fs-2">
-                        Description
-                    </div>
-                     {% if object.description %}
-                        <div class="">
-                            {{ object.description }}
-                        </div>
-                     {% else %}
-                        <div class="text-muted">
-                            -------
-                        </div>
-                     {% endif %}
-                </div>
-            </div>
-            <div class="bg-white  mb-4 p-5 shadow rounded-2" id="member-list">
-                 <div class="">
-                    <div >
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 ">
-
-                            <div class="fs-2 me-3 mt-2">{% trans "Members" %} </div>
-                            <div class="">
-                                <div class="label mb-1">{% trans "Search member:" %}</div>
-                                <form hx-get="{% url 'group-members' %}?group={{ group.pk }}"
-                                    hx-target="div.table-container"
-                                    hx-swap="outerHTML"
-                                    hx-indicator=".progress"
-                                    class="form-inline d-flex "
-                                >
-
-                                    <div id="name" class="me-2">
-                                        <input type="text" name="name" class="form-control" id="id_name">
-                                    </div>
-
-                                    <button type="submit" class="btn btn-main-color width-100 ms-2">{% trans "Search" %}</button>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="">
-                        <div class="progress">
-                            <div class="indeterminate"></div>
-                        </div>
-
-                        <br>
-
-                        <div hx-get="{% url 'group-members' %}?group={{ group.pk }}"
-                             hx-trigger="load"
-                             hx-target="div.table-container"
-                             hx-swap="outerHTML"
-                             hx-indicator=".progress"
-                             style="cursor: pointer;"
-                             class="table-container"></div>
-
-                    </div>
-                </div>
-            </div>
+        <div class="mx-auto fit-content">
+          <div class="fit-content">
+            <div class="label">Name</div>
+            <div class="fs-2 mb-3">{{ object.name }}</div>
+          </div>
         </div>
+
+        {% if request.user.can_edit %}
+          <hr class="my-5" />
+
+          <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+            <a href="{% url 'group-update' object.pk %}" type="button" class="btn btn-main-color">Edit</a>
+            <a href="{% url 'group-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"
+              >Delete</a
+            >
+          </div>
+          <div class="d-grid d-md-flex justify-content-md-center mt-3">
+            <a href="{% url 'group-add-member' object.pk %}" type="button" class="btn btn-success button-success-shadow"
+              >Add member</a
+            >
+          </div>
+        {% endif %}
+        <div class="d-grid gap-3 mt-3 d-md-flex justify-content-md-center">
+          <a href="{% url 'group-emails-history' object.pk %}" type="button" class="btn btn-light">Emails history</a>
+        </div>
+      </div>
     </div>
+    <div class="right-section fit-content-height">
+      {% if form.form.non_field_errors|length > 0 %}
+        <div class="p-5 shadow  bg-white mb-4 rounded-2">
+          {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+              <strong>{{ error|escape }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="bg-white  mb-4 p-5 shadow rounded-2">
+        <div class="">
+          <div class="fs-2">Description</div>
+          {% if object.description %}
+            <div class="">{{ object.description }}</div>
+          {% else %}
+            <div class="text-muted">-------</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="bg-white  mb-4 p-5 shadow rounded-2" id="member-list">
+        <div class="">
+          <div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 ">
+              <div class="fs-2 me-3 mt-2">{% trans "Members" %}</div>
+              <div class="">
+                <div class="label mb-1">{% trans "Search member:" %}</div>
+                <form
+                  hx-get="{% url 'group-members' %}?group={{ group.pk }}"
+                  hx-target="div.table-container"
+                  hx-swap="outerHTML"
+                  hx-indicator=".progress"
+                  class="form-inline d-flex "
+                >
+                  <div id="name" class="me-2">
+                    <input type="text" name="name" class="form-control" id="id_name" />
+                  </div>
+
+                  <button type="submit" class="btn btn-main-color width-100 ms-2">{% trans "Search" %}</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="">
+            <div class="progress">
+              <div class="indeterminate"></div>
+            </div>
+
+            <br />
+
+            <div
+              hx-get="{% url 'group-members' %}?group={{ group.pk }}"
+              hx-trigger="load"
+              hx-target="div.table-container"
+              hx-swap="outerHTML"
+              hx-indicator=".progress"
+              style="cursor: pointer;"
+              class="table-container"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
-    <script>
-        let first = true;
-        document.addEventListener('htmx:afterSettle', function(evt) {
-            if(!first){
-                targetDiv = document.getElementById("member-list");
-                targetDiv.scrollIntoView({ behavior: 'smooth' });
-            }
-            else{
-                first = false;
-            }
-        });
-    </script>
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script>
+    let first = true;
+    document.addEventListener("htmx:afterSettle", function (evt) {
+      if (!first) {
+        targetDiv = document.getElementById("member-list");
+        targetDiv.scrollIntoView({ behavior: "smooth" });
+      } else {
+        first = false;
+      }
+    });
+  </script>
 {% endblock %}

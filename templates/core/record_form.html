@@ -1,202 +1,132 @@
 {% extends "base.html" %}
-
 {% load static custom_tags %}
 
-{% block title %}{% if object %} {{ object }} | Update {% else %} Create contact {% endif %}{% endblock %}
+{% block title %}{% if object %}{{ object }} | Update{% else %}Create contact{% endif %}{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'record_detail.css' %}" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
-    <form method="post" novalidate>{% csrf_token %}
+  <form method="post" novalidate>
+    {% csrf_token %}
 
-        <div class="contact-container">
-            <div class="left-section fit-content-height">
-                <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-                    <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
-                        <i class="bi bi-person-lines-fill"></i>
-                    </div>
-                    <hr class="my-5" />
+    <div class="contact-container">
+      <div class="left-section fit-content-height">
+        <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+          <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+            <i class="bi bi-person-lines-fill"></i>
+          </div>
+          <hr class="my-5" />
 
-                    <div class="mx-auto ">
+          <div class="mx-auto ">
+            <div class="">
+              <div class="">{% record_form_field form.title 'form-control' False True %}</div>
 
-                        <div class="">
+              <div class="">{% record_form_field form.honorific 'form-control' False True %}</div>
+              <div class="">{% record_form_field form.respectful 'form-control' False True %}</div>
 
-                            <div class="">
-                                {% record_form_field form.title 'form-control' False True %}
-                            </div>
-
-                            <div class="">
-                                {% record_form_field form.honorific 'form-control' False True %}
-                            </div>
-                            <div class="">
-                                {% record_form_field form.respectful 'form-control' False True %}
-                            </div>
-
-                            <div class="">
-                                {% record_form_field form.first_name 'form-control' False True %}
-                            </div>
-                        </div>
-
-                        <div class="">
-                            {% record_form_field form.last_name 'form-control' False True %}
-                        </div>
-
-                    </div>
-                </div>
-
-                {% if object.main_contact %}
-                    <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-                        <div>
-                            {% record_form_field form.main_contact 'form-control' False True %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-
-                    <div class="my-3">
-                        <div class="fs-2">
-                            Position
-                        </div>
-                        <div class="my-3">
-                            {% record_form_field form.designation 'form-control' False True %}
-                        </div>
-
-                        <div class="my-3">
-                            {% record_form_field form.department 'form-control' False True %}
-                        </div>
-                        <div class="my-3">
-                            {% record_form_field form.affiliation 'form-control' False True %}
-                        </div>
-                    </div>
-
-
-                    <hr class="my-4">
-
-                    <div class="my-3">
-                        {% record_form_field form.organization 'organization' True %}
-                    </div>
-                </div>
-
+              <div class="">{% record_form_field form.first_name 'form-control' False True %}</div>
             </div>
 
-            <div class="right-section fit-content-height">
-                {% if form.non_field_errors|length > 0 %}
-                    <div class="p-5 shadow  bg-white mb-4 rounded-2">
-
-                        {% for error in form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                <strong>{{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
-
-                    </div>
-                {% endif %}
-
-                <div class="py-5 shadow details-container  bg-white mb-4 rounded-2">
-                    <div class="m-3">
-                        {% record_form_field form.contact_id 'form-control' %}
-                    </div>
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                    <div class="m-3">
-                        {% record_form_field form.phones 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.mobiles 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.emails 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.email_ccs 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.faxes 'form-control' %}
-                    </div>
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                    <div class="m-3">
-                        {% record_form_field form.focal_point 'form-check-input' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.org_head 'form-check-input' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.is_in_mailing_list 'form-check-input' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.is_use_organization_address 'form-check-input' %}
-                    </div>
-
-                    <div class="m-3">
-                        <div class=" fs-2">
-                            Address
-                        </div>
-                        <div>
-                            <div class="my-3">
-                                {% record_form_field form.address 'form-control' False True %}
-                            </div>
-
-                            <div class="my-3">
-                                {% record_form_field form.city 'form-control' False True %}
-                            </div>
-                            <div class="my-3">
-                                {% record_form_field form.state 'form-control' False True %}
-                            </div>
-                            <div class="my-3">
-                                {% record_form_field form.country 'form-control' False True %}
-                            </div>
-                            <div class="my-3">
-                                {% record_form_field form.postal_code 'form-control' False True %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.notes 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.birth_date 'form-control fit-content' %}
-                    </div>
-
-
-                </div>
-
-                <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                    <div class="m-3">
-                        {% record_form_field form.primary_lang 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.second_lang 'form-control' %}
-                    </div>
-                    <div class="m-3">
-                        {% record_form_field form.third_lang 'form-control' %}
-                    </div>
-
-                </div>
-
-                <div class="bg-white px-5 py-4 shadow rounded-2">
-                    <div class="text-muted"><span class="text-danger">*</span> Required field</div>
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-end">
-                        <a class="btn btn-secondary button-gray-shadow " href="{% if object %}{% url 'contact-detail' object.pk %}{% else %}{% url 'contact-list' %}{% endif %}">Cancel</a>
-                        <input class="btn btn-success button-success-shadow" type="submit" value="Update">
-
-                    </div>
-
-                </div>
-            </div>
+            <div class="">{% record_form_field form.last_name 'form-control' False True %}</div>
+          </div>
         </div>
-    </form>
 
+        {% if object.main_contact %}
+          <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+            <div>{% record_form_field form.main_contact 'form-control' False True %}</div>
+          </div>
+        {% endif %}
+
+        <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+          <div class="my-3">
+            <div class="fs-2">Position</div>
+            <div class="my-3">{% record_form_field form.designation 'form-control' False True %}</div>
+
+            <div class="my-3">{% record_form_field form.department 'form-control' False True %}</div>
+            <div class="my-3">{% record_form_field form.affiliation 'form-control' False True %}</div>
+          </div>
+
+          <hr class="my-4" />
+
+          <div class="my-3">{% record_form_field form.organization 'organization' True %}</div>
+        </div>
+      </div>
+
+      <div class="right-section fit-content-height">
+        {% if form.non_field_errors|length > 0 %}
+          <div class="p-5 shadow  bg-white mb-4 rounded-2">
+            {% for error in form.non_field_errors %}
+              <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="py-5 shadow details-container  bg-white mb-4 rounded-2">
+          <div class="m-3">{% record_form_field form.contact_id 'form-control' %}</div>
+        </div>
+
+        <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+          <div class="m-3">{% record_form_field form.phones 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.mobiles 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.emails 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.email_ccs 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.faxes 'form-control' %}</div>
+        </div>
+
+        <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+          <div class="m-3">{% record_form_field form.focal_point 'form-check-input' %}</div>
+          <div class="m-3">{% record_form_field form.org_head 'form-check-input' %}</div>
+          <div class="m-3">{% record_form_field form.is_in_mailing_list 'form-check-input' %}</div>
+          <div class="m-3">{% record_form_field form.is_use_organization_address 'form-check-input' %}</div>
+
+          <div class="m-3">
+            <div class=" fs-2">Address</div>
+            <div>
+              <div class="my-3">{% record_form_field form.address 'form-control' False True %}</div>
+
+              <div class="my-3">{% record_form_field form.city 'form-control' False True %}</div>
+              <div class="my-3">{% record_form_field form.state 'form-control' False True %}</div>
+              <div class="my-3">{% record_form_field form.country 'form-control' False True %}</div>
+              <div class="my-3">{% record_form_field form.postal_code 'form-control' False True %}</div>
+            </div>
+          </div>
+          <div class="m-3">{% record_form_field form.notes 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.birth_date 'form-control fit-content' %}</div>
+        </div>
+
+        <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+          <div class="m-3">{% record_form_field form.primary_lang 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.second_lang 'form-control' %}</div>
+          <div class="m-3">{% record_form_field form.third_lang 'form-control' %}</div>
+        </div>
+
+        <div class="bg-white px-5 py-4 shadow rounded-2">
+          <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+          <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+            <a
+              class="btn btn-secondary button-gray-shadow "
+              href="{% if object %}{% url 'contact-detail' object.pk %}{% else %}{% url 'contact-list' %}{% endif %}"
+              >Cancel</a
+            >
+            <input class="btn btn-success button-success-shadow" type="submit" value="Update" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 {% endblock %}
 
 {% block extra_js %}
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{% static 'js/record_form.js' %}"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="{% static 'js/record_form.js' %}"></script>
 {% endblock %}

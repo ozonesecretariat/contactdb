@@ -1,43 +1,37 @@
 {% load static custom_tags %}
 
 <div class="form-container">
-    <div class="fs-4">Step 1: Select the contacts for merging</div>
-    <div>Search and select the contacts you want to merge</div>
-    <form method="post" novalidate
-          hx-post="{% url 'merge-first-step' %}"
-          hx-target="div.form-container"
-          hx-swap="outerHTML"
-          class="my-4"
-    >{% csrf_token %}
-        {% if form.non_field_errors|length > 0 %}
-            <div class="my-3">
+  <div class="fs-4">Step 1: Select the contacts for merging</div>
+  <div>Search and select the contacts you want to merge</div>
+  <form
+    method="post"
+    novalidate
+    hx-post="{% url 'merge-first-step' %}"
+    hx-target="div.form-container"
+    hx-swap="outerHTML"
+    class="my-4"
+  >
+    {% csrf_token %}
+    {% if form.non_field_errors|length > 0 %}
+      <div class="my-3">
+        {% for error in form.non_field_errors %}
+          <div class="text-danger fs-09">{{ error|escape }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="my-3">
+      <div class="label">{{ form.contacts.label|title }}<span class="text-danger mx-1">*</span></div>
+      <div class="">{{ form.contacts|add_classes:"contacts" }}</div>
+      <div>
+        {% for error in form.contacts.errors %}
+          <div class="text-danger my-1">{{ error|escape }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="d-grid gap-3 my-3 d-md-flex justify-content-md-end">
+      <input class="btn btn-main-color " type="submit" value="Next step" />
+    </div>
 
-                {% for error in form.non_field_errors %}
-                    <div class="text-danger fs-09">
-                        {{ error|escape }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <div class="my-3">
-            <div class="label">
-                {{ form.contacts.label|title }}<span class="text-danger mx-1">*</span>
-            </div>
-            <div class="">
-                {{ form.contacts|add_classes:"contacts" }}
-            </div>
-            <div>
-                {% for error in form.contacts.errors %}
-                    <div class="text-danger my-1">
-                        {{ error|escape }}
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="d-grid gap-3 my-3 d-md-flex justify-content-md-end">
-            <input class="btn btn-main-color " type="submit" value="Next step">
-        </div>
-
-        <script src="{% static 'js/merge_contacts.js' %}"></script>
-    </form>
+    <script src="{% static 'js/merge_contacts.js' %}"></script>
+  </form>
 </div>

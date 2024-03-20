@@ -1,71 +1,69 @@
 tr {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 tbody tr:hover {
-    background-color: #fafafa;
+  background-color: #fafafa;
 }
 
 thead tr th:hover {
-    background-color: #f7f7f7;
+  background-color: #f7f7f7;
 }
 
 .width-100 {
-    width: 100px;
+  width: 100px;
 }
 
 .width-455 {
-    width: 455px;
+  width: 455px;
 }
 
 .width-530 {
-    width: 530px;
+  width: 530px;
 }
 
 .height-190 {
-    height:190px;
+  height: 190px;
 }
 
 .ml-10 {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .ml-15 {
-    margin-left: 15px;
+  margin-left: 15px;
 }
 
 .table-container th.asc:after {
-    content: '\0000a0\0025b2';
-    float: right;
+  content: "\0000a0\0025b2";
+  float: right;
 }
 
 .table-container th.desc:after {
-    content: '\0000a0\0025bc';
-    float: right;
+  content: "\0000a0\0025bc";
+  float: right;
 }
 
 .table-container table td:nth-child(1) {
-    width: 3%;
+  width: 3%;
 }
 
 .table-container table td:nth-child(2) {
-    width: 8%;
+  width: 8%;
 }
 
 .table-container table td:nth-child(3) {
-    width: 9%;
+  width: 9%;
 }
 
 .table-container table td:nth-child(4) {
-    width: 30%;
+  width: 30%;
 }
 
 .table-container table td:nth-child(5) {
-    width: 25%;
+  width: 25%;
 }
 
 .table-container table td:nth-child(6) {
-    width: 25%;
+  width: 25%;
 }
-
-

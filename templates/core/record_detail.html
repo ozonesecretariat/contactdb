@@ -1,377 +1,300 @@
 {% extends "base.html" %}
-
 {% load static custom_tags %}
 
 {% block title %}{{ object }} | Contact{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'record_detail.css' %}">
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.9.2/css/flag-icons.min.css"
-    />
+  <link rel="stylesheet" href="{% static 'record_detail.css' %}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.9.2/css/flag-icons.min.css" />
 {% endblock %}
 
 {% block content %}
+  <div class="contact-container">
+    <div class="left-section fit-content-height">
+      <div class="main-color-light  mb-4 p-5 shadow rounded-2">
+        <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
+          <i class="bi bi-person-lines-fill"></i>
+        </div>
+        <hr class="my-5" />
 
-    <div class="contact-container">
-        <div class="left-section fit-content-height">
-            <div class="main-color-light  mb-4 p-5 shadow rounded-2">
-                <div class="mx-auto mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper">
-                    <i class="bi bi-person-lines-fill"></i>
-                </div>
-                <hr class="my-5" />
-
-                <div class="mx-auto fit-content">
-
-                    <div class="d-flex gap-3 flex-wrap justify-content-center fit-content">
-                        {% if object.title %}
-                            <div class=" fit-content">
-                                <div class="">
-                                    {% record_detail_field object.title "Title" False "fs-2" True %}
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if object.honorific %}
-                            <div class=" fit-content">
-                                <div class="">
-                                    {% record_detail_field object.honorific "Honorific" False "fs-2" True %}
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if object.respectful %}
-                            <div class=" fit-content">
-                                <div class="">
-                                    {% record_detail_field object.respectful "Respectful" False "fs-2" True %}
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if object.first_name %}
-                            <div class=" fit-content ">
-                                <div class="">
-                                    {% record_detail_field object.first_name "First Name" False "fs-2" True %}
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if object.last_name %}
-                            <div class="fit-content">
-                                <div class="">
-                                    {% record_detail_field object.last_name "Last Name" False "fs-2" True %}
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-
-
-
-                </div>
-
-                {% if request.user.can_edit %}
-                    <hr class="my-5" />
-
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-                        <a href="{% url 'contact-update' object.pk %}" type="button" class="btn btn-main-color">Edit</a>
-                        <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow">Delete</a>
-
-                    </div>
-
-                {% endif %}
-
-                <div class="d-grid gap-3 mt-3 d-md-flex justify-content-md-center">
-                    <a href="{% url 'contact-emails-history' object.pk %}" type="button" class="btn btn-light">Emails history</a>
-                </div>
-            </div>
-
-            {% if object.is_secondary %}
-                <div class="p-5 shadow main-color-light mb-4 rounded-2">
-
-                    <div class="m-3">
-                        <div class="fs-2">
-                            This is a secondary contact
-                        </div>
-                        <div>Click the link below to see the main information</div>
-                        <br>
-                        {% record_detail_field object.main_contact "Main Contact" False "" True True %}
-                    </div>
-                </div>
+        <div class="mx-auto fit-content">
+          <div class="d-flex gap-3 flex-wrap justify-content-center fit-content">
+            {% if object.title %}
+              <div class=" fit-content">
+                <div class="">{% record_detail_field object.title "Title" False "fs-2" True %}</div>
+              </div>
+            {% endif %}
+            {% if object.honorific %}
+              <div class=" fit-content">
+                <div class="">{% record_detail_field object.honorific "Honorific" False "fs-2" True %}</div>
+              </div>
+            {% endif %}
+            {% if object.respectful %}
+              <div class=" fit-content">
+                <div class="">{% record_detail_field object.respectful "Respectful" False "fs-2" True %}</div>
+              </div>
             {% endif %}
 
-            <div class="p-5 mb-4 shadow main-color-light rounded-2">
+            {% if object.first_name %}
+              <div class=" fit-content ">
+                <div class="">{% record_detail_field object.first_name "First Name" False "fs-2" True %}</div>
+              </div>
+            {% endif %}
 
-                <div class="m-3">
-                    <div class="fs-2">
-                        Position
-                    </div>
-                    {% if object.designation or object.department or object.affiliation %}
-                        {% if object.designation %}
-                            <div class="mb-2">
-                                {% record_detail_field object.designation "Designation" False "" True %}
-                            </div>
-                        {% endif %}
-                        {% if object.department %}
-                            <div class="mb-2">
-                                {% record_detail_field object.department "Department" False "" True %}
-                            </div>
-                        {% endif %}
-                        {% if object.affiliation %}
-                            <div class="mb-2">
-                                {% record_detail_field object.affiliation "Affiliation" False "" True %}
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        <span class="text-muted">None</span>
-                    {% endif %}
-                </div>
-
-                <hr class="my-4">
-
-                <div class="mx-3 mb-3">
-                    <div class="fs-2">
-                        Organization
-                    </div>
-                    {% if object.organization %}
-                        {% if object.organization.name %}
-                            <div class="mb-2">
-                                {% record_detail_field object.organization.name "Name" False "" True %}
-                            </div>
-                        {% endif %}
-                        <div class="collapse" id="collapseOrg">
-
-                            {% if object.organization.organization_id %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.organization_id "Organization Id" False "text-break" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.acronym %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.acronym "Acronym" False "" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.organization_type_id %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.organization_type_id "Organization Type Id" False "text-break" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.organization_type %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.organization_type "Organization Type" False "" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.government %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.government "Government" False "" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.government_name %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.government_name "Government Name" False "" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.country %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.country "Country" False "" True %}
-                                </div>
-                            {% endif %}
-                            {% if object.organization.country_name %}
-                                <div class="mb-2">
-                                    {% record_detail_field object.organization.country_name "Country Name" False "" True %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
-                            <button class="btn btn-main-color text-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrg" aria-expanded="false" aria-controls="collapseOrg">
-                                <span class="text-collapsed">More info</span>
-                                <span class="text-expanded">Less info</span>
-                            </button>
-                        </div>
-                    {% else %}
-                        <span class="text-muted">None</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            {% with object.group_set.all as groups %}
-                {% if groups|length > 0 %}
-                    <div class="p-5 shadow main-color-light rounded-2 mb-4">
-                        <div class="m-3">
-                            <div class="fs-2">
-                                Groups
-                            </div>
-
-                            <div class="mt-3">
-                                <div class="d-flex gap-2 flex-wrap">
-                                    {% for group in groups %}
-                                        <div class="white p-2  fit-content rounded-2 group-container position-relative">
-                                            <a href="{% url 'group-detail' group.pk %}" class="stretched-link"></a>
-                                            <div class="d-flex flex-nowrap align-items-center justify-content-center">
-                                                <div class="mx-2 p-2 rounded-circle d-flex align-items-center justify-content-center group-icon-wrapper">
-                                                    <i class="bi bi-buildings-fill group-icon"></i>
-                                                </div>
-
-
-                                                <div class="me-1 fit-content">
-                                                    <div class=" ">
-                                                        {{ group.name }}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            {% with object.record_set.all as secondary_contacts %}
-                {% if secondary_contacts|length > 0 %}
-                    <div class="p-5 shadow main-color-light rounded-2">
-                        <div class="m-3">
-                            <div class="fs-2">
-                                Secondary contacts
-                            </div>
-                            <div class="mt-3">
-                                {% for contact in secondary_contacts %}
-                                    <a href="{% url 'contact-detail' contact.id %}"
-                                       class="text-decoration-none d-block my-1">
-                                        {{ contact }}
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
+            {% if object.last_name %}
+              <div class="fit-content">
+                <div class="">{% record_detail_field object.last_name "Last Name" False "fs-2" True %}</div>
+              </div>
+            {% endif %}
+          </div>
         </div>
 
+        {% if request.user.can_edit %}
+          <hr class="my-5" />
 
+          <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+            <a href="{% url 'contact-update' object.pk %}" type="button" class="btn btn-main-color">Edit</a>
+            <a href="{% url 'contact-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"
+              >Delete</a
+            >
+          </div>
+        {% endif %}
 
-        <div class="right-section fit-content-height">
-
-            <div class="py-4 px-5 shadow bg-white mb-4 rounded-2 d-grid d-md-flex gap-3 justify-content-md-end">
-                <a class="btn btn-light" href="#registration-statuses">Go to registration statuses<i class="bi bi-arrow-bar-down ms-1"></i></a>
-            </div>
-
-            <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    {% record_detail_field object.phones_with_info "Phones" False None False False True %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.mobiles_with_info "Mobiles" False None False False True %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.emails "Emails" True %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.email_ccs "Email Ccs" True %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.faxes_with_info "Faxes" False None False False True %}
-                </div>
-            </div>
-
-            <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    {% record_detail_field object.focal_point "Focal point" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.org_head "Head of organization" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.is_in_mailing_list "Is in mailing list" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.is_use_organization_address "Is use organization address" %}
-                </div>
-
-                <div class="m-3">
-                    <div class="fs-2">
-                        Address
-                    </div>
-                    <div>
-                        {% if object.address or object.city or object.state or object.country or object.postal_code %}
-
-                            {% if object.address %}
-                                <div class="mb-3">
-                                    {% record_detail_field object.address "Address" False "" True %}
-                                </div>
-                            {% endif %}
-
-                            {% if object.city %}
-                                <div class="mb-3">
-                                    {% record_detail_field object.city "City" False "" True %}
-                                </div>
-                            {% endif %}
-
-                            {% if object.state %}
-                                <div class="mb-3">
-                                    {% record_detail_field object.state "State" False "" True %}
-                                </div>
-                            {% endif %}
-
-                            {% if object.country %}
-                                <div class="mb-3">
-                                    {% record_detail_field object.country "Country" False "" True %}
-                                </div>
-                            {% endif %}
-
-                            {% if object.postal_code %}
-                                <div class="mb-3">
-                                    {% record_detail_field object.postal_code "Postal Code" False "" True %}
-                                </div>
-                            {% endif %}
-
-                        {% else %}
-                            <span class="text-muted">None</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.notes "Notes" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.birth_date "Birth Date" %}
-                </div>
-
-            </div>
-
-             <div class="py-5 shadow details-container bg-white mb-4 rounded-2">
-                <div class="m-3">
-                    {% record_detail_field object.primary_lang "Primary language" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.second_lang "Second language" %}
-                </div>
-                <div class="m-3">
-                    {% record_detail_field object.third_lang "Third language" %}
-                </div>
-            </div>
-
-             <div class="py-5 shadow bg-white rounded-2" id="registration-statuses">
-                <div class="">
-                    <div class="fs-2 mx-5">
-                        Registration Statuses <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-                    </div>
-
-                    <div class="registrations-section" hx-trigger="load" hx-swap="outerHTML" hx-indicator=".progress"
-                         hx-get="{% url 'registration-status-list' %}?page=1&contact={{ object.pk }}">
-
-                    </div>
-
-                </div>
-             </div>
+        <div class="d-grid gap-3 mt-3 d-md-flex justify-content-md-center">
+          <a href="{% url 'contact-emails-history' object.pk %}" type="button" class="btn btn-light">Emails history</a>
         </div>
+      </div>
+
+      {% if object.is_secondary %}
+        <div class="p-5 shadow main-color-light mb-4 rounded-2">
+          <div class="m-3">
+            <div class="fs-2">This is a secondary contact</div>
+            <div>Click the link below to see the main information</div>
+            <br />
+            {% record_detail_field object.main_contact "Main Contact" False "" True True %}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="p-5 mb-4 shadow main-color-light rounded-2">
+        <div class="m-3">
+          <div class="fs-2">Position</div>
+          {% if object.designation or object.department or object.affiliation %}
+            {% if object.designation %}
+              <div class="mb-2">{% record_detail_field object.designation "Designation" False "" True %}</div>
+            {% endif %}
+            {% if object.department %}
+              <div class="mb-2">{% record_detail_field object.department "Department" False "" True %}</div>
+            {% endif %}
+            {% if object.affiliation %}
+              <div class="mb-2">{% record_detail_field object.affiliation "Affiliation" False "" True %}</div>
+            {% endif %}
+          {% else %}
+            <span class="text-muted">None</span>
+          {% endif %}
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="mx-3 mb-3">
+          <div class="fs-2">Organization</div>
+          {% if object.organization %}
+            {% if object.organization.name %}
+              <div class="mb-2">{% record_detail_field object.organization.name "Name" False "" True %}</div>
+            {% endif %}
+            <div class="collapse" id="collapseOrg">
+              {% if object.organization.organization_id %}
+                <div class="mb-2">
+                  {% record_detail_field object.organization.organization_id "Organization Id" False "text-break" True %}
+                </div>
+              {% endif %}
+              {% if object.organization.acronym %}
+                <div class="mb-2">{% record_detail_field object.organization.acronym "Acronym" False "" True %}</div>
+              {% endif %}
+              {% if object.organization.organization_type_id %}
+                <div class="mb-2">
+                  {% record_detail_field object.organization.organization_type_id "Organization Type Id" False "text-break" True %}
+                </div>
+              {% endif %}
+              {% if object.organization.organization_type %}
+                <div class="mb-2">
+                  {% record_detail_field object.organization.organization_type "Organization Type" False "" True %}
+                </div>
+              {% endif %}
+              {% if object.organization.government %}
+                <div class="mb-2">
+                  {% record_detail_field object.organization.government "Government" False "" True %}
+                </div>
+              {% endif %}
+              {% if object.organization.government_name %}
+                <div class="mb-2">
+                  {% record_detail_field object.organization.government_name "Government Name" False "" True %}
+                </div>
+              {% endif %}
+              {% if object.organization.country %}
+                <div class="mb-2">{% record_detail_field object.organization.country "Country" False "" True %}</div>
+              {% endif %}
+              {% if object.organization.country_name %}
+                <div class="mb-2">
+                  {% record_detail_field object.organization.country_name "Country Name" False "" True %}
+                </div>
+              {% endif %}
+            </div>
+            <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+              <button
+                class="btn btn-main-color text-toggle"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOrg"
+                aria-expanded="false"
+                aria-controls="collapseOrg"
+              >
+                <span class="text-collapsed">More info</span>
+                <span class="text-expanded">Less info</span>
+              </button>
+            </div>
+          {% else %}
+            <span class="text-muted">None</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% with object.group_set.all as groups %}
+        {% if groups|length > 0 %}
+          <div class="p-5 shadow main-color-light rounded-2 mb-4">
+            <div class="m-3">
+              <div class="fs-2">Groups</div>
+
+              <div class="mt-3">
+                <div class="d-flex gap-2 flex-wrap">
+                  {% for group in groups %}
+                    <div class="white p-2  fit-content rounded-2 group-container position-relative">
+                      <a href="{% url 'group-detail' group.pk %}" class="stretched-link"></a>
+                      <div class="d-flex flex-nowrap align-items-center justify-content-center">
+                        <div
+                          class="mx-2 p-2 rounded-circle d-flex align-items-center justify-content-center group-icon-wrapper"
+                        >
+                          <i class="bi bi-buildings-fill group-icon"></i>
+                        </div>
+
+                        <div class="me-1 fit-content">
+                          <div class=" ">{{ group.name }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% with object.record_set.all as secondary_contacts %}
+        {% if secondary_contacts|length > 0 %}
+          <div class="p-5 shadow main-color-light rounded-2">
+            <div class="m-3">
+              <div class="fs-2">Secondary contacts</div>
+              <div class="mt-3">
+                {% for contact in secondary_contacts %}
+                  <a href="{% url 'contact-detail' contact.id %}" class="text-decoration-none d-block my-1">
+                    {{ contact }}
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
     </div>
 
+    <div class="right-section fit-content-height">
+      <div class="py-4 px-5 shadow bg-white mb-4 rounded-2 d-grid d-md-flex gap-3 justify-content-md-end">
+        <a class="btn btn-light" href="#registration-statuses"
+          >Go to registration statuses<i class="bi bi-arrow-bar-down ms-1"></i
+        ></a>
+      </div>
+
+      <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+        <div class="m-3">{% record_detail_field object.phones_with_info "Phones" False None False False True %}</div>
+        <div class="m-3">{% record_detail_field object.mobiles_with_info "Mobiles" False None False False True %}</div>
+        <div class="m-3">{% record_detail_field object.emails "Emails" True %}</div>
+        <div class="m-3">{% record_detail_field object.email_ccs "Email Ccs" True %}</div>
+        <div class="m-3">{% record_detail_field object.faxes_with_info "Faxes" False None False False True %}</div>
+      </div>
+
+      <div class="py-5 shadow  details-container bg-white mb-4 rounded-2">
+        <div class="m-3">{% record_detail_field object.focal_point "Focal point" %}</div>
+        <div class="m-3">{% record_detail_field object.org_head "Head of organization" %}</div>
+        <div class="m-3">{% record_detail_field object.is_in_mailing_list "Is in mailing list" %}</div>
+        <div class="m-3">
+          {% record_detail_field object.is_use_organization_address "Is use organization address" %}
+        </div>
+
+        <div class="m-3">
+          <div class="fs-2">Address</div>
+          <div>
+            {% if object.address or object.city or object.state or object.country or object.postal_code %}
+
+              {% if object.address %}
+                <div class="mb-3">{% record_detail_field object.address "Address" False "" True %}</div>
+              {% endif %}
+
+              {% if object.city %}
+                <div class="mb-3">{% record_detail_field object.city "City" False "" True %}</div>
+              {% endif %}
+
+              {% if object.state %}
+                <div class="mb-3">{% record_detail_field object.state "State" False "" True %}</div>
+              {% endif %}
+
+              {% if object.country %}
+                <div class="mb-3">{% record_detail_field object.country "Country" False "" True %}</div>
+              {% endif %}
+
+              {% if object.postal_code %}
+                <div class="mb-3">{% record_detail_field object.postal_code "Postal Code" False "" True %}</div>
+              {% endif %}
+            {% else %}
+              <span class="text-muted">None</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="m-3">{% record_detail_field object.notes "Notes" %}</div>
+        <div class="m-3">{% record_detail_field object.birth_date "Birth Date" %}</div>
+      </div>
+
+      <div class="py-5 shadow details-container bg-white mb-4 rounded-2">
+        <div class="m-3">{% record_detail_field object.primary_lang "Primary language" %}</div>
+        <div class="m-3">{% record_detail_field object.second_lang "Second language" %}</div>
+        <div class="m-3">{% record_detail_field object.third_lang "Third language" %}</div>
+      </div>
+
+      <div class="py-5 shadow bg-white rounded-2" id="registration-statuses">
+        <div class="">
+          <div class="fs-2 mx-5">
+            Registration Statuses
+            <script
+              src="https://code.jquery.com/jquery-3.6.4.min.js"
+              integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+              crossorigin="anonymous"
+            ></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+          </div>
+
+          <div
+            class="registrations-section"
+            hx-trigger="load"
+            hx-swap="outerHTML"
+            hx-indicator=".progress"
+            hx-get="{% url 'registration-status-list' %}?page=1&contact={{ object.pk }}"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_js %}
-
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
 {% endblock %}

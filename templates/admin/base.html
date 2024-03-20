@@ -1,12 +1,10 @@
 {% extends "admin/base.html" %}
-
 {% load static %}
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'admin.css' %}">
+  <link rel="stylesheet" href="{% static 'admin.css' %}" />
 {% endblock %}
-
 
 {% block userlinks %}
   <a href="{% url 'home' %}">Main Site</a> /
@@ -15,7 +13,6 @@
   {% endif %}
 
   <a href="{% url 'two_factor:profile' %}">Security</a> /
-
 
   <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
     {% csrf_token %}

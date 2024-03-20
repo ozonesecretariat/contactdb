@@ -1,15 +1,10 @@
 {% extends "two_factor/core/login.html" %}
-
 {% load static %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'login.css' %}">
+  <link rel="stylesheet" href="{% static 'login.css' %}" />
 {% endblock %}
 
 {% block content %}
-  <div class="mx-auto shadow p-5 login-container bg-white rounded-2">
-    {{ block.super }}
-
-  </div>
-
+  <div class="mx-auto shadow p-5 login-container bg-white rounded-2">{{ block.super }}</div>
 {% endblock %}

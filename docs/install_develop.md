@@ -12,7 +12,7 @@ This document describes installation steps required to install locally for devel
 - Create a postgresql database and user:
   ```shell
   sudo -u postgres createuser -Pds contactdb && sudo -u postgres createdb contactdb
-  ``` 
+  ```
 - _(Recommended)_ create and activate a python virtualenv
 - Clone this repository
 
@@ -24,7 +24,7 @@ This document describes installation steps required to install locally for devel
   ```
 - Install dependencies
   ```shell
-  pip install -c requirements/constraints.txt -r requirements/dev.txt 
+  pip install -c requirements/constraints.txt -r requirements/dev.txt
   ```
 - Run migrations
   ```shell
@@ -34,7 +34,7 @@ This document describes installation steps required to install locally for devel
   ```shell
   ./manage.py seed_db
   ```
-  
+
 ## Running the application
 
 - Start the backend with hot-reload
@@ -83,4 +83,4 @@ This document describes installation steps required to install locally for devel
 ## Where to go from here?
 
 See the [tests guide](./tests.md) to run the test suites locally. Afterward check
-the [development guide](./development_guide.md) to help you get started.  
+the [development guide](./development_guide.md) to help you get started.

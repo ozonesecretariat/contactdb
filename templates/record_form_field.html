@@ -1,20 +1,20 @@
 {% load custom_tags %}
 
-    <div class="{% if small_label %}label{% else %}fs-2 mb-3{% endif %}">{{ field.label|title }}{% if is_required %}<span class="text-danger">*</span> {% endif %}</div>
-    <div class="">
-        {% if class_names %}
-            {{ field|add_classes:class_names }}
-        {% else %}
-            {{ field }}
-        {% endif %}
-        {% if field.help_text %}
-            <div class="text-muted fs-09 form-help-text">{{ field.help_text|safe }}</div>
-        {% endif %}
-    </div>
-    <div>
-        {% for error in field.errors %}
-            <div class="text-danger my-1">
-                {{ error|escape }}
-            </div>
-        {% endfor %}
-    </div>
+<div class="{% if small_label %}label{% else %}fs-2 mb-3{% endif %}">
+  {{ field.label|title }}{% if is_required %}<span class="text-danger">*</span>{% endif %}
+</div>
+<div class="">
+  {% if class_names %}
+    {{ field|add_classes:class_names }}
+  {% else %}
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}
+    <div class="text-muted fs-09 form-help-text">{{ field.help_text|safe }}</div>
+  {% endif %}
+</div>
+<div>
+  {% for error in field.errors %}
+    <div class="text-danger my-1">{{ error|escape }}</div>
+  {% endfor %}
+</div>

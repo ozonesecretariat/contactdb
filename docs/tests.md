@@ -9,10 +9,10 @@
 - To run with coverage
   ```shell
   pytest --cov
-  ``` 
+  ```
 - To run a specific test suite
   ```shell
-  pytest accounts/tests/test_users.py 
+  pytest accounts/tests/test_users.py
   ```
 
 ## Running E2E tests
@@ -20,7 +20,7 @@
 Prepare env:
 
 - Clone repository locally
-- Make sure that the app is running. Either using [install for dev](./install_develop.md) or 
+- Make sure that the app is running. Either using [install for dev](./install_develop.md) or
   [install with docker](./install_docker.md).
 - Seed the database with data for the E2E tests. Only needs to be done once, but if you change anything in the DB you
   _may need to run it again_.

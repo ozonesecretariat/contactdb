@@ -1,123 +1,114 @@
 {% extends 'base.html' %}
-
 {% load static i18n django_task_tags %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'sync_kronos.css' %}">
+  <link rel="stylesheet" href="{% static 'sync_kronos.css' %}" />
 {% endblock %}
 
-{% block title %} Import from Kronos {% endblock %}
+{% block title %}Import from Kronos{% endblock %}
 
 {% block content %}
-    <div class="bg-white shadow p-5 rounded-2 mb-4">
+  <div class="bg-white shadow p-5 rounded-2 mb-4">
+    <div class="fs-2">Import Kronos events</div>
+    <hr />
+    <div>
+      <div
+        class="kronos-events-form"
+        hx-get="{% url 'kronos-events-import' %}"
+        hx-target="div.kronos-events-form"
+        hx-swap="outerHTML"
+        hx-trigger="load"
+      ></div>
+    </div>
+    <div class="d-flex gap-3 justify-content-start align-items-center mt-5 mb-2">
+      <div class="fs-4">Imports history</div>
+      <button
+        class="btn btn-main-color"
+        hx-get="{% url 'kronos-events-import-history' %}"
+        hx-target="div.events-imports div.table-container"
+        hx-swap="outerHTML"
+        hx-trigger="click"
+        hx-indicator=".progress"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+    <div class="">
+      <div class="progress">
+        <div class="indeterminate"></div>
+      </div>
 
-        <div class="fs-2">
-            Import Kronos events
-        </div>
-        <hr />
-        <div>
-            <div class="kronos-events-form"
-                 hx-get="{% url 'kronos-events-import' %}"
-                 hx-target="div.kronos-events-form"
-                 hx-swap="outerHTML"
-                 hx-trigger="load">
-            </div>
+      <div class="events-imports">
+        <div
+          hx-get="{% url 'kronos-events-import-history' %}"
+          hx-trigger="load"
+          hx-target="div.events-imports div.table-container"
+          hx-swap="outerHTML"
+          hx-indicator=".progress"
+          style="cursor: pointer;"
+          class="table-container"
+        ></div>
+      </div>
+    </div>
+  </div>
 
-        </div>
-        <div class="d-flex gap-3 justify-content-start align-items-center mt-5 mb-2">
-            <div class="fs-4">
-                Imports history
-            </div>
-            <button class="btn btn-main-color"
-                    hx-get="{% url 'kronos-events-import-history' %}"
-                    hx-target="div.events-imports div.table-container"
-                    hx-swap="outerHTML"
-                    hx-trigger="click"
-                    hx-indicator=".progress"
-            >
-                <i class="bi bi-arrow-clockwise"></i>
-            </button>
-        </div>
-        <div class="">
-            <div class="progress">
-                <div class="indeterminate"></div>
-            </div>
-
-            <div class="events-imports">
-                <div hx-get="{% url 'kronos-events-import-history' %}"
-                     hx-trigger="load"
-                     hx-target="div.events-imports div.table-container"
-                     hx-swap="outerHTML"
-                     hx-indicator=".progress"
-                     style="cursor: pointer;"
-                     class="table-container"></div>
-            </div>
-
-        </div>
-
+  <div class="bg-white shadow p-5 rounded-2 mb-4">
+    <div class="fs-2">Import contacts from Kronos</div>
+    <hr />
+    <div>
+      <div
+        class="kronos-participants-form"
+        hx-get="{% url 'kronos-participants-import' %}"
+        hx-target="div.kronos-participants-form"
+        hx-swap="outerHTML"
+        hx-trigger="load"
+      ></div>
     </div>
 
-    <div class="bg-white shadow p-5 rounded-2 mb-4">
-        <div class="fs-2">
-            Import contacts from Kronos
-        </div>
-        <hr/>
-        <div>
-            <div class="kronos-participants-form"
-                 hx-get="{% url 'kronos-participants-import' %}"
-                 hx-target="div.kronos-participants-form"
-                 hx-swap="outerHTML"
-                 hx-trigger="load">
-            </div>
-
-        </div>
-
-        <div class="d-flex gap-3 justify-content-start align-items-center mt-5 mb-2">
-            <div class="fs-4">
-                Imports history
-            </div>
-            <button class="btn btn-main-color"
-                    hx-get="{% url 'kronos-participants-import-history' %}"
-                    hx-target="div.participants-imports div.table-container"
-                    hx-swap="outerHTML"
-                    hx-trigger="click"
-                    hx-indicator=".progress"
-            >
-                <i class="bi bi-arrow-clockwise"></i>
-            </button>
-        </div>
-        <div class="">
-            <div class="progress">
-                <div class="indeterminate"></div>
-            </div>
-
-            <div class="participants-imports">
-                <div hx-get="{% url 'kronos-participants-import-history' %}"
-                 hx-trigger="load"
-                 hx-target="div.participants-imports div.table-container"
-                 hx-swap="outerHTML"
-                 hx-indicator=".progress"
-                 style="cursor: pointer;"
-                 class="table-container"></div>
-            </div>
-
-
-        </div>
+    <div class="d-flex gap-3 justify-content-start align-items-center mt-5 mb-2">
+      <div class="fs-4">Imports history</div>
+      <button
+        class="btn btn-main-color"
+        hx-get="{% url 'kronos-participants-import-history' %}"
+        hx-target="div.participants-imports div.table-container"
+        hx-swap="outerHTML"
+        hx-trigger="click"
+        hx-indicator=".progress"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
     </div>
+    <div class="">
+      <div class="progress">
+        <div class="indeterminate"></div>
+      </div>
 
-    <div class="bg-white px-5 py-4 shadow rounded-2">
-        <div class="text-muted"><span class="text-danger">*</span> Required field</div>
-
+      <div class="participants-imports">
+        <div
+          hx-get="{% url 'kronos-participants-import-history' %}"
+          hx-trigger="load"
+          hx-target="div.participants-imports div.table-container"
+          hx-swap="outerHTML"
+          hx-indicator=".progress"
+          style="cursor: pointer;"
+          class="table-container"
+        ></div>
+      </div>
     </div>
+  </div>
 
+  <div class="bg-white px-5 py-4 shadow rounded-2">
+    <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+  </div>
 {% endblock %}
 
-
 {% block extra_js %}
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
-    <script type="text/javascript" src="{% static 'js/django_task.js' %}"></script>
-    <script>
-
-    </script>
+  <script
+    src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+    crossorigin="anonymous"
+  ></script>
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script type="text/javascript" src="{% static 'js/django_task.js' %}"></script>
+  <script></script>
 {% endblock extra_js %}

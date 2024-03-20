@@ -7,12 +7,11 @@
 
 Docs:
 
- - [Install Docker](docs/install_docker.md)
+- [Install Docker](docs/install_docker.md)
 
 DEV docs/guides:
 
- - [Install for development](docs/install_develop.md)
- - [Development Guide](./docs/development_guide.md)
- - [Running automated tests](./docs/tests.md)
- - [Local Docker build](docs/local_docker_build.md)
-
+- [Install for development](docs/install_develop.md)
+- [Development Guide](./docs/development_guide.md)
+- [Running automated tests](./docs/tests.md)
+- [Local Docker build](docs/local_docker_build.md)

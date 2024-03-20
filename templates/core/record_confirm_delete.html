@@ -1,69 +1,48 @@
 {% extends 'base.html' %}
 
-{% block title %} {{ object }} | Delete contact {% endblock %}
+{% block title %}{{ object }} | Delete contact{% endblock %}
 
 {% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="bg-white p-5 shadow fs-2 mb-4 rounded-2">Are you sure you want to delete the following contact?</div>
 
-    <form method="post">{% csrf_token %}
-        <div class="bg-white p-5 shadow fs-2 mb-4 rounded-2">
-            Are you sure you want to delete the following contact?
-        </div>
-
-        <div class="main-color-light p-5 shadow mb-4 fit-content mx-auto rounded-2">
-            <div class=" mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper mx-auto">
-                <i class="bi bi-person-lines-fill"></i>
+    <div class="main-color-light p-5 shadow mb-4 fit-content mx-auto rounded-2">
+      <div class=" mb-3 p-3 rounded-circle d-flex align-items-center justify-content-center icon-wrapper mx-auto">
+        <i class="bi bi-person-lines-fill"></i>
+      </div>
+      <div class="d-flex flex-wrap align-items-center justify-content-center">
+        <div class="mx-auto d-flex flex-wrap justify-content-center fit-content">
+          {% if object.title %}
+            <div class="me-4 fit-content">
+              <div class="label">Title</div>
+              <div class="fs-3 mb-3">{{ object.title }}</div>
             </div>
-            <div class="d-flex flex-wrap align-items-center justify-content-center">
+          {% endif %}
 
-
-                <div class="mx-auto d-flex flex-wrap justify-content-center fit-content">
-                    {% if object.title %}
-                        <div class="me-4 fit-content">
-                            <div class="label">
-                                Title
-                            </div>
-                            <div class="fs-3 mb-3">
-                                {{ object.title }}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if object.first_name %}
-                        <div class="me-4 fit-content">
-                            <div class="label">
-                                First Name
-                            </div>
-                            <div class="fs-3 mb-3">
-                                {{ object.first_name }}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if object.last_name %}
-                        <div class="fit-content ">
-                            <div class="label">
-                                Last Name
-                            </div>
-                            <div class="fs-3 mb-3">
-                                {{ object.last_name }}
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
+          {% if object.first_name %}
+            <div class="me-4 fit-content">
+              <div class="label">First Name</div>
+              <div class="fs-3 mb-3">{{ object.first_name }}</div>
             </div>
+          {% endif %}
 
-        </div>
-
-        <div class="bg-white px-5 py-4 shadow rounded-2">
-            {{ form }}
-            <div class="d-grid gap-3 d-md-flex justify-content-md-end">
-                <a class="btn btn-secondary button-gray-shadow " href="{% url 'contact-detail' object.pk %}">Cancel</a>
-                <input class="btn btn-danger button-danger-shadow" type="submit" value="Delete">
+          {% if object.last_name %}
+            <div class="fit-content ">
+              <div class="label">Last Name</div>
+              <div class="fs-3 mb-3">{{ object.last_name }}</div>
             </div>
-
+          {% endif %}
         </div>
+      </div>
+    </div>
 
-        </form>
-
-
+    <div class="bg-white px-5 py-4 shadow rounded-2">
+      {{ form }}
+      <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+        <a class="btn btn-secondary button-gray-shadow " href="{% url 'contact-detail' object.pk %}">Cancel</a>
+        <input class="btn btn-danger button-danger-shadow" type="submit" value="Delete" />
+      </div>
+    </div>
+  </form>
 {% endblock %}

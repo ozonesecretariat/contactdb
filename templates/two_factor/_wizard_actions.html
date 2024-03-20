@@ -1,11 +1,15 @@
 {% load i18n %}
 
 <div class="d-flex justify-content-center mt-4">
-
   {% if wizard.steps.prev %}
-    <button name="wizard_goto_step" type="submit"
-            value="{{ wizard.steps.prev }}"
-            class="btn btn-secondary mx-2 button-gray-shadow">{% trans "Back" %}</button>
+    <button
+      name="wizard_goto_step"
+      type="submit"
+      value="{{ wizard.steps.prev }}"
+      class="btn btn-secondary mx-2 button-gray-shadow"
+    >
+      {% trans "Back" %}
+    </button>
   {% endif %}
   <button type="submit" class="btn mx-2 btn-main-color">
     {% if wizard.steps.current == 'token' %}
@@ -15,4 +19,3 @@
     {% endif %}
   </button>
 </div>
-

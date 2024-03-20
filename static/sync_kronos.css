@@ -1,15 +1,14 @@
-.table{
-    display: table;
-    overflow-x: auto;
+.table {
+  display: table;
+  overflow-x: auto;
 }
 
-#id_events div{
-    margin-bottom: 1rem;
+#id_events div {
+  margin-bottom: 1rem;
 }
 
-@media (max-width: 1200px){
-    .table{
-        display: block;
-    }
-
+@media (max-width: 1200px) {
+  .table {
+    display: block;
+  }
 }

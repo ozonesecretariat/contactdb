@@ -6,9 +6,9 @@ can be done by following these steps:
 - Make sure docker and docker-compose-plugin is installed
 - Copy override example and adjust as necessary:
   ```shell
-  cp docker-compose.override.local-build.yml docker-compose.override.yml  
+  cp docker-compose.override.local-build.yml docker-compose.override.yml
   ```
-- Copy env example and adjust as necessary. Most values will be set to working 
+- Copy env example and adjust as necessary. Most values will be set to working
   defaults
   ```shell
   cp .env.example .env
@@ -18,4 +18,3 @@ can be done by following these steps:
   docker compose build --pull
   docker compose up -d
   ```
-  

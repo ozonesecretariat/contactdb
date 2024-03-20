@@ -1,7 +1,7 @@
-.date-column{
-    min-width:205px;
+.date-column {
+  min-width: 205px;
 }
 
 .email-row:hover {
-    background-color: #fafafa !important;
+  background-color: #fafafa !important;
 }
