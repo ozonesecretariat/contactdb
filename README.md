@@ -2,7 +2,7 @@
 
 [![Test Suite](https://github.com/ozonesecretariat/contactdb/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ozonesecretariat/contactdb/actions/workflows/tests.yml)
 [![Code Style](https://github.com/ozonesecretariat/contactdb/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/ozonesecretariat/contactdb/actions/workflows/lint.yml)
-[![CodeQL](https://github.com/ozonesecretariat/contactdb/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ozonesecretariat/contactdb/actions/workflows/codeql.yml)
+[![CodeQL](https://github.com/ozonesecretariat/contactdb/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ozonesecretariat/contactdb/actions/workflows/github-code-scanning/codeql)
 [![Continuous Integration](https://github.com/ozonesecretariat/contactdb/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ozonesecretariat/contactdb/actions/workflows/ci.yml)
 
 Docs:
