@@ -1,0 +1,13 @@
+on:
+  workflow_call:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - run: pip install -c requirements/constraints.txt black
+      - run: black --check .
