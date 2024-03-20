@@ -49,7 +49,10 @@
         <div class="select-contact-list"></div>
 
         <hr class="my-5" />
-        <div class="fs-2 mb-3">Selected contact<span class="text-danger">*</span></div>
+        <div class="fs-2 mb-3">
+          Selected contact
+          <span class="text-danger">*</span>
+        </div>
         <div class="m-5 p-5  text-center main-color-light mx-auto fit-content rounded-3 label none-selected-message">
           No contact selected. Search and select a contact to add a new member to the group.
         </div>
@@ -95,7 +98,10 @@
         <form method="post" novalidate>
           {% csrf_token %}
           <div hidden="hidden">{{ form.new_member_id|add_classes:'member' }}</div>
-          <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+          <div class="text-muted">
+            <span class="text-danger">*</span>
+            Required field
+          </div>
           <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-2">
             <a class="btn btn-secondary button-gray-shadow " href="{% url 'group-detail' object.pk %}">Cancel</a>
             <input class="btn btn-success button-success-shadow" type="submit" value="Add Member" />

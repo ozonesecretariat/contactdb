@@ -10,7 +10,8 @@
     <div class="fs-4">
       Are you sure that you want to
       {% if SAVE_INCOMING_DATA %}override the old data{% elif KEEP_OLD_DATA %}discard incoming data{% endif %} for
-      <span class="fw-bold">{{ contact }}</span>?
+      <span class="fw-bold">{{ contact }}</span>
+      ?
     </div>
 
     <div hidden="hidden">{{ form }}</div>

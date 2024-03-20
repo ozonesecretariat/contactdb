@@ -31,14 +31,18 @@
 
           <div class="d-grid gap-3 d-md-flex justify-content-md-center">
             <a href="{% url 'group-update' object.pk %}" type="button" class="btn btn-main-color">Edit</a>
-            <a href="{% url 'group-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow"
-              >Delete</a
-            >
+            <a href="{% url 'group-delete' object.pk %}" type="button" class="btn btn-danger button-danger-shadow">
+              Delete
+            </a>
           </div>
           <div class="d-grid d-md-flex justify-content-md-center mt-3">
-            <a href="{% url 'group-add-member' object.pk %}" type="button" class="btn btn-success button-success-shadow"
-              >Add member</a
+            <a
+              href="{% url 'group-add-member' object.pk %}"
+              type="button"
+              class="btn btn-success button-success-shadow"
             >
+              Add member
+            </a>
           </div>
         {% endif %}
         <div class="d-grid gap-3 mt-3 d-md-flex justify-content-md-center">

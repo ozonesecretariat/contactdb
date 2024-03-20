@@ -20,7 +20,10 @@
       </div>
     {% endif %}
     <div class="my-3">
-      <div class="label">{{ form.contacts.label|title }}<span class="text-danger mx-1">*</span></div>
+      <div class="label">
+        {{ form.contacts.label|title }}
+        <span class="text-danger mx-1">*</span>
+      </div>
       <div class="">{{ form.contacts|add_classes:"contacts" }}</div>
       <div>
         {% for error in form.contacts.errors %}

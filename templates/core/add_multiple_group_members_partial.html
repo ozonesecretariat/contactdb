@@ -2,9 +2,10 @@
   {% for contact in object_list %}
     <div class="border-bottom p-2">
       <input id="contact_{{ contact.id }}" type="checkbox" value="{{ contact.id }}" name="members" checked />
-      <label for="contact_{{ contact.id }}"
-        ><span class="fw-bold">{{ contact }}</span> - {{ contact.organization.name }}</label
-      >
+      <label for="contact_{{ contact.id }}">
+        <span class="fw-bold">{{ contact }}</span>
+        - {{ contact.organization.name }}
+      </label>
     </div>
   {% endfor %}
 </div>

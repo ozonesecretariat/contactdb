@@ -8,12 +8,14 @@
           <div class="d-grid rounded-top overflow-hidden" style="grid-template-columns: 50% 50%">
             <div class="main-color-light border-end border-bottom p-2">
               <div class="mx-2 fw-bold">
-                {{ conflict.record }} <span class="text-muted fst-italic fs-09">(old data)</span>
+                {{ conflict.record }}
+                <span class="text-muted fst-italic fs-09">(old data)</span>
               </div>
             </div>
             <div class=" p-2 border-bottom">
               <div class="mx-2 fw-bold">
-                {{ conflict }} <span class="text-muted fst-italic fs-09">(incoming data)</span>
+                {{ conflict }}
+                <span class="text-muted fst-italic fs-09">(incoming data)</span>
               </div>
             </div>
           </div>
@@ -79,8 +81,9 @@
               hx-indicator=".progress"
               hx-get="{% url 'conflict-resolution' %}?page={{ page_obj.previous_page_number }}"
               hx-swap="outerHTML"
-              >Previous</a
             >
+              Previous
+            </a>
           </li>
         {% endif %}
         {% for i in pagination_range %}
@@ -94,8 +97,9 @@
                   role="button" hx-target="div.list-container" hx-trigger="click" hx-indicator=".progress"
                   hx-get="{% url 'conflict-resolution' %}?page={{ i }}" hx-swap="outerHTML"
                 {% endif %}
-                >{{ i }}</a
               >
+                {{ i }}
+              </a>
             {% endif %}
           </li>
         {% endfor %}
@@ -109,8 +113,9 @@
               hx-indicator=".progress"
               hx-get="{% url 'conflict-resolution' %}?page={{ page_obj.next_page_number }}"
               hx-swap="outerHTML"
-              >Next</a
             >
+              Next
+            </a>
           </li>
         {% endif %}
       </ul>

@@ -21,7 +21,10 @@
 
           <div class="mx-auto fit-content">
             <div class="fit-content">
-              <div class="label">Name<span class="text-danger">*</span></div>
+              <div class="label">
+                Name
+                <span class="text-danger">*</span>
+              </div>
               <div class="mb-3">
                 {{ form.name|add_classes:'form-control' }}
                 {% for error in form.name.errors %}
@@ -56,7 +59,10 @@
         </div>
 
         <div class="bg-white px-5 py-4 shadow rounded-2">
-          <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+          <div class="text-muted">
+            <span class="text-danger">*</span>
+            Required field
+          </div>
           <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-2">
             <a class="btn btn-secondary button-gray-shadow " href="{% url 'group-list' %}">Cancel</a>
             <input class="btn btn-success button-success-shadow" type="submit" value="Add group" />

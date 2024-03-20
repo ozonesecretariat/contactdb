@@ -99,8 +99,9 @@
               hx-indicator=".progress"
               hx-get="{% url 'registration-status-list' %}?page={{ page_obj.previous_page_number }}&contact={{ request.GET.contact }}"
               hx-swap="outerHTML"
-              >Previous</a
             >
+              Previous
+            </a>
           </li>
         {% endif %}
         {% for i in pagination_range %}
@@ -115,8 +116,9 @@
                   hx-get="{% url 'registration-status-list' %}?page={{ i }}&contact={{ request.GET.contact }}"
                   hx-swap="outerHTML"
                 {% endif %}
-                >{{ i }}</a
               >
+                {{ i }}
+              </a>
             {% endif %}
           </li>
         {% endfor %}
@@ -130,8 +132,9 @@
               hx-indicator=".progress"
               hx-get="{% url 'registration-status-list' %}?page={{ page_obj.next_page_number }}&contact={{ request.GET.contact }}"
               hx-swap="outerHTML"
-              >Next</a
             >
+              Next
+            </a>
           </li>
         {% endif %}
       </ul>

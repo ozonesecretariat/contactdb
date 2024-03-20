@@ -74,9 +74,9 @@
               {% if request.user.can_edit %}
                 <li class="my-3"><a class="text-decoration-none " href="{% url 'group-create' %}">Add group</a></li>
                 <li class="my-3">
-                  <a class="text-decoration-none " href="{% url 'groups-add-multiple-members' %}"
-                    >Add members to groups</a
-                  >
+                  <a class="text-decoration-none " href="{% url 'groups-add-multiple-members' %}">
+                    Add members to groups
+                  </a>
                 </li>
               {% endif %}
             </ol>

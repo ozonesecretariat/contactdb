@@ -9,9 +9,9 @@
           </div>
         {% endfor %}
       {% else %}
-        <span class="fw-bold fst-italic {% if compare_field|length > 0 %}text-danger{% else %}text-success{% endif %}"
-          >-------</span
-        >
+        <span class="fw-bold fst-italic {% if compare_field|length > 0 %}text-danger{% else %}text-success{% endif %}">
+          -------
+        </span>
       {% endif %}
     </div>
   {% elif is_bool %}

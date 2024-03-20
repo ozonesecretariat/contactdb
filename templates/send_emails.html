@@ -26,7 +26,10 @@
   </div>
 
   <div class="bg-white rounded-2 shadow p-5 mb-4">
-    <h4>{% trans "Recipients" %}<span class="text-danger">*</span></h4>
+    <h4>
+      {% trans "Recipients" %}
+      <span class="text-danger">*</span>
+    </h4>
     <br />
     <div class="fw-bold">{% trans "Select contacts by:" %}</div>
     <div>
@@ -164,9 +167,9 @@
               class="form-check-input "
               onclick="updateSelection()"
             />
-            <label for="id_{{ form.groups.name }}_{{ forloop.counter0 }}" class="form-check-label fw-bold"
-              >{{ choice }}</label
-            >
+            <label for="id_{{ form.groups.name }}_{{ forloop.counter0 }}" class="form-check-label fw-bold">
+              {{ choice }}
+            </label>
           </div>
         {% endfor %}
       </div>
@@ -192,9 +195,10 @@
                   checked
                   onclick="updateSelection()"
                 />
-                <label for="contact_{{ contact.id }}"
-                  ><span class="fw-bold">{{ contact }}</span> - {{ contact.emails }}</label
-                >
+                <label for="contact_{{ contact.id }}">
+                  <span class="fw-bold">{{ contact }}</span>
+                  - {{ contact.emails }}
+                </label>
               </div>
             {% endfor %}
           </div>
@@ -349,9 +353,9 @@
               class="form-check-input"
               onclick="updateSelectionCC()"
             />
-            <label for="cc-id_{{ form.cc_groups.name }}_{{ forloop.counter0 }}" class="form-check-label fw-bold"
-              >{{ choice }}</label
-            >
+            <label for="cc-id_{{ form.cc_groups.name }}_{{ forloop.counter0 }}" class="form-check-label fw-bold">
+              {{ choice }}
+            </label>
           </div>
         {% endfor %}
       </div>
@@ -376,9 +380,10 @@
                   checked
                   onclick="updateSelectionCC()"
                 />
-                <label for="cc-contact_{{ contact.id }}"
-                  ><span class="fw-bold">{{ contact }}</span> - {{ contact.emails }}</label
-                >
+                <label for="cc-contact_{{ contact.id }}">
+                  <span class="fw-bold">{{ contact }}</span>
+                  - {{ contact.emails }}
+                </label>
               </div>
             {% endfor %}
           </div>
@@ -406,11 +411,17 @@
     <div id="hidden-cc-contacts" hidden="hidden" style="display: none;"></div>
 
     <div class="bg-white rounded-2 shadow p-5 mb-4 d-flex flex-column">
-      <span class="label">{% trans "Subject" %}<span class="text-danger">*</span></span>
+      <span class="label">
+        {% trans "Subject" %}
+        <span class="text-danger">*</span>
+      </span>
       {{ form.subject }}
       <div class="d-flex flex-wrap mt-4 gap-3">
         <div>
-          <div class="label">{% trans "Content" %}<span class="text-danger">*</span></div>
+          <div class="label">
+            {% trans "Content" %}
+            <span class="text-danger">*</span>
+          </div>
           {{ form.content }}
         </div>
         <div>
@@ -430,7 +441,10 @@
     </div>
 
     <div class="bg-white shadow rounded-2 p-5">
-      <div class="text-muted"><span class="text-danger">*</span> Required field</div>
+      <div class="text-muted">
+        <span class="text-danger">*</span>
+        Required field
+      </div>
       <div class="d-grid gap-3 d-md-flex justify-content-md-end">
         <input class="btn btn-success" type="submit" value="Send email" />
       </div>

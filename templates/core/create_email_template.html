@@ -21,7 +21,10 @@
     {% endif %}
 
     <div class="fit-content">
-      <div class="label">Name<span class="text-danger">*</span></div>
+      <div class="label">
+        Name
+        <span class="text-danger">*</span>
+      </div>
       <div class="mb-3">
         {{ form.name|add_classes:'form-control' }}
         {% for error in form.name.errors %}
@@ -31,7 +34,10 @@
     </div>
 
     <div class="fit-content">
-      <div class="label">Html content<span class="text-danger">*</span></div>
+      <div class="label">
+        Html content
+        <span class="text-danger">*</span>
+      </div>
       <div class="mb-3">
         {{ form.html_content|add_classes:'form-control' }}
         {% for error in form.html_content.errors %}

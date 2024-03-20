@@ -17,10 +17,8 @@
 
       <div>
         <div class="d-grid gap-3 d-md-flex justify-content-md-center align-items-md-center">
-          <a class="btn btn-main-color" id="href-docx" href="{% url 'export-docx' %}">
-            {% trans "Export as .docx" %}
-          </a>
-          <a class="btn btn-success" id="href-xlsx" href="{% url 'export-excel' %}"> {% trans "Export as .xlsx" %} </a>
+          <a class="btn btn-main-color" id="href-docx" href="{% url 'export-docx' %}">{% trans "Export as .docx" %}</a>
+          <a class="btn btn-success" id="href-xlsx" href="{% url 'export-excel' %}">{% trans "Export as .xlsx" %}</a>
         </div>
         <p class="fst-italic" style="font-size:12px; opacity: 0.5;">
           {% trans "Contacts present in the table will be exported." %}
@@ -32,7 +30,7 @@
 
     {% if request.user.can_edit %}
       <div class=" d-grid gap-3 d-md-flex justify-content-md-start">
-        <a href="{% url 'merge-contacts' %}" class="btn btn-main-color"> Merge contacts </a>
+        <a href="{% url 'merge-contacts' %}" class="btn btn-main-color">Merge contacts</a>
 
         <a href="{% url 'contact-create' %}" class="btn btn-success">Add contact</a>
       </div>
