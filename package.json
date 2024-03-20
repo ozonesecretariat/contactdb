@@ -4,6 +4,8 @@
     "test:open": "cypress open --e2e"
   },
   "devDependencies": {
-    "cypress": "13.7.0"
+    "cypress": "13.7.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-jinja-template": "^1.3.3"
   }
 }
