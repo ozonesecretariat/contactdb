@@ -6,6 +6,7 @@ This document describes installation steps required to install locally for devel
 
 ## Preparing environment
 
+- Install node (>=20)
 - Install python and python-dev (>=3.12)
 - Install and start postgresql (>=15)
 - Install and start redis (>=7)
@@ -25,6 +26,7 @@ This document describes installation steps required to install locally for devel
 - Install dependencies
   ```shell
   pip install -c requirements/constraints.txt -r requirements/dev.txt
+  npm install
   ```
 - Run migrations
   ```shell

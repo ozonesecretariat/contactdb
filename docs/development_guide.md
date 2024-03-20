@@ -2,15 +2,19 @@
 
 ## Style guide
 
-The backend code uses the [black style guide](https://black.readthedocs.io/en/stable/) for automatic linting. Can
-be integrated into your IDE or manually run with:
-
-```bash
-black --extend-exclude=migrations .
-```
+- All files should be automatically formated with [prettier](https://prettier.io/).
+  Can be integrated into your IDE or manually run with:
+  ```bash
+  npm run lint
+  ```
+- The Python code uses the [black style guide](https://black.readthedocs.io/en/stable/) for extra automatic linting. Can
+  be integrated into your IDE or manually run with:
+  ```bash
+  black .
+  ```
 
 A workflow is integrated into GitHub action to check that any code push has been first processed with the project
-settings. See [code style workflow](https://github.com/ozonesecretariat/contactdb/actions/workflows/lint.yml)
+settings. See [code style workflow](../.github/workflows/lint.yml)
 
 ## Starting points
 
