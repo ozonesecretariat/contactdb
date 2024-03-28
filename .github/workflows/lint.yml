@@ -14,6 +14,6 @@ on:
 
 jobs:
   lint-black:
-    uses: ./.github/workflows/lint-black.yml
+    uses: ./.github/workflows/lint-python.yml
   lint-prettier:
-    uses: ./.github/workflows/lint-prettier.yml
+    uses: ./.github/workflows/lint-npm.yml

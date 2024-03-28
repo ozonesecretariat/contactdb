@@ -11,7 +11,6 @@ def test_create_user():
     user = User.objects.create_user(email="normal@user.com", password="foo")
     assert user.email == "normal@user.com"
     assert user.is_active
-    assert not user.is_staff
     assert not user.is_superuser
 
     with pytest.raises(AttributeError):

@@ -1,0 +1,7 @@
+{% extends "admin/actions/base_intermediate_page.html" %}
+
+{% block form %}
+  <div class="help">Add {{ queryset.count }} selected contacts to the following group:</div>
+  {{ widget|safe }}
+  <input type="submit" name="apply" value="Add to group" />
+{% endblock form %}

@@ -35,6 +35,7 @@ class Command(BaseCommand):
         call_command("flush", "--noinput")
         self.clear_queue()
 
+        call_command("load_fixtures", "initial")
         # Create users / password:
         #  - admin@example.com / admin
-        call_command("loaddata", "test/users")
+        call_command("load_fixtures", "test")

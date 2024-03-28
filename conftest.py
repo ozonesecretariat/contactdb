@@ -6,15 +6,13 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.timezone import make_aware
 
 from core.models import (
-    Record,
+    Contact,
     Organization,
-    Group,
-    KronosEvent,
-    TemporaryContact,
-    Emails,
-    EmailTag,
-    EmailFile,
+    ContactGroup,
+    ResolveConflict,
 )
+from emails.models import EmailAttachment, Email
+from events.models import Event
 
 
 @pytest.fixture
@@ -83,7 +81,7 @@ def snd_organization(db):
 
 @pytest.fixture
 def contact(db, first_organization):
-    return Record(
+    return Contact(
         organization=first_organization,
         contact_id="500d0202abb6fba28c50d61fa4979a28",
         phones=[],
@@ -98,7 +96,7 @@ def contact(db, first_organization):
 
 @pytest.fixture
 def other_contact(db, first_organization):
-    return Record(
+    return Contact(
         first_name="Other",
         last_name="Record",
         department="Minister of Agriculture",
@@ -117,7 +115,7 @@ def other_contact(db, first_organization):
 
 @pytest.fixture
 def third_contact(db, snd_organization):
-    return Record(
+    return Contact(
         first_name="Third",
         last_name="Record",
         department="Department",
@@ -136,17 +134,17 @@ def third_contact(db, snd_organization):
 
 @pytest.fixture
 def group(db):
-    return Group(name="Group1", description="This is a test description")
+    return ContactGroup(name="Group1", description="This is a test description")
 
 
 @pytest.fixture
 def other_group(db):
-    return Group(name="Group2", description="This is a test description2")
+    return ContactGroup(name="Group2", description="This is a test description2")
 
 
 @pytest.fixture
 def kronos_event(db):
-    return KronosEvent(
+    return Event(
         event_id="520345543cbd0495c00001879",
         code="005639",
         title="Event title",
@@ -164,7 +162,7 @@ def kronos_event(db):
 
 @pytest.fixture
 def temporary_contact(first_organization, other_contact):
-    return TemporaryContact(
+    return ResolveConflict(
         record=other_contact,
         first_name=other_contact.first_name,
         last_name=other_contact.last_name,
@@ -184,7 +182,7 @@ def temporary_contact(first_organization, other_contact):
 
 @pytest.fixture
 def snd_temporary_contact(db, snd_organization, third_contact):
-    return TemporaryContact(
+    return ResolveConflict(
         record=third_contact,
         first_name=third_contact.first_name,
         last_name=third_contact.last_name,
@@ -204,21 +202,16 @@ def snd_temporary_contact(db, snd_organization, third_contact):
 
 @pytest.fixture
 def email(db):
-    return Emails(
+    return Email(
         subject="Email subject",
         content="<h1>Email content</h1><p>Test </p>",
     )
 
 
 @pytest.fixture
-def email_tag_first_name(db):
-    return EmailTag(name="First name", field_name="first_name")
-
-
-@pytest.fixture
 def email_file(db, email):
     email.save()
-    email_file = EmailFile.objects.create(
+    email_file = EmailAttachment.objects.create(
         name="email_file.txt",
         email=email,
         file=SimpleUploadedFile("email_file.txt", b"these are the file contents!"),

@@ -526,3 +526,5 @@ GitHub.sublime-settings
 
 .fs/
 docker-compose.override.yml
+compose.override.yml
+cypress/screenshots/

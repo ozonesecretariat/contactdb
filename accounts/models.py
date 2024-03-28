@@ -6,10 +6,15 @@ from django.contrib.auth.models import (
 from django.db import models
 from two_factor.utils import default_device
 
-from contactdb.citext import CIEmailField
+from common.citext import CICharField, CIEmailField
 
 
 class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
+
     def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("Users must have an email address.")
@@ -25,51 +30,23 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         user = self.create_user(email, password, **extra_fields)
         user.is_superuser = True
-        user.is_staff = True
-        user.can_edit = True
-        user.can_import = True
-        user.can_send_mail = True
         user.save()
         return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = CIEmailField(
-        unique=True,
-        help_text='You can use <a href="../password/">this form</a> to change the password. '
-        "It is recommended to use 'Forgot password' for account retrieval.",
-    )
+    email = CIEmailField(unique=True)
+    first_name = CICharField(max_length=250, null=True, blank=True)
+    last_name = CICharField(max_length=250, null=True, blank=True)
+
     is_active = models.BooleanField(
         default=True,
         verbose_name="Active",
         help_text="Designates whether the account can be used. It is recommended to disable an "
         "account instead of deleting.",
     )
-    is_staff = models.BooleanField(
-        default=False,
-        verbose_name="Staff",
-        help_text="Designates whether the user can access the admin page.",
-    )
-    can_view = models.BooleanField(
-        default=True,
-        verbose_name="View contacts",
-        help_text="Designates whether the user can view contacts.",
-    )
-    can_edit = models.BooleanField(
-        default=False,
-        verbose_name="Edit contacts",
-        help_text="Designates whether the user can edit contacts.",
-    )
-    can_import = models.BooleanField(
-        default=False,
-        verbose_name="Import contacts",
-        help_text="Designates whether the user can import contacts.",
-    )
-    can_send_mail = models.BooleanField(
-        default=False,
-        verbose_name="Send emails",
-        help_text="Designates whether the user can send emails to contacts.",
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
 
@@ -78,6 +55,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    def natural_key(self):
+        return (self.email,)
+
     @property
     def two_factor_enabled(self):
         return bool(default_device(self))
+
+    @property
+    def is_staff(self):
+        return True

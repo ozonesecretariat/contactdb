@@ -1,0 +1,75 @@
+/* Custom array widget*/
+.vArrayField,
+.vArrayField .vArrayWidgetList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vArrayField .vArrayWidget {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.vArrayField .widgetTemplate {
+  /* The template widget used to create more should always be hidden */
+  display: none;
+}
+
+.vArrayField svg {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.vArrayField .vArrayWidget svg {
+  visibility: hidden;
+}
+
+.vArrayField .vArrayWidget:hover svg {
+  visibility: visible;
+}
+
+/* Don't show the remove button if there is only one entry */
+.vArrayField .vArrayWidget:only-of-type .remove {
+  display: none;
+}
+
+/* Don't show the move up button if this is the first one */
+.vArrayField .vArrayWidget:first-of-type .moveUp {
+  display: none;
+}
+
+/* Don't show the move down button if this is the last one */
+.vArrayField .vArrayWidget:last-of-type .moveDown {
+  display: none;
+}
+
+.vArrayField .remove {
+  fill: var(--delete-button-bg);
+}
+
+.vArrayField .remove:hover {
+  fill: var(--delete-button-hover-bg);
+}
+
+.vArrayField .add,
+.vArrayField .moveUp,
+.vArrayField .moveDown {
+  fill: var(--button-bg);
+}
+
+.vArrayField .add:hover,
+.vArrayField .moveUp:hover,
+.vArrayField .moveDown:hover {
+  fill: var(--button-hover-bg);
+}
+
+.vArrayField .addAction {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  color: var(--link-fg);
+}

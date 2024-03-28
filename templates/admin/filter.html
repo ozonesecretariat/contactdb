@@ -1,0 +1,21 @@
+{% load i18n %}
+
+{# Custom template that add a simple HTML select element instead of the list that Django has by default #}
+
+<h3>{% blocktranslate with filter_title=title %}By {{ filter_title }}{% endblocktranslate %}</h3>
+<ul>
+  <li>
+    <select
+      aria-label="{{ filter_title }}"
+      name="{{ spec.lookup_kwarg }}"
+      style="width: 260px;"
+      onchange="window.location.href = new window.URL(this.value, window.location).toString();"
+    >
+      {% for choice in choices %}
+        <option {% if choice.selected %}selected{% endif %} value="{{ choice.query_string|iriencode }}">
+          {{ choice.display }}
+        </option>
+      {% endfor %}
+    </select>
+  </li>
+</ul>

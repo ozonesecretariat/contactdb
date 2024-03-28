@@ -1,0 +1,82 @@
+[
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$2KwPfhwPZIbPW0fLVEVatF$JahBhLZ1rPioxC5sjElOrN9aUaxwpaPkKrPBcRF3kCA=",
+      "last_login": "2024-04-10T10:49:12.329Z",
+      "is_superuser": true,
+      "email": "admin@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "created_at": "2024-04-05T10:29:14.676Z",
+      "updated_at": "2024-04-05T10:29:14.685Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$gt5f0igPzniZV6Xs8xUXhh$8yhXPO7EQkFU2fT7VsitUaD5H0YmJvy8im/iOnCJvbU=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-view@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "created_at": "2024-04-05T10:38:30.578Z",
+      "updated_at": "2024-04-05T10:39:09.165Z",
+      "groups": [["View contacts"], ["View events"]],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$vAm6Zei3VFdgmoFBEYH9vL$F6IQCrgz/L4GCHO7hI5BQW2BrMZ2KIEZGDiMy7LsVBE=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-edit@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "created_at": "2024-04-05T10:38:37.999Z",
+      "updated_at": "2024-04-05T10:39:01.251Z",
+      "groups": [["Edit contacts"], ["Edit events"]],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$Rb5nI5ObbkpttmvifNMMQR$rRnkrG7BonsSfKFVMurq6tzU/qnGoz9kjNsQNaFfvy4=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-kronos@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "created_at": "2024-04-05T13:03:32.213Z",
+      "updated_at": "2024-04-05T13:07:11.566Z",
+      "groups": [["Load from Kronos"]],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$JC2z4jiXNL7YRZkwhjce4D$5A0UPXOK2r7JIDCUmiDgmnSYM8B9i4onW3+NAgvvzdA=",
+      "last_login": "2024-04-10T10:52:44.632Z",
+      "is_superuser": false,
+      "email": "test-emails@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "created_at": "2024-04-10T10:52:18.035Z",
+      "updated_at": "2024-04-10T10:52:31.151Z",
+      "groups": [["Edit templates"], ["Send emails"]],
+      "user_permissions": []
+    }
+  }
+]
