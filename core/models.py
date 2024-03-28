@@ -1,161 +1,199 @@
-from ckeditor_uploader.fields import RichTextUploadingField
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives, send_mass_mail
+import textwrap
+
+import pycountry
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.html import strip_tags
 from django_task.models import TaskRQ
-from django.contrib.postgres.fields import ArrayField
-from phonenumbers import parse, geocoder, NumberParseException
-from phonenumbers.phonenumberutil import NumberParseException as NumException
-from core.utils import (
-    ConflictResolutionMethods,
-    replace_relative_image_urls,
-    get_country_code,
-)
+
+from common.array_field import ArrayField
+from common.citext import CICharField
+from common.utils import ConflictResolutionMethods
 
 
-class LoadKronosEventsTask(TaskRQ):
-    DEFAULT_VERBOSITY = 2
-    TASK_QUEUE = "default"
-    TASK_TIMEOUT = 60
-    LOG_TO_FIELD = True
-    LOG_TO_FILE = False
+class Country(models.Model):
+    code = CICharField(max_length=2, primary_key=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        get_latest_by = "created_on"
+        ordering = ("name",)
+        verbose_name_plural = "countries"
 
-    @staticmethod
-    def get_jobclass():
-        from .jobs import LoadKronosEvents
+    def __str__(self):
+        return f"{self.name} ({self.code})"
 
-        return LoadKronosEvents
+    def clean(self):
+        self.code = self.code.upper()
+        if not self.name:
+            try:
+                self.name = pycountry.countries.get(alpha_2=self.code).name
+            except AttributeError:
+                pass
+
+
+class OrganizationType(models.Model):
+    organization_type_id = models.CharField(max_length=250, unique=True)
+    name = CICharField(max_length=250, primary_key=True)
+
+    class Meta:
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
 
 
 class Organization(models.Model):
     organization_id = models.CharField(max_length=250, unique=True)
-    name = models.CharField(max_length=250)
+    name = models.TextField()
+
     acronym = models.CharField(blank=True, max_length=30)
-    organization_type_id = models.CharField(max_length=250)
-    organization_type = models.CharField(max_length=250)
-    government = models.CharField(max_length=30, blank=True)
-    government_name = models.CharField(max_length=250, blank=True)
-    country = models.CharField(max_length=30, blank=True)
-    country_name = models.CharField(max_length=250, blank=True)
+    organization_type = models.ForeignKey(OrganizationType, on_delete=models.CASCADE)
+    government = models.ForeignKey(
+        Country,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
 
     def __str__(self):
-        if self.country_name:
-            return self.name + ", " + self.country_name
+        if self.country:
+            return self.name + ", " + self.country.name
         return self.name
 
     class Meta:
-        ordering = ["name", "country_name"]
+        ordering = ["name", "country__name"]
 
 
-class Record(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
+class BaseContact(models.Model):
+    organization = None
     contact_id = models.CharField(max_length=250, default="", blank=True)
     title = models.CharField(max_length=30, blank=True)
     honorific = models.CharField(max_length=30, default="", blank=True)
     respectful = models.CharField(max_length=30, default="", blank=True)
     first_name = models.CharField(max_length=250, default="", blank=True)
     last_name = models.CharField(max_length=250, default="", blank=True)
-    designation = models.CharField(max_length=250, default="", blank=True)
-    department = models.CharField(max_length=250, default="", blank=True)
-    affiliation = models.CharField(max_length=250, default="", blank=True)
+    designation = models.TextField(default="", blank=True)
+    department = models.TextField(default="", blank=True)
+    affiliation = models.TextField(default="", blank=True)
     primary_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="Primary language"
+        max_length=100, default="", blank=True, verbose_name="primary language"
     )
     second_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="Second language"
+        max_length=100, default="", blank=True, verbose_name="second language"
     )
     third_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="Third language"
+        max_length=100, default="", blank=True, verbose_name="third language"
     )
     phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
     mobiles = ArrayField(null=True, base_field=models.TextField(), blank=True)
     faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    emails = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    email_ccs = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    emails = ArrayField(null=True, base_field=models.EmailField(), blank=True)
+    email_ccs = ArrayField(null=True, base_field=models.EmailField(), blank=True)
     notes = models.TextField(default="", blank=True)
     is_in_mailing_list = models.BooleanField(default=False, blank=True)
     is_use_organization_address = models.BooleanField(default=False, blank=True)
     address = models.TextField(default="", blank=True)
     city = models.CharField(max_length=250, default="", blank=True)
     state = models.CharField(max_length=250, default="", blank=True)
-    country = models.CharField(max_length=250, default="", blank=True)
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     postal_code = models.CharField(max_length=250, default="", blank=True)
     birth_date = models.DateField(null=True, blank=True)
     focal_point = models.BooleanField(default=False, blank=True)
     org_head = models.BooleanField(
-        default=False, blank=True, verbose_name="Head of organization"
+        default=False, blank=True, verbose_name="head of organization"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     main_contact = models.ForeignKey(
-        "self", on_delete=models.SET_NULL, null=True, blank=True
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="secondary_contacts",
+        limit_choices_to={"main_contact": None},
     )
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        if self.organization:
+            return f"{self.full_name} ({self.organization})"
+        return self.full_name
+
+    @property
+    def full_name(self):
+        return " ".join([self.title, self.first_name, self.last_name]).strip()
 
     @property
     def is_secondary(self):
         return self.main_contact is not None
 
-    @property
-    def phones_with_info(self):
-        phones = []
-        for phone in self.phones:
-            try:
-                phone_number = parse(phone, None)
-                country = geocoder.country_name_for_number(
-                    phone_number, "en", region=None
-                )
-                prefix = "+" + str(phone_number.country_code)
-                code = get_country_code(country)
-                phones.append((country, code, prefix, phone_number.national_number))
-            except (NumberParseException, NumException):
-                phones.append(("", "", "", phone))
+    def clean(self):
+        if not self.first_name and not self.last_name:
+            raise ValidationError(
+                {
+                    "first_name": "At least first name or last name must be provided",
+                    "last_name": "At least first name or last name must be provided",
+                }
+            )
+        if self.main_contact == self:
+            raise ValidationError(
+                {"main_contact": "A contact cannot be the main contact for themself."}
+            )
 
-        return phones
-
-    @property
-    def mobiles_with_info(self):
-        phones = []
-        for phone in self.mobiles:
-            try:
-                phone_number = parse(phone, None)
-                country = geocoder.country_name_for_number(
-                    phone_number, "en", region=None
-                )
-                prefix = "+" + str(phone_number.country_code)
-                code = get_country_code(country)
-                phones.append((country, code, prefix, phone_number.national_number))
-            except (NumberParseException, NumException):
-                phones.append(("", "", "", phone))
-
-        return phones
-
-    @property
-    def faxes_with_info(self):
-        phones = []
-        for phone in self.faxes:
-            try:
-                phone_number = parse(phone, None)
-                country = geocoder.country_name_for_number(phone_number, "en")
-                prefix = "+" + str(phone_number.country_code)
-                code = get_country_code(country)
-                phones.append((country, code, prefix, phone_number.national_number))
-            except (NumberParseException, NumException):
-                phones.append(("", "", "", phone))
-
-        return phones
+        if self.main_contact and self.main_contact.main_contact:
+            raise ValidationError(
+                {"main_contact": "Main contact must not be a secondary contact"}
+            )
 
 
-class Group(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False)
+class Contact(BaseContact):
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="contacts",
+    )
+
+
+class ResolveConflict(BaseContact):
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="conflicting_contacts",
+    )
+    existing_contact = models.ForeignKey(
+        Contact,
+        on_delete=models.CASCADE,
+        related_name="conflicting_contacts",
+    )
+
+
+class ContactGroup(models.Model):
+    name = models.TextField(null=False, blank=False)
     description = models.TextField(blank=True, null=True)
-    contacts = models.ManyToManyField(Record, blank=True)
+    contacts = models.ManyToManyField(
+        Contact,
+        blank=True,
+        through="GroupMembership",
+        related_name="groups",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -168,207 +206,19 @@ class Group(models.Model):
 
     @property
     def description_preview(self):
-        if len(str(self.description)) > 150:
-            return self.description[:150] + "..."
-        return self.description
+        return textwrap.shorten(self.description or "", 150)
 
 
-class KronosEvent(models.Model):
-    event_id = models.CharField(max_length=150, blank=False, null=False, unique=True)
-    code = models.CharField(max_length=50, blank=False, null=False)
-    title = models.CharField(max_length=255, blank=False, null=False)
-    start_date = models.DateTimeField(null=False)
-    end_date = models.DateTimeField(null=False)
-    venue_country = models.CharField(max_length=50)
-    venue_city = models.CharField(max_length=150)
-    dates = models.CharField(max_length=255)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL, default=None, null=True)
-
-    def __str__(self):
-        return self.title
-
-    @property
-    def imported_participants(self):
-        return self.loadkronosparticipantstask_set.exists()
-
-    @property
-    def latest_import(self):
-        if self.imported_participants:
-            return self.loadkronosparticipantstask_set.latest()
-        return None
-
-    class Meta:
-        verbose_name_plural = "kronos events"
-
-
-class RegistrationStatus(models.Model):
-    contact = models.ForeignKey(Record, on_delete=models.CASCADE)
-    event = models.ForeignKey(KronosEvent, on_delete=models.CASCADE)
-    code = models.CharField(max_length=100)
-    status = models.IntegerField()
-    date = models.DateTimeField()
-    is_funded = models.BooleanField()
-    role = models.IntegerField(null=True)
-    priority_pass_code = models.CharField(max_length=150, blank=True)
-    tags = ArrayField(base_field=models.TextField(), blank=True)
-
-    def __str__(self):
-        return self.event.event_id
-
-    class Meta:
-        verbose_name_plural = "registration statuses"
-
-
-class NoRecipients(Exception):
-    pass
-
-
-class EmailTemplate(models.Model):
-    name = models.CharField(max_length=100)
-    html_content = RichTextUploadingField()
-
-    def __str__(self):
-        return self.name
-
-
-class Emails(models.Model):
-    recipients = models.ManyToManyField(Record, related_name="recipients")
-    cc = models.ManyToManyField(Record, related_name="cc", verbose_name="CC")
-    subject = models.TextField()
-    content = RichTextUploadingField()
-    groups = models.ManyToManyField(Group, blank=False)
+class GroupMembership(models.Model):
+    group = models.ForeignKey(ContactGroup, on_delete=models.CASCADE)
+    contact = models.ForeignKey(
+        Contact, on_delete=models.CASCADE, related_name="memberships"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    send_personalised_emails = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.subject
-
-    def send(self):
-        if not self.recipients:
-            raise NoRecipients("No recipients found.")
-
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipients = []
-        cc = []
-
-        if not self.send_personalised_emails:
-            for contact in self.recipients.all():
-                recipients += contact.emails
-
-            for contact in self.cc.all():
-                cc += contact.emails
-
-            self.send_email(
-                subject=self.subject,
-                content=self.content,
-                recipients=recipients,
-                cc=cc,
-                from_email=from_email,
-                attachments=self.emailfile_set.all(),
-            )
-        else:
-            for contact in self.recipients.all():
-                subject = self.subject.strip()
-                content = self.content.strip()
-
-                for tag in EmailTag.objects.all():
-                    subject = subject.replace(
-                        str(tag), getattr(contact, tag.field_name)
-                    )
-                    content = content.replace(
-                        str(tag), getattr(contact, tag.field_name)
-                    )
-                self.send_email(
-                    subject=subject,
-                    content=content,
-                    recipients=contact.emails,
-                    cc=[],
-                    from_email=from_email,
-                    attachments=self.emailfile_set.all(),
-                )
-
-    @staticmethod
-    def send_email(subject, content, recipients, cc, from_email, attachments):
-        text_content = strip_tags(content)
-        email = EmailMultiAlternatives(
-            subject=subject,
-            from_email=from_email,
-            to=recipients,
-            cc=cc,
-            body=text_content,
-        )
-        email.attach_alternative(replace_relative_image_urls(content), "text/html")
-        for file in attachments:
-            email.attach_file(file.path)
-        email.send()
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "e-mails"
-
-
-class EmailFile(models.Model):
-    name = models.CharField(max_length=100)
-    file = models.FileField(upload_to="email_files/")
-    email = models.ForeignKey(Emails, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def path(self):
-        return self.file.path
-
-    @property
-    def url(self):
-        return self.file.url
-
-
-class SendMailTask(TaskRQ):
-    """Can be used to send email asynchronously. Example usage:
-
-    SendMailTask.objects.create(
-        recipient="test@example.com",
-        subject="[Test email] subject here",
-        message="Hello world",
-    ).run(is_async=True)
-    """
-
-    DEFAULT_VERBOSITY = 2
-    TASK_QUEUE = "default"
-    TASK_TIMEOUT = 60
-    LOG_TO_FIELD = True
-    LOG_TO_FILE = False
-
-    email = models.ForeignKey(Emails, on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        get_latest_by = "created_on"
-
-    @staticmethod
-    def get_jobclass():
-        from .jobs import SendMailJob
-
-        return SendMailJob
-
-
-class LoadKronosParticipantsTask(TaskRQ):
-    DEFAULT_VERBOSITY = 2
-    TASK_QUEUE = "default"
-    TASK_TIMEOUT = 60
-    LOG_TO_FIELD = True
-    LOG_TO_FILE = False
-
-    kronos_events = models.ManyToManyField(KronosEvent)
-    create_groups = models.BooleanField(default=False)
-
-    class Meta:
-        get_latest_by = "created_on"
-
-    @staticmethod
-    def get_jobclass():
-        from .jobs import LoadKronosParticipants
-
-        return LoadKronosParticipants
+        unique_together = ("group", "contact")
 
 
 class ResolveAllConflictsTask(TaskRQ):
@@ -388,57 +238,3 @@ class ResolveAllConflictsTask(TaskRQ):
         from .jobs import ResolveAllConflicts
 
         return ResolveAllConflicts
-
-
-class TemporaryContact(models.Model):
-    record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True)
-    organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
-    contact_id = models.CharField(max_length=250, default="", blank=True)
-    title = models.CharField(max_length=30, blank=True)
-    honorific = models.CharField(max_length=30, default="", blank=True)
-    respectful = models.CharField(max_length=30, default="", blank=True)
-    first_name = models.CharField(max_length=250, default="", blank=True)
-    last_name = models.CharField(max_length=250, default="", blank=True)
-    designation = models.CharField(max_length=250, default="", blank=True)
-    department = models.CharField(max_length=250, default="", blank=True)
-    affiliation = models.CharField(max_length=250, default="", blank=True)
-    primary_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="Primary language"
-    )
-    second_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="Second language"
-    )
-    third_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="Third language"
-    )
-    phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    mobiles = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    emails = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    email_ccs = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    notes = models.TextField(default="", blank=True)
-    is_in_mailing_list = models.BooleanField(default=False, blank=True)
-    is_use_organization_address = models.BooleanField(default=False, blank=True)
-    address = models.TextField(default="", blank=True)
-    city = models.CharField(max_length=250, default="", blank=True)
-    state = models.CharField(max_length=250, default="", blank=True)
-    country = models.CharField(max_length=250, default="", blank=True)
-    postal_code = models.CharField(max_length=250, default="", blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    focal_point = models.BooleanField(default=False, blank=True)
-    org_head = models.BooleanField(
-        default=False, blank=True, verbose_name="Head of organization"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.first_name + " " + self.last_name
-
-
-class EmailTag(models.Model):
-    name = models.CharField(max_length=20, blank=False, null=False)
-    field_name = models.CharField(max_length=20, blank=False, null=False)
-
-    def __str__(self):
-        return "{{ " + self.name + " }}"

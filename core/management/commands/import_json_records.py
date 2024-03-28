@@ -1,6 +1,7 @@
 import json
 from django.core.management.base import BaseCommand
-from core.models import Organization, RegistrationStatus, Record, KronosEvent
+from core.models import Organization, Contact
+from events.models import Event, Registration
 
 
 class Command(BaseCommand):
@@ -36,7 +37,7 @@ class Command(BaseCommand):
                     country=check_field(record["organization"], "country"),
                     country_name=check_field(record["organization"], "countryName"),
                 )
-                contact, _ = Record.objects.get_or_create(
+                contact, _ = Contact.objects.get_or_create(
                     contact_id=record["contactId"],
                     organization=organization,
                     title=record["title"],
@@ -61,9 +62,9 @@ class Command(BaseCommand):
                     birth_date=check_field(record, "dateOfBirth"),
                 )
                 for registration in record["registrationStatuses"]:
-                    RegistrationStatus.objects.get_or_create(
+                    Registration.objects.get_or_create(
                         contact=contact,
-                        event=KronosEvent.objects.filter(
+                        event=Event.objects.filter(
                             event_id=registration.get("eventId")
                         ).first(),
                         code=registration["code"],

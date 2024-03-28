@@ -1,0 +1,125 @@
+@import url("vArrayField.css");
+
+/*
+  Constance table looks a bit wonky by default when using field sets.
+  Minor tweaks to make it look nicer
+*/
+.constance table {
+  table-layout: fixed;
+  max-width: 70rem;
+}
+
+.constance table textarea {
+  max-width: 100%;
+}
+
+.constance table td:last-child,
+.constance table th:last-child {
+  width: 5rem;
+}
+
+/* Make login looks like the rest of the django app */
+.login .form-row #id_auth-username,
+.login .form-row #id_auth-password,
+.login .form-row #id_token-otp_token,
+.login .form-row #id_backup-otp_token {
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login hr {
+  margin-top: 1rem;
+}
+
+/*Used by the QR code generator*/
+
+.bg-white {
+  background-color: white;
+}
+
+/* Get rid of the horizontal scrollbar in Django admin tables! */
+#result_list tbody td,
+#result_list tbody th {
+  word-break: break-word !important;
+  white-space: normal !important;
+  max-width: 460px;
+}
+
+/* Fix alignment of inline checkboxes*/
+.vCheckboxLabel {
+  padding: 2px 10px 0 5px !important;
+}
+
+.form-multiline {
+  align-items: center;
+}
+
+/* The select2 widget can be much wider */
+fieldset:not(.compare) .form-row .select2 {
+  width: 560px !important;
+}
+
+/* Make the textarea be the same size of all other inputs*/
+.change-form textarea {
+  max-width: 360px;
+}
+
+/* Email preview */
+.field-email_attachments ul {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.field-email_preview iframe,
+.field-email_plaintext pre,
+.field-email_source pre {
+  width: 50rem;
+  height: 20rem;
+
+  color: var(--body-loud-color);
+  border: 1px solid var(--border-color);
+
+  resize: both;
+  overflow: auto;
+}
+
+.field-email_plaintext pre {
+  text-wrap: wrap;
+}
+
+.field-email_source pre {
+  user-select: all;
+}
+
+/* Setup the conflict resolution view. */
+.model-contact.change-form #contact_form {
+  max-width: 1280px;
+}
+
+fieldset.compare .form-multiline {
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: 1fr 50px 1fr;
+}
+
+fieldset.compare .form-row.different {
+  background-color: var(--message-error-bg);
+}
+
+fieldset.compare .form-row:not(.different) .copy-button {
+  visibility: hidden;
+}
+
+fieldset.compare .fieldBox:has(.readonly) label {
+  display: none;
+}
+
+fieldset.compare .fieldBox ul {
+  margin: 0;
+  padding: 0;
+}
+
+fieldset.compare .fieldBox li {
+  list-style: disc inside;
+}

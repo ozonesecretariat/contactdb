@@ -1,0 +1,16 @@
+{% load static %}
+
+<div class="vArrayField">
+  <div class="vArrayWidgetList">
+    {% for widget in widgets %}
+      {% include 'admin/widgets/array_widget.html' with widget=widget %}
+    {% endfor %}
+  </div>
+  <div class="addAction" data-array-action="add">
+    <svg class="add">
+      <use href="{% static 'img/array-item-add.svg' %}#add"></use>
+    </svg>
+    Add more
+  </div>
+  <div class="widgetTemplate">{% include 'admin/widgets/array_widget.html' with widget=template_widget %}</div>
+</div>

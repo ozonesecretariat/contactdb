@@ -1,0 +1,18 @@
+{% extends "admin/actions/base_intermediate_page.html" %}
+
+{% block form %}
+  <fieldset class="module">
+    <div class="help">
+      Choose one of the contacts as the main contact, the other(s) will be saved as secondary contacts
+    </div>
+    {% for contact in queryset %}
+      <div class="form-row">
+        <label>
+          <input type="radio" name="main_contact" value="{{ contact.pk }}" />
+          {{ contact }}
+        </label>
+      </div>
+    {% endfor %}
+    <input type="submit" name="apply" value="Merge contacts" />
+  </fieldset>
+{% endblock form %}

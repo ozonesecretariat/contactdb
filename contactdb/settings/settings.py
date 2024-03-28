@@ -15,6 +15,7 @@ import socket
 from pathlib import Path
 
 import environ
+from common.docx_format import DOCX
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -74,7 +75,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
-    "django_htmx",
     "django_filters",
     "django_otp",
     "django_otp.plugins.otp_static",
@@ -84,10 +84,13 @@ INSTALLED_APPS = [
     "two_factor",
     "django_rq",
     "django_task",
-    "django_tables2",
+    "admin_auto_filters",
+    "import_export",
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
+    "events.apps.EventsConfig",
+    "emails.apps.EmailsConfig",
     "django.forms",
 ]
 
@@ -100,7 +103,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_otp.middleware.OTPMiddleware",
-    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = "contactdb.urls"
@@ -226,9 +228,9 @@ TIME_FORMAT = "H:i:s"
 
 # https://docs.djangoproject.com/en/4.0/ref/settings/#login-url
 # LOGIN_URL = "/admin/login"
-# LOGIN_URL = "two_factor:login"
-LOGIN_URL = "/account/login"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = "two_factor:login"
+LOGIN_REDIRECT_URL = "admin:index"
+LOGOUT_REDIRECT_URL = "admin:index"
 
 FS_DIR = BASE_DIR / ".fs"
 
@@ -243,7 +245,28 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # https://docs.djangoproject.com/en/4.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development
 MEDIA_URL = "/media/"
 MEDIA_ROOT = FS_DIR / "media"
+
+PROTECTED_MEDIA_URL = "/protected_media/"
+PROTECTED_MEDIA_ROOT = FS_DIR / "protected_media"
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+    "protected": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": PROTECTED_MEDIA_ROOT,
+            "base_url": PROTECTED_MEDIA_URL,
+        },
+    },
+}
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -295,6 +318,16 @@ CONSTANCE_CONFIG_FIELDSETS = (
     ),
 )
 
+# Import/Export Settings
+# https://django-import-export.readthedocs.io/en/stable/installation.html#settings
+IMPORT_EXPORT_IMPORT_PERMISSION_CODE = "add"
+IMPORT_EXPORT_EXPORT_PERMISSION_CODE = "view"
+IMPORT_EXPORT_CHUNK_SIZE = 1000
+
+from import_export.formats.base_formats import DEFAULT_FORMATS
+
+IMPORT_EXPORT_FORMATS = DEFAULT_FORMATS + [DOCX]
+
 # Sentry
 SENTRY_DSN = env.str("SENTRY_DSN", default="")
 
@@ -310,7 +343,6 @@ if SENTRY_DSN:
         ],
     )
 
-DJANGO_TABLES2_PAGE_RANGE = int(env.str("DJANGO_TABLES2_PAGE_RANGE", default=7))
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
@@ -322,9 +354,94 @@ KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
 
+CKEDITOR_PLACEHOLDERS = (
+    "full_name",
+    "first_name",
+    "last_name",
+    "title",
+    "honorific",
+    "respectful",
+)
+
 CKEDITOR_CONFIGS = {
     "default": {
-        "width": "100%",
+        "toolbar": [
+            {
+                "name": "document",
+                "items": [
+                    "placeholder_select",
+                    "Templates",
+                    "Preview",
+                ],
+            },
+            {
+                "name": "clipboard",
+                "items": [
+                    "Undo",
+                    "Redo",
+                ],
+            },
+            {
+                "name": "paragraph",
+                "items": [
+                    "NumberedList",
+                    "BulletedList",
+                    "-",
+                    "Outdent",
+                    "Indent",
+                    "Blockquote",
+                    "-",
+                    "JustifyLeft",
+                    "JustifyCenter",
+                    "JustifyRight",
+                    "JustifyBlock",
+                    "-",
+                    "BidiLtr",
+                    "BidiRtl",
+                ],
+            },
+            {
+                "name": "editing",
+                "items": ["Find", "Replace"],
+            },
+            {
+                "name": "insert",
+                "items": [
+                    "Image",
+                    "Table",
+                    "HorizontalRule",
+                    "Smiley",
+                    "SpecialChar",
+                ],
+            },
+            {"name": "about", "items": ["About"]},
+            "/",
+            {
+                "name": "basicstyles",
+                "items": [
+                    "Bold",
+                    "Italic",
+                    "Underline",
+                    "Strike",
+                    "Subscript",
+                    "Superscript",
+                    "-",
+                    "CopyFormatting",
+                    "RemoveFormat",
+                ],
+            },
+            {"name": "styles", "items": ["Styles", "Format", "Font", "FontSize"]},
+            {"name": "colors", "items": ["TextColor", "BGColor"]},
+            {"name": "links", "items": ["Link", "Unlink"]},
+            {"name": "tools", "items": ["Maximize", "ShowBlocks"]},
+        ],
+        "extraPlugins": "placeholder,placeholder_select,templates",
+        "placeholder_select": {
+            "placeholders": CKEDITOR_PLACEHOLDERS,
+        },
+        "templates_files": [
+            "/static/js/ckeditor_templates.js",
+        ],
     },
 }
 
@@ -340,9 +457,13 @@ if DEBUG:
         import socket
 
         def show_toolbar(request):
-            return DEBUG and (
-                request.META.get("REMOTE_ADDR") in INTERNAL_IPS
-                or request.META.get("HTTP_X_REAL_IP") in INTERNAL_IPS
+            return (
+                DEBUG
+                and (
+                    request.META.get("REMOTE_ADDR") in INTERNAL_IPS
+                    or request.META.get("HTTP_X_REAL_IP") in INTERNAL_IPS
+                )
+                and not request.GET.get("iframe")
             )
 
         hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())

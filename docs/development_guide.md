@@ -2,10 +2,15 @@
 
 ## Style guide
 
-- All files should be automatically formated with [prettier](https://prettier.io/).
+- All files should be automatically formatted with [prettier](https://prettier.io/).
   Can be integrated into your IDE or manually run with:
   ```bash
-  npm run lint
+  npm run lint:prettier
+  ```
+- All js files should be checked with [eslint](https://eslint.org/).
+  Can be integrated into your IDE or manually run with:
+  ```bash
+  npm run lint:eslint
   ```
 - The Python code uses the [black style guide](https://black.readthedocs.io/en/stable/) for extra automatic linting. Can
   be integrated into your IDE or manually run with:

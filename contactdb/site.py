@@ -4,7 +4,7 @@ from constance import config
 from django.contrib.admin import AdminSite
 from django.contrib.admin.apps import AdminConfig
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import include, path, reverse
 
 
 def should_redirect_setup_2fa(user):

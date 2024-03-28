@@ -1,0 +1,15 @@
+{% load static %}
+
+<div class="vArrayWidget">
+  {{ widget|safe }}
+
+  <svg class="remove" data-array-action="remove">
+    <use href="{% static 'img/array-item-remove.svg' %}#remove"></use>
+  </svg>
+  <svg class="moveUp" data-array-action="moveup">
+    <use href="{% static 'img/array-item-moveup.svg' %}#moveup"></use>
+  </svg>
+  <svg class="moveDown" data-array-action="movedown">
+    <use href="{% static 'img/array-item-movedown.svg' %}#movedown"></use>
+  </svg>
+</div>

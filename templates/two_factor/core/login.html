@@ -1,10 +1,109 @@
-{% extends "two_factor/core/login.html" %}
+{% extends "two_factor/_base_focus.html" %}
 {% load static %}
+{% load two_factor_tags %}
 
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'login.css' %}" />
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static "admin/css/login.css" %}" />
+  {{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block nav-breadcrumbs %}
 {% endblock %}
 
 {% block content %}
-  <div class="mx-auto shadow p-5 login-container bg-white rounded-2">{{ block.super }}</div>
+  {% if form.errors and not form.non_field_errors %}
+    <p class="errornote">Please correct the errors below.</p>
+  {% endif %}
+
+  {% if wizard.form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+      <p class="errornote">{{ error }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <div id="content-main">
+    {% if user.is_authenticated %}
+      <p class="errornote">
+        You are authenticated as {{ username }}, but are not authorized to access this page. Would you like to login to
+        a different account?
+      </p>
+    {% endif %}
+
+    <form action="" method="post" id="login-form">
+      {% csrf_token %}
+
+      {{ wizard.management_form }}
+
+      {% if wizard.steps.current == "auth" %}
+        <h1>Enter credentials</h1>
+        <div class="form-row">
+          {{ wizard.form.username.errors }}
+          {{ wizard.form.username.label_tag }}
+          {{ wizard.form.username }}
+        </div>
+        <div class="form-row">
+          {{ wizard.form.password.errors }}
+          {{ wizard.form.password.label_tag }}
+          {{ wizard.form.password }}
+          <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+          <div class="password-reset-link">
+            <a href="{{ password_reset_url }}">Forgotten your password or username?</a>
+          </div>
+        {% endif %}
+      {% elif wizard.steps.current == "token" %}
+        <h1>Enter OTP token</h1>
+        <div class="form-row">
+          {{ wizard.form.otp_token.errors }}
+          {{ wizard.form.otp_token.label_tag }}
+          {{ wizard.form.otp_token }}
+        </div>
+      {% elif wizard.steps.current == "backup" %}
+        <h1>Enter backup token</h1>
+        <div class="form-row">
+          {{ wizard.form.otp_token.errors }}
+          {{ wizard.form.otp_token.label_tag }}
+          {{ wizard.form.otp_token }}
+          <div class="help">Use this form for entering backup tokens for logging in.</div>
+        </div>
+      {% endif %}
+
+      {# hidden submit button to enable [enter] key#}
+      <input type="submit" value="" hidden />
+
+      <div class="submit-row">
+        <input type="submit" value="Log in" />
+      </div>
+      {% if other_devices %}
+        <div class="submit-row">
+          <p>Or, alternatively, use one of your other authentication methods:</p>
+          <p>
+            {% for other in other_devices %}
+              <button name="challenge_device" value="{{ other.persistent_id }}" type="submit">
+                {{ other|as_action }}
+              </button>
+            {% endfor %}
+          </p>
+        </div>
+      {% endif %}
+    </form>
+    {% if backup_tokens and wizard.steps.current == "token" %}
+      <hr />
+      <form action="" method="post" id="backup-link-form">
+        {% csrf_token %}
+        {{ wizard.management_form }}
+
+        <input name="wizard_goto_step" value="backup" hidden />
+        <div class="submit-row">
+          <input type="submit" value="Use a backup token" />
+        </div>
+      </form>
+    {% endif %}
+  </div>
 {% endblock %}
