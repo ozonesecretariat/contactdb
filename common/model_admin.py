@@ -50,10 +50,6 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     redirect_field_name = "next"
 
     @property
-    def docs(self):
-        return "TTTTTTTTT"
-
-    @property
     def opt_info(self):
         return self.opts.app_label, self.opts.model_name
 

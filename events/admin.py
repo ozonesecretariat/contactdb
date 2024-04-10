@@ -16,9 +16,12 @@ from events.models import (
 )
 
 
-# Register your models here.
 @admin.register(LoadEventsFromKronosTask)
-class LoadKronosEventsTaskAdmin(TaskAdmin):
+class LoadEventsFromKronosTaskAdmin(TaskAdmin):
+    """Task that imports all available events from Kronos.
+    Events that are already present will have their attributes updated.
+    """
+
     list_display = [
         "__str__",
         "created_on",
@@ -34,6 +37,11 @@ class LoadKronosEventsTaskAdmin(TaskAdmin):
 
 @admin.register(LoadParticipantsFromKronosTask)
 class LoadKronosFromParticipantsTaskAdmin(TaskAdmin):
+    """Import contacts and registrations from Kronos.
+    Contacts that have conflict data will be added as temporary contacts in
+    "Resolve Conflicts"
+    """
+
     list_display = [
         "event",
         "created_on",

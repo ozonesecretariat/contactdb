@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
+{% load core_extra %}
 
 {% block title %}
   {% if subtitle %}
@@ -8,6 +9,15 @@
   {% endif %}
   {{ title }}
   | {{ site_title|default:'Ozone Contact DB' }}
+{% endblock %}
+
+{% block content_subtitle %}
+  {% admin_docs as doc_string %}
+  {% if doc_string %}
+    <p class="help">{{ doc_string }}</p>
+  {% endif %}
+
+  {{ block.super }}
 {% endblock %}
 
 {% block extrastyle %}
