@@ -1,3 +1,5 @@
+"use strict";
+
 function addArrayWidget(fieldEl, value = null) {
   const parentNode = fieldEl.querySelector(".vArrayWidgetList");
   const template = fieldEl.querySelector(".widgetTemplate .vArrayWidget");
@@ -13,7 +15,9 @@ function addArrayWidget(fieldEl, value = null) {
 
 function handleArrayFieldEvent(event) {
   const actionTarget = event.target.closest("[data-array-action]");
-  if (!actionTarget) return;
+  if (!actionTarget) {
+    return;
+  }
 
   let widgetTarget = actionTarget.closest(".vArrayWidget");
 
@@ -37,7 +41,7 @@ function handleArrayFieldEvent(event) {
   widgetTarget.querySelector("input").focus();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   for (const el of document.querySelectorAll(".vArrayField")) {
     el.addEventListener("mouseup", handleArrayFieldEvent);
   }
@@ -51,19 +55,25 @@ document.addEventListener("DOMContentLoaded", function () {
  * @return {Boolean}
  */
 function arrayEquals(a1, a2) {
-  if (!a1 || !a2 || a1.length !== a2.length) return false;
-  for (let i = 0; i < a1.length; i++) {
-    if (a1[i] !== a2[i]) return false;
+  if (!a1 || !a2 || a1.length !== a2.length) {
+    return false;
+  }
+  for (let i = 0; i < a1.length; i += 1) {
+    if (a1[i] !== a2[i]) {
+      return false;
+    }
   }
   return true;
 }
 
 function getNewValue(el) {
   const newValueEl = el.querySelector(".fieldBox:not(.field-copy_widget) .readonly");
-  if (!newValueEl) return;
+  if (!newValueEl) {
+    return {};
+  }
   const pk = newValueEl.querySelector("[data-pk]")?.dataset.pk.trim();
 
-  let value;
+  let value = null;
   const listElement = newValueEl.querySelector("ul");
   if (listElement) {
     value = Array.from(listElement.querySelectorAll("li")).map((listEl) => listEl.innerText.trim());
@@ -84,17 +94,18 @@ function checkForDifferences() {
   for (const el of document.querySelectorAll("fieldset.compare .form-row")) {
     const newValue = getNewValue(el);
 
-    let currentInput;
+    let currentInput = null;
     let different = false;
 
     if ((currentInput = el.querySelector(".vArrayWidgetList"))) {
       const currentArray = Array.from(currentInput.querySelectorAll("input"))
         .map((item) => item.value.trim())
-        .filter((val) => !!val);
+        .filter((val) => Boolean(val));
       different = !arrayEquals(currentArray, newValue.value);
     } else if ((currentInput = el.querySelector("select"))) {
       different = currentInput.value !== newValue.pk;
     } else if ((currentInput = el.querySelector("input[type=checkbox]"))) {
+      // eslint-disable-next-line no-ternary
       different = (currentInput.checked ? "True" : "False") !== newValue.value;
     } else if ((currentInput = el.querySelector("input, textarea"))) {
       different = currentInput.value.trim() !== newValue.value;
@@ -115,9 +126,11 @@ function copyFromNew(event) {
   const el = event.target.closest(".form-row");
   const newValue = getNewValue(el);
 
-  if (!newValue.value) return;
+  if (!newValue.value) {
+    return;
+  }
 
-  let input;
+  let input = null;
 
   if ((input = el.querySelector(".vArrayField"))) {
     for (const existingEl of input.querySelectorAll(".vArrayWidgetList .vArrayWidget")) {
@@ -141,7 +154,7 @@ function copyFromNew(event) {
   checkForDifferences();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   checkForDifferences();
   for (const el of document.querySelectorAll("fieldset.compare .form-row")) {
     el.querySelector(".copy-button")?.addEventListener("click", copyFromNew);

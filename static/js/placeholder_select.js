@@ -1,5 +1,7 @@
+"use strict";
+
 function initPlaceholderSelect() {
-  const CKEDITOR = window.CKEDITOR;
+  const { CKEDITOR } = window;
 
   if (!CKEDITOR) {
     // Page doesn't have ckeditor, we don't need to do anything.
@@ -13,7 +15,7 @@ function initPlaceholderSelect() {
 
   CKEDITOR.plugins.add("placeholder_select", {
     requires: ["richcombo"],
-    init: function (editor) {
+    init(editor) {
       const placeholders = [];
 
       const defaultConfig = {
@@ -23,9 +25,9 @@ function initPlaceholderSelect() {
 
       const config = CKEDITOR.tools.extend(defaultConfig, editor.config.placeholder_select || {}, true);
 
-      for (let i = 0; i < config.placeholders.length; i++) {
-        const placeholder = config.format.replace("%placeholder%", config.placeholders[i]);
-        placeholders.push([placeholder, config.placeholders[i], config.placeholders[i]]);
+      for (const name of config.placeholders) {
+        const placeholder = config.format.replace("%placeholder%", name);
+        placeholders.push([placeholder, name, name]);
       }
 
       editor.ui.addRichCombo("placeholder_select", {
@@ -39,14 +41,14 @@ function initPlaceholderSelect() {
           voiceLabel: editor.lang.panelVoiceLabel,
         },
 
-        init: function () {
+        init() {
           this.startGroup("Placeholder");
-          for (const i in placeholders) {
-            this.add(placeholders[i][0], placeholders[i][1], placeholders[i][2]);
+          for (const attrs of placeholders) {
+            this.add(...attrs);
           }
         },
 
-        onClick: function (value) {
+        onClick(value) {
           editor.focus();
           editor.fire("saveSnapshot");
           editor.insertHtml(value);
