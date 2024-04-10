@@ -1,4 +1,5 @@
 import logging
+import re
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
@@ -18,6 +19,7 @@ class SendMailJob(Job):
             )
 
         text_content = strip_tags(html_content).replace("&nbsp;", " ").strip()
+        text_content = re.sub(r"\n{3,}", "\n\n", text_content)
 
         msg = EmailMultiAlternatives(
             subject=task.email.subject,
