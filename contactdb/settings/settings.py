@@ -138,7 +138,7 @@ WSGI_APPLICATION = "contactdb.wsgi.application"
 AUTH_USER_MODEL = "accounts.User"
 
 # https://pypi.org/project/django-group-model/
-AUTH_GROUP_MODEL = "accounts.Group"
+AUTH_GROUP_MODEL = "accounts.Role"
 
 
 # Database
