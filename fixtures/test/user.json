@@ -11,7 +11,7 @@
       "is_active": true,
       "created_at": "2024-04-05T10:29:14.676Z",
       "updated_at": "2024-04-05T10:29:14.685Z",
-      "groups": [],
+      "roles": [],
       "user_permissions": []
     }
   },
@@ -27,7 +27,7 @@
       "is_active": true,
       "created_at": "2024-04-05T10:38:30.578Z",
       "updated_at": "2024-04-05T10:39:09.165Z",
-      "groups": [["View contacts"], ["View events"]],
+      "roles": [["View contacts"], ["View events"]],
       "user_permissions": []
     }
   },
@@ -43,7 +43,7 @@
       "is_active": true,
       "created_at": "2024-04-05T10:38:37.999Z",
       "updated_at": "2024-04-05T10:39:01.251Z",
-      "groups": [["Edit contacts"], ["Edit events"]],
+      "roles": [["Edit contacts"], ["Edit events"]],
       "user_permissions": []
     }
   },
@@ -59,7 +59,7 @@
       "is_active": true,
       "created_at": "2024-04-05T13:03:32.213Z",
       "updated_at": "2024-04-05T13:07:11.566Z",
-      "groups": [["Load from Kronos"]],
+      "roles": [["Load from Kronos"]],
       "user_permissions": []
     }
   },
@@ -75,7 +75,7 @@
       "is_active": true,
       "created_at": "2024-04-10T10:52:18.035Z",
       "updated_at": "2024-04-10T10:52:31.151Z",
-      "groups": [["Edit templates"], ["Send emails"]],
+      "roles": [["Edit templates"], ["Send emails"]],
       "user_permissions": []
     }
   }

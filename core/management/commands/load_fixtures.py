@@ -1,11 +1,10 @@
 import logging
 
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.core.management import BaseCommand
 from django.core.management import call_command
 
-from accounts.models import User
+from accounts.models import Role, User
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ class Command(BaseCommand):
     FIXTURES = {
         "initial": (
             # auth
-            Group,
+            Role,
         ),
         "test": (
             # User

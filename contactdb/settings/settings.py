@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     "django_task",
     "admin_auto_filters",
     "import_export",
+    "django_group_model",
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
@@ -134,6 +135,9 @@ WSGI_APPLICATION = "contactdb.wsgi.application"
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-AUTH_USER_MODEL
 AUTH_USER_MODEL = "accounts.User"
+
+# https://pypi.org/project/django-group-model/
+AUTH_GROUP_MODEL = "accounts.Group"
 
 
 # Database

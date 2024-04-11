@@ -1,6 +1,8 @@
+from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.conf import settings
 from django.contrib import admin
 from django.contrib import messages
+from django.contrib.auth.admin import GroupAdmin
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
 from django.db.models import Count
@@ -9,10 +11,16 @@ from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from common.model_admin import ModelAdmin
 
-from .models import User
+from .models import User, Role
 
+admin.site.unregister(Group)
 admin.site.unregister(StaticDevice)
 admin.site.unregister(TOTPDevice)
+
+
+@admin.register(Role)
+class RoleAdmin(GroupAdmin):
+    pass
 
 
 @admin.register(User)
@@ -23,23 +31,23 @@ class UserAdmin(ModelAdmin):
         "email",
         "first_name",
         "last_name",
-        "user_groups",
+        "user_roles",
         "permission_count",
         "is_superuser",
         "is_active",
         "last_login",
     )
     list_filter = (
-        "groups",
+        AutocompleteFilterFactory("roles", "roles"),
         "is_active",
         "is_superuser",
     )
-    autocomplete_fields = ("groups",)
+    autocomplete_fields = ("roles",)
     filter_horizontal = ("user_permissions",)
     exclude = ("password",)
     actions = ("reset_2fa",)
 
-    prefetch_related = ("groups",)
+    prefetch_related = ("roles",)
     annotate_query = {
         "permission_count": Count("user_permissions"),
     }
@@ -61,7 +69,7 @@ class UserAdmin(ModelAdmin):
             {
                 "fields": (
                     "is_superuser",
-                    "groups",
+                    "roles",
                     "user_permissions",
                 )
             },
@@ -79,9 +87,9 @@ class UserAdmin(ModelAdmin):
     )
     readonly_fields = ("last_login", "created_at", "updated_at")
 
-    @admin.display(description="User Groups")
-    def user_groups(self, obj: User):
-        return ",".join(map(str, obj.groups.all()))
+    @admin.display(description="User Roles")
+    def user_roles(self, obj: User):
+        return ",".join(map(str, obj.roles.all()))
 
     @admin.display(description="User permissions", ordering="permission_count")
     def permission_count(self, obj):

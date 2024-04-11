@@ -1,6 +1,6 @@
 [
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "View contacts",
       "permissions": [
@@ -14,7 +14,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "View events",
       "permissions": [
@@ -27,7 +27,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "Edit contacts",
       "permissions": [
@@ -61,7 +61,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "Edit events",
       "permissions": [
@@ -89,7 +89,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "Load from Kronos",
       "permissions": [
@@ -149,7 +149,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "View emails",
       "permissions": [
@@ -161,7 +161,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "Edit templates",
       "permissions": [
@@ -173,7 +173,7 @@
     }
   },
   {
-    "model": "auth.group",
+    "model": "accounts.role",
     "fields": {
       "name": "Send emails",
       "permissions": [

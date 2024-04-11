@@ -4,9 +4,16 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django_group_model.models import AbstractGroup
 from two_factor.utils import default_device
 
 from common.citext import CICharField, CIEmailField
+
+
+class Role(AbstractGroup):
+    class Meta:
+        verbose_name = "role"
+        verbose_name_plural = "roles"
 
 
 class UserManager(BaseUserManager):
@@ -45,6 +52,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text="Designates whether the account can be used. It is recommended to disable an "
         "account instead of deleting.",
     )
+    roles = models.ManyToManyField(
+        Role,
+        blank=True,
+        related_name="user_set",
+        related_query_name="user",
+    )
+    groups = None
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
