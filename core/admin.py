@@ -384,7 +384,7 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         "main_contact",
         "country",
     )
-    actions = ["add_contacts_to_group", "merge_contacts"]
+    actions = ["add_contacts_to_group", "merge_contacts", "send_email"]
 
     @admin.action(description="Merge contacts", permissions=["change"])
     def merge_contacts(self, request, queryset):
@@ -446,6 +446,11 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
                 "title": "Please select group",
             },
         )
+
+    @admin.action(description="Send email to selected contacts", permissions=["view"])
+    def send_email(self, request, queryset):
+        ids = ",".join(map(str, queryset.values_list("id", flat=True)))
+        return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
 
 @admin.register(ResolveConflict)
@@ -520,9 +525,15 @@ class ContactGroupAdmin(ModelAdmin):
     annotate_query = {
         "contacts_count": Count("contacts"),
     }
+    actions = ("send_email",)
 
     @admin.display(description="Contacts", ordering="contacts_count")
     def contacts_count(self, obj):
         return self.get_related_link(
             obj, "contacts", "memberships__group", obj.contacts_count
         )
+
+    @admin.action(description="Send email to selected groups", permissions=["view"])
+    def send_email(self, request, queryset):
+        ids = ",".join(map(str, queryset.values_list("id", flat=True)))
+        return redirect(reverse("admin:emails_email_add") + "?groups=" + ids)
