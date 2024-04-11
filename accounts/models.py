@@ -49,14 +49,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(
         default=True,
         verbose_name="Active",
-        help_text="Designates whether the account can be used. It is recommended to disable an "
-        "account instead of deleting.",
+        help_text=(
+            "Designates whether the account can be used. It is recommended to "
+            "disable an account instead of deleting."
+        ),
     )
     roles = models.ManyToManyField(
         Role,
         blank=True,
         related_name="user_set",
         related_query_name="user",
+        help_text=(
+            "The roles this user has. A user will get all permissions granted to "
+            "each of their roles."
+        ),
     )
     groups = None
     created_at = models.DateTimeField(auto_now_add=True)
