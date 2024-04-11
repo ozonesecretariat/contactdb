@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
 from django.db.models import Count
 from django_otp import devices_for_user
@@ -95,3 +97,20 @@ class UserAdmin(ModelAdmin):
             "2FA has been disabled for selected users",
             level=messages.SUCCESS,
         )
+
+    def reset_password(self, request, obj):
+        form = PasswordResetForm({"email": obj.email})
+        form.full_clean()
+        form.save(request=request, use_https=settings.HAS_HTTPS)
+
+        self.message_user(
+            request,
+            f"Email sent to {obj} for password reset",
+            level=messages.SUCCESS,
+        )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if not change:
+            self.reset_password(request, obj)
