@@ -48,10 +48,16 @@ def maybe_redirect(func):
 class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     list_per_page = 20
     redirect_field_name = "next"
+    view_fieldsets = ()
 
     @property
     def opt_info(self):
         return self.opts.app_label, self.opts.model_name
+
+    def get_fieldsets(self, request, obj=None):
+        if obj and self.view_fieldsets:
+            return self.view_fieldsets
+        return super().get_fieldsets(request, obj=obj)
 
     def get_admin_template(self, name):
         return (f"admin/{self.opts.app_label}/{self.opts.model_name}/{name}",)

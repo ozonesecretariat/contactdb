@@ -11,47 +11,17 @@ class SendEmailJob(Job):
     @staticmethod
     def execute(job, task):
         task.log(logging.INFO, "Building email %r for: %s", task.email, task.contact)
-
-        html_content = task.email.content.strip()
-        for placeholder in settings.CKEDITOR_PLACEHOLDERS:
-            html_content = html_content.replace(
-                f"[[{placeholder}]]", getattr(task.contact, placeholder)
-            )
-
-        text_content = strip_tags(html_content).replace("&nbsp;", " ").strip()
-        text_content = re.sub(r"\n{3,}", "\n\n", text_content)
-
-        msg = EmailMultiAlternatives(
-            subject=task.email.subject,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=task.contact.emails,
-            cc=task.contact.email_ccs,
-            body=text_content,
-        )
-        msg.attach_alternative(
-            replace_relative_image_urls(html_content),
-            "text/html",
-        )
-
-        recipients = msg.recipients()
-        if not recipients:
+        msg = task.email.build_email(task.contact)
+        if not (recipients := msg.recipients()):
             raise RuntimeError(
                 "Contact has no email addresses, nowhere to send the email."
             )
 
-        for attachment in task.email.attachments.all():
-            task.log(logging.INFO, "Attaching: %s", attachment)
-            with attachment.file.open("rb") as fp:
-                msg.attach(
-                    attachment.name or attachment.file.name,
-                    fp.read(),
-                )
         task.log(
             logging.INFO,
             "Sending email to addresses: %s",
             recipients,
         )
-
         # Save a copy of the message before sending
         task.email_to = msg.to
         task.email_cc = msg.cc

@@ -60,6 +60,11 @@ fieldset:not(.compare) .form-row .select2 {
   width: 560px !important;
 }
 
+/* Make the subject field wider */
+.field-subject input {
+  width: 560px !important;
+}
+
 /* Make the textarea be the same size of all other inputs*/
 .change-form textarea {
   max-width: 360px;

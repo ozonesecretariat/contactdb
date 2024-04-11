@@ -1,5 +1,5 @@
 <ul>
-  {% for attachment in obj.email.attachments.all %}
+  {% for attachment in email.attachments.all %}
     <li>
       <a href="{{ attachment.file.url }}" download="{{ attachment.name }}">{{ attachment.name }}</a>
     </li>

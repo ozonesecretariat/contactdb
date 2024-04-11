@@ -5,9 +5,12 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.storage import storages
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 from common.array_field import ArrayField
+from common.utils import replace_relative_image_urls
 from core.models import Contact, ContactGroup
 
 
@@ -39,7 +42,6 @@ class EmailTemplate(models.Model):
 
 
 class Email(models.Model):
-    subject = models.TextField()
     recipients = models.ManyToManyField(
         Contact,
         blank=True,
@@ -50,6 +52,7 @@ class Email(models.Model):
         blank=True,
         help_text="Send the email to all contacts in these selected groups.",
     )
+    subject = models.CharField(max_length=900)
     content = RichTextUploadingField(validators=[validate_placeholders])
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
@@ -62,6 +65,38 @@ class Email(models.Model):
         for group in self.groups.all():
             all_recipients.update(group.contacts.all())
         return all_recipients
+
+    def build_email(self, contact=None):
+        msg = EmailMultiAlternatives(
+            subject=self.subject, from_email=settings.DEFAULT_FROM_EMAIL
+        )
+
+        html_content = self.content.strip()
+        if contact:
+            msg.to = contact.emails
+            msg.cc = contact.email_ccs
+
+            for placeholder in settings.CKEDITOR_PLACEHOLDERS:
+                html_content = html_content.replace(
+                    f"[[{placeholder}]]", getattr(contact, placeholder)
+                )
+
+        text_content = strip_tags(html_content).replace("&nbsp;", " ").strip()
+        text_content = re.sub(r"\n{3,}", "\n\n", text_content)
+
+        msg.body = text_content
+        msg.attach_alternative(
+            replace_relative_image_urls(html_content),
+            "text/html",
+        )
+
+        for attachment in self.attachments.all():
+            with attachment.file.open("rb") as fp:
+                msg.attach(
+                    attachment.name or attachment.file.name,
+                    fp.read(),
+                )
+        return msg
 
 
 class EmailAttachment(models.Model):
