@@ -33,6 +33,7 @@ HAS_HTTPS = env.bool("HAS_HTTPS", default=False)
 PROTOCOL = "https://" if HAS_HTTPS else "http://"
 
 BACKEND_HOST = env.list("BACKEND_HOST")
+MAIN_HOST = env.str("MAIN_HOST", default=BACKEND_HOST[0])
 
 REDIS_HOST = env.str("REDIS_HOST")
 REDIS_PORT = env.int("REDIS_PORT", default=6379)

@@ -12,6 +12,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from common.model_admin import ModelAdmin
 
 from .models import User, Role
+from .tasks import reset_password
 
 admin.site.unregister(Group)
 admin.site.unregister(StaticDevice)
@@ -45,13 +46,11 @@ class UserAdmin(ModelAdmin):
     autocomplete_fields = ("roles",)
     filter_horizontal = ("user_permissions",)
     exclude = ("password",)
-    actions = ("reset_2fa",)
 
     prefetch_related = ("roles",)
     annotate_query = {
         "permission_count": Count("user_permissions"),
     }
-
     fieldsets = (
         (
             None,
@@ -86,6 +85,7 @@ class UserAdmin(ModelAdmin):
         ),
     )
     readonly_fields = ("last_login", "created_at", "updated_at")
+    actions = ("reset_2fa", "reset_password_bulk")
 
     @admin.display(description="User Roles")
     def user_roles(self, obj: User):
@@ -106,14 +106,14 @@ class UserAdmin(ModelAdmin):
             level=messages.SUCCESS,
         )
 
-    def reset_password(self, request, obj):
-        form = PasswordResetForm({"email": obj.email})
-        form.full_clean()
-        form.save(request=request, use_https=settings.HAS_HTTPS)
+    @admin.action(description="Reset password")
+    def reset_password_bulk(self, request, queryset):
+        for obj in queryset:
+            reset_password.delay(obj.email)
 
         self.message_user(
             request,
-            f"Email sent to {obj} for password reset",
+            f"Email sent to {queryset.count()} accounts for password reset",
             level=messages.SUCCESS,
         )
 
@@ -121,4 +121,9 @@ class UserAdmin(ModelAdmin):
         super().save_model(request, obj, form, change)
 
         if not change:
-            self.reset_password(request, obj)
+            reset_password.delay(obj.email)
+            self.message_user(
+                request,
+                f"Email sent to {obj} for password reset",
+                level=messages.SUCCESS,
+            )

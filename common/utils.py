@@ -39,7 +39,7 @@ def get_relative_image_urls(email_body):
 
 def replace_relative_image_urls(email_body):
     relative_urls = get_relative_image_urls(email_body)
-    domain = settings.PROTOCOL + settings.BACKEND_HOST[0]
+    domain = settings.PROTOCOL + settings.MAIN_HOST
     for url in relative_urls:
         absolute_url = domain + url
         email_body = email_body.replace(url, absolute_url)
