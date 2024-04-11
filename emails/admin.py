@@ -152,18 +152,18 @@ class EmailAdmin(CKEditorTemplatesBase):
 @admin.register(SendEmailTask)
 class SendEmailTaskAdmin(TaskAdmin):
     search_fields = (
-        "email__title",
+        "email__subject",
         "email__content",
         "contact__first_name",
         "contact__last_name",
-        "contact__emails",
-        "contact__email_ccs",
+        "email_to",
+        "email_cc",
     )
     list_display = (
         "email",
         "contact",
-        "contact_emails",
-        "contact_email_ccs",
+        "email_to",
+        "email_cc",
         "created_on",
         "duration_display",
         "status_display",
@@ -184,6 +184,8 @@ class SendEmailTaskAdmin(TaskAdmin):
                 "fields": (
                     "email",
                     "contact",
+                    "email_to",
+                    "email_cc",
                     "download_email",
                 )
             },
@@ -193,6 +195,7 @@ class SendEmailTaskAdmin(TaskAdmin):
             {
                 "classes": ["collapse"],
                 "fields": (
+                    # TODO: add email to: and cc: recipients
                     "email_preview",
                     "email_plaintext",
                     "email_attachments",

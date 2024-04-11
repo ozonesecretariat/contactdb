@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.storage import storages
 from django.db import models
 from django_task.models import TaskRQ
+from common.array_field import ArrayField
 from core.models import Contact, ContactGroup
 
 
@@ -18,8 +19,19 @@ def validate_placeholders(value):
 
 
 class EmailTemplate(models.Model):
-    title = models.CharField(max_length=250)
-    description = models.TextField()
+    title = models.CharField(
+        max_length=250,
+        help_text=(
+            "Name of the template, used to identify the template when selecting it."
+        ),
+        unique=True,
+    )
+    description = models.TextField(
+        help_text=(
+            "A short description for the template, displayed in the list when "
+            "choosing a template for an email."
+        )
+    )
     content = RichTextUploadingField(validators=[validate_placeholders])
 
     def __str__(self):
@@ -28,8 +40,16 @@ class EmailTemplate(models.Model):
 
 class Email(models.Model):
     subject = models.TextField()
-    recipients = models.ManyToManyField(Contact, blank=True)
-    groups = models.ManyToManyField(ContactGroup, blank=True)
+    recipients = models.ManyToManyField(
+        Contact,
+        blank=True,
+        help_text="Send the email to all the selected contacts.",
+    )
+    groups = models.ManyToManyField(
+        ContactGroup,
+        blank=True,
+        help_text="Send the email to all contacts in these selected groups.",
+    )
     content = RichTextUploadingField(validators=[validate_placeholders])
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
@@ -79,11 +99,25 @@ class SendEmailTask(TaskRQ):
     contact = models.ForeignKey(
         Contact, on_delete=models.CASCADE, related_name="email_history"
     )
+    email_to = ArrayField(
+        blank=True,
+        null=True,
+        base_field=models.EmailField(),
+        help_text="List of email addresses this email was sent to.",
+        editable=False,
+    )
+    email_cc = ArrayField(
+        blank=True,
+        null=True,
+        base_field=models.EmailField(),
+        help_text="List of email addresses this email was sent to in CC.",
+        editable=False,
+    )
     sent_email = models.TextField(
         default="",
         blank=True,
         null=True,
-        help_text="Copy of the sent email.",
+        help_text="Complete copy of the sent email.",
     )
 
     class Meta:
@@ -92,9 +126,9 @@ class SendEmailTask(TaskRQ):
 
     @staticmethod
     def get_jobclass():
-        from .jobs import SendMailJob
+        from .jobs import SendEmailJob
 
-        return SendMailJob
+        return SendEmailJob
 
     @cached_property
     def msg(self):

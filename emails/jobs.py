@@ -7,7 +7,7 @@ from django_task.job import Job
 from common.utils import replace_relative_image_urls
 
 
-class SendMailJob(Job):
+class SendEmailJob(Job):
     @staticmethod
     def execute(job, task):
         task.log(logging.INFO, "Building email %r for: %s", task.email, task.contact)
@@ -52,8 +52,10 @@ class SendMailJob(Job):
             recipients,
         )
 
-        # Save a copy of the message before sending.
+        # Save a copy of the message before sending
+        task.email_to = msg.to
+        task.email_cc = msg.cc
         task.sent_email = msg.message().as_string()
         task.save()
-        count = msg.send()
-        task.log(logging.INFO, "Email %r sent to address, total %s", task.email, count)
+        msg.send()
+        task.log(logging.INFO, "Email %r sent to all addresses", task.email)

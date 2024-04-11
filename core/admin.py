@@ -64,7 +64,11 @@ class OrganizationAdmin(ModelAdmin):
         "government__name",
         "country__name",
     ]
-    list_filter = ["organization_type"]
+    list_filter = (
+        AutocompleteFilterFactory("organization_type", "organization_type"),
+        AutocompleteFilterFactory("country", "country"),
+        AutocompleteFilterFactory("government", "government"),
+    )
     list_display = (
         "name",
         "acronym",
