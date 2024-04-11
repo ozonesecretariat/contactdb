@@ -85,10 +85,11 @@ class RegistrationTagAdmin(ModelAdmin):
 @admin.register(Registration)
 class RegistrationAdmin(ModelAdmin):
     search_fields = [
-        "status",
         "event__title",
         "contact__first_name",
         "contact__last_name",
+        "status__name",
+        "role_name",
     ]
     list_display_links = ("contact", "event")
     list_display = (
