@@ -1,0 +1,34 @@
+[
+{
+  "model": "events.registrationrole",
+  "pk": 1,
+  "fields": {
+    "name": "Delegate",
+    "kronos_id": null
+  }
+},
+{
+  "model": "events.registrationrole",
+  "pk": 2,
+  "fields": {
+    "name": "Head",
+    "kronos_id": 0
+  }
+},
+{
+  "model": "events.registrationrole",
+  "pk": 3,
+  "fields": {
+    "name": "Alternate Head",
+    "kronos_id": 1
+  }
+},
+{
+  "model": "events.registrationrole",
+  "pk": 4,
+  "fields": {
+    "name": "Not Official Delegate",
+    "kronos_id": 2
+  }
+}
+]

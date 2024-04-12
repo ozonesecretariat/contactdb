@@ -5,6 +5,7 @@ from django.core.management import BaseCommand
 from django.core.management import call_command
 
 from accounts.models import Role, User
+from events.models import RegistrationRole, RegistrationStatus, RegistrationTag
 
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,10 @@ class Command(BaseCommand):
         "initial": (
             # auth
             Role,
+            # events
+            RegistrationTag,
+            RegistrationRole,
+            RegistrationStatus,
         ),
         "test": (
             # User

@@ -1,0 +1,26 @@
+[
+{
+  "model": "events.registrationstatus",
+  "pk": 1,
+  "fields": {
+    "name": "Nominated",
+    "kronos_id": 1
+  }
+},
+{
+  "model": "events.registrationstatus",
+  "pk": 2,
+  "fields": {
+    "name": "Accredited",
+    "kronos_id": 2
+  }
+},
+{
+  "model": "events.registrationstatus",
+  "pk": 3,
+  "fields": {
+    "name": "Registered",
+    "kronos_id": 4
+  }
+}
+]
