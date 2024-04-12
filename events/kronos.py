@@ -27,11 +27,6 @@ class Client:
             json=json_data or {},
             params=params or {},
         )
-        if not resp.ok:
-            import ipdb
-
-            ipdb.set_trace()
-            pass
 
         resp.raise_for_status()
         return resp.json()

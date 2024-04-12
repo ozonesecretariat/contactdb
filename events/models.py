@@ -134,10 +134,6 @@ class LoadParticipantsFromKronosTask(TaskRQ):
         related_name="import_tasks",
         help_text="Event to import participants for in this task.",
     )
-    create_groups = models.BooleanField(
-        default=True,
-        help_text="Automatically create a group with the event title as the name.",
-    )
     contacts_nr = models.PositiveIntegerField(
         default=0, editable=False, help_text="Number of newly created contacts created,"
     )

@@ -36,7 +36,7 @@ class LoadEventsFromKronosTaskAdmin(TaskAdmin):
 
 
 @admin.register(LoadParticipantsFromKronosTask)
-class LoadKronosFromParticipantsTaskAdmin(TaskAdmin):
+class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
     """Import contacts and registrations from Kronos.
     Contacts that have conflict data will be added as temporary contacts in
     "Resolve Conflicts"
@@ -59,6 +59,9 @@ class LoadKronosFromParticipantsTaskAdmin(TaskAdmin):
     )
     autocomplete_fields = ("event",)
     ordering = ("-created_on",)
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(RegistrationStatus)

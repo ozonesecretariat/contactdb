@@ -1,3 +1,4 @@
+from copy import copy
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.contrib.admin import EmptyFieldListFilter, helpers
@@ -14,7 +15,7 @@ from import_export.widgets import ForeignKeyWidget
 
 from common.urls import reverse
 from common.model_admin import ModelAdmin, TaskAdmin, ModelResource
-from core.jobs import ResolveAllConflicts
+from common.utils import update_object
 
 from core.models import (
     Country,
@@ -23,22 +24,10 @@ from core.models import (
     Contact,
     ContactGroup,
     OrganizationType,
-    ResolveAllConflictsTask,
     ResolveConflict,
 )
 
 MERGE_FROM_PARAM = "merge_from_temp"
-
-
-@admin.register(ResolveAllConflictsTask)
-class ResolveAllConflictsTaskAdmin(TaskAdmin):
-    list_display = [
-        "__str__",
-        "created_on",
-        "duration_display",
-        "status_display",
-    ]
-    ordering = ("-created_on",)
 
 
 @admin.register(Country)
@@ -475,13 +464,22 @@ class ResolveConflictAdmin(ContactAdminBase):
     def accept_new_data(self, request, queryset):
         new_contacts = list(queryset)
         for temp_contact in new_contacts:
-            ResolveAllConflicts.save_incoming_data(temp_contact)
+            self.save_incoming_data(temp_contact)
 
         self.message_user(
             request,
             f"{len(new_contacts)} conflicts resolved",
             messages.SUCCESS,
         )
+
+    @staticmethod
+    def save_incoming_data(incoming_contact):
+        record = incoming_contact.existing_contact
+        update_values = copy(dict(vars(incoming_contact)))
+        update_values.pop("existing_contact_id")
+        update_values.pop("id")
+        update_object(record, update_values)
+        ResolveConflict.objects.filter(pk=incoming_contact.id).first().delete()
 
     @admin.display(description="Existing contact")
     def existing_contact_link(self, obj):
