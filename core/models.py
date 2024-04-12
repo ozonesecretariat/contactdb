@@ -7,6 +7,7 @@ from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
 from common.citext import CICharField
+from common.model import KronosId
 from common.utils import ConflictResolutionMethods
 
 
@@ -31,7 +32,7 @@ class Country(models.Model):
 
 
 class OrganizationType(models.Model):
-    organization_type_id = models.CharField(max_length=250, unique=True)
+    organization_type_id = KronosId()
     name = CICharField(max_length=250, primary_key=True)
 
     class Meta:
@@ -42,7 +43,7 @@ class OrganizationType(models.Model):
 
 
 class Organization(models.Model):
-    organization_id = models.CharField(max_length=250, unique=True)
+    organization_id = KronosId()
     name = models.TextField()
 
     acronym = models.CharField(blank=True, max_length=30)
@@ -73,7 +74,6 @@ class Organization(models.Model):
 
 class BaseContact(models.Model):
     organization = None
-    contact_id = models.CharField(max_length=250, default="", blank=True)
     title = models.CharField(max_length=30, blank=True)
     honorific = models.CharField(max_length=30, default="", blank=True)
     respectful = models.CharField(max_length=30, default="", blank=True)
@@ -161,6 +161,7 @@ class BaseContact(models.Model):
 
 
 class Contact(BaseContact):
+    contact_id = KronosId()
     organization = models.ForeignKey(
         Organization,
         on_delete=models.SET_NULL,

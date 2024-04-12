@@ -117,7 +117,6 @@ class ContactAdminBase(ModelAdmin):
         "last_name",
     )
     search_fields = (
-        "contact_id",
         "first_name",
         "last_name",
         "designation",
@@ -219,7 +218,6 @@ class ContactAdminBase(ModelAdmin):
             {
                 "classes": ["collapse"],
                 "fields": (
-                    "contact_id",
                     "created_at",
                     "updated_at",
                 ),
@@ -227,7 +225,6 @@ class ContactAdminBase(ModelAdmin):
         ),
     )
     readonly_fields = (
-        "contact_id",
         "created_at",
         "updated_at",
         "copy_widget",

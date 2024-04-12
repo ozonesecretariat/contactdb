@@ -1,8 +1,7 @@
-from functools import cached_property
-from django.core.exceptions import ValidationError
 from django.db import models
 from django_task.models import TaskRQ
 from common.citext import CICharField
+from common.model import KronosEnum, KronosId
 from core.models import Contact, Country, ContactGroup
 
 
@@ -24,7 +23,7 @@ class LoadEventsFromKronosTask(TaskRQ):
 
 
 class Event(models.Model):
-    event_id = models.CharField(max_length=150, blank=True, null=True, unique=True)
+    event_id = KronosId()
     code = models.CharField(max_length=50, blank=False, null=False)
     title = models.CharField(max_length=255, blank=False, null=False)
     start_date = models.DateTimeField(null=False)
@@ -67,7 +66,7 @@ class RegistrationTag(models.Model):
 
 class RegistrationStatus(models.Model):
     name = CICharField(max_length=250, unique=True)
-    kronos_id = models.IntegerField(blank=True, null=True, default=-1, editable=False)
+    kronos_value = KronosEnum()
 
     class Meta:
         ordering = ("name",)
@@ -79,7 +78,7 @@ class RegistrationStatus(models.Model):
 
 class RegistrationRole(models.Model):
     name = CICharField(max_length=250, unique=True)
-    kronos_id = models.IntegerField(blank=True, null=True, default=-1, editable=False)
+    kronos_value = KronosEnum()
 
     class Meta:
         ordering = ("name",)
