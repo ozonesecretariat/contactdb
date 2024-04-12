@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.permissions import has_model_permission
+from common.urls import reverse
 from events.models import (
     Event,
     LoadEventsFromKronosTask,
@@ -146,10 +147,7 @@ class EventAdmin(ModelAdmin):
         "dates",
         "registrations_count",
     )
-    autocomplete_fields = (
-        "venue_country",
-        "group",
-    )
+    autocomplete_fields = ("venue_country",)
     list_filter = (
         AutocompleteFilterFactory("venue country", "venue_country"),
         "start_date",
@@ -167,12 +165,15 @@ class EventAdmin(ModelAdmin):
     annotate_query = {
         "registration_count": Count("registrations"),
     }
-    actions = ["load_contacts_from_kronos"]
+    actions = ["load_contacts_from_kronos", "send_email"]
 
     @admin.display(description="Registrations", ordering="registration_count")
     def registrations_count(self, obj):
         return self.get_related_link(
-            obj, "registrations", "event", obj.registration_count
+            obj,
+            "registrations",
+            "event",
+            f"{obj.registration_count} participants",
         )
 
     def has_load_contacts_from_kronos_permission(self, request):
@@ -200,3 +201,11 @@ class EventAdmin(ModelAdmin):
             level=messages.SUCCESS,
         )
         return redirect(self.get_admin_list_link(LoadParticipantsFromKronosTask))
+
+    @admin.action(
+        description="Send email to participants of selected events",
+        permissions=["view"],
+    )
+    def send_email(self, request, queryset):
+        ids = ",".join(map(str, queryset.values_list("id", flat=True)))
+        return redirect(reverse("admin:emails_email_add") + "?events=" + ids)

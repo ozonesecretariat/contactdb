@@ -36,23 +36,6 @@ class LoadParticipantsFromKronos(Job):
         parser = KronosParticipantsParser(task=task)
         response = kronos_client.get_participants(event.event_id)
         parser.parse_contact_list(response.get("records"))
-
-        if event.group:
-            participants = Contact.objects.filter(
-                Q(registrationstatus__event_id=event.id) & ~Q(group__id=event.group.id)
-            )
-            event.group.contacts.add(*participants)
-            task.log(
-                logging.INFO,
-                f"Added {participants.count()} to {event.group} group",
-            )
-        elif task.create_groups:
-            task.log(logging.INFO, f"Create group for {event} event")
-            group = ContactGroup.objects.create(name=event.title)
-            group.contacts.set(Contact.objects.filter(registrations__event_id=event.id))
-            event.group = group
-            event.save()
-
         task.save()
 
     @staticmethod

@@ -7,11 +7,13 @@ from django.core.exceptions import ValidationError
 from django.core.files.storage import storages
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from django.db.models import Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 from common.array_field import ArrayField
 from common.utils import replace_relative_image_urls
 from core.models import Contact, ContactGroup
+from events.models import Event
 
 
 def validate_placeholders(value):
@@ -46,11 +48,19 @@ class Email(models.Model):
         Contact,
         blank=True,
         help_text="Send the email to all the selected contacts.",
+        limit_choices_to=~Q(emails=[]),
     )
     groups = models.ManyToManyField(
         ContactGroup,
         blank=True,
         help_text="Send the email to all contacts in these selected groups.",
+        limit_choices_to=~Q(contacts=None),
+    )
+    events = models.ManyToManyField(
+        Event,
+        blank=True,
+        help_text="Send the email to all participants of these selected events.",
+        limit_choices_to=~Q(registrations=None),
     )
     subject = models.CharField(max_length=900)
     content = RichTextUploadingField(validators=[validate_placeholders])
@@ -62,8 +72,13 @@ class Email(models.Model):
     @property
     def all_recipients(self):
         all_recipients = set(self.recipients.all())
-        for group in self.groups.all():
+        for group in self.groups.prefetch_related("contacts"):
             all_recipients.update(group.contacts.all())
+        for event in self.events.all().prefetch_related(
+            "registrations", "registrations__contact"
+        ):
+            for registration in event.registrations.all():
+                all_recipients.add(registration.contact)
         return all_recipients
 
     def build_email(self, contact=None):

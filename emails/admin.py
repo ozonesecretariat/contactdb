@@ -179,8 +179,10 @@ class EmailAdminForm(forms.ModelForm):
         if (
             not self.cleaned_data["recipients"].exists()
             and not self.cleaned_data["groups"].exists()
+            and not self.cleaned_data["events"].exists()
         ):
-            msg = "At least one recipient or group must be specified"
+            msg = "At least one recipient, group or event must be specified"
+            self.add_error("events", msg)
             self.add_error("groups", msg)
             self.add_error("recipients", msg)
 
@@ -212,7 +214,7 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     )
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
-    autocomplete_fields = ("recipients", "groups")
+    autocomplete_fields = ("recipients", "groups", "events")
     prefetch_related = ("email_history",)
     fieldsets = (
         (
@@ -221,6 +223,7 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
                 "fields": (
                     "recipients",
                     "groups",
+                    "events",
                 )
             },
         ),

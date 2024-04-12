@@ -17,15 +17,7 @@ from common.utils import ConflictResolutionMethods
 class Command(BaseCommand):
     help = __doc__
 
-    def handle(
-        self,
-        no_groups,
-        no_resolve_conflicts,
-        resolution,
-        *args,
-        **options,
-    ):
-
+    def handle(self, *args, **options):
         print("Loading events")
         task = LoadEventsFromKronosTask.objects.create()
         task.run(is_async=False)

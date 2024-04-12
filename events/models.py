@@ -36,9 +36,6 @@ class Event(models.Model):
     )
     venue_city = models.CharField(max_length=150)
     dates = models.CharField(max_length=255)
-    group = models.ForeignKey(
-        ContactGroup, on_delete=models.SET_NULL, default=None, null=True, blank=True
-    )
 
     def __str__(self):
         return self.title
