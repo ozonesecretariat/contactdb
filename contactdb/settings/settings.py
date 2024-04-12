@@ -377,11 +377,18 @@ CKEDITOR_CONFIGS = {
                     "placeholder_select",
                     "Templates",
                     "Preview",
+                    "Source",
                 ],
             },
             {
                 "name": "clipboard",
                 "items": [
+                    # "Cut",
+                    # "Copy",
+                    # "Paste",
+                    # "PasteText",
+                    # "PasteFromWord",
+                    # "-",
                     "Undo",
                     "Redo",
                 ],
@@ -407,7 +414,14 @@ CKEDITOR_CONFIGS = {
             },
             {
                 "name": "editing",
-                "items": ["Find", "Replace"],
+                "items": [
+                    "Find",
+                    "Replace",
+                    "-",
+                    "SelectAll",
+                    # "-",
+                    # "Scayt",
+                ],
             },
             {
                 "name": "insert",
