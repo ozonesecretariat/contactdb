@@ -130,21 +130,21 @@ class KronosParticipantsParser(KronosParser):
             if registration is None:
                 continue
 
-            event = Event.objects.filter(event_id=registration.get("eventId")).first()
+            event = Event.objects.filter(event_id=registration["eventId"]).first()
+            status_kronos_id = registration["status"]
             status = RegistrationStatus.objects.get_or_create(
-                pk=registration["status"],
+                kronos_id=status_kronos_id,
                 defaults={
-                    "name": registration["status"],
+                    "name": status_kronos_id,
                 },
             )[0]
-            role = None
-            if role_pk := registration.get("role"):
-                role = RegistrationRole.objects.get_or_create(
-                    pk=role_pk,
-                    defaults={
-                        "name": role_pk,
-                    },
-                )[0]
+            role_kronos_id = registration.get("role")
+            role = RegistrationRole.objects.get_or_create(
+                kronos_id=role_kronos_id,
+                defaults={
+                    "name": role_kronos_id,
+                },
+            )[0]
 
             obj, created = Registration.objects.get_or_create(
                 contact=contact,
@@ -160,8 +160,10 @@ class KronosParticipantsParser(KronosParser):
             self.task.registrations_nr += created
 
             for tag in registration.get("tags", []):
-                tag = RegistrationTag.objects.get_or_create(name=tag)[0]
-                obj.tags.add(tag)
+                tag = tag.strip()
+                if tag:
+                    tag = RegistrationTag.objects.get_or_create(name=tag)[0]
+                    obj.tags.add(tag)
             self.task.log(
                 logging.INFO,
                 "Added meeting registration for %r event: %s",

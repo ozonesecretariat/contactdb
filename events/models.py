@@ -67,6 +67,7 @@ class RegistrationTag(models.Model):
 
 class RegistrationStatus(models.Model):
     name = CICharField(max_length=250, unique=True)
+    kronos_id = models.IntegerField(blank=True, null=True, default=-1, editable=False)
 
     class Meta:
         ordering = ("name",)
@@ -78,6 +79,7 @@ class RegistrationStatus(models.Model):
 
 class RegistrationRole(models.Model):
     name = CICharField(max_length=250, unique=True)
+    kronos_id = models.IntegerField(blank=True, null=True, default=-1, editable=False)
 
     class Meta:
         ordering = ("name",)

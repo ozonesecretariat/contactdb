@@ -64,15 +64,15 @@ class LoadKronosFromParticipantsTaskAdmin(TaskAdmin):
 @admin.register(RegistrationStatus)
 class RegistrationStatusAdmin(ModelAdmin):
     search_fields = ("name",)
-    list_display = ("id", "name")
-    list_display_links = ("id", "name")
+    list_display = ("name",)
+    list_display_links = ("name",)
 
 
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ModelAdmin):
     search_fields = ("name",)
-    list_display = ("id", "name")
-    list_display_links = ("id", "name")
+    list_display = ("name",)
+    list_display_links = ("name",)
 
 
 @admin.register(RegistrationTag)
@@ -89,7 +89,7 @@ class RegistrationAdmin(ModelAdmin):
         "contact__first_name",
         "contact__last_name",
         "status__name",
-        "role_name",
+        "role__name",
     ]
     list_display_links = ("contact", "event")
     list_display = (
