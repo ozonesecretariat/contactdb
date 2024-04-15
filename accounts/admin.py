@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.admin import GroupAdmin
 from django.contrib.auth.models import Group
 from django.db.models import Count
-from django_otp import devices_for_user
+from django_otp import devices_for_user, user_has_device
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from common.model_admin import ModelAdmin
@@ -34,6 +34,7 @@ class UserAdmin(ModelAdmin):
         "permission_count",
         "is_superuser",
         "is_active",
+        "has_2fa",
         "last_login",
     )
     list_filter = (
@@ -92,6 +93,10 @@ class UserAdmin(ModelAdmin):
     @admin.display(description="User permissions", ordering="permission_count")
     def permission_count(self, obj):
         return f"{obj.permission_count} permission(s)"
+
+    @admin.display(description="2FA enabled", boolean=True)
+    def has_2fa(self, obj):
+        return user_has_device(obj)
 
     @admin.action(description="Reset 2FA for selected users")
     def reset_2fa(self, request, queryset):
