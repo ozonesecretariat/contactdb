@@ -128,3 +128,8 @@ fieldset.compare .fieldBox ul {
 fieldset.compare .fieldBox li {
   list-style: disc inside;
 }
+
+/* Import page */
+.import-submit {
+  align-items: center;
+}

@@ -1,0 +1,30 @@
+{% extends "admin/import_export/import.html" %}
+{% load core_extra %}
+
+{% block content %}
+  <form id="download-template-form" method="POST" action="{% admin_export_url %}?id=-1">{% csrf_token %}</form>
+  {{ block.super }}
+{% endblock content %}
+
+{% block form_submit_button %}
+  <div class="submit-row import-submit">
+    <input type="submit" class="default" value="Submit" />
+    <select
+      required
+      form="download-template-form"
+      name="file_format"
+      onchange="this.form.submit(); this.value=''"
+      aria-label="Download template"
+    >
+      <optgroup label="Select template format">
+        {% for value, name in form.fields.input_format.choices %}
+          {% if not value %}
+            <option value="" disabled selected hidden>Download template</option>
+          {% elif name != 'yaml' and name != 'json' %}
+            <option value="{{ value }}">{{ name }}</option>
+          {% endif %}
+        {% endfor %}
+      </optgroup>
+    </select>
+  </div>
+{% endblock %}
