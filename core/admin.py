@@ -115,20 +115,6 @@ class ContactAdminBase(ModelAdmin):
         "emails",
         "organization__name",
     )
-    list_display = (
-        "title",
-        "first_name",
-        "last_name",
-        "organization",
-        "country",
-        "emails",
-        "phones",
-        "email_logs",
-    )
-    list_display_links = (
-        "first_name",
-        "last_name",
-    )
     autocomplete_fields = (
         "organization",
         "country",
@@ -362,7 +348,21 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         ContactMembershipInline,
         ContactRegistrationsInline,
     )
-
+    list_display = (
+        "title",
+        "first_name",
+        "last_name",
+        "organization",
+        "country",
+        "emails",
+        "phones",
+        "registrations_link",
+        "email_logs",
+    )
+    list_display_links = (
+        "first_name",
+        "last_name",
+    )
     list_filter = (
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
@@ -377,11 +377,23 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         "organization",
         "country",
     )
+    annotate_query = {
+        "registration_count": Count("registrations"),
+    }
     actions = [
         "send_email",
         "add_contacts_to_group",
         "merge_contacts",
     ]
+
+    @admin.display(description="Events", ordering="registration_count")
+    def registrations_link(self, obj):
+        return self.get_related_link(
+            obj,
+            "registrations",
+            "contact",
+            f"{obj.registration_count} registrations",
+        )
 
     def merge_two_contacts(self, contact1, contact2):
         ignored_fields = {

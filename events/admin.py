@@ -88,6 +88,7 @@ class RegistrationTagAdmin(ModelAdmin):
 
 @admin.register(Registration)
 class RegistrationAdmin(ModelAdmin):
+    ordering = ("contact__first_name", "contact__last_name", "event__title")
     search_fields = [
         "event__title",
         "contact__first_name",
