@@ -55,7 +55,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"vega@example.com\", \"vega.zephyr@example.org\"]",
-      "email_ccs": "[\"['vega@example.net']\"]",
+      "email_ccs": "[\"vega@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -68,7 +68,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:55.453Z",
-      "updated_at": "2024-04-15T12:51:55.453Z",
+      "updated_at": "2024-04-15T12:59:51.612Z",
       "contact_id": null,
       "organization": 18
     }
@@ -129,7 +129,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"nyx-crescent@example.com\"]",
-      "email_ccs": "[\"['nyx-crescent@example.net']\"]",
+      "email_ccs": "[\"nyx-crescent@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -142,7 +142,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:55.552Z",
-      "updated_at": "2024-04-15T12:51:55.552Z",
+      "updated_at": "2024-04-15T12:59:51.617Z",
       "contact_id": null,
       "organization": 14
     }
@@ -314,7 +314,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"xenon@example.com\"]",
-      "email_ccs": "[\"['xenon@example.net']\"]",
+      "email_ccs": "[\"xenon@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -327,7 +327,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:55.878Z",
-      "updated_at": "2024-04-15T12:51:55.879Z",
+      "updated_at": "2024-04-15T12:59:51.623Z",
       "contact_id": null,
       "organization": 11
     }
@@ -351,7 +351,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"zephyr-orion@example.com\", \"zephyr-orion.nyx@example.org\"]",
-      "email_ccs": "[\"['zephyr-orion@example.net']\"]",
+      "email_ccs": "[\"zephyr-orion@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -364,7 +364,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:55.930Z",
-      "updated_at": "2024-04-15T12:51:55.930Z",
+      "updated_at": "2024-04-15T12:59:51.631Z",
       "contact_id": null,
       "organization": 17
     }
@@ -388,7 +388,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"zephyr@example.com\", \"zephyr.vortex@example.org\"]",
-      "email_ccs": "[\"['zephyr@example.net']\"]",
+      "email_ccs": "[\"zephyr@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -401,7 +401,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:55.997Z",
-      "updated_at": "2024-04-15T12:51:55.997Z",
+      "updated_at": "2024-04-15T12:59:51.637Z",
       "contact_id": null,
       "organization": 19
     }
@@ -425,7 +425,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astra-kieran@example.com\"]",
-      "email_ccs": "[\"['astra-kieran@example.net']\"]",
+      "email_ccs": "[\"astra-kieran@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -438,7 +438,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.032Z",
-      "updated_at": "2024-04-15T12:51:56.032Z",
+      "updated_at": "2024-04-15T12:59:51.642Z",
       "contact_id": null,
       "organization": 1
     }
@@ -499,7 +499,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astra-caelum@example.com\"]",
-      "email_ccs": "[\"['astra-caelum@example.net']\"]",
+      "email_ccs": "[\"astra-caelum@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -512,7 +512,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.047Z",
-      "updated_at": "2024-04-15T12:51:56.047Z",
+      "updated_at": "2024-04-15T12:59:51.647Z",
       "contact_id": null,
       "organization": 3
     }
@@ -573,7 +573,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"axel@example.com\"]",
-      "email_ccs": "[\"['axel@example.net']\"]",
+      "email_ccs": "[\"axel@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -586,7 +586,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.086Z",
-      "updated_at": "2024-04-15T12:51:56.086Z",
+      "updated_at": "2024-04-15T12:59:51.654Z",
       "contact_id": null,
       "organization": 4
     }
@@ -684,7 +684,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"dax-titan@example.com\", \"dax-titan.eclipse@example.org\"]",
-      "email_ccs": "[\"['dax-titan@example.net']\"]",
+      "email_ccs": "[\"dax-titan@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -697,7 +697,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.252Z",
-      "updated_at": "2024-04-15T12:51:56.252Z",
+      "updated_at": "2024-04-15T12:59:51.659Z",
       "contact_id": null,
       "organization": 13
     }
@@ -721,7 +721,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"aurora@example.com\", \"aurora.xenon@example.org\"]",
-      "email_ccs": "[\"['aurora@example.net']\"]",
+      "email_ccs": "[\"aurora@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -734,7 +734,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.352Z",
-      "updated_at": "2024-04-15T12:51:56.352Z",
+      "updated_at": "2024-04-15T12:59:51.664Z",
       "contact_id": null,
       "organization": 1
     }
@@ -758,7 +758,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"aria@example.com\"]",
-      "email_ccs": "[\"['aria@example.net']\"]",
+      "email_ccs": "[\"aria@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -771,7 +771,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.393Z",
-      "updated_at": "2024-04-15T12:51:56.393Z",
+      "updated_at": "2024-04-15T12:59:51.670Z",
       "contact_id": null,
       "organization": 12
     }
@@ -795,7 +795,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"vega@example.com\"]",
-      "email_ccs": "[\"['vega@example.net']\"]",
+      "email_ccs": "[\"vega@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -808,7 +808,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.464Z",
-      "updated_at": "2024-04-15T12:51:56.464Z",
+      "updated_at": "2024-04-15T12:59:51.674Z",
       "contact_id": null,
       "organization": 9
     }
@@ -832,7 +832,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"aria@example.com\"]",
-      "email_ccs": "[\"['aria@example.net']\"]",
+      "email_ccs": "[\"aria@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -845,7 +845,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.521Z",
-      "updated_at": "2024-04-15T12:51:56.521Z",
+      "updated_at": "2024-04-15T12:59:51.680Z",
       "contact_id": null,
       "organization": 11
     }
@@ -869,7 +869,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astra@example.com\"]",
-      "email_ccs": "[\"['astra@example.net']\"]",
+      "email_ccs": "[\"astra@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -882,7 +882,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.630Z",
-      "updated_at": "2024-04-15T12:51:56.630Z",
+      "updated_at": "2024-04-15T12:59:51.686Z",
       "contact_id": null,
       "organization": 8
     }
@@ -906,7 +906,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astrid-spectrum@example.com\"]",
-      "email_ccs": "[\"['astrid-spectrum@example.net']\"]",
+      "email_ccs": "[\"astrid-spectrum@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -919,7 +919,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.716Z",
-      "updated_at": "2024-04-15T12:51:56.716Z",
+      "updated_at": "2024-04-15T12:59:51.691Z",
       "contact_id": null,
       "organization": 13
     }
@@ -943,7 +943,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"aurora@example.com\", \"aurora.astra@example.org\"]",
-      "email_ccs": "[\"['aurora@example.net']\"]",
+      "email_ccs": "[\"aurora@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -956,7 +956,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.780Z",
-      "updated_at": "2024-04-15T12:51:56.780Z",
+      "updated_at": "2024-04-15T12:59:51.696Z",
       "contact_id": null,
       "organization": 20
     }
@@ -980,7 +980,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"xenon-zephyr@example.com\"]",
-      "email_ccs": "[\"['xenon-zephyr@example.net']\"]",
+      "email_ccs": "[\"xenon-zephyr@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -993,7 +993,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.850Z",
-      "updated_at": "2024-04-15T12:51:56.850Z",
+      "updated_at": "2024-04-15T12:59:51.701Z",
       "contact_id": null,
       "organization": 9
     }
@@ -1017,7 +1017,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"zephyr@example.com\"]",
-      "email_ccs": "[\"['zephyr@example.net']\"]",
+      "email_ccs": "[\"zephyr@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1030,7 +1030,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.925Z",
-      "updated_at": "2024-04-15T12:51:56.925Z",
+      "updated_at": "2024-04-15T12:59:51.706Z",
       "contact_id": null,
       "organization": 18
     }
@@ -1054,7 +1054,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"dax@example.com\"]",
-      "email_ccs": "[\"['dax@example.net']\"]",
+      "email_ccs": "[\"dax@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1067,7 +1067,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.943Z",
-      "updated_at": "2024-04-15T12:51:56.943Z",
+      "updated_at": "2024-04-15T12:59:51.711Z",
       "contact_id": null,
       "organization": 12
     }
@@ -1091,7 +1091,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"thane@example.com\", \"thane.seren@example.org\"]",
-      "email_ccs": "[\"['thane@example.net']\"]",
+      "email_ccs": "[\"thane@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1104,7 +1104,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:56.984Z",
-      "updated_at": "2024-04-15T12:51:56.984Z",
+      "updated_at": "2024-04-15T12:59:51.719Z",
       "contact_id": null,
       "organization": 20
     }
@@ -1239,7 +1239,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astrid-drake@example.com\", \"astrid-drake.spectrum@example.org\"]",
-      "email_ccs": "[\"['astrid-drake@example.net']\"]",
+      "email_ccs": "[\"astrid-drake@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1252,7 +1252,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:57.288Z",
-      "updated_at": "2024-04-15T12:51:57.288Z",
+      "updated_at": "2024-04-15T12:59:51.725Z",
       "contact_id": null,
       "organization": 6
     }
@@ -1276,7 +1276,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"cassian-xenon@example.com\"]",
-      "email_ccs": "[\"['cassian-xenon@example.net']\"]",
+      "email_ccs": "[\"cassian-xenon@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1289,7 +1289,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:57.382Z",
-      "updated_at": "2024-04-15T12:51:57.383Z",
+      "updated_at": "2024-04-15T12:59:51.731Z",
       "contact_id": null,
       "organization": 6
     }
@@ -1498,7 +1498,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"orion@example.com\"]",
-      "email_ccs": "[\"['orion@example.net']\"]",
+      "email_ccs": "[\"orion@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1511,7 +1511,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:57.910Z",
-      "updated_at": "2024-04-15T12:51:57.910Z",
+      "updated_at": "2024-04-15T12:59:51.736Z",
       "contact_id": null,
       "organization": 11
     }
@@ -1535,7 +1535,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"nova-vega@example.com\", \"nova-vega.titan@example.org\"]",
-      "email_ccs": "[\"['nova-vega@example.net']\"]",
+      "email_ccs": "[\"nova-vega@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1548,7 +1548,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:57.965Z",
-      "updated_at": "2024-04-15T12:51:57.965Z",
+      "updated_at": "2024-04-15T12:59:51.742Z",
       "contact_id": null,
       "organization": 20
     }
@@ -1572,7 +1572,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"zephyr@example.com\"]",
-      "email_ccs": "[\"['zephyr@example.net']\"]",
+      "email_ccs": "[\"zephyr@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1585,7 +1585,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:58.065Z",
-      "updated_at": "2024-04-15T12:51:58.065Z",
+      "updated_at": "2024-04-15T12:59:51.748Z",
       "contact_id": null,
       "organization": 3
     }
@@ -1609,7 +1609,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"zephyr-zephyr@example.com\"]",
-      "email_ccs": "[\"['zephyr-zephyr@example.net']\"]",
+      "email_ccs": "[\"zephyr-zephyr@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1622,7 +1622,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:58.237Z",
-      "updated_at": "2024-04-15T12:51:58.237Z",
+      "updated_at": "2024-04-15T12:59:51.752Z",
       "contact_id": null,
       "organization": 18
     }
@@ -1831,7 +1831,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"thane-atlas@example.com\", \"thane-atlas.neutron@example.org\"]",
-      "email_ccs": "[\"['thane-atlas@example.net']\"]",
+      "email_ccs": "[\"thane-atlas@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1844,7 +1844,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:58.662Z",
-      "updated_at": "2024-04-15T12:51:58.662Z",
+      "updated_at": "2024-04-15T12:59:51.757Z",
       "contact_id": null,
       "organization": 14
     }
@@ -1868,7 +1868,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"aurora@example.com\"]",
-      "email_ccs": "[\"['aurora@example.net']\"]",
+      "email_ccs": "[\"aurora@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1881,7 +1881,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:58.753Z",
-      "updated_at": "2024-04-15T12:51:58.753Z",
+      "updated_at": "2024-04-15T12:59:51.762Z",
       "contact_id": null,
       "organization": 5
     }
@@ -1905,7 +1905,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"nyx-ezra@example.com\"]",
-      "email_ccs": "[\"['nyx-ezra@example.net']\"]",
+      "email_ccs": "[\"nyx-ezra@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1918,7 +1918,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:58.819Z",
-      "updated_at": "2024-04-15T12:51:58.819Z",
+      "updated_at": "2024-04-15T12:59:51.767Z",
       "contact_id": null,
       "organization": 20
     }
@@ -1979,7 +1979,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"lyra@example.com\"]",
-      "email_ccs": "[\"['lyra@example.net']\"]",
+      "email_ccs": "[\"lyra@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -1992,7 +1992,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:59.007Z",
-      "updated_at": "2024-04-15T12:51:59.007Z",
+      "updated_at": "2024-04-15T12:59:51.771Z",
       "contact_id": null,
       "organization": 11
     }
@@ -2016,7 +2016,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"luna-zephyr@example.com\"]",
-      "email_ccs": "[\"['luna-zephyr@example.net']\"]",
+      "email_ccs": "[\"luna-zephyr@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2029,7 +2029,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:59.016Z",
-      "updated_at": "2024-04-15T12:51:59.016Z",
+      "updated_at": "2024-04-15T12:59:51.775Z",
       "contact_id": null,
       "organization": null
     }
@@ -2201,7 +2201,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"ezra-vega@example.com\"]",
-      "email_ccs": "[\"['ezra-vega@example.net']\"]",
+      "email_ccs": "[\"ezra-vega@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2214,7 +2214,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:59.306Z",
-      "updated_at": "2024-04-15T12:51:59.306Z",
+      "updated_at": "2024-04-15T12:59:51.779Z",
       "contact_id": null,
       "organization": 14
     }
@@ -2349,7 +2349,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"nia-galactic@example.com\"]",
-      "email_ccs": "[\"['nia-galactic@example.net']\"]",
+      "email_ccs": "[\"nia-galactic@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2362,7 +2362,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:59.646Z",
-      "updated_at": "2024-04-15T12:51:59.646Z",
+      "updated_at": "2024-04-15T12:59:51.783Z",
       "contact_id": null,
       "organization": 10
     }
@@ -2534,7 +2534,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"orion-galactic@example.com\", \"orion-galactic.pulse@example.org\"]",
-      "email_ccs": "[\"['orion-galactic@example.net']\"]",
+      "email_ccs": "[\"orion-galactic@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2547,7 +2547,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:51:59.967Z",
-      "updated_at": "2024-04-15T12:51:59.967Z",
+      "updated_at": "2024-04-15T12:59:51.788Z",
       "contact_id": null,
       "organization": 14
     }
@@ -2571,7 +2571,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"elara@example.com\"]",
-      "email_ccs": "[\"['elara@example.net']\"]",
+      "email_ccs": "[\"elara@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2584,7 +2584,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.017Z",
-      "updated_at": "2024-04-15T12:52:00.017Z",
+      "updated_at": "2024-04-15T12:59:51.792Z",
       "contact_id": null,
       "organization": 19
     }
@@ -2608,7 +2608,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"lyra-pulse@example.com\"]",
-      "email_ccs": "[\"['lyra-pulse@example.net']\"]",
+      "email_ccs": "[\"lyra-pulse@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2621,7 +2621,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.090Z",
-      "updated_at": "2024-04-15T12:52:00.090Z",
+      "updated_at": "2024-04-15T12:59:51.796Z",
       "contact_id": null,
       "organization": 12
     }
@@ -2793,7 +2793,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astra@example.com\"]",
-      "email_ccs": "[\"['astra@example.net']\"]",
+      "email_ccs": "[\"astra@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2806,7 +2806,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.342Z",
-      "updated_at": "2024-04-15T12:52:00.342Z",
+      "updated_at": "2024-04-15T12:59:51.800Z",
       "contact_id": null,
       "organization": 19
     }
@@ -2830,7 +2830,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"eris-eclipse@example.com\", \"eris-eclipse.quantum@example.org\"]",
-      "email_ccs": "[\"['eris-eclipse@example.net']\"]",
+      "email_ccs": "[\"eris-eclipse@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2843,7 +2843,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.441Z",
-      "updated_at": "2024-04-15T12:52:00.441Z",
+      "updated_at": "2024-04-15T12:59:51.804Z",
       "contact_id": null,
       "organization": null
     }
@@ -2904,7 +2904,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"rhea-cyrus@example.com\", \"rhea-cyrus.stark@example.org\"]",
-      "email_ccs": "[\"['rhea-cyrus@example.net']\"]",
+      "email_ccs": "[\"rhea-cyrus@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2917,7 +2917,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.526Z",
-      "updated_at": "2024-04-15T12:52:00.526Z",
+      "updated_at": "2024-04-15T12:59:51.808Z",
       "contact_id": null,
       "organization": 5
     }
@@ -2941,7 +2941,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"seren@example.com\"]",
-      "email_ccs": "[\"['seren@example.net']\"]",
+      "email_ccs": "[\"seren@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2954,7 +2954,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.612Z",
-      "updated_at": "2024-04-15T12:52:00.612Z",
+      "updated_at": "2024-04-15T12:59:51.812Z",
       "contact_id": null,
       "organization": 18
     }
@@ -2978,7 +2978,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"elara@example.com\"]",
-      "email_ccs": "[\"['elara@example.net']\"]",
+      "email_ccs": "[\"elara@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -2991,7 +2991,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:00.654Z",
-      "updated_at": "2024-04-15T12:52:00.654Z",
+      "updated_at": "2024-04-15T12:59:51.816Z",
       "contact_id": null,
       "organization": 8
     }
@@ -3126,7 +3126,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"lyra-kai@example.com\"]",
-      "email_ccs": "[\"['lyra-kai@example.net']\"]",
+      "email_ccs": "[\"lyra-kai@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3139,7 +3139,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.004Z",
-      "updated_at": "2024-04-15T12:52:01.004Z",
+      "updated_at": "2024-04-15T12:59:51.820Z",
       "contact_id": null,
       "organization": 8
     }
@@ -3200,7 +3200,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"dax@example.com\"]",
-      "email_ccs": "[\"['dax@example.net']\"]",
+      "email_ccs": "[\"dax@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3213,7 +3213,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.075Z",
-      "updated_at": "2024-04-15T12:52:01.075Z",
+      "updated_at": "2024-04-15T12:59:51.824Z",
       "contact_id": null,
       "organization": 16
     }
@@ -3274,7 +3274,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"nia-vega@example.com\"]",
-      "email_ccs": "[\"['nia-vega@example.net']\"]",
+      "email_ccs": "[\"nia-vega@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3287,7 +3287,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.182Z",
-      "updated_at": "2024-04-15T12:52:01.182Z",
+      "updated_at": "2024-04-15T12:59:51.828Z",
       "contact_id": null,
       "organization": 9
     }
@@ -3385,7 +3385,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"ezra-rift@example.com\"]",
-      "email_ccs": "[\"['ezra-rift@example.net']\"]",
+      "email_ccs": "[\"ezra-rift@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3398,7 +3398,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.268Z",
-      "updated_at": "2024-04-15T12:52:01.268Z",
+      "updated_at": "2024-04-15T12:59:51.833Z",
       "contact_id": null,
       "organization": 19
     }
@@ -3496,7 +3496,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"astrid-lyra@example.com\"]",
-      "email_ccs": "[\"['astrid-lyra@example.net']\"]",
+      "email_ccs": "[\"astrid-lyra@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3509,7 +3509,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.559Z",
-      "updated_at": "2024-04-15T12:52:01.559Z",
+      "updated_at": "2024-04-15T12:59:51.839Z",
       "contact_id": null,
       "organization": 12
     }
@@ -3570,7 +3570,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"elio@example.com\", \"elio.rift@example.org\"]",
-      "email_ccs": "[\"['elio@example.net']\"]",
+      "email_ccs": "[\"elio@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3583,7 +3583,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.695Z",
-      "updated_at": "2024-04-15T12:52:01.695Z",
+      "updated_at": "2024-04-15T12:59:51.843Z",
       "contact_id": null,
       "organization": 17
     }
@@ -3644,7 +3644,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"rigel@example.com\"]",
-      "email_ccs": "[\"['rigel@example.net']\"]",
+      "email_ccs": "[\"rigel@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3657,7 +3657,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.872Z",
-      "updated_at": "2024-04-15T12:52:01.872Z",
+      "updated_at": "2024-04-15T12:59:51.848Z",
       "contact_id": null,
       "organization": 20
     }
@@ -3681,7 +3681,7 @@
       "mobiles": null,
       "faxes": null,
       "emails": "[\"kai-nova@example.com\"]",
-      "email_ccs": "[\"['kai-nova@example.net']\"]",
+      "email_ccs": "[\"kai-nova@example.net\"]",
       "notes": "",
       "is_in_mailing_list": false,
       "is_use_organization_address": false,
@@ -3694,7 +3694,7 @@
       "focal_point": false,
       "org_head": false,
       "created_at": "2024-04-15T12:52:01.990Z",
-      "updated_at": "2024-04-15T12:52:01.990Z",
+      "updated_at": "2024-04-15T12:59:51.851Z",
       "contact_id": null,
       "organization": 17
     }
