@@ -215,7 +215,7 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
     autocomplete_fields = ("recipients", "groups", "events")
-    prefetch_related = ("email_history",)
+    prefetch_related = ("email_logs",)
     fieldsets = (
         (
             None,
@@ -296,13 +296,13 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
             f"{len(tasks)} emails scheduled for sending",
             level=messages.SUCCESS,
         )
-        return redirect(self.get_admin_list_filter_link(obj, "email_history", "email"))
+        return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
 
     def _get_count_link(self, obj, status):
-        count = len([task for task in obj.email_history.all() if task.status == status])
+        count = len([task for task in obj.email_logs.all() if task.status == status])
         return self.get_related_link(
             obj,
-            "email_history",
+            "email_logs",
             "email",
             text=f"{count} emails",
             extra_filters={"status__exact": status},

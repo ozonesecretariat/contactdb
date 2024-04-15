@@ -96,12 +96,7 @@ class Registration(models.Model):
         related_name="registrations",
     )
     status = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
-    role = models.ForeignKey(
-        RegistrationRole,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
+    role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
     priority_pass_code = models.CharField(
         max_length=150,
         blank=True,

@@ -5,13 +5,15 @@ from django.contrib.admin import EmptyFieldListFilter, helpers
 from django.contrib.admin.utils import flatten_fieldsets
 from django.contrib.admin.widgets import AutocompleteSelect
 from django import forms
-from django.db.models import Count, Prefetch
+from django.db import IntegrityError, models
+from django.db.models import Count, ManyToManyRel, ManyToOneRel, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.html import format_html
 from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
+from common.array_field import ArrayField
 
 from common.urls import reverse
 from common.model_admin import ModelAdmin, TaskAdmin, ModelResource
@@ -86,14 +88,13 @@ class ContactResource(ModelResource):
         attribute="organization",
         widget=ForeignKeyWidget(Organization, "name"),
     )
-    prefetch_related = ("organization", "main_contact", "country")
+    prefetch_related = ("organization", "country")
 
     class Meta:
         model = Contact
         exclude = (
             "id",
             "contact_id",
-            "main_contact",
             "created_at",
             "updated_at",
         )
@@ -121,7 +122,7 @@ class ContactAdminBase(ModelAdmin):
         "country",
         "emails",
         "phones",
-        "sent_emails",
+        "email_logs",
     )
     list_display_links = (
         "first_name",
@@ -130,7 +131,6 @@ class ContactAdminBase(ModelAdmin):
     autocomplete_fields = (
         "organization",
         "country",
-        "main_contact",
     )
     fieldsets = (
         (
@@ -149,7 +149,6 @@ class ContactAdminBase(ModelAdmin):
             "Contact info",
             {
                 "fields": (
-                    "main_contact",
                     "emails",
                     "email_ccs",
                     "phones",
@@ -336,8 +335,8 @@ class ContactAdminBase(ModelAdmin):
         return super().get_inlines(request, obj)
 
     @admin.display(description="Sent emails")
-    def sent_emails(self, obj):
-        return self.get_related_link(obj, "email_history", "contact")
+    def email_logs(self, obj):
+        return self.get_related_link(obj, "email_logs", "contact")
 
 
 class ContactMembershipInline(admin.StackedInline):
@@ -355,7 +354,6 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
     inlines = (ContactMembershipInline,)
 
     list_filter = (
-        ("main_contact", EmptyFieldListFilter),
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
         AutocompleteFilterFactory("event", "registrations__event"),
@@ -367,36 +365,146 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
     )
     prefetch_related = (
         "organization",
-        "main_contact",
         "country",
     )
-    actions = ["add_contacts_to_group", "merge_contacts", "send_email"]
+    actions = [
+        "send_email",
+        "add_contacts_to_group",
+        "merge_contacts",
+    ]
+
+    def merge_two_contacts(self, contact1, contact2):
+        ignored_fields = {
+            "id",
+            "contact_id",
+            "created_at",
+            "updated_at",
+            "memberships",  # Through model, already cover by groups; can be ignored
+            "conflicting_contacts",
+        }
+
+        has_conflict = False
+        for field in self.opts.get_fields():
+            if field.is_relation and getattr(field, "multiple", False):
+                assert field.related_name, f"Missing related name: {field}"
+                name = field.related_name
+            else:
+                name = field.name
+
+            if name in ignored_fields:
+                continue
+
+            val1 = getattr(contact1, name)
+            val2 = getattr(contact2, name)
+
+            val1_empty = val1 == "" or val1 is None
+            val2_empty = val2 == "" or val2 is None
+
+            if isinstance(field, ManyToManyRel):
+                for item in val2.all():
+                    val1.add(item)
+            elif isinstance(field, ManyToOneRel):
+                rel_name = field.field.name
+                for item in val2.all():
+                    try:
+                        setattr(item, rel_name, contact1)
+                        item.save()
+                    except IntegrityError:
+                        continue
+            elif isinstance(field, models.BooleanField):
+                if val1 != val2:
+                    has_conflict = True
+            elif isinstance(field, ArrayField):
+                for item in val2:
+                    if item not in val1:
+                        val1.append(item)
+            elif isinstance(
+                field,
+                (
+                    models.CharField,
+                    models.TextField,
+                    models.IntegerField,
+                    models.FloatField,
+                    models.DecimalField,
+                    models.DateField,
+                    models.ForeignKey,
+                ),
+            ):
+                if val1 == val2:
+                    # Values are equal nothing to do
+                    continue
+                elif val1_empty and val2_empty:
+                    # Values are empty but different (e.g. "" vs None).
+                    # No conflict.
+                    continue
+                elif val1_empty or val2_empty:
+                    # Only one value is empty, use the non-empty one
+                    setattr(contact1, name, val1 or val2)
+                else:
+                    # Values differ
+                    has_conflict = True
+            else:
+                raise RuntimeError(f"Unexpected field type: {field}")
+        contact1.save()
+
+        return has_conflict
 
     @admin.action(description="Merge contacts", permissions=["change"])
     def merge_contacts(self, request, queryset):
-        if "apply" in request.POST:
-            main_contact = get_object_or_404(Contact, pk=request.POST["main_contact"])
-            secondary_contacts = queryset.exclude(pk=main_contact.pk)
-
-            Contact.objects.filter(main_contact__in=secondary_contacts).update(
-                main_contact=main_contact
-            )
-            secondary_contacts.update(main_contact=main_contact)
+        all_contacts = list(queryset)
+        if len(all_contacts) < 2:
             self.message_user(
                 request,
-                f"{queryset.count()} merged into {main_contact!r}",
-                messages.SUCCESS,
+                "Need at least 2 contacts to merge.",
+                messages.ERROR,
             )
             return
 
-        return self.get_intermediate_response(
-            "admin/actions/merge_contacts.html",
-            request,
-            queryset,
-            {
-                "title": "Please select main contact",
-            },
-        )
+        conflicts = []
+        main_contact = all_contacts[0]
+        for other_contact in all_contacts[1:]:
+            if self.merge_two_contacts(main_contact, other_contact):
+                conflicts.append(
+                    ResolveConflict.create_from_contact(main_contact, other_contact)
+                )
+            other_contact.delete()
+
+        if not conflicts:
+            self.message_user(
+                request,
+                f"{len(all_contacts)} merged successfully.",
+                messages.SUCCESS,
+            )
+        elif len(conflicts) == 1:
+            self.message_user(
+                request,
+                (
+                    f"One contact could not be merged automatically. "
+                    f"Please resolve the conflicts manually and click save."
+                ),
+                messages.WARNING,
+            )
+            return redirect(
+                reverse(
+                    "admin:core_contact_change",
+                    kwargs={"object_id": main_contact.id},
+                    query={
+                        MERGE_FROM_PARAM: conflicts[0].id,
+                    },
+                )
+            )
+        else:
+            self.message_user(
+                request,
+                (
+                    f"{len(conflicts)} could not be merged automatically. "
+                    f"Please click below to resolve each conflict manually."
+                ),
+                messages.WARNING,
+            )
+            return redirect(
+                self.get_admin_list_link(ResolveConflict, {"contact": main_contact.id})
+            )
 
     @admin.action(description="Add selected contacts to group", permissions=["change"])
     def add_contacts_to_group(self, request, queryset):
@@ -442,7 +550,6 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
 @admin.register(ResolveConflict)
 class ResolveConflictAdmin(ContactAdminBase):
     list_filter = (
-        ("main_contact", EmptyFieldListFilter),
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
         "org_head",
@@ -452,7 +559,7 @@ class ResolveConflictAdmin(ContactAdminBase):
     )
     list_display = (
         "existing_contact_link",
-        "new_contact",
+        "conflicting_contact",
     )
     list_display_links = ()
     prefetch_related = ("existing_contact",)
@@ -496,8 +603,8 @@ class ResolveConflictAdmin(ContactAdminBase):
             '<a href="{url}">{name}</a>', url=url, name=obj.existing_contact
         )
 
-    @admin.display(description="New contact")
-    def new_contact(self, obj):
+    @admin.display(description="Conflicting contact")
+    def conflicting_contact(self, obj):
         return str(obj)
 
     def has_add_permission(self, request):

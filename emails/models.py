@@ -49,18 +49,21 @@ class Email(models.Model):
         blank=True,
         help_text="Send the email to all the selected contacts.",
         limit_choices_to=~Q(emails=[]),
+        related_name="sent_emails",
     )
     groups = models.ManyToManyField(
         ContactGroup,
         blank=True,
         help_text="Send the email to all contacts in these selected groups.",
         limit_choices_to=~Q(contacts=None),
+        related_name="sent_emails",
     )
     events = models.ManyToManyField(
         Event,
         blank=True,
         help_text="Send the email to all participants of these selected events.",
         limit_choices_to=~Q(registrations=None),
+        related_name="sent_emails",
     )
     subject = models.CharField(max_length=900)
     content = RichTextUploadingField(validators=[validate_placeholders])
@@ -144,10 +147,10 @@ class SendEmailTask(TaskRQ):
     LOG_TO_FILE = False
 
     email = models.ForeignKey(
-        Email, on_delete=models.CASCADE, related_name="email_history"
+        Email, on_delete=models.CASCADE, related_name="email_logs"
     )
     contact = models.ForeignKey(
-        Contact, on_delete=models.CASCADE, related_name="email_history"
+        Contact, on_delete=models.CASCADE, related_name="email_logs"
     )
     email_to = ArrayField(
         blank=True,
@@ -171,7 +174,6 @@ class SendEmailTask(TaskRQ):
     )
 
     class Meta:
-        unique_together = ("email", "contact")
         get_latest_by = "created_on"
 
     @staticmethod

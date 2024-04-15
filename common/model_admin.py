@@ -66,20 +66,22 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     def response_post_save_change(self, request, obj):
         return super().response_post_save_change(request, obj)
 
-    def get_admin_list_link(self, model):
+    def get_admin_list_link(self, model, query=None):
         opts = model._meta
-        return reverse(f"admin:{opts.app_label}_{opts.model_name}_changelist")
+        return reverse(
+            f"admin:{opts.app_label}_{opts.model_name}_changelist", query=query
+        )
 
     def get_admin_list_filter_link(self, obj, name, filter_name, extra_filters=None):
         related_model = getattr(obj, name).model
-        params = urlencode(
-            {
+
+        return self.get_admin_list_link(
+            related_model,
+            query={
                 **(extra_filters or {}),
                 filter_name: obj.pk,
-            }
+            },
         )
-
-        return self.get_admin_list_link(related_model) + "?" + params
 
     def get_related_link(self, obj, name, filter_name, text=None, extra_filters=None):
         if text is None:

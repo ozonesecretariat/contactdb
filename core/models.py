@@ -116,14 +116,6 @@ class BaseContact(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    main_contact = models.ForeignKey(
-        "self",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="secondary_contacts",
-        limit_choices_to={"main_contact": None},
-    )
 
     class Meta:
         abstract = True
@@ -137,10 +129,6 @@ class BaseContact(models.Model):
     def full_name(self):
         return " ".join([self.title, self.first_name, self.last_name]).strip()
 
-    @property
-    def is_secondary(self):
-        return self.main_contact is not None
-
     def clean(self):
         if not self.first_name and not self.last_name:
             raise ValidationError(
@@ -148,15 +136,6 @@ class BaseContact(models.Model):
                     "first_name": "At least first name or last name must be provided",
                     "last_name": "At least first name or last name must be provided",
                 }
-            )
-        if self.main_contact == self:
-            raise ValidationError(
-                {"main_contact": "A contact cannot be the main contact for themself."}
-            )
-
-        if self.main_contact and self.main_contact.main_contact:
-            raise ValidationError(
-                {"main_contact": "Main contact must not be a secondary contact"}
             )
 
 
@@ -184,6 +163,19 @@ class ResolveConflict(BaseContact):
         on_delete=models.CASCADE,
         related_name="conflicting_contacts",
     )
+
+    @classmethod
+    def create_from_contact(cls, main_contact: Contact, other_contact):
+        obj = cls(existing_contact=main_contact)
+        for field in cls._meta.get_fields():
+            if field.auto_created:
+                continue
+            if field.name == "existing_contact":
+                continue
+
+            setattr(obj, field.name, getattr(other_contact, field.name))
+        obj.save()
+        return obj
 
 
 class ContactGroup(models.Model):

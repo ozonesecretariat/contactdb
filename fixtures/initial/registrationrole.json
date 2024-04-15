@@ -27,7 +27,7 @@
     "model": "events.registrationrole",
     "pk": 4,
     "fields": {
-      "name": "Not Official Delegate",
+      "name": "Unofficial Delegate",
       "kronos_value": 2
     }
   }
