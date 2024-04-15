@@ -169,6 +169,8 @@ class CKEditorTemplatesBase(ModelAdmin):
 
 @admin.register(EmailTemplate)
 class EmailTemplateAdmin(CKEditorTemplatesBase):
+    """Define email templates for later reuse when composing new emails."""
+
     list_display = ["title", "description"]
     search_fields = ["title", "description"]
 
@@ -203,6 +205,10 @@ class EmailAttachmentAdmin(admin.TabularInline):
 
 @admin.register(Email)
 class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
+    """Send emails in bulk to a contact list, groups of contacts or all registered
+    event participants.
+    """
+
     form = EmailAdminForm
     inlines = (EmailAttachmentAdmin,)
     list_display = (
@@ -323,6 +329,8 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
 @admin.register(SendEmailTask)
 class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
+    """View sent email logs."""
+
     search_fields = (
         "email__subject",
         "email__content",
