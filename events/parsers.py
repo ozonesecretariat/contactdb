@@ -222,6 +222,11 @@ class KronosParticipantsParser(KronosParser):
             contact_dict["organization"] = self.get_org(
                 contact_dict.get("organization", {})
             )
+            contact_dict["emails"] = self.parse_email_list(contact_dict.get("emails"))
+            contact_dict["emailCcs"] = self.parse_email_list(
+                contact_dict.get("emailCcs")
+            )
+
             contact_defaults = {
                 model_attr: contact_dict.get(kronos_attr)
                 for kronos_attr, model_attr in self.field_mapping.items()
