@@ -1,0 +1,100 @@
+[
+  {
+    "model": "core.organizationtype",
+    "pk": "ACC-EXPERT",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "ASS-PANEL",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "BIZ",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "EXHIBITOR",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "GOV",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "IGO",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "INTERPRETER",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "LOCALSTAFF",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "MEDIA",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "NGO",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "OBS",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "OTHER",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "SECRETARIAT",
+    "fields": {
+      "organization_type_id": null
+    }
+  },
+  {
+    "model": "core.organizationtype",
+    "pk": "UN",
+    "fields": {
+      "organization_type_id": null
+    }
+  }
+]

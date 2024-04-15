@@ -1,0 +1,242 @@
+[
+  {
+    "model": "core.organization",
+    "pk": 1,
+    "fields": {
+      "organization_id": null,
+      "name": "Galactic Research Institute for Advanced Technologies",
+      "acronym": "GRIAT",
+      "organization_type": "UN",
+      "government": "TG",
+      "country": "HM"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 2,
+    "fields": {
+      "organization_id": null,
+      "name": "Intergalactic Defense Coalition",
+      "acronym": "IDC",
+      "organization_type": "OBS",
+      "government": "ES",
+      "country": "UY"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 3,
+    "fields": {
+      "organization_id": null,
+      "name": "Celestial Exploratory Society",
+      "acronym": "CES",
+      "organization_type": "OTHER",
+      "government": "KW",
+      "country": "NC"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 4,
+    "fields": {
+      "organization_id": null,
+      "name": "Quantum Engineering Consortium",
+      "acronym": "QEC",
+      "organization_type": "OBS",
+      "government": "GQ",
+      "country": "TH"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 5,
+    "fields": {
+      "organization_id": null,
+      "name": "Interstellar Alliance for Planetary Preservation",
+      "acronym": "IAPP",
+      "organization_type": "GOV",
+      "government": "KM",
+      "country": "IE"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 6,
+    "fields": {
+      "organization_id": null,
+      "name": "Cosmic Nexus Intelligence Agency",
+      "acronym": "CNIA",
+      "organization_type": "OTHER",
+      "government": "PY",
+      "country": "SL"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 7,
+    "fields": {
+      "organization_id": null,
+      "name": "Astral Technologies Syndicate",
+      "acronym": "ATS",
+      "organization_type": "SECRETARIAT",
+      "government": "BH",
+      "country": "NI"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 8,
+    "fields": {
+      "organization_id": null,
+      "name": "Universal Science Foundation",
+      "acronym": "USF",
+      "organization_type": "OBS",
+      "government": "JO",
+      "country": "LR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 9,
+    "fields": {
+      "organization_id": null,
+      "name": "Extraterrestrial Relations Bureau",
+      "acronym": "ERB",
+      "organization_type": "ASS-PANEL",
+      "government": "RW",
+      "country": "UY"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 10,
+    "fields": {
+      "organization_id": null,
+      "name": "Stellar Cartography Society",
+      "acronym": "SCS",
+      "organization_type": "EXHIBITOR",
+      "government": "MD",
+      "country": "ME"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 11,
+    "fields": {
+      "organization_id": null,
+      "name": "Warp Dynamics Institute",
+      "acronym": "WDI",
+      "organization_type": "IGO",
+      "government": "CU",
+      "country": "PF"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 12,
+    "fields": {
+      "organization_id": null,
+      "name": "Astronomical Phenomena Research Council",
+      "acronym": "APRC",
+      "organization_type": "BIZ",
+      "government": "LT",
+      "country": "MZ"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 13,
+    "fields": {
+      "organization_id": null,
+      "name": "Terraforming Initiative Taskforce",
+      "acronym": "TIT",
+      "organization_type": "OTHER",
+      "government": "CZ",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 14,
+    "fields": {
+      "organization_id": null,
+      "name": "Metaverse Security Council",
+      "acronym": "MSC",
+      "organization_type": "LOCALSTAFF",
+      "government": "AM",
+      "country": "VC"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 15,
+    "fields": {
+      "organization_id": null,
+      "name": "Hyperion Galactic Council",
+      "acronym": "HGC",
+      "organization_type": "IGO",
+      "government": "TN",
+      "country": "VI"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 16,
+    "fields": {
+      "organization_id": null,
+      "name": "Orion Institute of Alien Studies",
+      "acronym": "OIAS",
+      "organization_type": "IGO",
+      "government": "AZ",
+      "country": "NG"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 17,
+    "fields": {
+      "organization_id": null,
+      "name": "Nebula Network Operations Center",
+      "acronym": "NNOC",
+      "organization_type": "LOCALSTAFF",
+      "government": "UA",
+      "country": "BY"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 18,
+    "fields": {
+      "organization_id": null,
+      "name": "Deep Space Exploration Agency",
+      "acronym": "DSEA",
+      "organization_type": "MEDIA",
+      "government": "TV",
+      "country": "JM"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 19,
+    "fields": {
+      "organization_id": null,
+      "name": "Quantum Entanglement Research Consortium",
+      "acronym": "QERC",
+      "organization_type": "EXHIBITOR",
+      "government": "CL",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 20,
+    "fields": {
+      "organization_id": null,
+      "name": "Exoplanetary Colonization Authority",
+      "acronym": "ECA",
+      "organization_type": "OBS",
+      "government": "GT",
+      "country": "EE"
+    }
+  }
+]

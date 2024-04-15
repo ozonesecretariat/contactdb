@@ -1,0 +1,202 @@
+[
+  {
+    "model": "core.contactgroup",
+    "pk": 1,
+    "fields": {
+      "name": "The Wanderlust Explorers",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.162Z",
+      "updated_at": "2024-04-15T12:51:54.162Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 2,
+    "fields": {
+      "name": "Tech Titans Alliance",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.172Z",
+      "updated_at": "2024-04-15T12:51:54.172Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 3,
+    "fields": {
+      "name": "Culinary Connoisseurs Collective",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.173Z",
+      "updated_at": "2024-04-15T12:51:54.173Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 4,
+    "fields": {
+      "name": "Fitness Fanatics Fellowship",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.175Z",
+      "updated_at": "2024-04-15T12:51:54.175Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 5,
+    "fields": {
+      "name": "Bookworm Brigade",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.177Z",
+      "updated_at": "2024-04-15T12:51:54.177Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 6,
+    "fields": {
+      "name": "Creative Minds Consortium",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.178Z",
+      "updated_at": "2024-04-15T12:51:54.178Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 7,
+    "fields": {
+      "name": "Nature Lovers League",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.179Z",
+      "updated_at": "2024-04-15T12:51:54.179Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 8,
+    "fields": {
+      "name": "Movie Buffs Society",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.181Z",
+      "updated_at": "2024-04-15T12:51:54.181Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 9,
+    "fields": {
+      "name": "Adventure Seekers Squad",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.182Z",
+      "updated_at": "2024-04-15T12:51:54.182Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 10,
+    "fields": {
+      "name": "Music Maniacs Association",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.184Z",
+      "updated_at": "2024-04-15T12:51:54.184Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 11,
+    "fields": {
+      "name": "The Dream Team Connection",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.186Z",
+      "updated_at": "2024-04-15T12:51:54.186Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 12,
+    "fields": {
+      "name": "Social Sparks Syndicate",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.189Z",
+      "updated_at": "2024-04-15T12:51:54.189Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 13,
+    "fields": {
+      "name": "Global Gourmet Gathering",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.191Z",
+      "updated_at": "2024-04-15T12:51:54.191Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 14,
+    "fields": {
+      "name": "Fitness Fusion Crew",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.194Z",
+      "updated_at": "2024-04-15T12:51:54.194Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 15,
+    "fields": {
+      "name": "Literary Legends League",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.197Z",
+      "updated_at": "2024-04-15T12:51:54.197Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 16,
+    "fields": {
+      "name": "Artistic Avengers Assembly",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.200Z",
+      "updated_at": "2024-04-15T12:51:54.200Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 17,
+    "fields": {
+      "name": "Wanderers' Circle",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.203Z",
+      "updated_at": "2024-04-15T12:51:54.203Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 18,
+    "fields": {
+      "name": "Cinema Savants Society",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.206Z",
+      "updated_at": "2024-04-15T12:51:54.206Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 19,
+    "fields": {
+      "name": "Trailblazers Tribe",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.209Z",
+      "updated_at": "2024-04-15T12:51:54.209Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "pk": 20,
+    "fields": {
+      "name": "Harmony Haven Hub",
+      "description": null,
+      "created_at": "2024-04-15T12:51:54.212Z",
+      "updated_at": "2024-04-15T12:51:54.212Z"
+    }
+  }
+]

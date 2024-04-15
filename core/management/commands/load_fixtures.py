@@ -4,8 +4,9 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.core.management import call_command
 
-from accounts.models import Role, User
-from events.models import RegistrationRole, RegistrationStatus, RegistrationTag
+from accounts.models import *
+from core.models import *
+from events.models import *
 
 
 logger = logging.getLogger(__name__)
@@ -27,6 +28,16 @@ class Command(BaseCommand):
         "test": (
             # User
             User,
+            # Core
+            Country,
+            OrganizationType,
+            Organization,
+            ContactGroup,
+            Contact,
+            GroupMembership,
+            # # Events
+            Event,
+            Registration,
         ),
     }
 
