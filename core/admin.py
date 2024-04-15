@@ -28,6 +28,7 @@ from core.models import (
     OrganizationType,
     ResolveConflict,
 )
+from events.models import Registration
 
 MERGE_FROM_PARAM = "merge_from_temp"
 
@@ -348,10 +349,19 @@ class ContactMembershipInline(admin.StackedInline):
     verbose_name_ = "Group Contacts"
 
 
+class ContactRegistrationsInline(admin.StackedInline):
+    extra = 0
+    model = Registration
+    autocomplete_fields = ("event", "status", "role", "tags")
+
+
 @admin.register(Contact)
 class ContactAdmin(ImportExportMixin, ContactAdminBase):
     resource_class = ContactResource
-    inlines = (ContactMembershipInline,)
+    inlines = (
+        ContactMembershipInline,
+        ContactRegistrationsInline,
+    )
 
     list_filter = (
         AutocompleteFilterFactory("organization", "organization"),
