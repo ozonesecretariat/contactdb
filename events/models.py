@@ -24,7 +24,7 @@ class LoadEventsFromKronosTask(TaskRQ):
 
 class Event(models.Model):
     event_id = KronosId()
-    code = models.CharField(max_length=50, blank=False, null=False)
+    code = models.CharField(max_length=50, blank=False, null=False, unique=True)
     title = models.CharField(max_length=255, blank=False, null=False)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
