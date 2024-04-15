@@ -79,7 +79,10 @@ class OrganizationAdmin(ModelAdmin):
     @admin.display(description="Contacts", ordering="contacts_count")
     def contacts_count(self, obj):
         return self.get_related_link(
-            obj, "contacts", "organization", obj.contacts_count
+            obj,
+            "contacts",
+            "organization",
+            f"{obj.contacts_count} contacts",
         )
 
 
