@@ -190,7 +190,8 @@
         ["add_sendemailtask", "emails", "sendemailtask"],
         ["change_sendemailtask", "emails", "sendemailtask"],
         ["delete_sendemailtask", "emails", "sendemailtask"],
-        ["view_sendemailtask", "emails", "sendemailtask"]
+        ["view_sendemailtask", "emails", "sendemailtask"],
+        ["view_event", "events", "event"]
       ]
     }
   }
