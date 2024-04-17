@@ -8,12 +8,14 @@ function exists(val) {
 }
 
 Cypress.Commands.addAll({
-  login(user, password) {
+  login(user, password, checkSuccess = true) {
     cy.visit(`/account/login/`);
     cy.get("input[autocomplete=username]").type(user);
     cy.get("input[autocomplete=current-password]").type(password);
     cy.get("input[type=submit]:not([hidden])").click();
-    cy.contains(`Welcome, ${user}`);
+    if (checkSuccess) {
+      cy.contains(`Welcome, ${user}`);
+    }
   },
   loginAdmin() {
     cy.login("admin@example.com", "admin");

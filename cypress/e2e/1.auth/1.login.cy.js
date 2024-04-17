@@ -7,11 +7,11 @@ describe("Check login", () => {
   });
   it("Check bad login", () => {
     cy.visit("/");
-    cy.login("inactive@example.com", "inactive");
+    cy.login("inactive@example.com", "inactive", false);
     cy.contains("Please enter a correct email and password.");
-    cy.login("admin@example.com", "badmin");
+    cy.login("admin@example.com", "badmin", false);
     cy.contains("Please enter a correct email and password.");
-    cy.login("badmin@example.com", "admin");
+    cy.login("badmin@example.com", "admin", false);
     cy.contains("Please enter a correct email and password.");
   });
   it("Check forgot password", () => {
