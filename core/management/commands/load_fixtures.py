@@ -6,6 +6,7 @@ from django.core.management import call_command
 
 from accounts.models import *
 from core.models import *
+from emails.models import *
 from events.models import *
 
 
@@ -36,6 +37,8 @@ class Command(BaseCommand):
             Contact,
             GroupMembership,
             ResolveConflict,
+            # Email
+            EmailTemplate,
             # Events
             Event,
             Registration,

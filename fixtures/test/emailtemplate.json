@@ -1,0 +1,20 @@
+[
+  {
+    "model": "emails.emailtemplate",
+    "pk": 1,
+    "fields": {
+      "title": "Test placeholders",
+      "description": "Template that test replacing the full name.",
+      "content": "<p>Dear&nbsp;[[full_name]]</p>\r\n\r\n<p>----</p>\r\n\r\n<p>Kind Regards,<br />\r\nOzone</p>"
+    }
+  },
+  {
+    "model": "emails.emailtemplate",
+    "pk": 2,
+    "fields": {
+      "title": "Test simple text",
+      "description": "Test simple text",
+      "content": "<p>Dear user,</p>\r\n\r\n<p>---</p>\r\n\r\n<p>Kind Regards,<br />\r\nOzone</p>"
+    }
+  }
+]

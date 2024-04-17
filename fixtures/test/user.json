@@ -3,7 +3,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$2KwPfhwPZIbPW0fLVEVatF$JahBhLZ1rPioxC5sjElOrN9aUaxwpaPkKrPBcRF3kCA=",
-      "last_login": "2024-04-17T12:03:56.194Z",
+      "last_login": "2024-04-17T13:59:25.126Z",
       "is_superuser": true,
       "email": "admin@example.com",
       "first_name": null,
@@ -67,7 +67,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$JC2z4jiXNL7YRZkwhjce4D$5A0UPXOK2r7JIDCUmiDgmnSYM8B9i4onW3+NAgvvzdA=",
-      "last_login": "2024-04-10T10:52:44.632Z",
+      "last_login": "2024-04-17T14:05:05.535Z",
       "is_superuser": false,
       "email": "test-emails@example.com",
       "first_name": null,
