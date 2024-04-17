@@ -20,6 +20,12 @@ module.exports = {
     {
       extends: ["plugin:cypress/recommended"],
       files: ["cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}", "cypress/support/**/*.{js,ts,jsx,tsx}"],
+      rules: {
+        // expect() expression will be marked as errors otherwise.
+        "no-unused-expressions": ["off"],
+        // Can't enforce camelCase since it conflicts with some python stuff
+        camelcase: ["error", { properties: "never" }],
+      },
     },
   ],
   parserOptions: {
