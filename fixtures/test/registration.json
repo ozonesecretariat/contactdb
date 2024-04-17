@@ -1289,37 +1289,9 @@
   },
   {
     "model": "events.registration",
-    "pk": 93,
-    "fields": {
-      "contact": 20,
-      "event": 2,
-      "status": 3,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:56.360Z",
-      "is_funded": false,
-      "tags": ["credential", "viewer"]
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 94,
-    "fields": {
-      "contact": 20,
-      "event": 5,
-      "status": 2,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:56.374Z",
-      "is_funded": false,
-      "tags": ["viewer"]
-    }
-  },
-  {
-    "model": "events.registration",
     "pk": 95,
     "fields": {
-      "contact": 20,
+      "contact": 26,
       "event": 13,
       "status": 2,
       "role": 4,
@@ -3811,7 +3783,7 @@
     "model": "events.registration",
     "pk": 273,
     "fields": {
-      "contact": 51,
+      "contact": 26,
       "event": 5,
       "status": 2,
       "role": 2,
@@ -3819,90 +3791,6 @@
       "date": "2024-04-15T12:51:58.769Z",
       "is_funded": true,
       "tags": ["credential", "online", "viewer"]
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 274,
-    "fields": {
-      "contact": 51,
-      "event": 8,
-      "status": 3,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.782Z",
-      "is_funded": true,
-      "tags": ["credential", "visa"]
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 275,
-    "fields": {
-      "contact": 51,
-      "event": 18,
-      "status": 1,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.791Z",
-      "is_funded": true,
-      "tags": []
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 276,
-    "fields": {
-      "contact": 51,
-      "event": 10,
-      "status": 3,
-      "role": 3,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.792Z",
-      "is_funded": true,
-      "tags": ["online"]
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 277,
-    "fields": {
-      "contact": 51,
-      "event": 6,
-      "status": 3,
-      "role": 1,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.796Z",
-      "is_funded": true,
-      "tags": ["online"]
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 278,
-    "fields": {
-      "contact": 51,
-      "event": 9,
-      "status": 3,
-      "role": 2,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.799Z",
-      "is_funded": true,
-      "tags": ["online", "viewer", "visa"]
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 279,
-    "fields": {
-      "contact": 51,
-      "event": 20,
-      "status": 2,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.810Z",
-      "is_funded": true,
-      "tags": ["online"]
     }
   },
   {
@@ -4021,7 +3909,7 @@
     "model": "events.registration",
     "pk": 288,
     "fields": {
-      "contact": 53,
+      "contact": 26,
       "event": 2,
       "status": 2,
       "role": 2,
@@ -4033,23 +3921,9 @@
   },
   {
     "model": "events.registration",
-    "pk": 289,
-    "fields": {
-      "contact": 53,
-      "event": 18,
-      "status": 3,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.944Z",
-      "is_funded": false,
-      "tags": []
-    }
-  },
-  {
-    "model": "events.registration",
     "pk": 290,
     "fields": {
-      "contact": 53,
+      "contact": 26,
       "event": 14,
       "status": 1,
       "role": 3,
@@ -4063,7 +3937,7 @@
     "model": "events.registration",
     "pk": 291,
     "fields": {
-      "contact": 53,
+      "contact": 26,
       "event": 9,
       "status": 3,
       "role": 1,
@@ -4075,23 +3949,9 @@
   },
   {
     "model": "events.registration",
-    "pk": 292,
-    "fields": {
-      "contact": 53,
-      "event": 1,
-      "status": 1,
-      "role": 1,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.965Z",
-      "is_funded": true,
-      "tags": ["credential", "online", "viewer"]
-    }
-  },
-  {
-    "model": "events.registration",
     "pk": 293,
     "fields": {
-      "contact": 53,
+      "contact": 26,
       "event": 20,
       "status": 3,
       "role": 2,
@@ -4105,7 +3965,7 @@
     "model": "events.registration",
     "pk": 294,
     "fields": {
-      "contact": 53,
+      "contact": 26,
       "event": 11,
       "status": 2,
       "role": 3,
@@ -4119,7 +3979,7 @@
     "model": "events.registration",
     "pk": 295,
     "fields": {
-      "contact": 53,
+      "contact": 26,
       "event": 12,
       "status": 2,
       "role": 4,
@@ -4127,20 +3987,6 @@
       "date": "2024-04-15T12:51:58.995Z",
       "is_funded": false,
       "tags": []
-    }
-  },
-  {
-    "model": "events.registration",
-    "pk": 296,
-    "fields": {
-      "contact": 53,
-      "event": 6,
-      "status": 1,
-      "role": 4,
-      "priority_pass_code": null,
-      "date": "2024-04-15T12:51:58.999Z",
-      "is_funded": true,
-      "tags": ["visa"]
     }
   },
   {

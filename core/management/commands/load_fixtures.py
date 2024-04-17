@@ -35,7 +35,8 @@ class Command(BaseCommand):
             ContactGroup,
             Contact,
             GroupMembership,
-            # # Events
+            ResolveConflict,
+            # Events
             Event,
             Registration,
         ),

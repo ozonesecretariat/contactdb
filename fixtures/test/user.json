@@ -3,7 +3,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$2KwPfhwPZIbPW0fLVEVatF$JahBhLZ1rPioxC5sjElOrN9aUaxwpaPkKrPBcRF3kCA=",
-      "last_login": "2024-04-15T12:53:12.050Z",
+      "last_login": "2024-04-17T12:03:56.194Z",
       "is_superuser": true,
       "email": "admin@example.com",
       "first_name": null,
@@ -19,7 +19,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$gt5f0igPzniZV6Xs8xUXhh$8yhXPO7EQkFU2fT7VsitUaD5H0YmJvy8im/iOnCJvbU=",
-      "last_login": null,
+      "last_login": "2024-04-17T09:29:07.387Z",
       "is_superuser": false,
       "email": "test-view@example.com",
       "first_name": null,
@@ -35,7 +35,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$vAm6Zei3VFdgmoFBEYH9vL$F6IQCrgz/L4GCHO7hI5BQW2BrMZ2KIEZGDiMy7LsVBE=",
-      "last_login": null,
+      "last_login": "2024-04-17T12:13:21.960Z",
       "is_superuser": false,
       "email": "test-edit@example.com",
       "first_name": null,
@@ -77,6 +77,38 @@
       "updated_at": "2024-04-10T10:52:31.151Z",
       "user_permissions": [],
       "roles": [["Edit templates"], ["Send emails"]]
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$qcsKBISna1LPrnmcELiyzc$YOo7bUlCm14AJjlyJWwKQXSqY632ZzTALbDv+iS6ib4=",
+      "last_login": null,
+      "is_superuser": true,
+      "email": "inactive@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": false,
+      "created_at": "2024-04-16T06:21:48.182Z",
+      "updated_at": "2024-04-16T06:22:05.567Z",
+      "user_permissions": [],
+      "roles": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$9EX7D6ZmrdPQrIO6f3bikE$De3y05rHIJ2O52GLzHXF0xRjvkZepZaHmJKJWBXKbxo=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-no-access@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "created_at": "2024-04-16T06:31:08.960Z",
+      "updated_at": "2024-04-16T06:33:46.448Z",
+      "user_permissions": [],
+      "roles": []
     }
   }
 ]
