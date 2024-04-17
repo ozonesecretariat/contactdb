@@ -117,9 +117,15 @@ class ContactAdminBase(ModelAdmin):
         "department",
         "emails",
         "organization__name",
+        "organization__country__name",
     )
     autocomplete_fields = (
         "organization",
+        "country",
+    )
+    prefetch_related = (
+        "organization",
+        "organization__country",
         "country",
     )
     fieldsets = (
@@ -376,10 +382,6 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         "is_use_organization_address",
         "focal_point",
     )
-    prefetch_related = (
-        "organization",
-        "country",
-    )
     annotate_query = {
         "registration_count": Count("registrations"),
     }
@@ -440,9 +442,15 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
                 if val1 != val2:
                     has_conflict = True
             elif isinstance(field, ArrayField):
-                for item in val2:
+                if val1 is None:
+                    setattr(contact1, name, [])
+                    val1 = getattr(contact1, name)
+
+                for item in val2 or []:
                     if item not in val1:
                         val1.append(item)
+
+                setattr(contact2, name, [])
             elif isinstance(
                 field,
                 (
@@ -471,6 +479,7 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
             else:
                 raise RuntimeError(f"Unexpected field type: {field}")
         contact1.save()
+        contact2.save()
 
         return has_conflict
 
@@ -522,7 +531,7 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
             self.message_user(
                 request,
                 (
-                    f"{len(conflicts)} could not be merged automatically. "
+                    f"{len(conflicts)} contacts could not be merged automatically. "
                     f"Please click below to resolve each conflict manually."
                 ),
                 messages.WARNING,
@@ -586,7 +595,10 @@ class ResolveConflictAdmin(ContactAdminBase):
         "existing_contact_link",
         "conflicting_contact",
     )
-    list_display_links = ()
+    list_display_links = (
+        "existing_contact_link",
+        "conflicting_contact",
+    )
     prefetch_related = ("existing_contact",)
     actions = ("accept_new_data",)
 
@@ -613,8 +625,7 @@ class ResolveConflictAdmin(ContactAdminBase):
         update_object(record, update_values)
         ResolveConflict.objects.filter(pk=incoming_contact.id).first().delete()
 
-    @admin.display(description="Existing contact")
-    def existing_contact_link(self, obj):
+    def _link_to_conflict_resolution(self, obj, text):
         next_url = reverse("admin:core_resolveconflict_changelist")
         url = reverse(
             "admin:core_contact_change",
@@ -624,13 +635,15 @@ class ResolveConflictAdmin(ContactAdminBase):
                 self.redirect_field_name: next_url,
             },
         )
-        return format_html(
-            '<a href="{url}">{name}</a>', url=url, name=obj.existing_contact
-        )
+        return format_html('<a href="{url}">{text}</a>', url=url, text=text)
+
+    @admin.display(description="Existing contact")
+    def existing_contact_link(self, obj):
+        return self._link_to_conflict_resolution(obj, obj.existing_contact)
 
     @admin.display(description="Conflicting contact")
     def conflicting_contact(self, obj):
-        return str(obj)
+        return self._link_to_conflict_resolution(obj, obj)
 
     def has_add_permission(self, request):
         return False
