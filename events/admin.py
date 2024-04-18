@@ -43,6 +43,7 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
     "Resolve Conflicts"
     """
 
+    search_fields = ("event__title",)
     list_display = [
         "event",
         "created_on",
@@ -59,6 +60,7 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
         "status",
     )
     autocomplete_fields = ("event",)
+    prefetch_related = ("event",)
     ordering = ("-created_on",)
 
     def has_add_permission(self, request):
