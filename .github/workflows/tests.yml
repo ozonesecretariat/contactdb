@@ -47,5 +47,11 @@ jobs:
         run: |
           docker compose exec -T app ./manage.py seed_db --no-input
       - name: "E2E tests"
+        id: "e2eTests"
         run: |
           npm run test
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
