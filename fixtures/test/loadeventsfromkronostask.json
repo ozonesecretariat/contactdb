@@ -1,0 +1,36 @@
+[
+  {
+    "model": "events.loadeventsfromkronostask",
+    "pk": "569b6a62-ef1f-4953-a60f-62fde626548f",
+    "fields": {
+      "description": "",
+      "created_on": "2024-04-18T08:29:19.700Z",
+      "created_by": ["admin@example.com"],
+      "started_on": "2024-04-18T08:29:19.776Z",
+      "completed_on": "2024-04-18T08:29:20.612Z",
+      "progress": null,
+      "status": "FAILURE",
+      "job_id": "5025732f-d04e-4265-841b-b9a97be1a7bd",
+      "mode": "ASYNC",
+      "failure_reason": "403 Client Error: Forbidden for url: https://accounts.cbd.int/api/v2013/authentication/token",
+      "log_text": "2024-04-18 08:29:19,777|INFO|STARTED [queue: \"default\", task: \"569b6a62-ef1f-4953-a60f-62fde626548f\", job: \"5025732f-d04e-4265-841b-b9a97be1a7bd\"]\n2024-04-18 08:29:19,779|INFO|Loading events from Kronos\n2024-04-18 08:29:20,610|ERROR|403 Client Error: Forbidden for url: https://accounts.cbd.int/api/v2013/authentication/token\n2024-04-18 08:29:20,611|ERROR|Traceback (most recent call last):\n  File \"/home/kiro/PycharmProjects/contactdb/.venv/lib/python3.12/site-packages/django_task/job.py\", line 51, in run\n    job_class.execute(job, task)\n  File \"/home/kiro/PycharmProjects/contactdb/events/jobs.py\", line 15, in execute\n    kronos_client.login()\n  File \"/home/kiro/PycharmProjects/contactdb/events/kronos.py\", line 35, in login\n    data = self._send_kronos(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/kiro/PycharmProjects/contactdb/events/kronos.py\", line 31, in _send_kronos\n    resp.raise_for_status()\n  File \"/home/kiro/PycharmProjects/contactdb/.venv/lib/python3.12/site-packages/requests/models.py\", line 1021, in raise_for_status\n    raise HTTPError(http_error_msg, response=self)\nrequests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://accounts.cbd.int/api/v2013/authentication/token\n\n2024-04-18 08:29:20,612|INFO|FAILURE [queue: \"default\", task: \"569b6a62-ef1f-4953-a60f-62fde626548f\", job: \"5025732f-d04e-4265-841b-b9a97be1a7bd\"]\n"
+    }
+  },
+  {
+    "model": "events.loadeventsfromkronostask",
+    "pk": "9589f0fd-08b0-45ab-a3b6-ae8a96e8db11",
+    "fields": {
+      "description": "",
+      "created_on": "2024-04-18T08:29:33.012Z",
+      "created_by": ["admin@example.com"],
+      "started_on": "2024-04-18T08:29:33.048Z",
+      "completed_on": "2024-04-18T08:29:33.718Z",
+      "progress": null,
+      "status": "FAILURE",
+      "job_id": "57b13632-600b-4115-a9b4-516b3e9f5522",
+      "mode": "ASYNC",
+      "failure_reason": "403 Client Error: Forbidden for url: https://accounts.cbd.int/api/v2013/authentication/token",
+      "log_text": "2024-04-18 08:29:33,049|INFO|STARTED [queue: \"default\", task: \"9589f0fd-08b0-45ab-a3b6-ae8a96e8db11\", job: \"57b13632-600b-4115-a9b4-516b3e9f5522\"]\n2024-04-18 08:29:33,051|INFO|Loading events from Kronos\n2024-04-18 08:29:33,714|ERROR|403 Client Error: Forbidden for url: https://accounts.cbd.int/api/v2013/authentication/token\n2024-04-18 08:29:33,716|ERROR|Traceback (most recent call last):\n  File \"/home/kiro/PycharmProjects/contactdb/.venv/lib/python3.12/site-packages/django_task/job.py\", line 51, in run\n    job_class.execute(job, task)\n  File \"/home/kiro/PycharmProjects/contactdb/events/jobs.py\", line 15, in execute\n    kronos_client.login()\n  File \"/home/kiro/PycharmProjects/contactdb/events/kronos.py\", line 35, in login\n    data = self._send_kronos(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/kiro/PycharmProjects/contactdb/events/kronos.py\", line 31, in _send_kronos\n    resp.raise_for_status()\n  File \"/home/kiro/PycharmProjects/contactdb/.venv/lib/python3.12/site-packages/requests/models.py\", line 1021, in raise_for_status\n    raise HTTPError(http_error_msg, response=self)\nrequests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://accounts.cbd.int/api/v2013/authentication/token\n\n2024-04-18 08:29:33,718|INFO|FAILURE [queue: \"default\", task: \"9589f0fd-08b0-45ab-a3b6-ae8a96e8db11\", job: \"57b13632-600b-4115-a9b4-516b3e9f5522\"]\n"
+    }
+  }
+]

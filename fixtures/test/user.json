@@ -3,7 +3,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$2KwPfhwPZIbPW0fLVEVatF$JahBhLZ1rPioxC5sjElOrN9aUaxwpaPkKrPBcRF3kCA=",
-      "last_login": "2024-04-17T13:59:25.126Z",
+      "last_login": "2024-04-18T08:29:04.768Z",
       "is_superuser": true,
       "email": "admin@example.com",
       "first_name": null,

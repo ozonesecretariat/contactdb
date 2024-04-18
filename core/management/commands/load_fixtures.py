@@ -39,6 +39,8 @@ class Command(BaseCommand):
             ResolveConflict,
             # Events
             Event,
+            LoadEventsFromKronosTask,
+            LoadParticipantsFromKronosTask,
             Registration,
             # Email
             EmailTemplate,
