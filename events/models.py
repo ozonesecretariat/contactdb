@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django_task.models import TaskRQ
 from common.citext import CICharField
@@ -49,6 +50,16 @@ class Event(models.Model):
         if self.imported_participants:
             return self.import_tasks.latest()
         return None
+
+    def clean(self):
+        if self.start_date > self.end_date:
+            msg = "Start date must be before the end date"
+            raise ValidationError(
+                {
+                    "start_date": msg,
+                    "end_date": msg,
+                }
+            )
 
 
 class RegistrationTag(models.Model):
