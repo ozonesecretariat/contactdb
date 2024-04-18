@@ -1,10 +1,6 @@
 describe("Check", () => {
-  it("Check search", () => {
-    cy.loginView();
-    cy.checkSearch("Contact groups", "dream team", "The Dream Team Connection");
-  });
-  it("Check add and delete", () => {
+  it("Check model admin", () => {
     cy.loginEdit();
-    cy.checkAdd("Contact groups");
+    cy.checkModelAdmin({ modelName: "Contact groups" });
   });
 });

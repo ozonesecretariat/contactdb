@@ -1,10 +1,6 @@
 describe("Check", () => {
-  it("Check search", () => {
+  it("Check model admin", () => {
     cy.loginAdmin();
-    cy.checkSearch("Roles", "kronos", "Load from Kronos");
-  });
-  it("Check add and delete", () => {
-    cy.loginAdmin();
-    cy.checkAdd("Roles");
+    cy.checkModelAdmin({ modelName: "Roles" });
   });
 });

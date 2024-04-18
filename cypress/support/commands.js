@@ -79,9 +79,12 @@ Cypress.Commands.addAll({
     });
   },
   chooseSelect(name, value) {
-    cy.get(`.field-${name} .select2`).click();
-    cy.get(`.select2-search  [type=search]`).type(value);
-    cy.get(`.select2-results [role=option]`).contains(value).click();
+    cy.get(`[name=${name}`).then(($el) => {
+      const elId = $el.attr("id");
+      cy.get(`[name=${name}]`).parent().find(".select2").click();
+      cy.get(`[type=search][aria-controls="select2-${elId}-results"]`).type(value);
+      cy.get(`#select2-${elId}-results [role=option]`).contains(value).click();
+    });
   },
   getIframeBody(selector) {
     return cy.get(selector).its("0.contentDocument.body").should("not.be.empty").then(cy.wrap);
@@ -89,49 +92,72 @@ Cypress.Commands.addAll({
   typeCKEditor(name, value) {
     cy.getIframeBody(`.field-${name} iframe`).type(value);
   },
-  checkSearch(modelName, searchValue, expectedValue = null) {
+  typeInput(name, value) {
+    cy.get(`[name="${name}"]`).then(($el) => {
+      const el = $el.get(0);
+
+      if (el.tagName.toLowerCase() === "select") {
+        cy.chooseSelect(name, value);
+      } else if (el.dataset.type === "ckeditortype") {
+        cy.typeCKEditor(name, value);
+      } else {
+        cy.get(`[name="${name}"]`).type(value);
+      }
+    });
+  },
+  performSearch({ modelName, searchValue = "", filters = {} }) {
+    cy.get("tbody a").contains(modelName).click();
+    for (const [key, value] of Object.entries(filters)) {
+      cy.typeInput(key, value);
+    }
+    if (searchValue) {
+      cy.get("#searchbar").type(searchValue);
+      cy.get("input[value=Search]").click();
+    }
+  },
+  checkNotFound({ modelName, searchValue = "", filters = {} }) {
+    cy.performSearch({ modelName, searchValue, filters });
+    cy.contains("0 results");
+  },
+  checkSearch({ modelName, searchValue = "", expectedValue = null, filters = {} }) {
     const checkedValue = expectedValue ?? searchValue;
 
-    cy.get("a").contains(modelName).click();
-    cy.get("#searchbar").type(searchValue);
-    cy.get("input[value=Search]").click();
+    cy.performSearch({ modelName, searchValue, filters });
     cy.contains("1 result");
-    cy.get("a").contains(checkedValue).click();
-    cy.get("h2").contains(checkedValue);
+    cy.get("#result_list a").contains(checkedValue).click();
+    cy.contains(checkedValue);
   },
-  checkAdd(modelName, nameField = "name", extraFields = {}, suffix = "") {
-    const randomName = randomStr(`test-${modelName}-`, 64, suffix);
-
-    cy.get("a").contains(modelName).click();
+  checkModelAdmin({
+    modelName,
+    nameField = "name",
+    extraFields = {},
+    suffix = "",
+    checkDelete = true,
+    filters = {},
+    searchValue = null,
+  }) {
+    let identifier = searchValue;
+    cy.get("tbody a").contains(modelName).click();
     cy.get(".object-tools a.addlink").contains("Add").click();
-    cy.get(`[name="${nameField}"]`).type(randomName);
+
+    if (nameField) {
+      const randomName = randomStr(`test-${modelName}-`, 10, suffix);
+      cy.get(`[name="${nameField}"]`).type(randomName);
+      identifier ??= randomName;
+    }
 
     for (const [name, value] of Object.entries(extraFields)) {
-      cy.get(`[name="${name}"]`).then(($el) => {
-        const el = $el.get(0);
-
-        if (el.tagName.toLowerCase() === "select") {
-          cy.chooseSelect(name, value);
-        } else if (el.dataset.type === "ckeditortype") {
-          cy.typeCKEditor(name, value);
-        } else {
-          cy.get(`[name="${name}"]`).type(value);
-        }
-      });
+      cy.typeInput(name, value);
     }
     cy.get("input[value=Save]").click();
-    cy.get("#searchbar").type(randomName);
-    cy.get("input[value=Search]").click();
-    cy.contains("1 result");
+    cy.contains("was added successfully");
 
-    cy.get("#result_list a").contains(randomName).click();
-    cy.get("h2").contains(randomName);
+    if (checkDelete) {
+      cy.checkSearch({ modelName, searchValue: identifier, filters });
+      cy.get("a").contains("Delete").click();
+      cy.get("[type=submit]").contains("Yes, I’m sure").click();
 
-    cy.get("a").contains("Delete").click();
-    cy.get("[type=submit]").contains("Yes, I’m sure").click();
-
-    cy.get("#searchbar").type(randomName);
-    cy.get("input[value=Search]").click();
-    cy.contains("0 results");
+      cy.checkNotFound({ modelName, searchValue: identifier, filters });
+    }
   },
 });

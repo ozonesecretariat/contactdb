@@ -1,4 +1,4 @@
-export function randomStr(prefix = "", size = 64, suffix = "") {
+export function randomStr(prefix = "", size = 10, suffix = "") {
   let text = prefix;
   const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 

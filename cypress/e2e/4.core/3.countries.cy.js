@@ -1,6 +1,6 @@
 describe("Check", () => {
   it("Check search", () => {
     cy.loginView();
-    cy.checkSearch("Countries", "romania", "RO");
+    cy.checkSearch({ modelName: "Countries", searchValue: "romania", expectedValue: "RO" });
   });
 });

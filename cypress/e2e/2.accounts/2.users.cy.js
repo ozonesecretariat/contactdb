@@ -1,10 +1,6 @@
 describe("Check", () => {
-  it("Check search", () => {
+  it("Check model admin", () => {
     cy.loginAdmin();
-    cy.checkSearch("Users", "admin", "admin@example.com");
-  });
-  it("Check add and delete", () => {
-    cy.loginAdmin();
-    cy.checkAdd("Users", "email", {}, "@example.org");
+    cy.checkModelAdmin({ modelName: "Users", nameField: "email", suffix: "@example.org" });
   });
 });

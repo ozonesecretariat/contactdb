@@ -1,10 +1,6 @@
 describe("Check", () => {
-  it("Check search", () => {
-    cy.loginView();
-    cy.checkSearch("Organizations", "exoplanetary", "Exoplanetary Colonization Authority");
-  });
-  it("Check add and delete", () => {
+  it("Check model admin", () => {
     cy.loginEdit();
-    cy.checkAdd("Organizations", "name", { organization_type: "OTHER" });
+    cy.checkModelAdmin({ modelName: "Organizations", extraFields: { organization_type: "OTHER" } });
   });
 });
