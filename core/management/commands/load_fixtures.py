@@ -37,11 +37,13 @@ class Command(BaseCommand):
             Contact,
             GroupMembership,
             ResolveConflict,
-            # Email
-            EmailTemplate,
             # Events
             Event,
             Registration,
+            # Email
+            EmailTemplate,
+            Email,
+            SendEmailTask,
         ),
     }
 

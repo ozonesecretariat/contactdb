@@ -39,7 +39,7 @@ module.exports = {
     // Allow both function declarations and expressions
     "func-style": "off",
     // Exclude some commonly used iterators
-    "id-length": ["error", { exceptions: ["i", "j", "k"] }],
+    "id-length": ["error", { exceptions: ["i", "j", "k", "$"] }],
     // Disable max-params
     "max-params": "off",
     // Disable max-statements
