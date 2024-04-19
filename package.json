@@ -10,9 +10,9 @@
     "lint:prettier:check": "prettier --check ."
   },
   "devDependencies": {
-    "cypress": "13.7.0",
+    "cypress": "13.8.0",
     "eslint": "8.57.0",
-    "eslint-plugin-cypress": "2.15.1",
+    "eslint-plugin-cypress": "2.15.2",
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-n": "16.6.2",
     "eslint-plugin-promise": "6.1.1",
