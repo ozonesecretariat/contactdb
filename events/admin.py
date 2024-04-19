@@ -95,6 +95,8 @@ class RegistrationAdmin(ModelAdmin):
         "event__title",
         "contact__first_name",
         "contact__last_name",
+        "contact__emails",
+        "contact__email_ccs",
         "status__name",
         "role__name",
     ]
