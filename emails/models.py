@@ -150,7 +150,10 @@ class SendEmailTask(TaskRQ):
         Email, on_delete=models.CASCADE, related_name="email_logs"
     )
     contact = models.ForeignKey(
-        Contact, on_delete=models.CASCADE, related_name="email_logs"
+        Contact,
+        on_delete=models.SET_NULL,
+        related_name="email_logs",
+        null=True,
     )
     email_to = ArrayField(
         blank=True,
