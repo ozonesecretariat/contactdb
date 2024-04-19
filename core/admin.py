@@ -1,7 +1,6 @@
 from copy import copy
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
-from django.contrib.admin import EmptyFieldListFilter, helpers
 from django.contrib.admin.utils import flatten_fieldsets
 from django.contrib.admin.widgets import AutocompleteSelect
 from django import forms
@@ -16,8 +15,7 @@ from import_export.widgets import ForeignKeyWidget
 from common.array_field import ArrayField
 
 from common.urls import reverse
-from common.model_admin import ModelAdmin, TaskAdmin, ModelResource
-from common.utils import update_object
+from common.model_admin import ModelAdmin, ModelResource
 
 from core.models import (
     Country,
