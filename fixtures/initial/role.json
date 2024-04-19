@@ -117,8 +117,6 @@
         ["change_organizationtype", "core", "organizationtype"],
         ["delete_organizationtype", "core", "organizationtype"],
         ["view_organizationtype", "core", "organizationtype"],
-        ["add_resolveallconflictstask", "core", "resolveallconflictstask"],
-        ["view_resolveallconflictstask", "core", "resolveallconflictstask"],
         ["delete_resolveconflict", "core", "resolveconflict"],
         ["view_resolveconflict", "core", "resolveconflict"],
         ["add_event", "events", "event"],
