@@ -483,7 +483,7 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
 
         return has_conflict
 
-    @admin.action(description="Merge contacts", permissions=["change"])
+    @admin.action(description="Merge selected contacts", permissions=["change"])
     def merge_contacts(self, request, queryset):
         all_contacts = list(queryset)
         if len(all_contacts) < 2:
@@ -583,6 +583,22 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
 
 @admin.register(ResolveConflict)
 class ResolveConflictAdmin(ContactAdminBase):
+    search_fields = (
+        "first_name",
+        "last_name",
+        "designation",
+        "department",
+        "emails",
+        "organization__name",
+        "organization__country__name",
+        "existing_contact__first_name",
+        "existing_contact__last_name",
+        "existing_contact__designation",
+        "existing_contact__department",
+        "existing_contact__emails",
+        "existing_contact__organization__name",
+        "existing_contact__organization__country__name",
+    )
     list_filter = (
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
@@ -599,7 +615,13 @@ class ResolveConflictAdmin(ContactAdminBase):
         "existing_contact_link",
         "conflicting_contact",
     )
-    prefetch_related = ("existing_contact",)
+    prefetch_related = (
+        "organization",
+        "organization__country",
+        "existing_contact",
+        "existing_contact__organization",
+        "existing_contact__organization__country",
+    )
     actions = ("accept_new_data",)
 
     @admin.action(
