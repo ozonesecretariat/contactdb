@@ -58,6 +58,8 @@ module.exports = {
     "no-shadow": "off",
     // Force separate var declaration
     "one-var": ["error", "never"],
+    // Disable destructing preference
+    "prefer-destructuring": "off",
     // Disable sorting rules
     "sort-imports": "off",
     "sort-keys": "off",

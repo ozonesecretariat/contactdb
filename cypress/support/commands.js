@@ -78,7 +78,26 @@ Cypress.Commands.addAll({
       expect(Array.from(remainingApps), "Expecting all apps to be checked").to.be.empty;
     });
   },
-  chooseSelect(name, value) {
+  goToModel(modelName) {
+    cy.get("tbody a").contains(modelName).click();
+  },
+  goToModelAdd(modelName) {
+    cy.goToModel(modelName);
+    cy.get(".object-tools a.addlink").contains("Add").click();
+  },
+  addModel(modelName, fields) {
+    cy.goToModelAdd(modelName);
+    cy.fillInputs(fields);
+    cy.get("input[value=Save]").click();
+    cy.contains("was added successfully");
+  },
+  deleteModel(modelName, searchValue, filters = {}) {
+    cy.checkSearch({ modelName, searchValue, filters });
+    cy.get("a").contains("Delete").click();
+    cy.get("[type=submit]").contains("Yes, I’m sure").click();
+    cy.contains("deleted successfully");
+  },
+  chooseSelect2(name, value) {
     cy.get(`[name=${name}`).then(($el) => {
       const elId = $el.attr("id");
       cy.get(`[name=${name}]`).parent().find(".select2").click();
@@ -89,27 +108,51 @@ Cypress.Commands.addAll({
   getIframeBody(selector) {
     return cy.get(selector).its("0.contentDocument.body").should("not.be.empty").then(cy.wrap);
   },
-  typeCKEditor(name, value) {
+  fillCKEditor(name, value) {
     cy.getIframeBody(`.field-${name} iframe`).type(value);
   },
-  typeInput(name, value) {
-    cy.get(`[name="${name}"]`).then(($el) => {
+  fillInline(name, values) {
+    for (let i = 0; i < values.length; i += 1) {
+      cy.get(`#${name}-group .add-row a`).click();
+
+      for (const [key, value] of Object.entries(values[i])) {
+        cy.fillInput([name, i, key].join("-"), value);
+      }
+    }
+  },
+  fillInput(name, value) {
+    cy.get(`[name="${name}"], #${name}-group`).then(($el) => {
       const el = $el.get(0);
 
       if (el.tagName.toLowerCase() === "select") {
-        cy.chooseSelect(name, value);
+        if (el.classList.contains("admin-autocomplete")) {
+          cy.chooseSelect2(name, value);
+        } else {
+          cy.get(`[name=${name}]`).select(value);
+        }
       } else if (el.dataset.type === "ckeditortype") {
-        cy.typeCKEditor(name, value);
+        cy.fillCKEditor(name, value);
+      } else if (el.classList.contains("inline-group")) {
+        cy.fillInline(name, value);
       } else {
-        cy.get(`[name="${name}"]`).type(value);
+        cy.get(`[name="${name}"]`).first().type(value);
       }
     });
   },
-  performSearch({ modelName, searchValue = "", filters = {} }) {
-    cy.get("tbody a").contains(modelName).click();
-    for (const [key, value] of Object.entries(filters)) {
-      cy.typeInput(key, value);
+  fillInputs(inputs) {
+    for (const [key, value] of Object.entries(inputs)) {
+      cy.fillInput(key, value);
     }
+  },
+  triggerAction(modelName, filters) {
+    cy.goToModel("Contacts");
+    cy.fillInputs(filters);
+    cy.get("#action-toggle").click();
+    cy.get(".actions button").contains("Go").click();
+  },
+  performSearch({ modelName, searchValue = "", filters = {} }) {
+    cy.goToModel(modelName);
+    cy.fillInputs(filters);
     if (searchValue) {
       cy.get("#searchbar").type(searchValue);
       cy.get("input[value=Search]").click();
@@ -137,27 +180,43 @@ Cypress.Commands.addAll({
     searchValue = null,
   }) {
     let identifier = searchValue;
-    cy.get("tbody a").contains(modelName).click();
-    cy.get(".object-tools a.addlink").contains("Add").click();
+    const fields = { ...extraFields };
 
     if (nameField) {
-      const randomName = randomStr(`test-${modelName}-`, 10, suffix);
-      cy.get(`[name="${nameField}"]`).type(randomName);
-      identifier ??= randomName;
+      fields[nameField] = randomStr(`test-${modelName}-`, 10, suffix);
+      identifier ??= fields[nameField];
     }
-
-    for (const [name, value] of Object.entries(extraFields)) {
-      cy.typeInput(name, value);
-    }
-    cy.get("input[value=Save]").click();
-    cy.contains("was added successfully");
-
+    cy.addModel(modelName, fields);
     if (checkDelete) {
-      cy.checkSearch({ modelName, searchValue: identifier, filters });
-      cy.get("a").contains("Delete").click();
-      cy.get("[type=submit]").contains("Yes, I’m sure").click();
-
+      cy.deleteModel(modelName, identifier, filters);
       cy.checkNotFound({ modelName, searchValue: identifier, filters });
     }
+  },
+  createContactGroup(numberOfContacts = 1, extraFields = {}) {
+    const groupName = randomStr("test-group-");
+    cy.addModel("Contact groups", { name: groupName });
+
+    const contacts = [];
+    for (let i = 0; i < numberOfContacts; i += 1) {
+      const contact = {
+        first_name: randomStr("first-name-"),
+        last_name: randomStr("last-name-"),
+        emails: randomStr("test-email-", 10, "@example.org"),
+        memberships: [{ group: groupName }],
+        ...extraFields,
+      };
+      contacts.push(contact);
+
+      cy.addModel("Contacts", contact);
+    }
+
+    return cy.wrap({ name: groupName, contacts });
+  },
+  deleteContactGroup(group) {
+    cy.triggerAction("Contacts", { memberships__group: group.name, action: "Delete selected contacts" });
+    cy.get("[type=submit]").contains("Yes, I’m sure").click();
+    cy.contains("Successfully deleted");
+
+    cy.deleteModel("Contact groups", group.name);
   },
 });
