@@ -39,7 +39,7 @@ class Event(models.Model):
     dates = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.title
+        return f"{self.code} {self.title}"
 
     @property
     def imported_participants(self):
