@@ -15,6 +15,7 @@ import socket
 from pathlib import Path
 
 import environ
+import pycountry
 from common.docx_format import DOCX
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -463,6 +464,9 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
+
+# Add EU ISO code which is exceptionally reserved.
+pycountry.countries.add_entry(alpha_2="EU", name="European Union")
 
 if DEBUG:
     DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)

@@ -35,9 +35,9 @@ MERGE_FROM_PARAM = "merge_from_temp"
 
 @admin.register(Country)
 class CountryAdmin(ModelAdmin):
-    list_display = ("code", "name")
-    search_fields = ("code", "name")
-    list_display_links = ("code", "name")
+    list_display = ("code", "name", "official_name")
+    search_fields = ("code", "name", "official_name")
+    list_display_links = ("code", "name", "official_name")
 
 
 @admin.register(OrganizationType)
@@ -645,6 +645,9 @@ class ResolveConflictAdmin(ContactAdminBase):
         update_values.pop("existing_contact_id")
         update_values.pop("id")
         update_object(record, update_values)
+        for key, value in update_values.items():
+            setattr(record, key, value)
+        record.save()
         ResolveConflict.objects.filter(pk=incoming_contact.id).first().delete()
 
     def _link_to_conflict_resolution(self, obj, text):

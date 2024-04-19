@@ -11,9 +11,24 @@ from django.db.models import Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 from common.array_field import ArrayField
-from common.utils import replace_relative_image_urls
 from core.models import Contact, ContactGroup
 from events.models import Event
+
+
+def get_relative_image_urls(email_body):
+    img_tag_pattern = r'<img.*?src="(.*?)"'
+    relative_image_urls = re.findall(img_tag_pattern, email_body)
+    return list(set(relative_image_urls))
+
+
+def replace_relative_image_urls(email_body):
+    relative_urls = get_relative_image_urls(email_body)
+    domain = settings.PROTOCOL + settings.MAIN_HOST
+    for url in relative_urls:
+        absolute_url = domain + url
+        email_body = email_body.replace(url, absolute_url)
+
+    return email_body
 
 
 def validate_placeholders(value):

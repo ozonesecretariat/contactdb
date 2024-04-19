@@ -1,17 +1,14 @@
 """Script to run the kronos event load tasks from cmd line."""
 
 import sys
-from django.core.management.base import BaseCommand, CommandParser
 
-from core.models import (
-    ResolveAllConflictsTask,
-)
+from django.core.management.base import BaseCommand
+
 from events.models import (
     Event,
     LoadEventsFromKronosTask,
     LoadParticipantsFromKronosTask,
 )
-from common.utils import ConflictResolutionMethods
 
 
 class Command(BaseCommand):

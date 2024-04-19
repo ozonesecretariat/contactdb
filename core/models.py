@@ -8,12 +8,12 @@ from django_task.models import TaskRQ
 from common.array_field import ArrayField
 from common.citext import CICharField
 from common.model import KronosId
-from common.utils import ConflictResolutionMethods
 
 
 class Country(models.Model):
     code = CICharField(max_length=2, primary_key=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
+    name = CICharField(max_length=255, null=True, blank=True)
+    official_name = CICharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ("name",)
@@ -27,7 +27,14 @@ class Country(models.Model):
         if not self.name:
             try:
                 self.name = pycountry.countries.get(alpha_2=self.code).name
-            except AttributeError:
+            except (AttributeError, LookupError):
+                pass
+        if not self.official_name:
+            try:
+                self.official_name = pycountry.countries.get(
+                    alpha_2=self.code
+                ).official_name
+            except (AttributeError, LookupError):
                 pass
 
 

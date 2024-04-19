@@ -1,10 +1,6 @@
 import logging
-import re
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.utils.html import strip_tags
+
 from django_task.job import Job
-from common.utils import replace_relative_image_urls
 
 
 class SendEmailJob(Job):

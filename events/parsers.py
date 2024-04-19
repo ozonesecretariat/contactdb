@@ -18,7 +18,13 @@ from events.models import (
     RegistrationStatus,
     RegistrationTag,
 )
-from common.utils import check_diff
+
+
+def check_diff(obj, dictionary):
+    for key, value in dictionary.items():
+        if getattr(obj, key) != value:
+            return True
+    return False
 
 
 class KronosParser:
@@ -44,14 +50,11 @@ class KronosParser:
     def parse_datetime(self, value):
         return make_aware(datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ"))
 
-    def get_country(self, code: str, name=None):
+    def get_country(self, code: str):
         if not code:
             return
 
-        obj, created = Country.objects.get_or_create(
-            code=code.upper(),
-            defaults={"name": name},
-        )
+        obj, created = Country.objects.get_or_create(code=code.upper())
         obj.clean()
         obj.save()
 
@@ -80,12 +83,8 @@ class KronosParser:
                 "name": org_dict.get("name"),
                 "acronym": org_dict.get("acronym"),
                 "organization_type": self.get_org_type(org_dict),
-                "government": self.get_country(
-                    org_dict.get("government"), org_dict.get("governmentName")
-                ),
-                "country": self.get_country(
-                    org_dict.get("country"), org_dict.get("countryName")
-                ),
+                "government": self.get_country(org_dict.get("government")),
+                "country": self.get_country(org_dict.get("country")),
             },
         )
         if created:
@@ -216,9 +215,7 @@ class KronosParticipantsParser(KronosParser):
             contact_dict["dateOfBirth"] = self.parse_date(
                 contact_dict.get("dateOfBirth")
             )
-            contact_dict["country"] = self.get_country(
-                contact_dict.get("country"), contact_dict.get("countryName")
-            )
+            contact_dict["country"] = self.get_country(contact_dict.get("country"))
             contact_dict["organization"] = self.get_org(
                 contact_dict.get("organization", {})
             )
