@@ -1,6 +1,7 @@
 import logging
 import re
 from datetime import datetime
+from functools import cached_property
 
 from django.utils.timezone import make_aware
 
@@ -11,6 +12,7 @@ from core.models import (
     OrganizationType,
     ResolveConflict,
 )
+from events.kronos import KronosClient
 from events.models import (
     Event,
     Registration,
@@ -30,6 +32,14 @@ def check_diff(obj, dictionary):
 class KronosParser:
     def __init__(self, task):
         self.task = task
+        self.client = KronosClient()
+
+    @cached_property
+    def kronos_org_types(self):
+        return {
+            org_type["organizationTypeId"]: org_type
+            for org_type in self.client.get_org_types()
+        }
 
     def parse_email_list(self, email_list):
         if isinstance(email_list, str):
@@ -64,13 +74,20 @@ class KronosParser:
         return obj
 
     def get_org_type(self, org_dict):
-        obj, created = OrganizationType.objects.get_or_create(
-            organization_type_id=org_dict["organizationTypeId"],
-            defaults={"name": org_dict["organizationType"]},
-        )
-        if created:
-            self.task.log(logging.INFO, "Created Organization Type: %r", obj)
+        org_type_id = org_dict["organizationTypeId"]
+        try:
+            return OrganizationType.objects.get(organization_type_id=org_type_id)
+        except OrganizationType.DoesNotExist:
+            pass
 
+        org_type = self.kronos_org_types[org_type_id]
+        obj = OrganizationType.objects.create(
+            organization_type_id=org_type_id,
+            acronym=org_type["acronym"],
+            title=org_type["title"],
+            description=org_type["description"],
+        )
+        self.task.log(logging.INFO, "Created Organization Type: %r", obj)
         return obj
 
     def get_org(self, org_dict):
@@ -94,10 +111,10 @@ class KronosParser:
 
 
 class KronosEventsParser(KronosParser):
-    def parse_event_list(self, event_list):
+    def parse_event_list(self):
         count_created = 0
         count_updated = 0
-        for event_dict in event_list:
+        for event_dict in self.client.get_meetings():
             self.task.log(logging.INFO, f"Saving event: {event_dict.get('title')}")
 
             d = {
@@ -209,8 +226,8 @@ class KronosParticipantsParser(KronosParser):
                 event,
             )
 
-    def parse_contact_list(self, contact_list):
-        for contact_dict in contact_list:
+    def parse_contact_list(self, event_id):
+        for contact_dict in self.client.get_participants(event_id):
             contact_id = contact_dict["contactId"]
             contact_dict["dateOfBirth"] = self.parse_date(
                 contact_dict.get("dateOfBirth")

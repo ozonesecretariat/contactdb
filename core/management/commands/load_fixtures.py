@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.core.management import BaseCommand
 from django.core.management import call_command
 
@@ -10,7 +9,7 @@ from emails.models import *
 from events.models import *
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("contactdb")
 
 
 class Command(BaseCommand):
@@ -30,7 +29,6 @@ class Command(BaseCommand):
             # User
             User,
             # Core
-            Country,
             OrganizationType,
             Organization,
             ContactGroup,
@@ -66,6 +64,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, fixture_type, *args, exclude, dump=False, **options):
+        logging.basicConfig()
         for model in self.FIXTURES[fixture_type]:
             opt = model._meta
             name = opt.model_name

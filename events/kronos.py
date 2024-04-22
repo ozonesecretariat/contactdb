@@ -9,11 +9,13 @@ KRONOS_USERNAME = settings.KRONOS_USERNAME
 KRONOS_PASSWORD = settings.KRONOS_PASSWORD
 
 
-class Client:
-    auth_token = None
+class KronosClient:
+    def __init__(self):
+        self.auth_token = None
+        self.auth_token = self._login()
 
-    def _send_kronos(
-        self, path, params=None, json_data=None, method=requests.get, host=KRONOS_HOST
+    def send_kronos(
+        self, path, params=None, json_data=None, method="GET", host=KRONOS_HOST
     ):
         headers = {
             "Content-Type": "application/json",
@@ -21,7 +23,9 @@ class Client:
         }
         if self.auth_token:
             headers["Authorization"] = f"Token {self.auth_token}"
-        resp = method(
+
+        resp = requests.request(
+            method=method,
             url=f"https://{host}{path}",
             headers=headers,
             json=json_data or {},
@@ -31,30 +35,37 @@ class Client:
         resp.raise_for_status()
         return resp.json()
 
-    def login(self):
-        data = self._send_kronos(
+    def _login(self):
+        data = self.send_kronos(
             path="/api/v2013/authentication/token",
             host=ACCOUNTS_HOST,
             json_data={
                 "email": f"{KRONOS_USERNAME}",
                 "password": f"{KRONOS_PASSWORD}",
             },
-            method=requests.post,
+            method="POST",
         )
+
         self.auth_token = data.get("authenticationToken")
         return self.auth_token
 
     def get_meetings(self):
-        return self._send_kronos(path="/api/v2018/events")
+        return self.send_kronos(path="/api/v2018/events")["records"]
 
     def get_participants(self, event_id: str):
         qparams = {
             "eventIds": [event_id],
             "registrationStatusForEventIds": [event_id],
         }
-        return self._send_kronos(
+        return self.send_kronos(
             path="/api/v2018/contacts",
             params={
                 "q": json.dumps(qparams),
             },
-        )
+        )["records"]
+
+    def get_org_types(self):
+        return self.send_kronos("/api/v2018/organizations/types")
+
+    def get_countries(self):
+        return self.send_kronos("/api/v2018/countries")
