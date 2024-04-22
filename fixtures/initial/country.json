@@ -3,1743 +3,1584 @@
     "model": "core.country",
     "pk": "AD",
     "fields": {
-      "name": "Andorra"
+      "name": "Andorra",
+      "official_name": "Principality of Andorra"
     }
   },
   {
     "model": "core.country",
     "pk": "AE",
     "fields": {
-      "name": "United Arab Emirates"
+      "name": "United Arab Emirates",
+      "official_name": "United Arab Emirates"
     }
   },
   {
     "model": "core.country",
     "pk": "AF",
     "fields": {
-      "name": "Afghanistan"
+      "name": "Afghanistan",
+      "official_name": "Islamic Republic of Afghanistan"
     }
   },
   {
     "model": "core.country",
     "pk": "AG",
     "fields": {
-      "name": "Antigua and Barbuda"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "AI",
-    "fields": {
-      "name": "Anguilla"
+      "name": "Antigua and Barbuda",
+      "official_name": "Antigua and Barbuda"
     }
   },
   {
     "model": "core.country",
     "pk": "AL",
     "fields": {
-      "name": "Albania"
+      "name": "Albania",
+      "official_name": "Republic of Albania"
     }
   },
   {
     "model": "core.country",
     "pk": "AM",
     "fields": {
-      "name": "Armenia"
+      "name": "Armenia",
+      "official_name": "Republic of Armenia"
     }
   },
   {
     "model": "core.country",
     "pk": "AO",
     "fields": {
-      "name": "Angola"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "AQ",
-    "fields": {
-      "name": "Antarctica"
+      "name": "Angola",
+      "official_name": "Republic of Angola"
     }
   },
   {
     "model": "core.country",
     "pk": "AR",
     "fields": {
-      "name": "Argentina"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "AS",
-    "fields": {
-      "name": "American Samoa"
+      "name": "Argentina",
+      "official_name": "Argentine Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "AT",
     "fields": {
-      "name": "Austria"
+      "name": "Austria",
+      "official_name": "Republic of Austria"
     }
   },
   {
     "model": "core.country",
     "pk": "AU",
     "fields": {
-      "name": "Australia"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "AW",
-    "fields": {
-      "name": "Aruba"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "AX",
-    "fields": {
-      "name": "Åland Islands"
+      "name": "Australia",
+      "official_name": "Australia"
     }
   },
   {
     "model": "core.country",
     "pk": "AZ",
     "fields": {
-      "name": "Azerbaijan"
+      "name": "Azerbaijan",
+      "official_name": "Republic of Azerbaijan"
     }
   },
   {
     "model": "core.country",
     "pk": "BA",
     "fields": {
-      "name": "Bosnia and Herzegovina"
+      "name": "Bosnia and Herzegovina",
+      "official_name": "Republic of Bosnia and Herzegovina"
     }
   },
   {
     "model": "core.country",
     "pk": "BB",
     "fields": {
-      "name": "Barbados"
+      "name": "Barbados",
+      "official_name": "Barbados"
     }
   },
   {
     "model": "core.country",
     "pk": "BD",
     "fields": {
-      "name": "Bangladesh"
+      "name": "Bangladesh",
+      "official_name": "People's Republic of Bangladesh"
     }
   },
   {
     "model": "core.country",
     "pk": "BE",
     "fields": {
-      "name": "Belgium"
+      "name": "Belgium",
+      "official_name": "Kingdom of Belgium"
     }
   },
   {
     "model": "core.country",
     "pk": "BF",
     "fields": {
-      "name": "Burkina Faso"
+      "name": "Burkina Faso",
+      "official_name": "Burkina Faso"
     }
   },
   {
     "model": "core.country",
     "pk": "BG",
     "fields": {
-      "name": "Bulgaria"
+      "name": "Bulgaria",
+      "official_name": "Republic of Bulgaria"
     }
   },
   {
     "model": "core.country",
     "pk": "BH",
     "fields": {
-      "name": "Bahrain"
+      "name": "Bahrain",
+      "official_name": "Kingdom of Bahrain"
     }
   },
   {
     "model": "core.country",
     "pk": "BI",
     "fields": {
-      "name": "Burundi"
+      "name": "Burundi",
+      "official_name": "Republic of Burundi"
     }
   },
   {
     "model": "core.country",
     "pk": "BJ",
     "fields": {
-      "name": "Benin"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "BL",
-    "fields": {
-      "name": "Saint Barthélemy"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "BM",
-    "fields": {
-      "name": "Bermuda"
+      "name": "Benin",
+      "official_name": "Republic of Benin"
     }
   },
   {
     "model": "core.country",
     "pk": "BN",
     "fields": {
-      "name": "Brunei Darussalam"
+      "name": "Brunei Darussalam",
+      "official_name": "Brunei Darussalam"
     }
   },
   {
     "model": "core.country",
     "pk": "BO",
     "fields": {
-      "name": "Bolivia, Plurinational State of"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "BQ",
-    "fields": {
-      "name": "Bonaire, Sint Eustatius and Saba"
+      "name": "Bolivia, Plurinational State of",
+      "official_name": "Plurinational State of Bolivia"
     }
   },
   {
     "model": "core.country",
     "pk": "BR",
     "fields": {
-      "name": "Brazil"
+      "name": "Brazil",
+      "official_name": "Federative Republic of Brazil"
     }
   },
   {
     "model": "core.country",
     "pk": "BS",
     "fields": {
-      "name": "Bahamas"
+      "name": "Bahamas",
+      "official_name": "Commonwealth of the Bahamas"
     }
   },
   {
     "model": "core.country",
     "pk": "BT",
     "fields": {
-      "name": "Bhutan"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "BV",
-    "fields": {
-      "name": "Bouvet Island"
+      "name": "Bhutan",
+      "official_name": "Kingdom of Bhutan"
     }
   },
   {
     "model": "core.country",
     "pk": "BW",
     "fields": {
-      "name": "Botswana"
+      "name": "Botswana",
+      "official_name": "Republic of Botswana"
     }
   },
   {
     "model": "core.country",
     "pk": "BY",
     "fields": {
-      "name": "Belarus"
+      "name": "Belarus",
+      "official_name": "Republic of Belarus"
     }
   },
   {
     "model": "core.country",
     "pk": "BZ",
     "fields": {
-      "name": "Belize"
+      "name": "Belize",
+      "official_name": "Belize"
     }
   },
   {
     "model": "core.country",
     "pk": "CA",
     "fields": {
-      "name": "Canada"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "CC",
-    "fields": {
-      "name": "Cocos (Keeling) Islands"
+      "name": "Canada",
+      "official_name": "Canada"
     }
   },
   {
     "model": "core.country",
     "pk": "CD",
     "fields": {
-      "name": "Congo, The Democratic Republic of the"
+      "name": "Congo, The Democratic Republic of the",
+      "official_name": "Congo, The Democratic Republic of the"
     }
   },
   {
     "model": "core.country",
     "pk": "CF",
     "fields": {
-      "name": "Central African Republic"
+      "name": "Central African Republic",
+      "official_name": "Central African Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "CG",
     "fields": {
-      "name": "Congo"
+      "name": "Congo",
+      "official_name": "Republic of the Congo"
     }
   },
   {
     "model": "core.country",
     "pk": "CH",
     "fields": {
-      "name": "Switzerland"
+      "name": "Switzerland",
+      "official_name": "Swiss Confederation"
     }
   },
   {
     "model": "core.country",
     "pk": "CI",
     "fields": {
-      "name": "Côte d'Ivoire"
+      "name": "Côte d'Ivoire",
+      "official_name": "Republic of Côte d'Ivoire"
     }
   },
   {
     "model": "core.country",
     "pk": "CK",
     "fields": {
-      "name": "Cook Islands"
+      "name": "Cook Islands",
+      "official_name": "Cook Islands"
     }
   },
   {
     "model": "core.country",
     "pk": "CL",
     "fields": {
-      "name": "Chile"
+      "name": "Chile",
+      "official_name": "Republic of Chile"
     }
   },
   {
     "model": "core.country",
     "pk": "CM",
     "fields": {
-      "name": "Cameroon"
+      "name": "Cameroon",
+      "official_name": "Republic of Cameroon"
     }
   },
   {
     "model": "core.country",
     "pk": "CN",
     "fields": {
-      "name": "China"
+      "name": "China",
+      "official_name": "People's Republic of China"
     }
   },
   {
     "model": "core.country",
     "pk": "CO",
     "fields": {
-      "name": "Colombia"
+      "name": "Colombia",
+      "official_name": "Republic of Colombia"
     }
   },
   {
     "model": "core.country",
     "pk": "CR",
     "fields": {
-      "name": "Costa Rica"
+      "name": "Costa Rica",
+      "official_name": "Republic of Costa Rica"
     }
   },
   {
     "model": "core.country",
     "pk": "CU",
     "fields": {
-      "name": "Cuba"
+      "name": "Cuba",
+      "official_name": "Republic of Cuba"
     }
   },
   {
     "model": "core.country",
     "pk": "CV",
     "fields": {
-      "name": "Cabo Verde"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "CW",
-    "fields": {
-      "name": "Curaçao"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "CX",
-    "fields": {
-      "name": "Christmas Island"
+      "name": "Cabo Verde",
+      "official_name": "Republic of Cabo Verde"
     }
   },
   {
     "model": "core.country",
     "pk": "CY",
     "fields": {
-      "name": "Cyprus"
+      "name": "Cyprus",
+      "official_name": "Republic of Cyprus"
     }
   },
   {
     "model": "core.country",
     "pk": "CZ",
     "fields": {
-      "name": "Czechia"
+      "name": "Czechia",
+      "official_name": "Czech Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "DE",
     "fields": {
-      "name": "Germany"
+      "name": "Germany",
+      "official_name": "Federal Republic of Germany"
     }
   },
   {
     "model": "core.country",
     "pk": "DJ",
     "fields": {
-      "name": "Djibouti"
+      "name": "Djibouti",
+      "official_name": "Republic of Djibouti"
     }
   },
   {
     "model": "core.country",
     "pk": "DK",
     "fields": {
-      "name": "Denmark"
+      "name": "Denmark",
+      "official_name": "Kingdom of Denmark"
     }
   },
   {
     "model": "core.country",
     "pk": "DM",
     "fields": {
-      "name": "Dominica"
+      "name": "Dominica",
+      "official_name": "Commonwealth of Dominica"
     }
   },
   {
     "model": "core.country",
     "pk": "DO",
     "fields": {
-      "name": "Dominican Republic"
+      "name": "Dominican Republic",
+      "official_name": "Dominican Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "DZ",
     "fields": {
-      "name": "Algeria"
+      "name": "Algeria",
+      "official_name": "People's Democratic Republic of Algeria"
     }
   },
   {
     "model": "core.country",
     "pk": "EC",
     "fields": {
-      "name": "Ecuador"
+      "name": "Ecuador",
+      "official_name": "Republic of Ecuador"
     }
   },
   {
     "model": "core.country",
     "pk": "EE",
     "fields": {
-      "name": "Estonia"
+      "name": "Estonia",
+      "official_name": "Republic of Estonia"
     }
   },
   {
     "model": "core.country",
     "pk": "EG",
     "fields": {
-      "name": "Egypt"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "EH",
-    "fields": {
-      "name": "Western Sahara"
+      "name": "Egypt",
+      "official_name": "Arab Republic of Egypt"
     }
   },
   {
     "model": "core.country",
     "pk": "ER",
     "fields": {
-      "name": "Eritrea"
+      "name": "Eritrea",
+      "official_name": "the State of Eritrea"
     }
   },
   {
     "model": "core.country",
     "pk": "ES",
     "fields": {
-      "name": "Spain"
+      "name": "Spain",
+      "official_name": "Kingdom of Spain"
     }
   },
   {
     "model": "core.country",
     "pk": "ET",
     "fields": {
-      "name": "Ethiopia"
+      "name": "Ethiopia",
+      "official_name": "Federal Democratic Republic of Ethiopia"
+    }
+  },
+  {
+    "model": "core.country",
+    "pk": "EU",
+    "fields": {
+      "name": "European Union",
+      "official_name": "European Union"
     }
   },
   {
     "model": "core.country",
     "pk": "FI",
     "fields": {
-      "name": "Finland"
+      "name": "Finland",
+      "official_name": "Republic of Finland"
     }
   },
   {
     "model": "core.country",
     "pk": "FJ",
     "fields": {
-      "name": "Fiji"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "FK",
-    "fields": {
-      "name": "Falkland Islands (Malvinas)"
+      "name": "Fiji",
+      "official_name": "Republic of Fiji"
     }
   },
   {
     "model": "core.country",
     "pk": "FM",
     "fields": {
-      "name": "Micronesia, Federated States of"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "FO",
-    "fields": {
-      "name": "Faroe Islands"
+      "name": "Micronesia, Federated States of",
+      "official_name": "Federated States of Micronesia"
     }
   },
   {
     "model": "core.country",
     "pk": "FR",
     "fields": {
-      "name": "France"
+      "name": "France",
+      "official_name": "French Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "GA",
     "fields": {
-      "name": "Gabon"
+      "name": "Gabon",
+      "official_name": "Gabonese Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "GB",
     "fields": {
-      "name": "United Kingdom"
+      "name": "United Kingdom",
+      "official_name": "United Kingdom of Great Britain and Northern Ireland"
     }
   },
   {
     "model": "core.country",
     "pk": "GD",
     "fields": {
-      "name": "Grenada"
+      "name": "Grenada",
+      "official_name": "Grenada"
     }
   },
   {
     "model": "core.country",
     "pk": "GE",
     "fields": {
-      "name": "Georgia"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GF",
-    "fields": {
-      "name": "French Guiana"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GG",
-    "fields": {
-      "name": "Guernsey"
+      "name": "Georgia",
+      "official_name": "Georgia"
     }
   },
   {
     "model": "core.country",
     "pk": "GH",
     "fields": {
-      "name": "Ghana"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GI",
-    "fields": {
-      "name": "Gibraltar"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GL",
-    "fields": {
-      "name": "Greenland"
+      "name": "Ghana",
+      "official_name": "Republic of Ghana"
     }
   },
   {
     "model": "core.country",
     "pk": "GM",
     "fields": {
-      "name": "Gambia"
+      "name": "Gambia",
+      "official_name": "Republic of the Gambia"
     }
   },
   {
     "model": "core.country",
     "pk": "GN",
     "fields": {
-      "name": "Guinea"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GP",
-    "fields": {
-      "name": "Guadeloupe"
+      "name": "Guinea",
+      "official_name": "Republic of Guinea"
     }
   },
   {
     "model": "core.country",
     "pk": "GQ",
     "fields": {
-      "name": "Equatorial Guinea"
+      "name": "Equatorial Guinea",
+      "official_name": "Republic of Equatorial Guinea"
     }
   },
   {
     "model": "core.country",
     "pk": "GR",
     "fields": {
-      "name": "Greece"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GS",
-    "fields": {
-      "name": "South Georgia and the South Sandwich Islands"
+      "name": "Greece",
+      "official_name": "Hellenic Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "GT",
     "fields": {
-      "name": "Guatemala"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "GU",
-    "fields": {
-      "name": "Guam"
+      "name": "Guatemala",
+      "official_name": "Republic of Guatemala"
     }
   },
   {
     "model": "core.country",
     "pk": "GW",
     "fields": {
-      "name": "Guinea-Bissau"
+      "name": "Guinea-Bissau",
+      "official_name": "Republic of Guinea-Bissau"
     }
   },
   {
     "model": "core.country",
     "pk": "GY",
     "fields": {
-      "name": "Guyana"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "HK",
-    "fields": {
-      "name": "Hong Kong"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "HM",
-    "fields": {
-      "name": "Heard Island and McDonald Islands"
+      "name": "Guyana",
+      "official_name": "Republic of Guyana"
     }
   },
   {
     "model": "core.country",
     "pk": "HN",
     "fields": {
-      "name": "Honduras"
+      "name": "Honduras",
+      "official_name": "Republic of Honduras"
     }
   },
   {
     "model": "core.country",
     "pk": "HR",
     "fields": {
-      "name": "Croatia"
+      "name": "Croatia",
+      "official_name": "Republic of Croatia"
     }
   },
   {
     "model": "core.country",
     "pk": "HT",
     "fields": {
-      "name": "Haiti"
+      "name": "Haiti",
+      "official_name": "Republic of Haiti"
     }
   },
   {
     "model": "core.country",
     "pk": "HU",
     "fields": {
-      "name": "Hungary"
+      "name": "Hungary",
+      "official_name": "Hungary"
     }
   },
   {
     "model": "core.country",
     "pk": "ID",
     "fields": {
-      "name": "Indonesia"
+      "name": "Indonesia",
+      "official_name": "Republic of Indonesia"
     }
   },
   {
     "model": "core.country",
     "pk": "IE",
     "fields": {
-      "name": "Ireland"
+      "name": "Ireland",
+      "official_name": "Ireland"
     }
   },
   {
     "model": "core.country",
     "pk": "IL",
     "fields": {
-      "name": "Israel"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "IM",
-    "fields": {
-      "name": "Isle of Man"
+      "name": "Israel",
+      "official_name": "State of Israel"
     }
   },
   {
     "model": "core.country",
     "pk": "IN",
     "fields": {
-      "name": "India"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "IO",
-    "fields": {
-      "name": "British Indian Ocean Territory"
+      "name": "India",
+      "official_name": "Republic of India"
     }
   },
   {
     "model": "core.country",
     "pk": "IQ",
     "fields": {
-      "name": "Iraq"
+      "name": "Iraq",
+      "official_name": "Republic of Iraq"
     }
   },
   {
     "model": "core.country",
     "pk": "IR",
     "fields": {
-      "name": "Iran, Islamic Republic of"
+      "name": "Iran, Islamic Republic of",
+      "official_name": "Islamic Republic of Iran"
     }
   },
   {
     "model": "core.country",
     "pk": "IS",
     "fields": {
-      "name": "Iceland"
+      "name": "Iceland",
+      "official_name": "Republic of Iceland"
     }
   },
   {
     "model": "core.country",
     "pk": "IT",
     "fields": {
-      "name": "Italy"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "JE",
-    "fields": {
-      "name": "Jersey"
+      "name": "Italy",
+      "official_name": "Italian Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "JM",
     "fields": {
-      "name": "Jamaica"
+      "name": "Jamaica",
+      "official_name": "Jamaica"
     }
   },
   {
     "model": "core.country",
     "pk": "JO",
     "fields": {
-      "name": "Jordan"
+      "name": "Jordan",
+      "official_name": "Hashemite Kingdom of Jordan"
     }
   },
   {
     "model": "core.country",
     "pk": "JP",
     "fields": {
-      "name": "Japan"
+      "name": "Japan",
+      "official_name": "Japan"
     }
   },
   {
     "model": "core.country",
     "pk": "KE",
     "fields": {
-      "name": "Kenya"
+      "name": "Kenya",
+      "official_name": "Republic of Kenya"
     }
   },
   {
     "model": "core.country",
     "pk": "KG",
     "fields": {
-      "name": "Kyrgyzstan"
+      "name": "Kyrgyzstan",
+      "official_name": "Kyrgyz Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "KH",
     "fields": {
-      "name": "Cambodia"
+      "name": "Cambodia",
+      "official_name": "Kingdom of Cambodia"
     }
   },
   {
     "model": "core.country",
     "pk": "KI",
     "fields": {
-      "name": "Kiribati"
+      "name": "Kiribati",
+      "official_name": "Republic of Kiribati"
     }
   },
   {
     "model": "core.country",
     "pk": "KM",
     "fields": {
-      "name": "Comoros"
+      "name": "Comoros",
+      "official_name": "Union of the Comoros"
     }
   },
   {
     "model": "core.country",
     "pk": "KN",
     "fields": {
-      "name": "Saint Kitts and Nevis"
+      "name": "Saint Kitts and Nevis",
+      "official_name": "Saint Kitts and Nevis"
     }
   },
   {
     "model": "core.country",
     "pk": "KP",
     "fields": {
-      "name": "Korea, Democratic People's Republic of"
+      "name": "Korea, Democratic People's Republic of",
+      "official_name": "Democratic People's Republic of Korea"
     }
   },
   {
     "model": "core.country",
     "pk": "KR",
     "fields": {
-      "name": "Korea, Republic of"
+      "name": "Korea, Republic of",
+      "official_name": "Korea, Republic of"
     }
   },
   {
     "model": "core.country",
     "pk": "KW",
     "fields": {
-      "name": "Kuwait"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "KY",
-    "fields": {
-      "name": "Cayman Islands"
+      "name": "Kuwait",
+      "official_name": "State of Kuwait"
     }
   },
   {
     "model": "core.country",
     "pk": "KZ",
     "fields": {
-      "name": "Kazakhstan"
+      "name": "Kazakhstan",
+      "official_name": "Republic of Kazakhstan"
     }
   },
   {
     "model": "core.country",
     "pk": "LA",
     "fields": {
-      "name": "Lao People's Democratic Republic"
+      "name": "Lao People's Democratic Republic",
+      "official_name": "Lao People's Democratic Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "LB",
     "fields": {
-      "name": "Lebanon"
+      "name": "Lebanon",
+      "official_name": "Lebanese Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "LC",
     "fields": {
-      "name": "Saint Lucia"
+      "name": "Saint Lucia",
+      "official_name": "Saint Lucia"
     }
   },
   {
     "model": "core.country",
     "pk": "LI",
     "fields": {
-      "name": "Liechtenstein"
+      "name": "Liechtenstein",
+      "official_name": "Principality of Liechtenstein"
     }
   },
   {
     "model": "core.country",
     "pk": "LK",
     "fields": {
-      "name": "Sri Lanka"
+      "name": "Sri Lanka",
+      "official_name": "Democratic Socialist Republic of Sri Lanka"
     }
   },
   {
     "model": "core.country",
     "pk": "LR",
     "fields": {
-      "name": "Liberia"
+      "name": "Liberia",
+      "official_name": "Republic of Liberia"
     }
   },
   {
     "model": "core.country",
     "pk": "LS",
     "fields": {
-      "name": "Lesotho"
+      "name": "Lesotho",
+      "official_name": "Kingdom of Lesotho"
     }
   },
   {
     "model": "core.country",
     "pk": "LT",
     "fields": {
-      "name": "Lithuania"
+      "name": "Lithuania",
+      "official_name": "Republic of Lithuania"
     }
   },
   {
     "model": "core.country",
     "pk": "LU",
     "fields": {
-      "name": "Luxembourg"
+      "name": "Luxembourg",
+      "official_name": "Grand Duchy of Luxembourg"
     }
   },
   {
     "model": "core.country",
     "pk": "LV",
     "fields": {
-      "name": "Latvia"
+      "name": "Latvia",
+      "official_name": "Republic of Latvia"
     }
   },
   {
     "model": "core.country",
     "pk": "LY",
     "fields": {
-      "name": "Libya"
+      "name": "Libya",
+      "official_name": "Libya"
     }
   },
   {
     "model": "core.country",
     "pk": "MA",
     "fields": {
-      "name": "Morocco"
+      "name": "Morocco",
+      "official_name": "Kingdom of Morocco"
     }
   },
   {
     "model": "core.country",
     "pk": "MC",
     "fields": {
-      "name": "Monaco"
+      "name": "Monaco",
+      "official_name": "Principality of Monaco"
     }
   },
   {
     "model": "core.country",
     "pk": "MD",
     "fields": {
-      "name": "Moldova, Republic of"
+      "name": "Moldova, Republic of",
+      "official_name": "Republic of Moldova"
     }
   },
   {
     "model": "core.country",
     "pk": "ME",
     "fields": {
-      "name": "Montenegro"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "MF",
-    "fields": {
-      "name": "Saint Martin (French part)"
+      "name": "Montenegro",
+      "official_name": "Montenegro"
     }
   },
   {
     "model": "core.country",
     "pk": "MG",
     "fields": {
-      "name": "Madagascar"
+      "name": "Madagascar",
+      "official_name": "Republic of Madagascar"
     }
   },
   {
     "model": "core.country",
     "pk": "MH",
     "fields": {
-      "name": "Marshall Islands"
+      "name": "Marshall Islands",
+      "official_name": "Republic of the Marshall Islands"
     }
   },
   {
     "model": "core.country",
     "pk": "MK",
     "fields": {
-      "name": "North Macedonia"
+      "name": "North Macedonia",
+      "official_name": "Republic of North Macedonia"
     }
   },
   {
     "model": "core.country",
     "pk": "ML",
     "fields": {
-      "name": "Mali"
+      "name": "Mali",
+      "official_name": "Republic of Mali"
     }
   },
   {
     "model": "core.country",
     "pk": "MM",
     "fields": {
-      "name": "Myanmar"
+      "name": "Myanmar",
+      "official_name": "Republic of Myanmar"
     }
   },
   {
     "model": "core.country",
     "pk": "MN",
     "fields": {
-      "name": "Mongolia"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "MO",
-    "fields": {
-      "name": "Macao"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "MP",
-    "fields": {
-      "name": "Northern Mariana Islands"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "MQ",
-    "fields": {
-      "name": "Martinique"
+      "name": "Mongolia",
+      "official_name": "Mongolia"
     }
   },
   {
     "model": "core.country",
     "pk": "MR",
     "fields": {
-      "name": "Mauritania"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "MS",
-    "fields": {
-      "name": "Montserrat"
+      "name": "Mauritania",
+      "official_name": "Islamic Republic of Mauritania"
     }
   },
   {
     "model": "core.country",
     "pk": "MT",
     "fields": {
-      "name": "Malta"
+      "name": "Malta",
+      "official_name": "Republic of Malta"
     }
   },
   {
     "model": "core.country",
     "pk": "MU",
     "fields": {
-      "name": "Mauritius"
+      "name": "Mauritius",
+      "official_name": "Republic of Mauritius"
     }
   },
   {
     "model": "core.country",
     "pk": "MV",
     "fields": {
-      "name": "Maldives"
+      "name": "Maldives",
+      "official_name": "Republic of Maldives"
     }
   },
   {
     "model": "core.country",
     "pk": "MW",
     "fields": {
-      "name": "Malawi"
+      "name": "Malawi",
+      "official_name": "Republic of Malawi"
     }
   },
   {
     "model": "core.country",
     "pk": "MX",
     "fields": {
-      "name": "Mexico"
+      "name": "Mexico",
+      "official_name": "United Mexican States"
     }
   },
   {
     "model": "core.country",
     "pk": "MY",
     "fields": {
-      "name": "Malaysia"
+      "name": "Malaysia",
+      "official_name": "Malaysia"
     }
   },
   {
     "model": "core.country",
     "pk": "MZ",
     "fields": {
-      "name": "Mozambique"
+      "name": "Mozambique",
+      "official_name": "Republic of Mozambique"
     }
   },
   {
     "model": "core.country",
     "pk": "NA",
     "fields": {
-      "name": "Namibia"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "NC",
-    "fields": {
-      "name": "New Caledonia"
+      "name": "Namibia",
+      "official_name": "Republic of Namibia"
     }
   },
   {
     "model": "core.country",
     "pk": "NE",
     "fields": {
-      "name": "Niger"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "NF",
-    "fields": {
-      "name": "Norfolk Island"
+      "name": "Niger",
+      "official_name": "Republic of the Niger"
     }
   },
   {
     "model": "core.country",
     "pk": "NG",
     "fields": {
-      "name": "Nigeria"
+      "name": "Nigeria",
+      "official_name": "Federal Republic of Nigeria"
     }
   },
   {
     "model": "core.country",
     "pk": "NI",
     "fields": {
-      "name": "Nicaragua"
+      "name": "Nicaragua",
+      "official_name": "Republic of Nicaragua"
     }
   },
   {
     "model": "core.country",
     "pk": "NL",
     "fields": {
-      "name": "Netherlands"
+      "name": "Netherlands",
+      "official_name": "Kingdom of the Netherlands"
     }
   },
   {
     "model": "core.country",
     "pk": "NO",
     "fields": {
-      "name": "Norway"
+      "name": "Norway",
+      "official_name": "Kingdom of Norway"
     }
   },
   {
     "model": "core.country",
     "pk": "NP",
     "fields": {
-      "name": "Nepal"
+      "name": "Nepal",
+      "official_name": "Federal Democratic Republic of Nepal"
     }
   },
   {
     "model": "core.country",
     "pk": "NR",
     "fields": {
-      "name": "Nauru"
+      "name": "Nauru",
+      "official_name": "Republic of Nauru"
     }
   },
   {
     "model": "core.country",
     "pk": "NU",
     "fields": {
-      "name": "Niue"
+      "name": "Niue",
+      "official_name": "Niue"
     }
   },
   {
     "model": "core.country",
     "pk": "NZ",
     "fields": {
-      "name": "New Zealand"
+      "name": "New Zealand",
+      "official_name": "New Zealand"
     }
   },
   {
     "model": "core.country",
     "pk": "OM",
     "fields": {
-      "name": "Oman"
+      "name": "Oman",
+      "official_name": "Sultanate of Oman"
     }
   },
   {
     "model": "core.country",
     "pk": "PA",
     "fields": {
-      "name": "Panama"
+      "name": "Panama",
+      "official_name": "Republic of Panama"
     }
   },
   {
     "model": "core.country",
     "pk": "PE",
     "fields": {
-      "name": "Peru"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "PF",
-    "fields": {
-      "name": "French Polynesia"
+      "name": "Peru",
+      "official_name": "Republic of Peru"
     }
   },
   {
     "model": "core.country",
     "pk": "PG",
     "fields": {
-      "name": "Papua New Guinea"
+      "name": "Papua New Guinea",
+      "official_name": "Independent State of Papua New Guinea"
     }
   },
   {
     "model": "core.country",
     "pk": "PH",
     "fields": {
-      "name": "Philippines"
+      "name": "Philippines",
+      "official_name": "Republic of the Philippines"
     }
   },
   {
     "model": "core.country",
     "pk": "PK",
     "fields": {
-      "name": "Pakistan"
+      "name": "Pakistan",
+      "official_name": "Islamic Republic of Pakistan"
     }
   },
   {
     "model": "core.country",
     "pk": "PL",
     "fields": {
-      "name": "Poland"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "PM",
-    "fields": {
-      "name": "Saint Pierre and Miquelon"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "PN",
-    "fields": {
-      "name": "Pitcairn"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "PR",
-    "fields": {
-      "name": "Puerto Rico"
+      "name": "Poland",
+      "official_name": "Republic of Poland"
     }
   },
   {
     "model": "core.country",
     "pk": "PS",
     "fields": {
-      "name": "Palestine, State of"
+      "name": "Palestine, State of",
+      "official_name": "the State of Palestine"
     }
   },
   {
     "model": "core.country",
     "pk": "PT",
     "fields": {
-      "name": "Portugal"
+      "name": "Portugal",
+      "official_name": "Portuguese Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "PW",
     "fields": {
-      "name": "Palau"
+      "name": "Palau",
+      "official_name": "Republic of Palau"
     }
   },
   {
     "model": "core.country",
     "pk": "PY",
     "fields": {
-      "name": "Paraguay"
+      "name": "Paraguay",
+      "official_name": "Republic of Paraguay"
     }
   },
   {
     "model": "core.country",
     "pk": "QA",
     "fields": {
-      "name": "Qatar"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "RE",
-    "fields": {
-      "name": "Réunion"
+      "name": "Qatar",
+      "official_name": "State of Qatar"
     }
   },
   {
     "model": "core.country",
     "pk": "RO",
     "fields": {
-      "name": "Romania"
+      "name": "Romania",
+      "official_name": "Romania"
     }
   },
   {
     "model": "core.country",
     "pk": "RS",
     "fields": {
-      "name": "Serbia"
+      "name": "Serbia",
+      "official_name": "Republic of Serbia"
     }
   },
   {
     "model": "core.country",
     "pk": "RU",
     "fields": {
-      "name": "Russian Federation"
+      "name": "Russian Federation",
+      "official_name": "Russian Federation"
     }
   },
   {
     "model": "core.country",
     "pk": "RW",
     "fields": {
-      "name": "Rwanda"
+      "name": "Rwanda",
+      "official_name": "Rwandese Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "SA",
     "fields": {
-      "name": "Saudi Arabia"
+      "name": "Saudi Arabia",
+      "official_name": "Kingdom of Saudi Arabia"
     }
   },
   {
     "model": "core.country",
     "pk": "SB",
     "fields": {
-      "name": "Solomon Islands"
+      "name": "Solomon Islands",
+      "official_name": "Solomon Islands"
     }
   },
   {
     "model": "core.country",
     "pk": "SC",
     "fields": {
-      "name": "Seychelles"
+      "name": "Seychelles",
+      "official_name": "Republic of Seychelles"
     }
   },
   {
     "model": "core.country",
     "pk": "SD",
     "fields": {
-      "name": "Sudan"
+      "name": "Sudan",
+      "official_name": "Republic of the Sudan"
     }
   },
   {
     "model": "core.country",
     "pk": "SE",
     "fields": {
-      "name": "Sweden"
+      "name": "Sweden",
+      "official_name": "Kingdom of Sweden"
     }
   },
   {
     "model": "core.country",
     "pk": "SG",
     "fields": {
-      "name": "Singapore"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "SH",
-    "fields": {
-      "name": "Saint Helena, Ascension and Tristan da Cunha"
+      "name": "Singapore",
+      "official_name": "Republic of Singapore"
     }
   },
   {
     "model": "core.country",
     "pk": "SI",
     "fields": {
-      "name": "Slovenia"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "SJ",
-    "fields": {
-      "name": "Svalbard and Jan Mayen"
+      "name": "Slovenia",
+      "official_name": "Republic of Slovenia"
     }
   },
   {
     "model": "core.country",
     "pk": "SK",
     "fields": {
-      "name": "Slovakia"
+      "name": "Slovakia",
+      "official_name": "Slovak Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "SL",
     "fields": {
-      "name": "Sierra Leone"
+      "name": "Sierra Leone",
+      "official_name": "Republic of Sierra Leone"
     }
   },
   {
     "model": "core.country",
     "pk": "SM",
     "fields": {
-      "name": "San Marino"
+      "name": "San Marino",
+      "official_name": "Republic of San Marino"
     }
   },
   {
     "model": "core.country",
     "pk": "SN",
     "fields": {
-      "name": "Senegal"
+      "name": "Senegal",
+      "official_name": "Republic of Senegal"
     }
   },
   {
     "model": "core.country",
     "pk": "SO",
     "fields": {
-      "name": "Somalia"
+      "name": "Somalia",
+      "official_name": "Federal Republic of Somalia"
     }
   },
   {
     "model": "core.country",
     "pk": "SR",
     "fields": {
-      "name": "Suriname"
+      "name": "Suriname",
+      "official_name": "Republic of Suriname"
     }
   },
   {
     "model": "core.country",
     "pk": "SS",
     "fields": {
-      "name": "South Sudan"
+      "name": "South Sudan",
+      "official_name": "Republic of South Sudan"
     }
   },
   {
     "model": "core.country",
     "pk": "ST",
     "fields": {
-      "name": "Sao Tome and Principe"
+      "name": "Sao Tome and Principe",
+      "official_name": "Democratic Republic of Sao Tome and Principe"
     }
   },
   {
     "model": "core.country",
     "pk": "SV",
     "fields": {
-      "name": "El Salvador"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "SX",
-    "fields": {
-      "name": "Sint Maarten (Dutch part)"
+      "name": "El Salvador",
+      "official_name": "Republic of El Salvador"
     }
   },
   {
     "model": "core.country",
     "pk": "SY",
     "fields": {
-      "name": "Syrian Arab Republic"
+      "name": "Syrian Arab Republic",
+      "official_name": "Syrian Arab Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "SZ",
     "fields": {
-      "name": "Eswatini"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "TC",
-    "fields": {
-      "name": "Turks and Caicos Islands"
+      "name": "Eswatini",
+      "official_name": "Kingdom of Eswatini"
     }
   },
   {
     "model": "core.country",
     "pk": "TD",
     "fields": {
-      "name": "Chad"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "TF",
-    "fields": {
-      "name": "French Southern Territories"
+      "name": "Chad",
+      "official_name": "Republic of Chad"
     }
   },
   {
     "model": "core.country",
     "pk": "TG",
     "fields": {
-      "name": "Togo"
+      "name": "Togo",
+      "official_name": "Togolese Republic"
     }
   },
   {
     "model": "core.country",
     "pk": "TH",
     "fields": {
-      "name": "Thailand"
+      "name": "Thailand",
+      "official_name": "Kingdom of Thailand"
     }
   },
   {
     "model": "core.country",
     "pk": "TJ",
     "fields": {
-      "name": "Tajikistan"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "TK",
-    "fields": {
-      "name": "Tokelau"
+      "name": "Tajikistan",
+      "official_name": "Republic of Tajikistan"
     }
   },
   {
     "model": "core.country",
     "pk": "TL",
     "fields": {
-      "name": "Timor-Leste"
+      "name": "Timor-Leste",
+      "official_name": "Democratic Republic of Timor-Leste"
     }
   },
   {
     "model": "core.country",
     "pk": "TM",
     "fields": {
-      "name": "Turkmenistan"
+      "name": "Turkmenistan",
+      "official_name": "Turkmenistan"
     }
   },
   {
     "model": "core.country",
     "pk": "TN",
     "fields": {
-      "name": "Tunisia"
+      "name": "Tunisia",
+      "official_name": "Republic of Tunisia"
     }
   },
   {
     "model": "core.country",
     "pk": "TO",
     "fields": {
-      "name": "Tonga"
+      "name": "Tonga",
+      "official_name": "Kingdom of Tonga"
     }
   },
   {
     "model": "core.country",
     "pk": "TR",
     "fields": {
-      "name": "Türkiye"
+      "name": "Türkiye",
+      "official_name": "Republic of Türkiye"
     }
   },
   {
     "model": "core.country",
     "pk": "TT",
     "fields": {
-      "name": "Trinidad and Tobago"
+      "name": "Trinidad and Tobago",
+      "official_name": "Republic of Trinidad and Tobago"
     }
   },
   {
     "model": "core.country",
     "pk": "TV",
     "fields": {
-      "name": "Tuvalu"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "TW",
-    "fields": {
-      "name": "Taiwan, Province of China"
+      "name": "Tuvalu",
+      "official_name": "Tuvalu"
     }
   },
   {
     "model": "core.country",
     "pk": "TZ",
     "fields": {
-      "name": "Tanzania, United Republic of"
+      "name": "Tanzania, United Republic of",
+      "official_name": "United Republic of Tanzania"
     }
   },
   {
     "model": "core.country",
     "pk": "UA",
     "fields": {
-      "name": "Ukraine"
+      "name": "Ukraine",
+      "official_name": "Ukraine"
     }
   },
   {
     "model": "core.country",
     "pk": "UG",
     "fields": {
-      "name": "Uganda"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "UM",
-    "fields": {
-      "name": "United States Minor Outlying Islands"
+      "name": "Uganda",
+      "official_name": "Republic of Uganda"
     }
   },
   {
     "model": "core.country",
     "pk": "US",
     "fields": {
-      "name": "United States"
+      "name": "United States",
+      "official_name": "United States of America"
     }
   },
   {
     "model": "core.country",
     "pk": "UY",
     "fields": {
-      "name": "Uruguay"
+      "name": "Uruguay",
+      "official_name": "Eastern Republic of Uruguay"
     }
   },
   {
     "model": "core.country",
     "pk": "UZ",
     "fields": {
-      "name": "Uzbekistan"
+      "name": "Uzbekistan",
+      "official_name": "Republic of Uzbekistan"
     }
   },
   {
     "model": "core.country",
     "pk": "VA",
     "fields": {
-      "name": "Holy See (Vatican City State)"
+      "name": "Holy See (Vatican City State)",
+      "official_name": "Holy See (Vatican City State)"
     }
   },
   {
     "model": "core.country",
     "pk": "VC",
     "fields": {
-      "name": "Saint Vincent and the Grenadines"
+      "name": "Saint Vincent and the Grenadines",
+      "official_name": "Saint Vincent and the Grenadines"
     }
   },
   {
     "model": "core.country",
     "pk": "VE",
     "fields": {
-      "name": "Venezuela, Bolivarian Republic of"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "VG",
-    "fields": {
-      "name": "Virgin Islands, British"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "VI",
-    "fields": {
-      "name": "Virgin Islands, U.S."
+      "name": "Venezuela, Bolivarian Republic of",
+      "official_name": "Bolivarian Republic of Venezuela"
     }
   },
   {
     "model": "core.country",
     "pk": "VN",
     "fields": {
-      "name": "Viet Nam"
+      "name": "Viet Nam",
+      "official_name": "Socialist Republic of Viet Nam"
     }
   },
   {
     "model": "core.country",
     "pk": "VU",
     "fields": {
-      "name": "Vanuatu"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "WF",
-    "fields": {
-      "name": "Wallis and Futuna"
+      "name": "Vanuatu",
+      "official_name": "Republic of Vanuatu"
     }
   },
   {
     "model": "core.country",
     "pk": "WS",
     "fields": {
-      "name": "Samoa"
+      "name": "Samoa",
+      "official_name": "Independent State of Samoa"
     }
   },
   {
     "model": "core.country",
     "pk": "YE",
     "fields": {
-      "name": "Yemen"
-    }
-  },
-  {
-    "model": "core.country",
-    "pk": "YT",
-    "fields": {
-      "name": "Mayotte"
+      "name": "Yemen",
+      "official_name": "Republic of Yemen"
     }
   },
   {
     "model": "core.country",
     "pk": "ZA",
     "fields": {
-      "name": "South Africa"
+      "name": "South Africa",
+      "official_name": "Republic of South Africa"
     }
   },
   {
     "model": "core.country",
     "pk": "ZM",
     "fields": {
-      "name": "Zambia"
+      "name": "Zambia",
+      "official_name": "Republic of Zambia"
     }
   },
   {
     "model": "core.country",
     "pk": "ZW",
     "fields": {
-      "name": "Zimbabwe"
+      "name": "Zimbabwe",
+      "official_name": "Republic of Zimbabwe"
     }
   }
 ]

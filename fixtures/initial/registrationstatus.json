@@ -1,26 +1,26 @@
 [
-{
-  "model": "events.registrationstatus",
-  "pk": 1,
-  "fields": {
-    "name": "Nominated",
-    "kronos_value": 1
+  {
+    "model": "events.registrationstatus",
+    "pk": 1,
+    "fields": {
+      "name": "Nominated",
+      "kronos_value": 1
+    }
+  },
+  {
+    "model": "events.registrationstatus",
+    "pk": 2,
+    "fields": {
+      "name": "Accredited",
+      "kronos_value": 2
+    }
+  },
+  {
+    "model": "events.registrationstatus",
+    "pk": 3,
+    "fields": {
+      "name": "Registered",
+      "kronos_value": 4
+    }
   }
-},
-{
-  "model": "events.registrationstatus",
-  "pk": 2,
-  "fields": {
-    "name": "Accredited",
-    "kronos_value": 2
-  }
-},
-{
-  "model": "events.registrationstatus",
-  "pk": 3,
-  "fields": {
-    "name": "Registered",
-    "kronos_value": 4
-  }
-}
 ]

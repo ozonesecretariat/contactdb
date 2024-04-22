@@ -3,7 +3,7 @@
     "model": "core.groupmembership",
     "pk": 1,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 2,
       "created_at": "2024-04-15T12:51:55.456Z",
       "updated_at": "2024-04-15T12:51:55.456Z"
@@ -13,7 +13,7 @@
     "model": "core.groupmembership",
     "pk": 2,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 2,
       "created_at": "2024-04-15T12:51:55.460Z",
       "updated_at": "2024-04-15T12:51:55.460Z"
@@ -23,7 +23,7 @@
     "model": "core.groupmembership",
     "pk": 3,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 2,
       "created_at": "2024-04-15T12:51:55.462Z",
       "updated_at": "2024-04-15T12:51:55.462Z"
@@ -33,7 +33,7 @@
     "model": "core.groupmembership",
     "pk": 4,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 3,
       "created_at": "2024-04-15T12:51:55.506Z",
       "updated_at": "2024-04-15T12:51:55.506Z"
@@ -43,7 +43,7 @@
     "model": "core.groupmembership",
     "pk": 5,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 3,
       "created_at": "2024-04-15T12:51:55.510Z",
       "updated_at": "2024-04-15T12:51:55.511Z"
@@ -53,7 +53,7 @@
     "model": "core.groupmembership",
     "pk": 6,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 4,
       "created_at": "2024-04-15T12:51:55.557Z",
       "updated_at": "2024-04-15T12:51:55.557Z"
@@ -63,7 +63,7 @@
     "model": "core.groupmembership",
     "pk": 7,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 4,
       "created_at": "2024-04-15T12:51:55.561Z",
       "updated_at": "2024-04-15T12:51:55.561Z"
@@ -73,7 +73,7 @@
     "model": "core.groupmembership",
     "pk": 8,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 4,
       "created_at": "2024-04-15T12:51:55.565Z",
       "updated_at": "2024-04-15T12:51:55.565Z"
@@ -83,7 +83,7 @@
     "model": "core.groupmembership",
     "pk": 9,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 5,
       "created_at": "2024-04-15T12:51:55.574Z",
       "updated_at": "2024-04-15T12:51:55.574Z"
@@ -93,7 +93,7 @@
     "model": "core.groupmembership",
     "pk": 10,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 6,
       "created_at": "2024-04-15T12:51:55.624Z",
       "updated_at": "2024-04-15T12:51:55.624Z"
@@ -103,7 +103,7 @@
     "model": "core.groupmembership",
     "pk": 11,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 6,
       "created_at": "2024-04-15T12:51:55.628Z",
       "updated_at": "2024-04-15T12:51:55.628Z"
@@ -113,7 +113,7 @@
     "model": "core.groupmembership",
     "pk": 12,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 6,
       "created_at": "2024-04-15T12:51:55.632Z",
       "updated_at": "2024-04-15T12:51:55.632Z"
@@ -123,7 +123,7 @@
     "model": "core.groupmembership",
     "pk": 13,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 6,
       "created_at": "2024-04-15T12:51:55.635Z",
       "updated_at": "2024-04-15T12:51:55.635Z"
@@ -133,7 +133,7 @@
     "model": "core.groupmembership",
     "pk": 14,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 7,
       "created_at": "2024-04-15T12:51:55.753Z",
       "updated_at": "2024-04-15T12:51:55.753Z"
@@ -143,7 +143,7 @@
     "model": "core.groupmembership",
     "pk": 15,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 7,
       "created_at": "2024-04-15T12:51:55.757Z",
       "updated_at": "2024-04-15T12:51:55.757Z"
@@ -153,7 +153,7 @@
     "model": "core.groupmembership",
     "pk": 16,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 7,
       "created_at": "2024-04-15T12:51:55.760Z",
       "updated_at": "2024-04-15T12:51:55.760Z"
@@ -163,7 +163,7 @@
     "model": "core.groupmembership",
     "pk": 17,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 7,
       "created_at": "2024-04-15T12:51:55.764Z",
       "updated_at": "2024-04-15T12:51:55.764Z"
@@ -173,7 +173,7 @@
     "model": "core.groupmembership",
     "pk": 18,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 8,
       "created_at": "2024-04-15T12:51:55.872Z",
       "updated_at": "2024-04-15T12:51:55.872Z"
@@ -183,7 +183,7 @@
     "model": "core.groupmembership",
     "pk": 19,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 8,
       "created_at": "2024-04-15T12:51:55.874Z",
       "updated_at": "2024-04-15T12:51:55.874Z"
@@ -193,7 +193,7 @@
     "model": "core.groupmembership",
     "pk": 20,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 9,
       "created_at": "2024-04-15T12:51:55.881Z",
       "updated_at": "2024-04-15T12:51:55.881Z"
@@ -203,7 +203,7 @@
     "model": "core.groupmembership",
     "pk": 21,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 10,
       "created_at": "2024-04-15T12:51:55.932Z",
       "updated_at": "2024-04-15T12:51:55.932Z"
@@ -213,7 +213,7 @@
     "model": "core.groupmembership",
     "pk": 22,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 10,
       "created_at": "2024-04-15T12:51:55.934Z",
       "updated_at": "2024-04-15T12:51:55.934Z"
@@ -223,7 +223,7 @@
     "model": "core.groupmembership",
     "pk": 23,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 10,
       "created_at": "2024-04-15T12:51:55.936Z",
       "updated_at": "2024-04-15T12:51:55.936Z"
@@ -233,7 +233,7 @@
     "model": "core.groupmembership",
     "pk": 24,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 10,
       "created_at": "2024-04-15T12:51:55.938Z",
       "updated_at": "2024-04-15T12:51:55.938Z"
@@ -243,7 +243,7 @@
     "model": "core.groupmembership",
     "pk": 25,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 11,
       "created_at": "2024-04-15T12:51:56Z",
       "updated_at": "2024-04-15T12:51:56Z"
@@ -253,7 +253,7 @@
     "model": "core.groupmembership",
     "pk": 26,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 15,
       "created_at": "2024-04-15T12:51:56.054Z",
       "updated_at": "2024-04-15T12:51:56.054Z"
@@ -263,7 +263,7 @@
     "model": "core.groupmembership",
     "pk": 27,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 17,
       "created_at": "2024-04-15T12:51:56.161Z",
       "updated_at": "2024-04-15T12:51:56.161Z"
@@ -273,7 +273,7 @@
     "model": "core.groupmembership",
     "pk": 28,
     "fields": {
-      "group": 13,
+      "group": ["Music Maniacs Association"],
       "contact": 17,
       "created_at": "2024-04-15T12:51:56.164Z",
       "updated_at": "2024-04-15T12:51:56.164Z"
@@ -283,7 +283,7 @@
     "model": "core.groupmembership",
     "pk": 29,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 17,
       "created_at": "2024-04-15T12:51:56.168Z",
       "updated_at": "2024-04-15T12:51:56.168Z"
@@ -293,7 +293,7 @@
     "model": "core.groupmembership",
     "pk": 30,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 18,
       "created_at": "2024-04-15T12:51:56.227Z",
       "updated_at": "2024-04-15T12:51:56.227Z"
@@ -303,7 +303,7 @@
     "model": "core.groupmembership",
     "pk": 31,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 19,
       "created_at": "2024-04-15T12:51:56.257Z",
       "updated_at": "2024-04-15T12:51:56.257Z"
@@ -313,7 +313,7 @@
     "model": "core.groupmembership",
     "pk": 32,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 19,
       "created_at": "2024-04-15T12:51:56.260Z",
       "updated_at": "2024-04-15T12:51:56.260Z"
@@ -323,7 +323,7 @@
     "model": "core.groupmembership",
     "pk": 33,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 19,
       "created_at": "2024-04-15T12:51:56.264Z",
       "updated_at": "2024-04-15T12:51:56.264Z"
@@ -333,7 +333,7 @@
     "model": "core.groupmembership",
     "pk": 34,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 19,
       "created_at": "2024-04-15T12:51:56.267Z",
       "updated_at": "2024-04-15T12:51:56.267Z"
@@ -343,7 +343,7 @@
     "model": "core.groupmembership",
     "pk": 36,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 21,
       "created_at": "2024-04-15T12:51:56.398Z",
       "updated_at": "2024-04-15T12:51:56.398Z"
@@ -353,7 +353,7 @@
     "model": "core.groupmembership",
     "pk": 37,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 21,
       "created_at": "2024-04-15T12:51:56.402Z",
       "updated_at": "2024-04-15T12:51:56.402Z"
@@ -363,7 +363,7 @@
     "model": "core.groupmembership",
     "pk": 38,
     "fields": {
-      "group": 13,
+      "group": ["Music Maniacs Association"],
       "contact": 21,
       "created_at": "2024-04-15T12:51:56.405Z",
       "updated_at": "2024-04-15T12:51:56.405Z"
@@ -373,7 +373,7 @@
     "model": "core.groupmembership",
     "pk": 39,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 22,
       "created_at": "2024-04-15T12:51:56.468Z",
       "updated_at": "2024-04-15T12:51:56.468Z"
@@ -383,7 +383,7 @@
     "model": "core.groupmembership",
     "pk": 40,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 22,
       "created_at": "2024-04-15T12:51:56.471Z",
       "updated_at": "2024-04-15T12:51:56.472Z"
@@ -393,7 +393,7 @@
     "model": "core.groupmembership",
     "pk": 41,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 22,
       "created_at": "2024-04-15T12:51:56.475Z",
       "updated_at": "2024-04-15T12:51:56.475Z"
@@ -403,7 +403,7 @@
     "model": "core.groupmembership",
     "pk": 42,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 22,
       "created_at": "2024-04-15T12:51:56.478Z",
       "updated_at": "2024-04-15T12:51:56.478Z"
@@ -413,7 +413,7 @@
     "model": "core.groupmembership",
     "pk": 43,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 23,
       "created_at": "2024-04-15T12:51:56.526Z",
       "updated_at": "2024-04-15T12:51:56.526Z"
@@ -423,7 +423,7 @@
     "model": "core.groupmembership",
     "pk": 44,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 24,
       "created_at": "2024-04-15T12:51:56.634Z",
       "updated_at": "2024-04-15T12:51:56.634Z"
@@ -433,7 +433,7 @@
     "model": "core.groupmembership",
     "pk": 45,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 24,
       "created_at": "2024-04-15T12:51:56.637Z",
       "updated_at": "2024-04-15T12:51:56.637Z"
@@ -443,7 +443,7 @@
     "model": "core.groupmembership",
     "pk": 46,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 26,
       "created_at": "2024-04-15T12:51:56.784Z",
       "updated_at": "2024-04-15T12:51:56.784Z"
@@ -453,7 +453,7 @@
     "model": "core.groupmembership",
     "pk": 47,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 28,
       "created_at": "2024-04-15T12:51:56.928Z",
       "updated_at": "2024-04-15T12:51:56.928Z"
@@ -463,7 +463,7 @@
     "model": "core.groupmembership",
     "pk": 48,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 28,
       "created_at": "2024-04-15T12:51:56.930Z",
       "updated_at": "2024-04-15T12:51:56.930Z"
@@ -473,7 +473,7 @@
     "model": "core.groupmembership",
     "pk": 49,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 28,
       "created_at": "2024-04-15T12:51:56.931Z",
       "updated_at": "2024-04-15T12:51:56.931Z"
@@ -483,7 +483,7 @@
     "model": "core.groupmembership",
     "pk": 50,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 32,
       "created_at": "2024-04-15T12:51:57.222Z",
       "updated_at": "2024-04-15T12:51:57.222Z"
@@ -493,7 +493,7 @@
     "model": "core.groupmembership",
     "pk": 51,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 34,
       "created_at": "2024-04-15T12:51:57.292Z",
       "updated_at": "2024-04-15T12:51:57.292Z"
@@ -503,7 +503,7 @@
     "model": "core.groupmembership",
     "pk": 52,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 34,
       "created_at": "2024-04-15T12:51:57.296Z",
       "updated_at": "2024-04-15T12:51:57.296Z"
@@ -513,7 +513,7 @@
     "model": "core.groupmembership",
     "pk": 53,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 34,
       "created_at": "2024-04-15T12:51:57.299Z",
       "updated_at": "2024-04-15T12:51:57.299Z"
@@ -523,7 +523,7 @@
     "model": "core.groupmembership",
     "pk": 54,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 36,
       "created_at": "2024-04-15T12:51:57.435Z",
       "updated_at": "2024-04-15T12:51:57.435Z"
@@ -533,7 +533,7 @@
     "model": "core.groupmembership",
     "pk": 55,
     "fields": {
-      "group": 19,
+      "group": ["Artistic Avengers Assembly"],
       "contact": 36,
       "created_at": "2024-04-15T12:51:57.439Z",
       "updated_at": "2024-04-15T12:51:57.439Z"
@@ -543,7 +543,7 @@
     "model": "core.groupmembership",
     "pk": 56,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 36,
       "created_at": "2024-04-15T12:51:57.442Z",
       "updated_at": "2024-04-15T12:51:57.442Z"
@@ -553,7 +553,7 @@
     "model": "core.groupmembership",
     "pk": 57,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 36,
       "created_at": "2024-04-15T12:51:57.445Z",
       "updated_at": "2024-04-15T12:51:57.446Z"
@@ -563,7 +563,7 @@
     "model": "core.groupmembership",
     "pk": 58,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 38,
       "created_at": "2024-04-15T12:51:57.650Z",
       "updated_at": "2024-04-15T12:51:57.650Z"
@@ -573,7 +573,7 @@
     "model": "core.groupmembership",
     "pk": 59,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 38,
       "created_at": "2024-04-15T12:51:57.654Z",
       "updated_at": "2024-04-15T12:51:57.654Z"
@@ -583,7 +583,7 @@
     "model": "core.groupmembership",
     "pk": 60,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 38,
       "created_at": "2024-04-15T12:51:57.658Z",
       "updated_at": "2024-04-15T12:51:57.658Z"
@@ -593,7 +593,7 @@
     "model": "core.groupmembership",
     "pk": 61,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 38,
       "created_at": "2024-04-15T12:51:57.662Z",
       "updated_at": "2024-04-15T12:51:57.662Z"
@@ -603,7 +603,7 @@
     "model": "core.groupmembership",
     "pk": 62,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 39,
       "created_at": "2024-04-15T12:51:57.687Z",
       "updated_at": "2024-04-15T12:51:57.687Z"
@@ -613,7 +613,7 @@
     "model": "core.groupmembership",
     "pk": 63,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 39,
       "created_at": "2024-04-15T12:51:57.691Z",
       "updated_at": "2024-04-15T12:51:57.691Z"
@@ -623,7 +623,7 @@
     "model": "core.groupmembership",
     "pk": 64,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 40,
       "created_at": "2024-04-15T12:51:57.840Z",
       "updated_at": "2024-04-15T12:51:57.840Z"
@@ -633,7 +633,7 @@
     "model": "core.groupmembership",
     "pk": 65,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 40,
       "created_at": "2024-04-15T12:51:57.843Z",
       "updated_at": "2024-04-15T12:51:57.843Z"
@@ -643,7 +643,7 @@
     "model": "core.groupmembership",
     "pk": 66,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 40,
       "created_at": "2024-04-15T12:51:57.847Z",
       "updated_at": "2024-04-15T12:51:57.847Z"
@@ -653,7 +653,7 @@
     "model": "core.groupmembership",
     "pk": 67,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 40,
       "created_at": "2024-04-15T12:51:57.850Z",
       "updated_at": "2024-04-15T12:51:57.850Z"
@@ -663,7 +663,7 @@
     "model": "core.groupmembership",
     "pk": 68,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 41,
       "created_at": "2024-04-15T12:51:57.914Z",
       "updated_at": "2024-04-15T12:51:57.914Z"
@@ -673,7 +673,7 @@
     "model": "core.groupmembership",
     "pk": 69,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 41,
       "created_at": "2024-04-15T12:51:57.918Z",
       "updated_at": "2024-04-15T12:51:57.918Z"
@@ -683,7 +683,7 @@
     "model": "core.groupmembership",
     "pk": 70,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 41,
       "created_at": "2024-04-15T12:51:57.921Z",
       "updated_at": "2024-04-15T12:51:57.921Z"
@@ -693,7 +693,7 @@
     "model": "core.groupmembership",
     "pk": 71,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 42,
       "created_at": "2024-04-15T12:51:57.967Z",
       "updated_at": "2024-04-15T12:51:57.967Z"
@@ -703,7 +703,7 @@
     "model": "core.groupmembership",
     "pk": 72,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 43,
       "created_at": "2024-04-15T12:51:58.070Z",
       "updated_at": "2024-04-15T12:51:58.070Z"
@@ -713,7 +713,7 @@
     "model": "core.groupmembership",
     "pk": 73,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 43,
       "created_at": "2024-04-15T12:51:58.073Z",
       "updated_at": "2024-04-15T12:51:58.073Z"
@@ -723,7 +723,7 @@
     "model": "core.groupmembership",
     "pk": 74,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 43,
       "created_at": "2024-04-15T12:51:58.076Z",
       "updated_at": "2024-04-15T12:51:58.076Z"
@@ -733,7 +733,7 @@
     "model": "core.groupmembership",
     "pk": 75,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 44,
       "created_at": "2024-04-15T12:51:58.242Z",
       "updated_at": "2024-04-15T12:51:58.242Z"
@@ -743,7 +743,7 @@
     "model": "core.groupmembership",
     "pk": 76,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 44,
       "created_at": "2024-04-15T12:51:58.246Z",
       "updated_at": "2024-04-15T12:51:58.246Z"
@@ -753,7 +753,7 @@
     "model": "core.groupmembership",
     "pk": 77,
     "fields": {
-      "group": 13,
+      "group": ["Music Maniacs Association"],
       "contact": 44,
       "created_at": "2024-04-15T12:51:58.249Z",
       "updated_at": "2024-04-15T12:51:58.249Z"
@@ -763,7 +763,7 @@
     "model": "core.groupmembership",
     "pk": 78,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 45,
       "created_at": "2024-04-15T12:51:58.320Z",
       "updated_at": "2024-04-15T12:51:58.320Z"
@@ -773,7 +773,7 @@
     "model": "core.groupmembership",
     "pk": 79,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 45,
       "created_at": "2024-04-15T12:51:58.323Z",
       "updated_at": "2024-04-15T12:51:58.323Z"
@@ -783,7 +783,7 @@
     "model": "core.groupmembership",
     "pk": 80,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 45,
       "created_at": "2024-04-15T12:51:58.327Z",
       "updated_at": "2024-04-15T12:51:58.327Z"
@@ -793,7 +793,7 @@
     "model": "core.groupmembership",
     "pk": 81,
     "fields": {
-      "group": 19,
+      "group": ["Artistic Avengers Assembly"],
       "contact": 45,
       "created_at": "2024-04-15T12:51:58.330Z",
       "updated_at": "2024-04-15T12:51:58.330Z"
@@ -803,7 +803,7 @@
     "model": "core.groupmembership",
     "pk": 82,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 46,
       "created_at": "2024-04-15T12:51:58.423Z",
       "updated_at": "2024-04-15T12:51:58.423Z"
@@ -813,7 +813,7 @@
     "model": "core.groupmembership",
     "pk": 83,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 46,
       "created_at": "2024-04-15T12:51:58.426Z",
       "updated_at": "2024-04-15T12:51:58.426Z"
@@ -823,7 +823,7 @@
     "model": "core.groupmembership",
     "pk": 84,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 46,
       "created_at": "2024-04-15T12:51:58.429Z",
       "updated_at": "2024-04-15T12:51:58.429Z"
@@ -833,7 +833,7 @@
     "model": "core.groupmembership",
     "pk": 85,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 46,
       "created_at": "2024-04-15T12:51:58.433Z",
       "updated_at": "2024-04-15T12:51:58.433Z"
@@ -843,7 +843,7 @@
     "model": "core.groupmembership",
     "pk": 86,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 47,
       "created_at": "2024-04-15T12:51:58.463Z",
       "updated_at": "2024-04-15T12:51:58.463Z"
@@ -853,7 +853,7 @@
     "model": "core.groupmembership",
     "pk": 87,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 48,
       "created_at": "2024-04-15T12:51:58.547Z",
       "updated_at": "2024-04-15T12:51:58.547Z"
@@ -863,7 +863,7 @@
     "model": "core.groupmembership",
     "pk": 88,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 49,
       "created_at": "2024-04-15T12:51:58.581Z",
       "updated_at": "2024-04-15T12:51:58.581Z"
@@ -873,7 +873,7 @@
     "model": "core.groupmembership",
     "pk": 89,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 49,
       "created_at": "2024-04-15T12:51:58.584Z",
       "updated_at": "2024-04-15T12:51:58.584Z"
@@ -883,7 +883,7 @@
     "model": "core.groupmembership",
     "pk": 90,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 49,
       "created_at": "2024-04-15T12:51:58.588Z",
       "updated_at": "2024-04-15T12:51:58.588Z"
@@ -893,7 +893,7 @@
     "model": "core.groupmembership",
     "pk": 98,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 55,
       "created_at": "2024-04-15T12:51:59.018Z",
       "updated_at": "2024-04-15T12:51:59.018Z"
@@ -903,7 +903,7 @@
     "model": "core.groupmembership",
     "pk": 99,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 56,
       "created_at": "2024-04-15T12:51:59.023Z",
       "updated_at": "2024-04-15T12:51:59.023Z"
@@ -913,7 +913,7 @@
     "model": "core.groupmembership",
     "pk": 100,
     "fields": {
-      "group": 13,
+      "group": ["Music Maniacs Association"],
       "contact": 56,
       "created_at": "2024-04-15T12:51:59.024Z",
       "updated_at": "2024-04-15T12:51:59.024Z"
@@ -923,7 +923,7 @@
     "model": "core.groupmembership",
     "pk": 101,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 56,
       "created_at": "2024-04-15T12:51:59.026Z",
       "updated_at": "2024-04-15T12:51:59.026Z"
@@ -933,7 +933,7 @@
     "model": "core.groupmembership",
     "pk": 102,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 56,
       "created_at": "2024-04-15T12:51:59.028Z",
       "updated_at": "2024-04-15T12:51:59.028Z"
@@ -943,7 +943,7 @@
     "model": "core.groupmembership",
     "pk": 103,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 57,
       "created_at": "2024-04-15T12:51:59.066Z",
       "updated_at": "2024-04-15T12:51:59.066Z"
@@ -953,7 +953,7 @@
     "model": "core.groupmembership",
     "pk": 104,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 58,
       "created_at": "2024-04-15T12:51:59.176Z",
       "updated_at": "2024-04-15T12:51:59.176Z"
@@ -963,7 +963,7 @@
     "model": "core.groupmembership",
     "pk": 105,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 58,
       "created_at": "2024-04-15T12:51:59.180Z",
       "updated_at": "2024-04-15T12:51:59.180Z"
@@ -973,7 +973,7 @@
     "model": "core.groupmembership",
     "pk": 106,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 60,
       "created_at": "2024-04-15T12:51:59.311Z",
       "updated_at": "2024-04-15T12:51:59.311Z"
@@ -983,7 +983,7 @@
     "model": "core.groupmembership",
     "pk": 107,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 61,
       "created_at": "2024-04-15T12:51:59.351Z",
       "updated_at": "2024-04-15T12:51:59.351Z"
@@ -993,7 +993,7 @@
     "model": "core.groupmembership",
     "pk": 108,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 62,
       "created_at": "2024-04-15T12:51:59.469Z",
       "updated_at": "2024-04-15T12:51:59.469Z"
@@ -1003,7 +1003,7 @@
     "model": "core.groupmembership",
     "pk": 109,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 62,
       "created_at": "2024-04-15T12:51:59.473Z",
       "updated_at": "2024-04-15T12:51:59.473Z"
@@ -1013,7 +1013,7 @@
     "model": "core.groupmembership",
     "pk": 110,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 63,
       "created_at": "2024-04-15T12:51:59.533Z",
       "updated_at": "2024-04-15T12:51:59.533Z"
@@ -1023,7 +1023,7 @@
     "model": "core.groupmembership",
     "pk": 111,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 63,
       "created_at": "2024-04-15T12:51:59.537Z",
       "updated_at": "2024-04-15T12:51:59.537Z"
@@ -1033,7 +1033,7 @@
     "model": "core.groupmembership",
     "pk": 112,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 64,
       "created_at": "2024-04-15T12:51:59.651Z",
       "updated_at": "2024-04-15T12:51:59.651Z"
@@ -1043,7 +1043,7 @@
     "model": "core.groupmembership",
     "pk": 113,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 64,
       "created_at": "2024-04-15T12:51:59.654Z",
       "updated_at": "2024-04-15T12:51:59.654Z"
@@ -1053,7 +1053,7 @@
     "model": "core.groupmembership",
     "pk": 114,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 64,
       "created_at": "2024-04-15T12:51:59.658Z",
       "updated_at": "2024-04-15T12:51:59.658Z"
@@ -1063,7 +1063,7 @@
     "model": "core.groupmembership",
     "pk": 115,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 65,
       "created_at": "2024-04-15T12:51:59.666Z",
       "updated_at": "2024-04-15T12:51:59.666Z"
@@ -1073,7 +1073,7 @@
     "model": "core.groupmembership",
     "pk": 116,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 65,
       "created_at": "2024-04-15T12:51:59.669Z",
       "updated_at": "2024-04-15T12:51:59.669Z"
@@ -1083,7 +1083,7 @@
     "model": "core.groupmembership",
     "pk": 117,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 65,
       "created_at": "2024-04-15T12:51:59.672Z",
       "updated_at": "2024-04-15T12:51:59.672Z"
@@ -1093,7 +1093,7 @@
     "model": "core.groupmembership",
     "pk": 118,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 66,
       "created_at": "2024-04-15T12:51:59.797Z",
       "updated_at": "2024-04-15T12:51:59.797Z"
@@ -1103,7 +1103,7 @@
     "model": "core.groupmembership",
     "pk": 119,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 66,
       "created_at": "2024-04-15T12:51:59.801Z",
       "updated_at": "2024-04-15T12:51:59.801Z"
@@ -1113,7 +1113,7 @@
     "model": "core.groupmembership",
     "pk": 120,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 66,
       "created_at": "2024-04-15T12:51:59.804Z",
       "updated_at": "2024-04-15T12:51:59.805Z"
@@ -1123,7 +1123,7 @@
     "model": "core.groupmembership",
     "pk": 121,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 66,
       "created_at": "2024-04-15T12:51:59.808Z",
       "updated_at": "2024-04-15T12:51:59.808Z"
@@ -1133,7 +1133,7 @@
     "model": "core.groupmembership",
     "pk": 122,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 69,
       "created_at": "2024-04-15T12:51:59.972Z",
       "updated_at": "2024-04-15T12:51:59.972Z"
@@ -1143,7 +1143,7 @@
     "model": "core.groupmembership",
     "pk": 123,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 69,
       "created_at": "2024-04-15T12:51:59.975Z",
       "updated_at": "2024-04-15T12:51:59.975Z"
@@ -1153,7 +1153,7 @@
     "model": "core.groupmembership",
     "pk": 124,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 69,
       "created_at": "2024-04-15T12:51:59.979Z",
       "updated_at": "2024-04-15T12:51:59.979Z"
@@ -1163,7 +1163,7 @@
     "model": "core.groupmembership",
     "pk": 125,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 70,
       "created_at": "2024-04-15T12:52:00.022Z",
       "updated_at": "2024-04-15T12:52:00.022Z"
@@ -1173,7 +1173,7 @@
     "model": "core.groupmembership",
     "pk": 126,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 70,
       "created_at": "2024-04-15T12:52:00.025Z",
       "updated_at": "2024-04-15T12:52:00.025Z"
@@ -1183,7 +1183,7 @@
     "model": "core.groupmembership",
     "pk": 127,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 71,
       "created_at": "2024-04-15T12:52:00.092Z",
       "updated_at": "2024-04-15T12:52:00.092Z"
@@ -1193,7 +1193,7 @@
     "model": "core.groupmembership",
     "pk": 128,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 71,
       "created_at": "2024-04-15T12:52:00.094Z",
       "updated_at": "2024-04-15T12:52:00.094Z"
@@ -1203,7 +1203,7 @@
     "model": "core.groupmembership",
     "pk": 129,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 72,
       "created_at": "2024-04-15T12:52:00.169Z",
       "updated_at": "2024-04-15T12:52:00.169Z"
@@ -1213,7 +1213,7 @@
     "model": "core.groupmembership",
     "pk": 130,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 72,
       "created_at": "2024-04-15T12:52:00.173Z",
       "updated_at": "2024-04-15T12:52:00.173Z"
@@ -1223,7 +1223,7 @@
     "model": "core.groupmembership",
     "pk": 131,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 72,
       "created_at": "2024-04-15T12:52:00.176Z",
       "updated_at": "2024-04-15T12:52:00.176Z"
@@ -1233,7 +1233,7 @@
     "model": "core.groupmembership",
     "pk": 132,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 72,
       "created_at": "2024-04-15T12:52:00.180Z",
       "updated_at": "2024-04-15T12:52:00.180Z"
@@ -1243,7 +1243,7 @@
     "model": "core.groupmembership",
     "pk": 133,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 73,
       "created_at": "2024-04-15T12:52:00.267Z",
       "updated_at": "2024-04-15T12:52:00.267Z"
@@ -1253,7 +1253,7 @@
     "model": "core.groupmembership",
     "pk": 134,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 73,
       "created_at": "2024-04-15T12:52:00.270Z",
       "updated_at": "2024-04-15T12:52:00.270Z"
@@ -1263,7 +1263,7 @@
     "model": "core.groupmembership",
     "pk": 135,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 74,
       "created_at": "2024-04-15T12:52:00.279Z",
       "updated_at": "2024-04-15T12:52:00.279Z"
@@ -1273,7 +1273,7 @@
     "model": "core.groupmembership",
     "pk": 136,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 75,
       "created_at": "2024-04-15T12:52:00.287Z",
       "updated_at": "2024-04-15T12:52:00.287Z"
@@ -1283,7 +1283,7 @@
     "model": "core.groupmembership",
     "pk": 137,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 75,
       "created_at": "2024-04-15T12:52:00.290Z",
       "updated_at": "2024-04-15T12:52:00.290Z"
@@ -1293,7 +1293,7 @@
     "model": "core.groupmembership",
     "pk": 138,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 75,
       "created_at": "2024-04-15T12:52:00.293Z",
       "updated_at": "2024-04-15T12:52:00.293Z"
@@ -1303,7 +1303,7 @@
     "model": "core.groupmembership",
     "pk": 139,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 76,
       "created_at": "2024-04-15T12:52:00.346Z",
       "updated_at": "2024-04-15T12:52:00.346Z"
@@ -1313,7 +1313,7 @@
     "model": "core.groupmembership",
     "pk": 140,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 76,
       "created_at": "2024-04-15T12:52:00.348Z",
       "updated_at": "2024-04-15T12:52:00.348Z"
@@ -1323,7 +1323,7 @@
     "model": "core.groupmembership",
     "pk": 141,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 76,
       "created_at": "2024-04-15T12:52:00.350Z",
       "updated_at": "2024-04-15T12:52:00.350Z"
@@ -1333,7 +1333,7 @@
     "model": "core.groupmembership",
     "pk": 142,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 76,
       "created_at": "2024-04-15T12:52:00.352Z",
       "updated_at": "2024-04-15T12:52:00.352Z"
@@ -1343,7 +1343,7 @@
     "model": "core.groupmembership",
     "pk": 143,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 77,
       "created_at": "2024-04-15T12:52:00.445Z",
       "updated_at": "2024-04-15T12:52:00.445Z"
@@ -1353,7 +1353,7 @@
     "model": "core.groupmembership",
     "pk": 144,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 77,
       "created_at": "2024-04-15T12:52:00.448Z",
       "updated_at": "2024-04-15T12:52:00.448Z"
@@ -1363,7 +1363,7 @@
     "model": "core.groupmembership",
     "pk": 145,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 78,
       "created_at": "2024-04-15T12:52:00.512Z",
       "updated_at": "2024-04-15T12:52:00.512Z"
@@ -1373,7 +1373,7 @@
     "model": "core.groupmembership",
     "pk": 146,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 78,
       "created_at": "2024-04-15T12:52:00.516Z",
       "updated_at": "2024-04-15T12:52:00.516Z"
@@ -1383,7 +1383,7 @@
     "model": "core.groupmembership",
     "pk": 147,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 78,
       "created_at": "2024-04-15T12:52:00.519Z",
       "updated_at": "2024-04-15T12:52:00.519Z"
@@ -1393,7 +1393,7 @@
     "model": "core.groupmembership",
     "pk": 148,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 78,
       "created_at": "2024-04-15T12:52:00.522Z",
       "updated_at": "2024-04-15T12:52:00.522Z"
@@ -1403,7 +1403,7 @@
     "model": "core.groupmembership",
     "pk": 149,
     "fields": {
-      "group": 19,
+      "group": ["Artistic Avengers Assembly"],
       "contact": 79,
       "created_at": "2024-04-15T12:52:00.531Z",
       "updated_at": "2024-04-15T12:52:00.531Z"
@@ -1413,7 +1413,7 @@
     "model": "core.groupmembership",
     "pk": 150,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 79,
       "created_at": "2024-04-15T12:52:00.535Z",
       "updated_at": "2024-04-15T12:52:00.535Z"
@@ -1423,7 +1423,7 @@
     "model": "core.groupmembership",
     "pk": 151,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 80,
       "created_at": "2024-04-15T12:52:00.615Z",
       "updated_at": "2024-04-15T12:52:00.615Z"
@@ -1433,7 +1433,7 @@
     "model": "core.groupmembership",
     "pk": 152,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 80,
       "created_at": "2024-04-15T12:52:00.617Z",
       "updated_at": "2024-04-15T12:52:00.617Z"
@@ -1443,7 +1443,7 @@
     "model": "core.groupmembership",
     "pk": 153,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 80,
       "created_at": "2024-04-15T12:52:00.619Z",
       "updated_at": "2024-04-15T12:52:00.619Z"
@@ -1453,7 +1453,7 @@
     "model": "core.groupmembership",
     "pk": 154,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 80,
       "created_at": "2024-04-15T12:52:00.621Z",
       "updated_at": "2024-04-15T12:52:00.621Z"
@@ -1463,7 +1463,7 @@
     "model": "core.groupmembership",
     "pk": 155,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 82,
       "created_at": "2024-04-15T12:52:00.758Z",
       "updated_at": "2024-04-15T12:52:00.758Z"
@@ -1473,7 +1473,7 @@
     "model": "core.groupmembership",
     "pk": 156,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 82,
       "created_at": "2024-04-15T12:52:00.761Z",
       "updated_at": "2024-04-15T12:52:00.761Z"
@@ -1483,7 +1483,7 @@
     "model": "core.groupmembership",
     "pk": 157,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 82,
       "created_at": "2024-04-15T12:52:00.765Z",
       "updated_at": "2024-04-15T12:52:00.765Z"
@@ -1493,7 +1493,7 @@
     "model": "core.groupmembership",
     "pk": 158,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 83,
       "created_at": "2024-04-15T12:52:00.858Z",
       "updated_at": "2024-04-15T12:52:00.858Z"
@@ -1503,7 +1503,7 @@
     "model": "core.groupmembership",
     "pk": 159,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 83,
       "created_at": "2024-04-15T12:52:00.861Z",
       "updated_at": "2024-04-15T12:52:00.861Z"
@@ -1513,7 +1513,7 @@
     "model": "core.groupmembership",
     "pk": 160,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 84,
       "created_at": "2024-04-15T12:52:00.956Z",
       "updated_at": "2024-04-15T12:52:00.956Z"
@@ -1523,7 +1523,7 @@
     "model": "core.groupmembership",
     "pk": 161,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 84,
       "created_at": "2024-04-15T12:52:00.958Z",
       "updated_at": "2024-04-15T12:52:00.958Z"
@@ -1533,7 +1533,7 @@
     "model": "core.groupmembership",
     "pk": 162,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 84,
       "created_at": "2024-04-15T12:52:00.960Z",
       "updated_at": "2024-04-15T12:52:00.960Z"
@@ -1543,7 +1543,7 @@
     "model": "core.groupmembership",
     "pk": 163,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 86,
       "created_at": "2024-04-15T12:52:01.034Z",
       "updated_at": "2024-04-15T12:52:01.034Z"
@@ -1553,7 +1553,7 @@
     "model": "core.groupmembership",
     "pk": 164,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 86,
       "created_at": "2024-04-15T12:52:01.036Z",
       "updated_at": "2024-04-15T12:52:01.036Z"
@@ -1563,7 +1563,7 @@
     "model": "core.groupmembership",
     "pk": 165,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 86,
       "created_at": "2024-04-15T12:52:01.037Z",
       "updated_at": "2024-04-15T12:52:01.037Z"
@@ -1573,7 +1573,7 @@
     "model": "core.groupmembership",
     "pk": 166,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 86,
       "created_at": "2024-04-15T12:52:01.039Z",
       "updated_at": "2024-04-15T12:52:01.039Z"
@@ -1583,7 +1583,7 @@
     "model": "core.groupmembership",
     "pk": 167,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 87,
       "created_at": "2024-04-15T12:52:01.077Z",
       "updated_at": "2024-04-15T12:52:01.077Z"
@@ -1593,7 +1593,7 @@
     "model": "core.groupmembership",
     "pk": 168,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 87,
       "created_at": "2024-04-15T12:52:01.078Z",
       "updated_at": "2024-04-15T12:52:01.078Z"
@@ -1603,7 +1603,7 @@
     "model": "core.groupmembership",
     "pk": 169,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 87,
       "created_at": "2024-04-15T12:52:01.079Z",
       "updated_at": "2024-04-15T12:52:01.079Z"
@@ -1613,7 +1613,7 @@
     "model": "core.groupmembership",
     "pk": 170,
     "fields": {
-      "group": 1,
+      "group": ["FPLS"],
       "contact": 87,
       "created_at": "2024-04-15T12:52:01.081Z",
       "updated_at": "2024-04-15T12:52:01.081Z"
@@ -1623,7 +1623,7 @@
     "model": "core.groupmembership",
     "pk": 171,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 88,
       "created_at": "2024-04-15T12:52:01.134Z",
       "updated_at": "2024-04-15T12:52:01.134Z"
@@ -1633,7 +1633,7 @@
     "model": "core.groupmembership",
     "pk": 172,
     "fields": {
-      "group": 8,
+      "group": ["Bookworm Brigade"],
       "contact": 88,
       "created_at": "2024-04-15T12:52:01.136Z",
       "updated_at": "2024-04-15T12:52:01.136Z"
@@ -1643,7 +1643,7 @@
     "model": "core.groupmembership",
     "pk": 173,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 88,
       "created_at": "2024-04-15T12:52:01.137Z",
       "updated_at": "2024-04-15T12:52:01.137Z"
@@ -1653,7 +1653,7 @@
     "model": "core.groupmembership",
     "pk": 174,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 88,
       "created_at": "2024-04-15T12:52:01.139Z",
       "updated_at": "2024-04-15T12:52:01.139Z"
@@ -1663,7 +1663,7 @@
     "model": "core.groupmembership",
     "pk": 175,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 89,
       "created_at": "2024-04-15T12:52:01.185Z",
       "updated_at": "2024-04-15T12:52:01.185Z"
@@ -1673,7 +1673,7 @@
     "model": "core.groupmembership",
     "pk": 176,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 89,
       "created_at": "2024-04-15T12:52:01.187Z",
       "updated_at": "2024-04-15T12:52:01.187Z"
@@ -1683,7 +1683,7 @@
     "model": "core.groupmembership",
     "pk": 177,
     "fields": {
-      "group": 5,
+      "group": ["Tech Titans Alliance"],
       "contact": 89,
       "created_at": "2024-04-15T12:52:01.189Z",
       "updated_at": "2024-04-15T12:52:01.189Z"
@@ -1693,7 +1693,7 @@
     "model": "core.groupmembership",
     "pk": 178,
     "fields": {
-      "group": 10,
+      "group": ["Nature Lovers League"],
       "contact": 89,
       "created_at": "2024-04-15T12:52:01.192Z",
       "updated_at": "2024-04-15T12:52:01.192Z"
@@ -1703,7 +1703,7 @@
     "model": "core.groupmembership",
     "pk": 179,
     "fields": {
-      "group": 13,
+      "group": ["Music Maniacs Association"],
       "contact": 90,
       "created_at": "2024-04-15T12:52:01.216Z",
       "updated_at": "2024-04-15T12:52:01.216Z"
@@ -1713,7 +1713,7 @@
     "model": "core.groupmembership",
     "pk": 180,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 90,
       "created_at": "2024-04-15T12:52:01.218Z",
       "updated_at": "2024-04-15T12:52:01.218Z"
@@ -1723,7 +1723,7 @@
     "model": "core.groupmembership",
     "pk": 181,
     "fields": {
-      "group": 3,
+      "group": ["Focal point"],
       "contact": 90,
       "created_at": "2024-04-15T12:52:01.221Z",
       "updated_at": "2024-04-15T12:52:01.221Z"
@@ -1733,7 +1733,7 @@
     "model": "core.groupmembership",
     "pk": 182,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 91,
       "created_at": "2024-04-15T12:52:01.238Z",
       "updated_at": "2024-04-15T12:52:01.238Z"
@@ -1743,7 +1743,7 @@
     "model": "core.groupmembership",
     "pk": 183,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 91,
       "created_at": "2024-04-15T12:52:01.240Z",
       "updated_at": "2024-04-15T12:52:01.240Z"
@@ -1753,7 +1753,7 @@
     "model": "core.groupmembership",
     "pk": 184,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 92,
       "created_at": "2024-04-15T12:52:01.272Z",
       "updated_at": "2024-04-15T12:52:01.272Z"
@@ -1763,7 +1763,7 @@
     "model": "core.groupmembership",
     "pk": 185,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 92,
       "created_at": "2024-04-15T12:52:01.275Z",
       "updated_at": "2024-04-15T12:52:01.275Z"
@@ -1773,7 +1773,7 @@
     "model": "core.groupmembership",
     "pk": 186,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 92,
       "created_at": "2024-04-15T12:52:01.278Z",
       "updated_at": "2024-04-15T12:52:01.278Z"
@@ -1783,7 +1783,7 @@
     "model": "core.groupmembership",
     "pk": 187,
     "fields": {
-      "group": 6,
+      "group": ["Culinary Connoisseurs Collective"],
       "contact": 92,
       "created_at": "2024-04-15T12:52:01.281Z",
       "updated_at": "2024-04-15T12:52:01.281Z"
@@ -1793,7 +1793,7 @@
     "model": "core.groupmembership",
     "pk": 188,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 93,
       "created_at": "2024-04-15T12:52:01.372Z",
       "updated_at": "2024-04-15T12:52:01.372Z"
@@ -1803,7 +1803,7 @@
     "model": "core.groupmembership",
     "pk": 189,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 93,
       "created_at": "2024-04-15T12:52:01.377Z",
       "updated_at": "2024-04-15T12:52:01.377Z"
@@ -1813,7 +1813,7 @@
     "model": "core.groupmembership",
     "pk": 190,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 94,
       "created_at": "2024-04-15T12:52:01.451Z",
       "updated_at": "2024-04-15T12:52:01.451Z"
@@ -1823,7 +1823,7 @@
     "model": "core.groupmembership",
     "pk": 191,
     "fields": {
-      "group": 20,
+      "group": ["Wanderers' Circle"],
       "contact": 94,
       "created_at": "2024-04-15T12:52:01.455Z",
       "updated_at": "2024-04-15T12:52:01.455Z"
@@ -1833,7 +1833,7 @@
     "model": "core.groupmembership",
     "pk": 192,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 96,
       "created_at": "2024-04-15T12:52:01.602Z",
       "updated_at": "2024-04-15T12:52:01.602Z"
@@ -1843,7 +1843,7 @@
     "model": "core.groupmembership",
     "pk": 193,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 96,
       "created_at": "2024-04-15T12:52:01.605Z",
       "updated_at": "2024-04-15T12:52:01.606Z"
@@ -1853,7 +1853,7 @@
     "model": "core.groupmembership",
     "pk": 194,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 96,
       "created_at": "2024-04-15T12:52:01.609Z",
       "updated_at": "2024-04-15T12:52:01.609Z"
@@ -1863,7 +1863,7 @@
     "model": "core.groupmembership",
     "pk": 195,
     "fields": {
-      "group": 16,
+      "group": ["Global Gourmet Gathering"],
       "contact": 97,
       "created_at": "2024-04-15T12:52:01.700Z",
       "updated_at": "2024-04-15T12:52:01.700Z"
@@ -1873,7 +1873,7 @@
     "model": "core.groupmembership",
     "pk": 196,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 97,
       "created_at": "2024-04-15T12:52:01.703Z",
       "updated_at": "2024-04-15T12:52:01.703Z"
@@ -1883,7 +1883,7 @@
     "model": "core.groupmembership",
     "pk": 197,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 97,
       "created_at": "2024-04-15T12:52:01.706Z",
       "updated_at": "2024-04-15T12:52:01.706Z"
@@ -1893,7 +1893,7 @@
     "model": "core.groupmembership",
     "pk": 198,
     "fields": {
-      "group": 4,
+      "group": ["The Wanderlust Explorers"],
       "contact": 98,
       "created_at": "2024-04-15T12:52:01.795Z",
       "updated_at": "2024-04-15T12:52:01.795Z"
@@ -1903,7 +1903,7 @@
     "model": "core.groupmembership",
     "pk": 199,
     "fields": {
-      "group": 9,
+      "group": ["Creative Minds Consortium"],
       "contact": 98,
       "created_at": "2024-04-15T12:52:01.798Z",
       "updated_at": "2024-04-15T12:52:01.798Z"
@@ -1913,7 +1913,7 @@
     "model": "core.groupmembership",
     "pk": 200,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 99,
       "created_at": "2024-04-15T12:52:01.876Z",
       "updated_at": "2024-04-15T12:52:01.876Z"
@@ -1923,7 +1923,7 @@
     "model": "core.groupmembership",
     "pk": 201,
     "fields": {
-      "group": 13,
+      "group": ["Music Maniacs Association"],
       "contact": 99,
       "created_at": "2024-04-15T12:52:01.879Z",
       "updated_at": "2024-04-15T12:52:01.879Z"
@@ -1933,7 +1933,7 @@
     "model": "core.groupmembership",
     "pk": 202,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 100,
       "created_at": "2024-04-15T12:52:01.994Z",
       "updated_at": "2024-04-15T12:52:01.994Z"
@@ -1943,7 +1943,7 @@
     "model": "core.groupmembership",
     "pk": 203,
     "fields": {
-      "group": 2,
+      "group": ["NFP"],
       "contact": 26,
       "created_at": "2024-04-17T12:05:09.305Z",
       "updated_at": "2024-04-17T12:05:09.305Z"
@@ -1953,7 +1953,7 @@
     "model": "core.groupmembership",
     "pk": 204,
     "fields": {
-      "group": 11,
+      "group": ["Movie Buffs Society"],
       "contact": 26,
       "created_at": "2024-04-17T12:05:09.309Z",
       "updated_at": "2024-04-17T12:05:09.309Z"
@@ -1963,7 +1963,7 @@
     "model": "core.groupmembership",
     "pk": 205,
     "fields": {
-      "group": 12,
+      "group": ["Adventure Seekers Squad"],
       "contact": 26,
       "created_at": "2024-04-17T12:05:09.313Z",
       "updated_at": "2024-04-17T12:05:09.313Z"
@@ -1973,7 +1973,7 @@
     "model": "core.groupmembership",
     "pk": 206,
     "fields": {
-      "group": 14,
+      "group": ["The Dream Team Connection"],
       "contact": 26,
       "created_at": "2024-04-17T12:05:09.317Z",
       "updated_at": "2024-04-17T12:05:09.317Z"
@@ -1983,7 +1983,7 @@
     "model": "core.groupmembership",
     "pk": 207,
     "fields": {
-      "group": 7,
+      "group": ["Fitness Fanatics Fellowship"],
       "contact": 26,
       "created_at": "2024-04-17T12:06:50.979Z",
       "updated_at": "2024-04-17T12:06:50.979Z"
@@ -1993,7 +1993,7 @@
     "model": "core.groupmembership",
     "pk": 208,
     "fields": {
-      "group": 17,
+      "group": ["Fitness Fusion Crew"],
       "contact": 26,
       "created_at": "2024-04-17T12:06:50.983Z",
       "updated_at": "2024-04-17T12:06:50.983Z"
@@ -2003,7 +2003,7 @@
     "model": "core.groupmembership",
     "pk": 209,
     "fields": {
-      "group": 18,
+      "group": ["Literary Legends League"],
       "contact": 26,
       "created_at": "2024-04-17T12:06:50.987Z",
       "updated_at": "2024-04-17T12:06:50.987Z"
@@ -2013,7 +2013,7 @@
     "model": "core.groupmembership",
     "pk": 210,
     "fields": {
-      "group": 15,
+      "group": ["Social Sparks Syndicate"],
       "contact": 26,
       "created_at": "2024-04-17T12:06:51.026Z",
       "updated_at": "2024-04-17T12:06:51.026Z"

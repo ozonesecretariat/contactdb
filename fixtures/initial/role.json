@@ -1,716 +1,196 @@
 [
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "View contacts",
-    "permissions": [
-      [
-        "view_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "view_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "view_country",
-        "core",
-        "country"
-      ],
-      [
-        "view_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "view_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "view_organizationtype",
-        "core",
-        "organizationtype"
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "View contacts",
+      "permissions": [
+        ["view_contact", "core", "contact"],
+        ["view_contactgroup", "core", "contactgroup"],
+        ["view_country", "core", "country"],
+        ["view_groupmembership", "core", "groupmembership"],
+        ["view_organization", "core", "organization"],
+        ["view_organizationtype", "core", "organizationtype"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "View events",
-    "permissions": [
-      [
-        "view_event",
-        "events",
-        "event"
-      ],
-      [
-        "view_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "view_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "view_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "view_registrationtag",
-        "events",
-        "registrationtag"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "View events",
+      "permissions": [
+        ["view_event", "events", "event"],
+        ["view_registration", "events", "registration"],
+        ["view_registrationrole", "events", "registrationrole"],
+        ["view_registrationstatus", "events", "registrationstatus"],
+        ["view_registrationtag", "events", "registrationtag"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "Edit contacts",
-    "permissions": [
-      [
-        "add_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "change_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "delete_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "view_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "add_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "change_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "delete_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "view_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "add_country",
-        "core",
-        "country"
-      ],
-      [
-        "change_country",
-        "core",
-        "country"
-      ],
-      [
-        "delete_country",
-        "core",
-        "country"
-      ],
-      [
-        "view_country",
-        "core",
-        "country"
-      ],
-      [
-        "add_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "change_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "delete_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "view_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "add_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "change_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "delete_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "view_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "add_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "change_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "delete_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "view_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "delete_resolveconflict",
-        "core",
-        "resolveconflict"
-      ],
-      [
-        "view_resolveconflict",
-        "core",
-        "resolveconflict"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Edit contacts",
+      "permissions": [
+        ["add_contact", "core", "contact"],
+        ["change_contact", "core", "contact"],
+        ["delete_contact", "core", "contact"],
+        ["view_contact", "core", "contact"],
+        ["add_contactgroup", "core", "contactgroup"],
+        ["change_contactgroup", "core", "contactgroup"],
+        ["delete_contactgroup", "core", "contactgroup"],
+        ["view_contactgroup", "core", "contactgroup"],
+        ["add_country", "core", "country"],
+        ["change_country", "core", "country"],
+        ["delete_country", "core", "country"],
+        ["view_country", "core", "country"],
+        ["add_groupmembership", "core", "groupmembership"],
+        ["change_groupmembership", "core", "groupmembership"],
+        ["delete_groupmembership", "core", "groupmembership"],
+        ["view_groupmembership", "core", "groupmembership"],
+        ["add_organization", "core", "organization"],
+        ["change_organization", "core", "organization"],
+        ["delete_organization", "core", "organization"],
+        ["view_organization", "core", "organization"],
+        ["add_organizationtype", "core", "organizationtype"],
+        ["change_organizationtype", "core", "organizationtype"],
+        ["delete_organizationtype", "core", "organizationtype"],
+        ["view_organizationtype", "core", "organizationtype"],
+        ["delete_resolveconflict", "core", "resolveconflict"],
+        ["view_resolveconflict", "core", "resolveconflict"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "Edit events",
-    "permissions": [
-      [
-        "add_event",
-        "events",
-        "event"
-      ],
-      [
-        "change_event",
-        "events",
-        "event"
-      ],
-      [
-        "delete_event",
-        "events",
-        "event"
-      ],
-      [
-        "view_event",
-        "events",
-        "event"
-      ],
-      [
-        "add_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "change_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "delete_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "view_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "add_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "change_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "delete_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "view_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "add_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "change_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "delete_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "view_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "add_registrationtag",
-        "events",
-        "registrationtag"
-      ],
-      [
-        "change_registrationtag",
-        "events",
-        "registrationtag"
-      ],
-      [
-        "delete_registrationtag",
-        "events",
-        "registrationtag"
-      ],
-      [
-        "view_registrationtag",
-        "events",
-        "registrationtag"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Edit events",
+      "permissions": [
+        ["add_event", "events", "event"],
+        ["change_event", "events", "event"],
+        ["delete_event", "events", "event"],
+        ["view_event", "events", "event"],
+        ["add_registration", "events", "registration"],
+        ["change_registration", "events", "registration"],
+        ["delete_registration", "events", "registration"],
+        ["view_registration", "events", "registration"],
+        ["add_registrationrole", "events", "registrationrole"],
+        ["change_registrationrole", "events", "registrationrole"],
+        ["delete_registrationrole", "events", "registrationrole"],
+        ["view_registrationrole", "events", "registrationrole"],
+        ["add_registrationstatus", "events", "registrationstatus"],
+        ["change_registrationstatus", "events", "registrationstatus"],
+        ["delete_registrationstatus", "events", "registrationstatus"],
+        ["view_registrationstatus", "events", "registrationstatus"],
+        ["add_registrationtag", "events", "registrationtag"],
+        ["change_registrationtag", "events", "registrationtag"],
+        ["delete_registrationtag", "events", "registrationtag"],
+        ["view_registrationtag", "events", "registrationtag"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "Load from Kronos",
-    "permissions": [
-      [
-        "add_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "change_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "delete_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "view_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "add_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "change_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "delete_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "view_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "add_country",
-        "core",
-        "country"
-      ],
-      [
-        "change_country",
-        "core",
-        "country"
-      ],
-      [
-        "delete_country",
-        "core",
-        "country"
-      ],
-      [
-        "view_country",
-        "core",
-        "country"
-      ],
-      [
-        "add_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "change_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "delete_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "view_groupmembership",
-        "core",
-        "groupmembership"
-      ],
-      [
-        "add_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "change_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "delete_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "view_organization",
-        "core",
-        "organization"
-      ],
-      [
-        "add_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "change_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "delete_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "view_organizationtype",
-        "core",
-        "organizationtype"
-      ],
-      [
-        "delete_resolveconflict",
-        "core",
-        "resolveconflict"
-      ],
-      [
-        "view_resolveconflict",
-        "core",
-        "resolveconflict"
-      ],
-      [
-        "add_event",
-        "events",
-        "event"
-      ],
-      [
-        "change_event",
-        "events",
-        "event"
-      ],
-      [
-        "delete_event",
-        "events",
-        "event"
-      ],
-      [
-        "view_event",
-        "events",
-        "event"
-      ],
-      [
-        "add_loadeventsfromkronostask",
-        "events",
-        "loadeventsfromkronostask"
-      ],
-      [
-        "view_loadeventsfromkronostask",
-        "events",
-        "loadeventsfromkronostask"
-      ],
-      [
-        "add_loadparticipantsfromkronostask",
-        "events",
-        "loadparticipantsfromkronostask"
-      ],
-      [
-        "view_loadparticipantsfromkronostask",
-        "events",
-        "loadparticipantsfromkronostask"
-      ],
-      [
-        "add_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "change_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "delete_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "view_registration",
-        "events",
-        "registration"
-      ],
-      [
-        "add_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "change_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "delete_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "view_registrationrole",
-        "events",
-        "registrationrole"
-      ],
-      [
-        "add_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "change_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "delete_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "view_registrationstatus",
-        "events",
-        "registrationstatus"
-      ],
-      [
-        "add_registrationtag",
-        "events",
-        "registrationtag"
-      ],
-      [
-        "change_registrationtag",
-        "events",
-        "registrationtag"
-      ],
-      [
-        "delete_registrationtag",
-        "events",
-        "registrationtag"
-      ],
-      [
-        "view_registrationtag",
-        "events",
-        "registrationtag"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Load from Kronos",
+      "permissions": [
+        ["add_contact", "core", "contact"],
+        ["change_contact", "core", "contact"],
+        ["delete_contact", "core", "contact"],
+        ["view_contact", "core", "contact"],
+        ["add_contactgroup", "core", "contactgroup"],
+        ["change_contactgroup", "core", "contactgroup"],
+        ["delete_contactgroup", "core", "contactgroup"],
+        ["view_contactgroup", "core", "contactgroup"],
+        ["add_country", "core", "country"],
+        ["change_country", "core", "country"],
+        ["delete_country", "core", "country"],
+        ["view_country", "core", "country"],
+        ["add_groupmembership", "core", "groupmembership"],
+        ["change_groupmembership", "core", "groupmembership"],
+        ["delete_groupmembership", "core", "groupmembership"],
+        ["view_groupmembership", "core", "groupmembership"],
+        ["add_organization", "core", "organization"],
+        ["change_organization", "core", "organization"],
+        ["delete_organization", "core", "organization"],
+        ["view_organization", "core", "organization"],
+        ["add_organizationtype", "core", "organizationtype"],
+        ["change_organizationtype", "core", "organizationtype"],
+        ["delete_organizationtype", "core", "organizationtype"],
+        ["view_organizationtype", "core", "organizationtype"],
+        ["delete_resolveconflict", "core", "resolveconflict"],
+        ["view_resolveconflict", "core", "resolveconflict"],
+        ["add_event", "events", "event"],
+        ["change_event", "events", "event"],
+        ["delete_event", "events", "event"],
+        ["view_event", "events", "event"],
+        ["add_loadeventsfromkronostask", "events", "loadeventsfromkronostask"],
+        ["view_loadeventsfromkronostask", "events", "loadeventsfromkronostask"],
+        ["add_loadparticipantsfromkronostask", "events", "loadparticipantsfromkronostask"],
+        ["view_loadparticipantsfromkronostask", "events", "loadparticipantsfromkronostask"],
+        ["add_registration", "events", "registration"],
+        ["change_registration", "events", "registration"],
+        ["delete_registration", "events", "registration"],
+        ["view_registration", "events", "registration"],
+        ["add_registrationrole", "events", "registrationrole"],
+        ["change_registrationrole", "events", "registrationrole"],
+        ["delete_registrationrole", "events", "registrationrole"],
+        ["view_registrationrole", "events", "registrationrole"],
+        ["add_registrationstatus", "events", "registrationstatus"],
+        ["change_registrationstatus", "events", "registrationstatus"],
+        ["delete_registrationstatus", "events", "registrationstatus"],
+        ["view_registrationstatus", "events", "registrationstatus"],
+        ["add_registrationtag", "events", "registrationtag"],
+        ["change_registrationtag", "events", "registrationtag"],
+        ["delete_registrationtag", "events", "registrationtag"],
+        ["view_registrationtag", "events", "registrationtag"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "View emails",
-    "permissions": [
-      [
-        "view_email",
-        "emails",
-        "email"
-      ],
-      [
-        "view_emailattachment",
-        "emails",
-        "emailattachment"
-      ],
-      [
-        "view_emailtemplate",
-        "emails",
-        "emailtemplate"
-      ],
-      [
-        "view_sendemailtask",
-        "emails",
-        "sendemailtask"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "View emails",
+      "permissions": [
+        ["view_email", "emails", "email"],
+        ["view_emailattachment", "emails", "emailattachment"],
+        ["view_emailtemplate", "emails", "emailtemplate"],
+        ["view_sendemailtask", "emails", "sendemailtask"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "Edit templates",
-    "permissions": [
-      [
-        "add_emailtemplate",
-        "emails",
-        "emailtemplate"
-      ],
-      [
-        "change_emailtemplate",
-        "emails",
-        "emailtemplate"
-      ],
-      [
-        "delete_emailtemplate",
-        "emails",
-        "emailtemplate"
-      ],
-      [
-        "view_emailtemplate",
-        "emails",
-        "emailtemplate"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Edit templates",
+      "permissions": [
+        ["add_emailtemplate", "emails", "emailtemplate"],
+        ["change_emailtemplate", "emails", "emailtemplate"],
+        ["delete_emailtemplate", "emails", "emailtemplate"],
+        ["view_emailtemplate", "emails", "emailtemplate"]
       ]
-    ]
-  }
-},
-{
-  "model": "accounts.role",
-  "fields": {
-    "name": "Send emails",
-    "permissions": [
-      [
-        "view_contact",
-        "core",
-        "contact"
-      ],
-      [
-        "view_contactgroup",
-        "core",
-        "contactgroup"
-      ],
-      [
-        "add_email",
-        "emails",
-        "email"
-      ],
-      [
-        "change_email",
-        "emails",
-        "email"
-      ],
-      [
-        "delete_email",
-        "emails",
-        "email"
-      ],
-      [
-        "view_email",
-        "emails",
-        "email"
-      ],
-      [
-        "add_emailattachment",
-        "emails",
-        "emailattachment"
-      ],
-      [
-        "change_emailattachment",
-        "emails",
-        "emailattachment"
-      ],
-      [
-        "delete_emailattachment",
-        "emails",
-        "emailattachment"
-      ],
-      [
-        "view_emailattachment",
-        "emails",
-        "emailattachment"
-      ],
-      [
-        "add_sendemailtask",
-        "emails",
-        "sendemailtask"
-      ],
-      [
-        "change_sendemailtask",
-        "emails",
-        "sendemailtask"
-      ],
-      [
-        "delete_sendemailtask",
-        "emails",
-        "sendemailtask"
-      ],
-      [
-        "view_sendemailtask",
-        "emails",
-        "sendemailtask"
-      ],
-      [
-        "view_event",
-        "events",
-        "event"
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Send emails",
+      "permissions": [
+        ["view_contact", "core", "contact"],
+        ["view_contactgroup", "core", "contactgroup"],
+        ["add_email", "emails", "email"],
+        ["change_email", "emails", "email"],
+        ["delete_email", "emails", "email"],
+        ["view_email", "emails", "email"],
+        ["add_emailattachment", "emails", "emailattachment"],
+        ["change_emailattachment", "emails", "emailattachment"],
+        ["delete_emailattachment", "emails", "emailattachment"],
+        ["view_emailattachment", "emails", "emailattachment"],
+        ["add_sendemailtask", "emails", "sendemailtask"],
+        ["change_sendemailtask", "emails", "sendemailtask"],
+        ["delete_sendemailtask", "emails", "sendemailtask"],
+        ["view_sendemailtask", "emails", "sendemailtask"],
+        ["view_event", "events", "event"]
       ]
-    ]
+    }
   }
-}
 ]

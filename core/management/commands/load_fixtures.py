@@ -18,12 +18,13 @@ class Command(BaseCommand):
     # Order is important
     FIXTURES = {
         "initial": (
-            # auth
+            # Accounts
             Role,
             # core
+            Country,
             ContactGroup,
             OrganizationType,
-            # events
+            # Events
             RegistrationTag,
             RegistrationRole,
             RegistrationStatus,
@@ -32,7 +33,6 @@ class Command(BaseCommand):
             # User
             User,
             # Core
-            Country,
             Organization,
             ContactGroup,
             Contact,

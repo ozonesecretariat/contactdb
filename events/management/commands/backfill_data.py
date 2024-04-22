@@ -15,7 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         client = KronosClient()
         for country in client.get_countries():
-            obj, created = Country.objects.get_or_create(code=country["code"])
+            obj, created = Country.objects.get_or_create(code=country["code"].upper())
             obj.name = ""
             obj.official_name = ""
             obj.clean()

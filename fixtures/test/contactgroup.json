@@ -2,8 +2,39 @@
   {
     "model": "core.contactgroup",
     "fields": {
+      "name": "FPLS",
+      "description": null,
+      "predefined": true,
+      "created_at": "2024-04-22T07:24:13.030Z",
+      "updated_at": "2024-04-22T07:24:13.030Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "fields": {
+      "name": "NFP",
+      "description": null,
+      "predefined": true,
+      "created_at": "2024-04-22T07:24:20.190Z",
+      "updated_at": "2024-04-22T07:24:20.190Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "fields": {
+      "name": "Focal point",
+      "description": null,
+      "predefined": true,
+      "created_at": "2024-04-22T07:24:24.975Z",
+      "updated_at": "2024-04-22T07:24:24.975Z"
+    }
+  },
+  {
+    "model": "core.contactgroup",
+    "fields": {
       "name": "The Wanderlust Explorers",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.162Z",
       "updated_at": "2024-04-15T12:51:54.162Z"
     }
@@ -13,6 +44,7 @@
     "fields": {
       "name": "Tech Titans Alliance",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.172Z",
       "updated_at": "2024-04-15T12:51:54.172Z"
     }
@@ -22,6 +54,7 @@
     "fields": {
       "name": "Culinary Connoisseurs Collective",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.173Z",
       "updated_at": "2024-04-15T12:51:54.173Z"
     }
@@ -31,6 +64,7 @@
     "fields": {
       "name": "Fitness Fanatics Fellowship",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.175Z",
       "updated_at": "2024-04-15T12:51:54.175Z"
     }
@@ -40,6 +74,7 @@
     "fields": {
       "name": "Bookworm Brigade",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.177Z",
       "updated_at": "2024-04-15T12:51:54.177Z"
     }
@@ -49,6 +84,7 @@
     "fields": {
       "name": "Creative Minds Consortium",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.178Z",
       "updated_at": "2024-04-15T12:51:54.178Z"
     }
@@ -58,6 +94,7 @@
     "fields": {
       "name": "Nature Lovers League",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.179Z",
       "updated_at": "2024-04-15T12:51:54.179Z"
     }
@@ -67,6 +104,7 @@
     "fields": {
       "name": "Movie Buffs Society",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.181Z",
       "updated_at": "2024-04-15T12:51:54.181Z"
     }
@@ -76,6 +114,7 @@
     "fields": {
       "name": "Adventure Seekers Squad",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.182Z",
       "updated_at": "2024-04-15T12:51:54.182Z"
     }
@@ -85,6 +124,7 @@
     "fields": {
       "name": "Music Maniacs Association",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.184Z",
       "updated_at": "2024-04-15T12:51:54.184Z"
     }
@@ -94,6 +134,7 @@
     "fields": {
       "name": "The Dream Team Connection",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.186Z",
       "updated_at": "2024-04-15T12:51:54.186Z"
     }
@@ -103,6 +144,7 @@
     "fields": {
       "name": "Social Sparks Syndicate",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.189Z",
       "updated_at": "2024-04-15T12:51:54.189Z"
     }
@@ -112,6 +154,7 @@
     "fields": {
       "name": "Global Gourmet Gathering",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.191Z",
       "updated_at": "2024-04-15T12:51:54.191Z"
     }
@@ -121,6 +164,7 @@
     "fields": {
       "name": "Fitness Fusion Crew",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.194Z",
       "updated_at": "2024-04-15T12:51:54.194Z"
     }
@@ -130,6 +174,7 @@
     "fields": {
       "name": "Literary Legends League",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.197Z",
       "updated_at": "2024-04-15T12:51:54.197Z"
     }
@@ -139,6 +184,7 @@
     "fields": {
       "name": "Artistic Avengers Assembly",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.200Z",
       "updated_at": "2024-04-15T12:51:54.200Z"
     }
@@ -148,6 +194,7 @@
     "fields": {
       "name": "Wanderers' Circle",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.203Z",
       "updated_at": "2024-04-15T12:51:54.203Z"
     }
@@ -157,6 +204,7 @@
     "fields": {
       "name": "Cinema Savants Society",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.206Z",
       "updated_at": "2024-04-15T12:51:54.206Z"
     }
@@ -166,6 +214,7 @@
     "fields": {
       "name": "Trailblazers Tribe",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.209Z",
       "updated_at": "2024-04-15T12:51:54.209Z"
     }
@@ -175,6 +224,7 @@
     "fields": {
       "name": "Harmony Haven Hub",
       "description": null,
+      "predefined": false,
       "created_at": "2024-04-15T12:51:54.212Z",
       "updated_at": "2024-04-15T12:51:54.212Z"
     }

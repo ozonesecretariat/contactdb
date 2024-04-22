@@ -50,7 +50,9 @@ class OrganizationAdmin(ModelAdmin):
     search_fields = [
         "name",
         "acronym",
-        "organization_type__name",
+        "organization_type__acronym",
+        "organization_type__title",
+        "organization_type__description",
         "government__name",
         "country__name",
     ]

@@ -1,22 +1,22 @@
 [
-{
-  "model": "events.registrationtag",
-  "pk": "credential",
-  "fields": {}
-},
-{
-  "model": "events.registrationtag",
-  "pk": "online",
-  "fields": {}
-},
-{
-  "model": "events.registrationtag",
-  "pk": "viewer",
-  "fields": {}
-},
-{
-  "model": "events.registrationtag",
-  "pk": "visa",
-  "fields": {}
-}
+  {
+    "model": "events.registrationtag",
+    "pk": "credential",
+    "fields": {}
+  },
+  {
+    "model": "events.registrationtag",
+    "pk": "online",
+    "fields": {}
+  },
+  {
+    "model": "events.registrationtag",
+    "pk": "viewer",
+    "fields": {}
+  },
+  {
+    "model": "events.registrationtag",
+    "pk": "visa",
+    "fields": {}
+  }
 ]
