@@ -351,6 +351,7 @@ if SENTRY_DSN:
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
+# Kronos import
 ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
 KRONOS_HOST = env.str("KRONOS_HOST", default="")
 
@@ -360,6 +361,10 @@ KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
 
+# Focal point imports
+FOCAL_POINT_ENDPOINT = "https://ors.ozone.unep.org/api/country-profiles/focal-points/"
+
+# CKEditor
 CKEDITOR_PLACEHOLDERS = (
     "full_name",
     "first_name",
