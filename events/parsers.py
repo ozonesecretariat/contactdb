@@ -47,7 +47,9 @@ class KronosParser:
 
         result = set()
         for item in email_list:
-            result.update(re.split(r"[;,]", item))
+            for addr in re.split(r"[;,]", item):
+                if addr := str(addr).strip():
+                    result.add(addr)
 
         return list(result)
 
