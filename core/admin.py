@@ -40,8 +40,8 @@ class CountryAdmin(ModelAdmin):
 
 @admin.register(OrganizationType)
 class OrganizationTypeAdmin(ModelAdmin):
-    search_fields = ("name",)
-    list_display = ("name",)
+    search_fields = ("acronym", "title", "description")
+    list_display = ("acronym", "title", "description")
     readonly_fields = ("organization_type_id",)
 
 

@@ -40,13 +40,15 @@ class Country(models.Model):
 
 class OrganizationType(models.Model):
     organization_type_id = KronosId()
-    name = CICharField(max_length=250, primary_key=True)
+    acronym = CICharField(max_length=50, primary_key=True)
+    title = CICharField(max_length=250, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("title",)
 
     def __str__(self):
-        return self.name
+        return f"{self.title} ({self.acronym})"
 
 
 class Organization(models.Model):
