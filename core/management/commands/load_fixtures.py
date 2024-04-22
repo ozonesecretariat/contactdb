@@ -20,6 +20,9 @@ class Command(BaseCommand):
         "initial": (
             # auth
             Role,
+            # core
+            ContactGroup,
+            OrganizationType,
             # events
             RegistrationTag,
             RegistrationRole,
@@ -29,7 +32,7 @@ class Command(BaseCommand):
             # User
             User,
             # Core
-            OrganizationType,
+            Country,
             Organization,
             ContactGroup,
             Contact,

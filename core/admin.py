@@ -135,7 +135,7 @@ class ContactAdminBase(ModelAdmin):
                     "first_name",
                     "last_name",
                     "country",
-                    ("is_in_mailing_list", "focal_point"),
+                    "is_in_mailing_list",
                 ),
             },
         ),
@@ -378,7 +378,6 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         "org_head",
         "is_in_mailing_list",
         "is_use_organization_address",
-        "focal_point",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -603,7 +602,6 @@ class ResolveConflictAdmin(ContactAdminBase):
         "org_head",
         "is_in_mailing_list",
         "is_use_organization_address",
-        "focal_point",
     )
     list_display = (
         "existing_contact_link",
@@ -642,7 +640,6 @@ class ResolveConflictAdmin(ContactAdminBase):
         update_values = copy(dict(vars(incoming_contact)))
         update_values.pop("existing_contact_id")
         update_values.pop("id")
-        update_object(record, update_values)
         for key, value in update_values.items():
             setattr(record, key, value)
         record.save()
@@ -680,9 +677,11 @@ class ContactGroupAdmin(ModelAdmin):
     search_fields = ("name", "description")
     list_display = (
         "name",
+        "predefined",
         "description_preview",
         "contacts_count",
     )
+    list_filter = ("predefined",)
     exclude = ("contacts",)
     prefetch_related = ("contacts",)
     annotate_query = {
@@ -700,3 +699,13 @@ class ContactGroupAdmin(ModelAdmin):
     def send_email(self, request, queryset):
         ids = ",".join(map(str, queryset.values_list("id", flat=True)))
         return redirect(reverse("admin:emails_email_add") + "?groups=" + ids)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.predefined:
+            return False
+        return super().has_delete_permission(request, obj=obj)
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.predefined:
+            return False
+        return super().has_change_permission(request, obj=obj)

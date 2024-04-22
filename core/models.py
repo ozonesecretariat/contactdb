@@ -119,7 +119,6 @@ class BaseContact(models.Model):
     )
     postal_code = models.CharField(max_length=250, default="", blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    focal_point = models.BooleanField(default=False, blank=True)
     org_head = models.BooleanField(
         default=False, blank=True, verbose_name="head of organization"
     )
@@ -187,8 +186,13 @@ class ResolveConflict(BaseContact):
         return obj
 
 
+class ContactGroupManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class ContactGroup(models.Model):
-    name = models.TextField(null=False, blank=False)
+    name = CICharField(max_length=255, null=False, blank=False, unique=True)
     description = models.TextField(blank=True, null=True)
     contacts = models.ManyToManyField(
         Contact,
@@ -196,19 +200,21 @@ class ContactGroup(models.Model):
         through="GroupMembership",
         related_name="groups",
     )
+    predefined = models.BooleanField(default=False, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = ContactGroupManager()
 
     def __str__(self):
         return self.name
 
     @property
-    def members_count(self):
-        return self.contacts.count()
-
-    @property
     def description_preview(self):
         return textwrap.shorten(self.description or "", 150)
+
+    def natural_key(self):
+        return (self.name,)
 
 
 class GroupMembership(models.Model):

@@ -1,0 +1,128 @@
+[
+{
+  "model": "core.organizationtype",
+  "pk": "ACC-EXPERT",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff5",
+    "title": "Academia/Expert",
+    "description": "Academia/Expert"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "ASS-PANEL",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff2",
+    "title": "Assessment Panels",
+    "description": "Assessment Panels"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "BIZ",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff4",
+    "title": "Industry",
+    "description": "Industry"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "EXHIBITOR",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff7",
+    "title": "Exhibitors",
+    "description": "Exhibitors"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "GOV",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5fef",
+    "title": "Government",
+    "description": "Government"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "IGO",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5fee",
+    "title": "IGOs",
+    "description": "IGOs"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "INTERPRETER",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ffb",
+    "title": "Interpreters",
+    "description": "Interpreters"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "LOCALSTAFF",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff8",
+    "title": "Local Support",
+    "description": "Local Support"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "MEDIA",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ffa",
+    "title": "Media",
+    "description": "Media"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "NGO",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff1",
+    "title": "NGOs",
+    "description": "NGOs"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "OBS",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff0",
+    "title": "Observers",
+    "description": "Observers"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "OTHER",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff9",
+    "title": "Others",
+    "description": "Others"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "SECRETARIAT",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff6",
+    "title": "Secretariat",
+    "description": "Secretariat"
+  }
+},
+{
+  "model": "core.organizationtype",
+  "pk": "UN",
+  "fields": {
+    "organization_type_id": "594bce8cf939e087ce7d5ff3",
+    "title": "UN Agencies",
+    "description": "UN Agencies"
+  }
+}
+]

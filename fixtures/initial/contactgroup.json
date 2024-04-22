@@ -1,0 +1,32 @@
+[
+{
+  "model": "core.contactgroup",
+  "fields": {
+    "name": "FPLS",
+    "description": null,
+    "predefined": true,
+    "created_at": "2024-04-22T07:24:13.030Z",
+    "updated_at": "2024-04-22T07:24:13.030Z"
+  }
+},
+{
+  "model": "core.contactgroup",
+  "fields": {
+    "name": "NFP",
+    "description": null,
+    "predefined": true,
+    "created_at": "2024-04-22T07:24:20.190Z",
+    "updated_at": "2024-04-22T07:24:20.190Z"
+  }
+},
+{
+  "model": "core.contactgroup",
+  "fields": {
+    "name": "Focal point",
+    "description": null,
+    "predefined": true,
+    "created_at": "2024-04-22T07:24:24.975Z",
+    "updated_at": "2024-04-22T07:24:24.975Z"
+  }
+}
+]
