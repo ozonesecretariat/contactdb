@@ -320,3 +320,17 @@ class GroupMembership(models.Model):
 
     class Meta:
         unique_together = ("group", "contact")
+
+
+class ImportFocalPointsTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 300
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import ImportFocalPoints
+
+        return ImportFocalPoints
