@@ -8,6 +8,7 @@ describe("Check user permissions", () => {
         country: true,
         organizationtype: true,
         organization: true,
+        possibleduplicate: { view: true },
         resolveconflict: { view: true },
       },
       events: {
