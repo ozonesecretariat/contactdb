@@ -25,9 +25,6 @@ class ContactDBAdminSite(AdminSite):
                 if getattr(model_admin, "show_index_page_count", False):
                     model_dict["name"] += f" ({model_admin.get_index_page_count()})"
 
-                if default_filters := getattr(model_admin, "default_filters", None):
-                    model_dict["admin_url"] += "?" + urlencode(default_filters)
-
         return app_list
 
     def admin_view(self, view, cacheable=False):

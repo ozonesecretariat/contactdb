@@ -6,7 +6,7 @@ from django.contrib.admin.widgets import AutocompleteSelect
 from django import forms
 from django.db import IntegrityError, models
 from django.db.models import Count, ManyToManyRel, ManyToOneRel, Prefetch
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -692,6 +692,34 @@ class ResolveConflictAdmin(ContactAdminBase):
         return False
 
 
+class IsDismissedFilter(admin.SimpleListFilter):
+    title = "dismissed"
+    parameter_name = "is_dismissed"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("0", "No"),
+            ("1", "Yes"),
+        ]
+
+    def choices(self, changelist):
+        for lookup, title in self.lookup_choices:
+            yield {
+                "selected": self.value() == str(lookup),
+                "query_string": changelist.get_query_string(
+                    {self.parameter_name: lookup}
+                ),
+                "display": title,
+            }
+
+    def queryset(self, request, queryset):
+        val = self.value()
+        if val == "0" or val is None:
+            return queryset.filter(is_dismissed=False)
+        if val == "1":
+            return queryset.filter(is_dismissed=True)
+
+
 @admin.register(PossibleDuplicate)
 class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     show_index_page_count = True
@@ -700,12 +728,9 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         "contacts_display",
     )
     list_filter = (
-        "is_dismissed",
+        IsDismissedFilter,
         ArrayFilterFactory("duplicate_fields", "duplicate field"),
     )
-    default_filters = {
-        "is_dismissed__exact": "0",
-    }
     search_fields = (
         "duplicate_values",
         "contacts__first_name",

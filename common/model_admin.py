@@ -49,7 +49,6 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     list_per_page = 20
     redirect_field_name = "next"
     view_fieldsets = ()
-    default_filters = None
 
     def get_index_page_count(self):
         return self.model.objects.count()
