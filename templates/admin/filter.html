@@ -7,7 +7,7 @@
   <li>
     <select
       aria-label="{{ filter_title }}"
-      name="{{ spec.lookup_kwarg }}"
+      name="{% firstof spec.lookup_kwarg spec.parameter_name %}"
       style="width: 260px;"
       onchange="window.location.href = new window.URL(this.value, window.location).toString();"
     >
