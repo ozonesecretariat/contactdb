@@ -212,14 +212,20 @@ class PossibleDuplicate(DBView):
 
         return f"""
             SELECT 
-                array_to_string(array_agg(duplicate_value), ',')    AS id,  
-                array_agg(duplicate_value)                          AS duplicate_values,  
-                array_agg(duplicate_type)                           AS duplicate_fields,  
-                contact_ids                                         AS contact_ids,
+                array_to_string(
+                    array_agg(duplicate_value ORDER BY duplicate_value), ','
+                ) AS id,  
+                array_agg(
+                    duplicate_value ORDER BY duplicate_value
+                ) AS duplicate_values,  
+                array_agg(
+                    duplicate_type ORDER BY duplicate_type
+                ) AS duplicate_fields,  
+                contact_ids,
                 EXISTS(
                     SELECT 1 FROM core_dismissedduplicate 
                     WHERE core_dismissedduplicate.contact_ids = duplicate_groups.contact_ids
-                )                                                   AS is_dismissed
+                ) AS is_dismissed
             FROM ({union_query}) AS duplicate_groups
             GROUP BY contact_ids
             ORDER BY id, contact_ids
