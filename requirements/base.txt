@@ -3,6 +3,7 @@ django-admin-autocomplete-filter
 django-admin-env-notice
 django-ckeditor
 django-constance
+django-db-views
 django-environ
 django-extensions
 django-filter
@@ -12,6 +13,7 @@ django_redis
 django-rq
 django-task
 django-two-factor-auth[phonenumbers]
+django-object-actions
 psycopg[binary]
 pycountry
 python-docx

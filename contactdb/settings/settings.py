@@ -89,6 +89,8 @@ INSTALLED_APPS = [
     "admin_auto_filters",
     "import_export",
     "django_group_model",
+    "django_db_views",
+    "django_object_actions",
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
