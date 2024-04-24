@@ -1,10 +1,11 @@
 from functools import update_wrapper
+from urllib.parse import urlencode
 
 from constance import config
 from django.contrib.admin import AdminSite
 from django.contrib.admin.apps import AdminConfig
 from django.shortcuts import redirect
-from django.urls import include, path, reverse
+from django.urls import reverse
 
 
 def should_redirect_setup_2fa(user):
@@ -15,6 +16,19 @@ class ContactDBAdminSite(AdminSite):
     site_title = "Ozone Contact DB"
     site_header = "Ozone Contact DB"
     index_title = "Ozone Contact DB"
+
+    def get_app_list(self, request, app_label=None):
+        app_list = super().get_app_list(request, app_label=app_label)
+        for app_dict in app_list:
+            for model_dict in app_dict["models"]:
+                model_admin = self._registry[model_dict["model"]]
+                if getattr(model_admin, "show_index_page_count", False):
+                    model_dict["name"] += f" ({model_admin.get_index_page_count()})"
+
+                if default_filters := getattr(model_admin, "default_filters", None):
+                    model_dict["admin_url"] += "?" + urlencode(default_filters)
+
+        return app_list
 
     def admin_view(self, view, cacheable=False):
         view = super().admin_view(view, cacheable)

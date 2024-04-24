@@ -1,5 +1,4 @@
 from functools import wraps
-from urllib.parse import urlencode
 from django.contrib import admin
 from django.shortcuts import redirect
 
@@ -46,9 +45,14 @@ def maybe_redirect(func):
 
 
 class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
+    show_index_page_count = False
     list_per_page = 20
     redirect_field_name = "next"
     view_fieldsets = ()
+    default_filters = None
+
+    def get_index_page_count(self):
+        return self.model.objects.count()
 
     @property
     def opt_info(self):
