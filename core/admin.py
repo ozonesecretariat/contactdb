@@ -9,21 +9,26 @@ from django.db.models import Count, ManyToManyRel, ManyToOneRel, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django_object_actions import action, DjangoObjectActions
 from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
-from common.array_field import ArrayField
+from common.array_field import ArrayField, ArrayFilterFactory, ArrayLength
+from common.permissions import has_model_permission
 
 from common.urls import reverse
 from common.model_admin import ModelAdmin, ModelResource
 
 from core.models import (
     Country,
+    DismissedDuplicate,
     GroupMembership,
     Organization,
     Contact,
     ContactGroup,
     OrganizationType,
+    PossibleDuplicate,
     ResolveConflict,
 )
 from events.models import Registration
@@ -116,6 +121,7 @@ class ContactAdminBase(ModelAdmin):
         "designation",
         "department",
         "emails",
+        "email_ccs",
         "organization__name",
         "organization__country__name",
     )
@@ -350,75 +356,30 @@ class ContactRegistrationsInline(admin.StackedInline):
     autocomplete_fields = ("event", "status", "role", "tags")
 
 
-@admin.register(Contact)
-class ContactAdmin(ImportExportMixin, ContactAdminBase):
-    resource_class = ContactResource
-    inlines = (
-        ContactMembershipInline,
-        ContactRegistrationsInline,
-    )
-    list_display = (
-        "title",
-        "first_name",
-        "last_name",
-        "organization",
-        "country",
-        "emails",
-        "phones",
-        "registrations_link",
-        "email_logs",
-    )
-    list_display_links = (
-        "first_name",
-        "last_name",
-    )
-    list_filter = (
-        AutocompleteFilterFactory("organization", "organization"),
-        AutocompleteFilterFactory("country", "country"),
-        AutocompleteFilterFactory("event", "registrations__event"),
-        AutocompleteFilterFactory("group", "memberships__group"),
-        "org_head",
-        "is_in_mailing_list",
-        "is_use_organization_address",
-    )
-    annotate_query = {
-        "registration_count": Count("registrations"),
-    }
-    actions = [
-        "send_email",
-        "add_contacts_to_group",
-        "merge_contacts",
-    ]
-
-    @admin.display(description="Events", ordering="registration_count")
-    def registrations_link(self, obj):
-        return self.get_related_link(
-            obj,
-            "registrations",
-            "contact",
-            f"{obj.registration_count} registrations",
-        )
-
-    def merge_two_contacts(self, contact1, contact2):
+class MergeContacts:
+    @staticmethod
+    def merge_two_contacts(contact1, contact2):
         ignored_fields = {
             "id",
             "contact_id",
             "created_at",
             "updated_at",
+            "possibleduplicate",
+            "possibleduplicatecontact",
             "memberships",  # Through model, already cover by groups; can be ignored
             "conflicting_contacts",
         }
 
         has_conflict = False
-        for field in self.opts.get_fields():
+        for field in Contact._meta.get_fields():
+            if field.name in ignored_fields:
+                continue
+
             if field.is_relation and getattr(field, "multiple", False):
                 assert field.related_name, f"Missing related name: {field}"
                 name = field.related_name
             else:
                 name = field.name
-
-            if name in ignored_fields:
-                continue
 
             val1 = getattr(contact1, name)
             val2 = getattr(contact2, name)
@@ -480,10 +441,15 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         contact1.save()
         contact2.save()
 
-        return has_conflict
+        conflict = None
+        if has_conflict:
+            conflict = ResolveConflict.create_from_contact(contact1, contact2)
 
-    @admin.action(description="Merge selected contacts", permissions=["change"])
-    def merge_contacts(self, request, queryset):
+        contact2.delete()
+
+        return conflict
+
+    def merge_action(self, request, queryset):
         all_contacts = list(queryset)
         if len(all_contacts) < 2:
             self.message_user(
@@ -496,11 +462,8 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
         conflicts = []
         main_contact = all_contacts[0]
         for other_contact in all_contacts[1:]:
-            if self.merge_two_contacts(main_contact, other_contact):
-                conflicts.append(
-                    ResolveConflict.create_from_contact(main_contact, other_contact)
-                )
-            other_contact.delete()
+            if conflict := self.merge_two_contacts(main_contact, other_contact):
+                conflicts.append(conflict)
 
         if not conflicts:
             self.message_user(
@@ -538,6 +501,60 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
             return redirect(
                 self.get_admin_list_link(ResolveConflict, {"contact": main_contact.id})
             )
+
+
+@admin.register(Contact)
+class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
+    resource_class = ContactResource
+    inlines = (
+        ContactMembershipInline,
+        ContactRegistrationsInline,
+    )
+    list_display = (
+        "title",
+        "first_name",
+        "last_name",
+        "organization",
+        "country",
+        "emails",
+        "phones",
+        "registrations_link",
+        "email_logs",
+    )
+    list_display_links = (
+        "first_name",
+        "last_name",
+    )
+    list_filter = (
+        AutocompleteFilterFactory("organization", "organization"),
+        AutocompleteFilterFactory("country", "country"),
+        AutocompleteFilterFactory("event", "registrations__event"),
+        AutocompleteFilterFactory("group", "memberships__group"),
+        "org_head",
+        "is_in_mailing_list",
+        "is_use_organization_address",
+    )
+    annotate_query = {
+        "registration_count": Count("registrations"),
+    }
+    actions = [
+        "send_email",
+        "add_contacts_to_group",
+        "merge_contacts",
+    ]
+
+    @admin.display(description="Events", ordering="registration_count")
+    def registrations_link(self, obj):
+        return self.get_related_link(
+            obj,
+            "registrations",
+            "contact",
+            f"{obj.registration_count} registrations",
+        )
+
+    @admin.action(description="Merge selected contacts", permissions=["change"])
+    def merge_contacts(self, request, queryset):
+        return self.merge_action(request, queryset)
 
     @admin.action(description="Add selected contacts to group", permissions=["change"])
     def add_contacts_to_group(self, request, queryset):
@@ -582,6 +599,7 @@ class ContactAdmin(ImportExportMixin, ContactAdminBase):
 
 @admin.register(ResolveConflict)
 class ResolveConflictAdmin(ContactAdminBase):
+    show_index_page_count = True
     search_fields = (
         "first_name",
         "last_name",
@@ -672,6 +690,122 @@ class ResolveConflictAdmin(ContactAdminBase):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+@admin.register(PossibleDuplicate)
+class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
+    show_index_page_count = True
+    list_display = (
+        "identical_values",
+        "contacts_display",
+    )
+    list_filter = (
+        "is_dismissed",
+        ArrayFilterFactory("duplicate_fields", "duplicate field"),
+    )
+    default_filters = {
+        "is_dismissed__exact": "0",
+    }
+    search_fields = (
+        "duplicate_values",
+        "contacts__first_name",
+        "contacts__last_name",
+        "contacts__designation",
+        "contacts__department",
+        "contacts__emails",
+        "contacts__email_ccs",
+    )
+    prefetch_related = (
+        "contacts",
+        "contacts__organization",
+        "contacts__organization__country",
+    )
+    annotate_query = {
+        "field_count": ArrayLength("duplicate_fields"),
+        "contact_count": ArrayLength("contact_ids"),
+    }
+    fields = ("identical_values", "contacts_display", "is_dismissed")
+    change_actions = ("merge_possible_duplicate", "dismiss_duplicate")
+    actions = ("dismiss_duplicates",)
+
+    def get_index_page_count(self):
+        return self.model.objects.filter(is_dismissed=False).count()
+
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .order_by("-field_count", "-contact_count")
+        )
+
+    def has_resolve_duplicates_permission(self, request):
+        return (
+            self.has_view_permission(request)
+            and has_model_permission(request, Contact, "change")
+            and has_model_permission(request, Contact, "delete")
+        )
+
+    @action(
+        label="Merge",
+        description="Merge contacts",
+        permissions=["resolve_duplicates"],
+    )
+    def merge_possible_duplicate(self, request, obj):
+        return self.merge_action(request, obj.contacts.all())
+
+    @action(
+        label="Dismiss",
+        description="Dismiss this potential duplicate",
+        permissions=["resolve_duplicates"],
+    )
+    def dismiss_duplicate(self, request, obj):
+        DismissedDuplicate.objects.get_or_create(contact_ids=obj.contact_ids)
+        self.message_user(
+            request,
+            f"Possible duplicate dismissed",
+            level=messages.SUCCESS,
+        )
+        return redirect(self.get_admin_list_link(self.model))
+
+    @action(
+        label="Dismiss",
+        description="Dismiss selected duplicates",
+        permissions=["resolve_duplicates"],
+    )
+    def dismiss_duplicates(self, request, queryset):
+        objs = DismissedDuplicate.objects.bulk_create(
+            [
+                DismissedDuplicate(contact_ids=duplicate.contact_ids)
+                for duplicate in queryset
+            ],
+            ignore_conflicts=True,
+        )
+        self.message_user(
+            request,
+            f"{len(objs)} possible duplicates dismissed",
+            level=messages.SUCCESS,
+        )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
+
+    @admin.display(description="Identical values", ordering="id")
+    def identical_values(self, obj):
+        return mark_safe("<br/>".join(obj.duplicate_values))
+
+    @admin.display(description="Contacts", ordering="contact_count")
+    def contacts_display(self, obj):
+        urls = []
+        for contact in obj.contacts.all():
+            url = reverse("admin:core_contact_change", args=(contact.id,))
+            urls.append(f"<a href={url}>{contact}</a>")
+        return mark_safe("<br/>".join(urls))
 
 
 @admin.register(ContactGroup)

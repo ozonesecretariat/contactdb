@@ -85,9 +85,9 @@ class KronosParser:
         org_type = self.kronos_org_types[org_type_id]
         obj = OrganizationType.objects.create(
             organization_type_id=org_type_id,
-            acronym=org_type["acronym"],
-            title=org_type["title"],
-            description=org_type["description"],
+            acronym=org_type["acronym"].strip(),
+            title=org_type["title"].strip(),
+            description=org_type["description"].strip(),
         )
         self.task.log(logging.INFO, "Created Organization Type: %r", obj)
         return obj
@@ -99,8 +99,8 @@ class KronosParser:
         obj, created = Organization.objects.get_or_create(
             organization_id=org_dict["organizationId"],
             defaults={
-                "name": org_dict.get("name"),
-                "acronym": org_dict.get("acronym"),
+                "name": org_dict.get("name", "").strip(),
+                "acronym": org_dict.get("acronym", "").strip(),
                 "organization_type": self.get_org_type(org_dict),
                 "government": self.get_country(org_dict.get("government")),
                 "country": self.get_country(org_dict.get("country")),
@@ -248,7 +248,7 @@ class KronosParticipantsParser(KronosParser):
                 for kronos_attr, model_attr in self.field_mapping.items()
             }
 
-            contact = Contact.objects.filter(contact_id=contact_id).first()
+            contact = Contact.objects.filter(contact_ids__contains=[contact_id]).first()
             if contact:
                 if check_diff(contact, contact_defaults):
                     self.task.log(
@@ -272,7 +272,7 @@ class KronosParticipantsParser(KronosParser):
                     self.task.skipped_nr += 1
             else:
                 contact = Contact.objects.create(
-                    contact_id=contact_id, **contact_defaults
+                    contact_ids=[contact_id], **contact_defaults
                 )
                 self.task.contacts_nr += 1
                 self.task.log(

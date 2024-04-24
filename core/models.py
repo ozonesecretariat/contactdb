@@ -3,6 +3,7 @@ import textwrap
 import pycountry
 from django.core.exceptions import ValidationError
 from django.db import models
+from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
@@ -148,7 +149,12 @@ class BaseContact(models.Model):
 
 
 class Contact(BaseContact):
-    contact_id = KronosId()
+    contact_ids = ArrayField(
+        base_field=models.TextField(), null=True, blank=True, editable=False
+    )
+    focal_point_ids = ArrayField(
+        base_field=models.IntegerField(), null=True, blank=True, editable=False
+    )
     organization = models.ForeignKey(
         Organization,
         on_delete=models.SET_NULL,
@@ -156,6 +162,92 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
+
+
+class PossibleDuplicate(DBView):
+    id = models.TextField(primary_key=True)
+    duplicate_fields = ArrayField(base_field=models.TextField())
+    duplicate_values = ArrayField(base_field=models.TextField())
+    contact_ids = ArrayField(base_field=models.IntegerField())
+    contacts = models.ManyToManyField(Contact, through="PossibleDuplicateContact")
+    is_dismissed = models.BooleanField(default=False)
+
+    @staticmethod
+    def view_definition():
+        fields = (
+            {
+                "field_name": "Name",
+                "field": "concat(first_name, ' ', last_name)",
+            },
+            {
+                "field_name": "Email",
+                "field": "unnest(emails)",
+            },
+            {
+                "field_name": "Email Cc",
+                "field": "unnest(email_ccs)",
+            },
+            {
+                "field_name": "Phone",
+                "field": "unnest(phones)",
+            },
+            {
+                "field_name": "Mobile",
+                "field": "unnest(mobiles)",
+            },
+            {
+                "field_name": "Fax",
+                "field": "unnest(faxes)",
+            },
+        )
+        query_template = """
+            SELECT '%(field_name)s'                         AS duplicate_type, 
+                   concat('%(field_name)s: ', %(field)s)    AS duplicate_value,
+                   array_agg(id ORDER BY id)::int[]         AS contact_ids
+            FROM core_contact
+            GROUP BY duplicate_value
+            HAVING count(1) > 1
+        """
+        union_query = " UNION ALL ".join([query_template % field for field in fields])
+
+        return f"""
+            SELECT 
+                array_to_string(array_agg(duplicate_value), ',')    AS id,  
+                array_agg(duplicate_value)                          AS duplicate_values,  
+                array_agg(duplicate_type)                           AS duplicate_fields,  
+                contact_ids                                         AS contact_ids,
+                EXISTS(
+                    SELECT 1 FROM core_dismissedduplicate 
+                    WHERE core_dismissedduplicate.contact_ids = duplicate_groups.contact_ids
+                )                                                   AS is_dismissed
+            FROM ({union_query}) AS duplicate_groups
+            GROUP BY contact_ids
+        """
+
+    class Meta:
+        managed = False
+
+
+class PossibleDuplicateContact(DBView):
+    contact = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    duplicate_values = models.ForeignKey(PossibleDuplicate, on_delete=models.DO_NOTHING)
+
+    @staticmethod
+    def view_definition():
+        return f"""
+            SELECT 
+                row_number() over ()    AS id,
+                unnest(contact_ids)     AS contact_id,  
+                subq.id                 AS duplicate_values_id
+            FROM ({PossibleDuplicate.view_definition()}) AS subq
+        """
+
+    class Meta:
+        managed = False
+
+
+class DismissedDuplicate(models.Model):
+    contact_ids = ArrayField(base_field=models.IntegerField(), unique=True)
 
 
 class ResolveConflict(BaseContact):

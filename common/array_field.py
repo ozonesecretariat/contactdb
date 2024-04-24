@@ -1,7 +1,10 @@
 from collections import Counter
+from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.widgets import AdminTextInputWidget
 from django.contrib.postgres.forms.array import SimpleArrayField
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import Func
 from django.forms import Widget
 
 from django.contrib.postgres.fields import ArrayField as DjangoArrayField
@@ -63,3 +66,41 @@ class ArrayField(DjangoArrayField):
         for item, count in Counter(value).items():
             if count > 1:
                 raise ValidationError(f"Duplicate value: {item!r}")
+
+
+def ArrayFilterFactory(_parameter_name, _title=None):
+    class ArrayFieldListFilter(SimpleListFilter):
+        title = _title or _parameter_name
+        parameter_name = _parameter_name
+
+        def lookups(self, request, model_admin):
+            array_values = model_admin.model.objects.values_list(
+                self.parameter_name, flat=True
+            ).distinct()
+
+            return sorted(
+                {
+                    (value, value)
+                    for array_value in array_values
+                    for value in array_value
+                }
+            )
+
+        def queryset(self, request, queryset):
+            lookup_value = self.value()
+            if lookup_value:
+                queryset = queryset.filter(
+                    **{f"{self.parameter_name}__contains": [lookup_value]}
+                )
+            return queryset
+
+    return ArrayFieldListFilter
+
+
+class ArrayLength(Func):
+    function = "array_length"
+
+    def __init__(self, array_field, dimension=1, **kwargs):
+        if "output_field" not in kwargs:
+            kwargs["output_field"] = models.IntegerField()
+        super().__init__(array_field, dimension, **kwargs)
