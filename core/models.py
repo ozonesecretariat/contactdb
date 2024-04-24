@@ -222,6 +222,7 @@ class PossibleDuplicate(DBView):
                 )                                                   AS is_dismissed
             FROM ({union_query}) AS duplicate_groups
             GROUP BY contact_ids
+            ORDER BY id, contact_ids
         """
 
     class Meta:
