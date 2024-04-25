@@ -47,6 +47,18 @@ services:
     restart: always
     command: ["./manage.py", "rqworker"]
 
+  scheduler:
+    image: ghcr.io/ozonesecretariat/contactdb-app:${DOCKER_TAG:-main}
+    env_file:
+      - .env
+    volumes:
+      - app_data:/app/.fs
+    depends_on:
+      - db
+      - redis
+    restart: always
+    command: ["./manage.py", "rqscheduler"]
+
   nginx:
     image: ghcr.io/ozonesecretariat/contactdb-nginx:${DOCKER_TAG:-main}
     volumes:

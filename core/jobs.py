@@ -7,7 +7,8 @@ from django.db.models import Q, QuerySet, TextField
 from django.db.models.functions import Cast
 from django.utils.text import smart_split
 from django_task.job import Job
-from core.models import Contact, Country, Organization
+from common.scheduler import cron
+from core.models import Contact, Country, ImportFocalPointsTask, Organization
 from events.parsers import parse_list
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
@@ -223,3 +224,9 @@ class ImportFocalPoints(Job):
     @staticmethod
     def on_complete(job, task):
         task.log(logging.INFO, "Focal points imported")
+
+
+@cron("20 0 * * *")
+def trigger_import_focal_point():
+    task = ImportFocalPointsTask.objects.create()
+    task.run(is_async=True)

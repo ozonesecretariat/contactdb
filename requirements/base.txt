@@ -18,4 +18,5 @@ psycopg[binary]
 pycountry
 python-docx
 sentry-sdk[django]
+rq-scheduler
 requests
