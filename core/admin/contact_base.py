@@ -45,8 +45,9 @@ class ContactAdminBase(ModelAdmin):
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}
-        if MERGE_FROM_PARAM in request.GET:
+        if temp_contact_pk := request.GET.get(MERGE_FROM_PARAM):
             extra_context["title"] = "Resolve contact conflict"
+            get_object_or_404(ResolveConflict, pk=temp_contact_pk)
 
         return super().change_view(
             request,
