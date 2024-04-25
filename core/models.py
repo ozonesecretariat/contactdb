@@ -7,7 +7,7 @@ from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
-from common.citext import CICharField
+from common.citext import CICharField, CITextField
 from common.model import KronosId
 
 
@@ -191,27 +191,27 @@ class PossibleDuplicate(DBView):
         fields = (
             {
                 "field_name": "Name",
-                "field": "concat(first_name, ' ', last_name)",
+                "field": "concat(TRIM(LOWER(first_name)), ' ', TRIM(LOWER(last_name)))",
             },
             {
                 "field_name": "Email",
-                "field": "unnest(emails)",
+                "field": "TRIM(LOWER(unnest(emails)))",
             },
             {
                 "field_name": "Email Cc",
-                "field": "unnest(email_ccs)",
+                "field": "TRIM(LOWER(unnest(email_ccs)))",
             },
             {
                 "field_name": "Phone",
-                "field": "unnest(phones)",
+                "field": "TRIM(LOWER(unnest(phones)))",
             },
             {
                 "field_name": "Mobile",
-                "field": "unnest(mobiles)",
+                "field": "TRIM(LOWER(unnest(mobiles)))",
             },
             {
                 "field_name": "Fax",
-                "field": "unnest(faxes)",
+                "field": "TRIM(LOWER(unnest(faxes)))",
             },
         )
         query_template = """
