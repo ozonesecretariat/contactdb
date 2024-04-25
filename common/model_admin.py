@@ -50,6 +50,18 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     redirect_field_name = "next"
     view_fieldsets = ()
 
+    def get_inline_action(self, obj, tool_name, classes=""):
+        tool = getattr(self, tool_name)
+        label = getattr(tool, "label", tool_name.replace("_", " ").capitalize())
+        url = reverse(
+            "admin:%s_%s_actions" % self.opt_info,
+            kwargs={
+                "pk": obj.pk,
+                "tool": tool_name,
+            },
+        )
+        return f'<a href="{url}" class="button {classes}">{label}</a>'
+
     def get_index_page_count(self):
         return self.model.objects.count()
 

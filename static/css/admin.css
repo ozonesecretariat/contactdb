@@ -133,3 +133,8 @@ fieldset.compare .fieldBox li {
 .import-submit {
   align-items: center;
 }
+
+/* Don't wrap inline actions. */
+#result_list tbody td.field-inline_actions {
+  white-space: nowrap !important;
+}

@@ -45,6 +45,7 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     list_display = (
         "identical_values",
         "contacts_display",
+        "inline_actions",
     )
     list_filter = (
         IsDismissedFilter,
@@ -73,6 +74,7 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     }
     fields = ("identical_values", "contacts_display", "is_dismissed")
     change_actions = ("merge_possible_duplicate", "dismiss_duplicate")
+    inline_actions = change_actions
     actions = ("dismiss_duplicates",)
 
     def get_index_page_count(self):
@@ -83,6 +85,17 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
             super()
             .get_queryset(*args, **kwargs)
             .order_by("-field_count", "-contact_count")
+        )
+
+    @admin.display(description="Actions")
+    def inline_actions(self, obj):
+        return mark_safe(
+            " ".join(
+                [
+                    self.get_inline_action(obj, "merge_possible_duplicate", "default"),
+                    self.get_inline_action(obj, "dismiss_duplicate"),
+                ]
+            )
         )
 
     def has_resolve_duplicates_permission(self, request):
