@@ -2,6 +2,7 @@ from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count
 from django.shortcuts import redirect
+from import_export.admin import ExportMixin
 
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.permissions import has_model_permission
@@ -68,21 +69,21 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
 
 
 @admin.register(RegistrationStatus)
-class RegistrationStatusAdmin(ModelAdmin):
+class RegistrationStatusAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
     list_display = ("name",)
     list_display_links = ("name",)
 
 
 @admin.register(RegistrationRole)
-class RegistrationRoleAdmin(ModelAdmin):
+class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
     list_display = ("name",)
     list_display_links = ("name",)
 
 
 @admin.register(RegistrationTag)
-class RegistrationTagAdmin(ModelAdmin):
+class RegistrationTagAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
     list_display = ("name",)
     list_display_links = ("name",)
@@ -132,7 +133,7 @@ class RegistrationAdmin(ModelAdmin):
 
 
 @admin.register(Event)
-class EventAdmin(ModelAdmin):
+class EventAdmin(ExportMixin, ModelAdmin):
     search_fields = (
         "code",
         "title",

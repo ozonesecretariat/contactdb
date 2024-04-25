@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.db.models import Count
 from django.shortcuts import redirect
+from import_export.admin import ExportMixin
 from common.model_admin import ModelAdmin
 from common.urls import reverse
 from core.models import ContactGroup
 
 
 @admin.register(ContactGroup)
-class ContactGroupAdmin(ModelAdmin):
+class ContactGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name", "description")
     list_display = (
         "name",
