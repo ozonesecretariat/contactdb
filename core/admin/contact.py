@@ -79,6 +79,92 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "is_in_mailing_list",
         "is_use_organization_address",
     )
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("title", "honorific", "respectful"),
+                    "first_name",
+                    "last_name",
+                    "country",
+                    "is_in_mailing_list",
+                ),
+            },
+        ),
+        (
+            "Contact info",
+            {
+                "fields": (
+                    "emails",
+                    "email_ccs",
+                    "phones",
+                    "mobiles",
+                    "faxes",
+                )
+            },
+        ),
+        (
+            "Organization",
+            {
+                "fields": (
+                    "organization",
+                    "designation",
+                    "department",
+                    "affiliation",
+                    "org_head",
+                    "is_use_organization_address",
+                )
+            },
+        ),
+        (
+            "Address",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    ("city", "state", "postal_code"),
+                    "address",
+                ),
+            },
+        ),
+        (
+            "Language",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    "primary_lang",
+                    "second_lang",
+                    "third_lang",
+                ),
+            },
+        ),
+        (
+            "Other",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    "birth_date",
+                    "notes",
+                ),
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    "contact_ids",
+                    "focal_point_ids",
+                    "created_at",
+                    "updated_at",
+                ),
+            },
+        ),
+    )
+    readonly_fields = ContactAdminBase.readonly_fields + (
+        "contact_ids",
+        "focal_point_ids",
+    )
     annotate_query = {
         "registration_count": Count("registrations"),
     }
