@@ -35,7 +35,7 @@ def parse_list(email_list):
 
     result = set()
     for item in email_list:
-        for addr in re.split(r"[;,/]", item):
+        for addr in re.split(r"[;,]", item):
             if addr := str(addr).strip():
                 result.add(addr)
 

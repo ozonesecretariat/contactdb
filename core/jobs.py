@@ -11,6 +11,29 @@ from core.models import Contact, Country, Organization
 from events.parsers import parse_list
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
+TITLES = {
+    "Abog",
+    "Amb",
+    "Dr",
+    "Eng",
+    "Engr",
+    "Ing",
+    "Ir",
+    "Lic",
+    "MP",
+    "Miss",
+    "Mme",
+    "Mr",
+    "Mrs",
+    "Ms",
+    "Rev",
+    "Sr",
+    "Sra",
+    "H.E",
+    "H.E",
+    "Honorable",
+}
+KNOWN_TITLES = TITLES.union({_t + "." for _t in TITLES})
 
 
 class ImportFocalPoints(Job):
@@ -72,7 +95,6 @@ class ImportFocalPoints(Job):
             try:
                 return query.get()
             except (model.DoesNotExist, model.MultipleObjectsReturned) as e:
-                print("Not found for name", name, e)
                 continue
         raise model.DoesNotExist
 
@@ -138,8 +160,16 @@ class ImportFocalPoints(Job):
         except ValueError:
             first_name, last_name = "", item["name"]
 
+        try:
+            title, other = first_name.split(None, 1)
+            assert title in KNOWN_TITLES
+            first_name = other
+        except (ValueError, AssertionError):
+            title = ""
+
         contact = Contact.objects.create(
             focal_point_ids=[item["id"]],
+            title=title,
             first_name=first_name,
             last_name=last_name,
             organization=org,
