@@ -5,6 +5,7 @@
     "fields": {
       "organization_id": null,
       "name": "Galactic Research Institute for Advanced Technologies",
+      "alt_names": null,
       "acronym": "GRIAT",
       "organization_type": "UN",
       "government": "TG",
@@ -17,6 +18,7 @@
     "fields": {
       "organization_id": null,
       "name": "Intergalactic Defense Coalition",
+      "alt_names": null,
       "acronym": "IDC",
       "organization_type": "OBS",
       "government": "ES",
@@ -29,6 +31,7 @@
     "fields": {
       "organization_id": null,
       "name": "Celestial Exploratory Society",
+      "alt_names": null,
       "acronym": "CES",
       "organization_type": "OTHER",
       "government": "KW",
@@ -41,6 +44,7 @@
     "fields": {
       "organization_id": null,
       "name": "Quantum Engineering Consortium",
+      "alt_names": null,
       "acronym": "QEC",
       "organization_type": "OBS",
       "government": "GQ",
@@ -53,6 +57,7 @@
     "fields": {
       "organization_id": null,
       "name": "Interstellar Alliance for Planetary Preservation",
+      "alt_names": null,
       "acronym": "IAPP",
       "organization_type": "GOV",
       "government": "KM",
@@ -65,6 +70,7 @@
     "fields": {
       "organization_id": null,
       "name": "Cosmic Nexus Intelligence Agency",
+      "alt_names": null,
       "acronym": "CNIA",
       "organization_type": "OTHER",
       "government": "PY",
@@ -77,6 +83,7 @@
     "fields": {
       "organization_id": null,
       "name": "Astral Technologies Syndicate",
+      "alt_names": null,
       "acronym": "ATS",
       "organization_type": "SECRETARIAT",
       "government": "BH",
@@ -89,6 +96,7 @@
     "fields": {
       "organization_id": null,
       "name": "Universal Science Foundation",
+      "alt_names": null,
       "acronym": "USF",
       "organization_type": "OBS",
       "government": "JO",
@@ -101,6 +109,7 @@
     "fields": {
       "organization_id": null,
       "name": "Extraterrestrial Relations Bureau",
+      "alt_names": null,
       "acronym": "ERB",
       "organization_type": "ASS-PANEL",
       "government": "RW",
@@ -113,6 +122,7 @@
     "fields": {
       "organization_id": null,
       "name": "Stellar Cartography Society",
+      "alt_names": null,
       "acronym": "SCS",
       "organization_type": "EXHIBITOR",
       "government": "MD",
@@ -125,6 +135,7 @@
     "fields": {
       "organization_id": null,
       "name": "Warp Dynamics Institute",
+      "alt_names": null,
       "acronym": "WDI",
       "organization_type": "IGO",
       "government": "CU",
@@ -137,6 +148,7 @@
     "fields": {
       "organization_id": null,
       "name": "Astronomical Phenomena Research Council",
+      "alt_names": null,
       "acronym": "APRC",
       "organization_type": "BIZ",
       "government": "LT",
@@ -149,6 +161,7 @@
     "fields": {
       "organization_id": null,
       "name": "Terraforming Initiative Taskforce",
+      "alt_names": null,
       "acronym": "TIT",
       "organization_type": "OTHER",
       "government": "CZ",
@@ -161,6 +174,7 @@
     "fields": {
       "organization_id": null,
       "name": "Metaverse Security Council",
+      "alt_names": null,
       "acronym": "MSC",
       "organization_type": "LOCALSTAFF",
       "government": "AM",
@@ -173,6 +187,7 @@
     "fields": {
       "organization_id": null,
       "name": "Hyperion Galactic Council",
+      "alt_names": null,
       "acronym": "HGC",
       "organization_type": "IGO",
       "government": "TN",
@@ -185,6 +200,7 @@
     "fields": {
       "organization_id": null,
       "name": "Orion Institute of Alien Studies",
+      "alt_names": null,
       "acronym": "OIAS",
       "organization_type": "IGO",
       "government": "AZ",
@@ -197,6 +213,7 @@
     "fields": {
       "organization_id": null,
       "name": "Nebula Network Operations Center",
+      "alt_names": null,
       "acronym": "NNOC",
       "organization_type": "LOCALSTAFF",
       "government": "UA",
@@ -209,6 +226,7 @@
     "fields": {
       "organization_id": null,
       "name": "Deep Space Exploration Agency",
+      "alt_names": null,
       "acronym": "DSEA",
       "organization_type": "MEDIA",
       "government": "TV",
@@ -221,6 +239,7 @@
     "fields": {
       "organization_id": null,
       "name": "Quantum Entanglement Research Consortium",
+      "alt_names": null,
       "acronym": "QERC",
       "organization_type": "EXHIBITOR",
       "government": "CL",
@@ -233,6 +252,7 @@
     "fields": {
       "organization_id": null,
       "name": "Exoplanetary Colonization Authority",
+      "alt_names": null,
       "acronym": "ECA",
       "organization_type": "OBS",
       "government": "GT",

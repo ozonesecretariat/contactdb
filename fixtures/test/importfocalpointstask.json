@@ -1,0 +1,36 @@
+[
+  {
+    "model": "core.importfocalpointstask",
+    "pk": "47aae0ca-5a52-4db1-b1c3-8b35ad615c6d",
+    "fields": {
+      "description": "",
+      "created_on": "2024-04-25T08:27:27.567Z",
+      "created_by": ["admin@example.com"],
+      "started_on": null,
+      "completed_on": null,
+      "progress": null,
+      "status": "PENDING",
+      "job_id": "",
+      "mode": "ASYNC",
+      "failure_reason": "",
+      "log_text": ""
+    }
+  },
+  {
+    "model": "core.importfocalpointstask",
+    "pk": "8ce9b659-d621-4ae7-bf7c-84838f90f205",
+    "fields": {
+      "description": "",
+      "created_on": "2024-04-25T08:29:37.101Z",
+      "created_by": ["admin@example.com"],
+      "started_on": null,
+      "completed_on": null,
+      "progress": null,
+      "status": "PENDING",
+      "job_id": "",
+      "mode": "ASYNC",
+      "failure_reason": "",
+      "log_text": ""
+    }
+  }
+]
