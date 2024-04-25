@@ -146,11 +146,6 @@ class ImportFocalPoints(Job):
 
     @classmethod
     def process_contact(cls, item):
-        try:
-            return Contact.objects.get(focal_point_ids__contains=[item["id"]])
-        except Contact.DoesNotExist:
-            pass
-
         party = cls.get_country(item["party"])
         country = cls.get_country(item["country"])
         org = cls.get_organization(item["organisation"], party, country)
@@ -197,8 +192,26 @@ class ImportFocalPoints(Job):
 
         resp = requests.get(url)
         resp.raise_for_status()
-        for contact in resp.json():
-            cls.process_contact(contact)
+        for item in resp.json():
+            focal_id = item["id"]
+            try:
+                contact = Contact.objects.get(focal_point_ids__contains=[focal_id])
+                task.log(
+                    logging.INFO,
+                    "Focal point with id %s already exists: %s",
+                    focal_id,
+                    contact,
+                )
+            except Contact.DoesNotExist:
+                pass
+
+            contact = cls.process_contact(item)
+            task.log(
+                logging.INFO,
+                "Contact with focal point %s created: %s",
+                focal_id,
+                contact,
+            )
 
     @staticmethod
     def on_complete(job, task):
