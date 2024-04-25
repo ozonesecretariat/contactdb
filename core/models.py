@@ -55,9 +55,18 @@ class OrganizationType(models.Model):
 class Organization(models.Model):
     organization_id = KronosId()
     name = models.TextField()
-
+    alt_names = ArrayField(
+        base_field=models.TextField(),
+        blank=True,
+        null=True,
+    )
     acronym = models.CharField(blank=True, max_length=30)
-    organization_type = models.ForeignKey(OrganizationType, on_delete=models.CASCADE)
+    organization_type = models.ForeignKey(
+        OrganizationType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     government = models.ForeignKey(
         Country,
         on_delete=models.SET_NULL,
@@ -162,6 +171,11 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
+
+    def add_to_group(self, name):
+        return GroupMembership.objects.create(
+            contact=self, group=ContactGroup.objects.get(name=name)
+        )
 
 
 class PossibleDuplicate(DBView):
