@@ -3,10 +3,12 @@ import string
 import pycountry
 import requests
 from django.conf import settings
-from django.db.models import Q, QuerySet
+from django.db.models import Q, QuerySet, TextField
+from django.db.models.functions import Cast
 from django.utils.text import smart_split
 from django_task.job import Job
-from core.models import Country, Organization
+from core.models import Contact, Country, Organization
+from events.parsers import parse_list
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
 
@@ -47,7 +49,9 @@ class ImportFocalPoints(Job):
 
         for field in fields:
             try:
-                return original_query.get(**{field: name})
+                return original_query.annotate(
+                    _search_field=Cast(field, output_field=TextField())
+                ).get(_search_field=name)
             except (model.DoesNotExist, model.MultipleObjectsReturned):
                 continue
 
@@ -98,21 +102,63 @@ class ImportFocalPoints(Job):
         raise LookupError(f"Unable to find country for: {name}")
 
     @classmethod
-    def get_organization(cls, name, country):
-        return cls.search_multiple(
-            [
-                Organization.objects.all(),
-                Organization.objects.filter(country=country),
-            ],
-            name,
-            ["name"],
+    def get_organization(cls, name, party, country):
+        try:
+            return cls.search_multiple(
+                [
+                    Organization.objects.all(),
+                    Organization.objects.filter(country=country),
+                    Organization.objects.filter(government=country),
+                    Organization.objects.filter(country=party),
+                    Organization.objects.filter(government=party),
+                ],
+                name,
+                ["name", "alt_names"],
+            )
+        except LookupError:
+            pass
+
+        return Organization.objects.create(
+            name=name, acronym="", country=country, government=party
         )
 
     @classmethod
     def process_contact(cls, item):
+        try:
+            return Contact.objects.get(focal_point_ids__contains=[item["id"]])
+        except Contact.DoesNotExist:
+            pass
+
         party = cls.get_country(item["party"])
         country = cls.get_country(item["country"])
-        org = cls.get_organization(item["organisation"], country)
+        org = cls.get_organization(item["organisation"], party, country)
+
+        try:
+            first_name, last_name = item["name"].rsplit(None, 1)
+        except ValueError:
+            first_name, last_name = "", item["name"]
+
+        contact = Contact.objects.create(
+            focal_point_ids=[item["id"]],
+            first_name=first_name,
+            last_name=last_name,
+            organization=org,
+            country=party or country,
+            designation=item["designation"],
+            phones=parse_list(item["tel"]),
+            emails=parse_list(item["email"]),
+            faxes=parse_list(item["fax"]),
+            address=item["address"],
+            city=item["city"],
+        )
+
+        contact.add_to_group("Focal point")
+        if item["is_licensing_system"]:
+            contact.add_to_group("FPLS")
+        if item["is_national"]:
+            contact.add_to_group("NFP")
+
+        return contact
 
     @classmethod
     def execute(cls, job, task):

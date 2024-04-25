@@ -29,6 +29,19 @@ def check_diff(obj, dictionary):
     return False
 
 
+def parse_list(email_list):
+    if isinstance(email_list, str):
+        email_list = [email_list]
+
+    result = set()
+    for item in email_list:
+        for addr in re.split(r"[;,/]", item):
+            if addr := str(addr).strip():
+                result.add(addr)
+
+    return list(result)
+
+
 class KronosParser:
     def __init__(self, task):
         self.task = task
@@ -40,18 +53,6 @@ class KronosParser:
             org_type["organizationTypeId"]: org_type
             for org_type in self.client.get_org_types()
         }
-
-    def parse_email_list(self, email_list):
-        if isinstance(email_list, str):
-            email_list = [email_list]
-
-        result = set()
-        for item in email_list:
-            for addr in re.split(r"[;,]", item):
-                if addr := str(addr).strip():
-                    result.add(addr)
-
-        return list(result)
 
     def parse_date(self, value):
         try:
@@ -238,10 +239,8 @@ class KronosParticipantsParser(KronosParser):
             contact_dict["organization"] = self.get_org(
                 contact_dict.get("organization", {})
             )
-            contact_dict["emails"] = self.parse_email_list(contact_dict.get("emails"))
-            contact_dict["emailCcs"] = self.parse_email_list(
-                contact_dict.get("emailCcs")
-            )
+            contact_dict["emails"] = parse_list(contact_dict.get("emails"))
+            contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
 
             contact_defaults = {
                 model_attr: contact_dict.get(kronos_attr)
