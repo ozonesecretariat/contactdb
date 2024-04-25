@@ -26,6 +26,10 @@ Steps for installing the application with Docker for production. _Not suitable f
   ```shell
   docker compose exec app ./manage.py createsuperuser
   ```
+- Load initial fixtures
+  ```shell
+  docker compose exec app ./manage.py load_fixtures initial
+  ```
 
 ## Updating
 
