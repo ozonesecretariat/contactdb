@@ -192,6 +192,8 @@ class ImportFocalPoints(Job):
 
         resp = requests.get(url)
         resp.raise_for_status()
+
+        created, skipped = 0, 0
         for item in resp.json():
             focal_id = item["id"]
             try:
@@ -202,16 +204,21 @@ class ImportFocalPoints(Job):
                     focal_id,
                     contact,
                 )
+                skipped += 1
+                continue
             except Contact.DoesNotExist:
                 pass
 
             contact = cls.process_contact(item)
+            created += 1
             task.log(
                 logging.INFO,
                 "Contact with focal point %s created: %s",
                 focal_id,
                 contact,
             )
+        task.description = f"Contacts created={created}; skipped={skipped}"
+        task.save()
 
     @staticmethod
     def on_complete(job, task):

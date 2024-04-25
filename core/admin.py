@@ -18,7 +18,7 @@ from common.array_field import ArrayField, ArrayFilterFactory, ArrayLength
 from common.permissions import has_model_permission
 
 from common.urls import reverse
-from common.model_admin import ModelAdmin, ModelResource
+from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
 
 from core.models import (
     Country,
@@ -30,6 +30,7 @@ from core.models import (
     OrganizationType,
     PossibleDuplicate,
     ResolveConflict,
+    ImportFocalPointsTask,
 )
 from events.models import Registration
 
@@ -870,3 +871,8 @@ class ContactGroupAdmin(ModelAdmin):
         if obj and obj.predefined:
             return False
         return super().has_change_permission(request, obj=obj)
+
+
+@admin.register(ImportFocalPointsTask)
+class ImportFocalPointsTaskAdmin(TaskAdmin):
+    """Import focal points from ors.ozone.unep.org."""
