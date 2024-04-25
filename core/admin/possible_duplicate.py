@@ -1,3 +1,4 @@
+from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
@@ -48,6 +49,9 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     list_filter = (
         IsDismissedFilter,
         ArrayFilterFactory("duplicate_fields", "duplicate field"),
+        "contacts__groups",
+        AutocompleteFilterFactory("organization", "contacts__organization"),
+        AutocompleteFilterFactory("country", "contacts__country"),
     )
     search_fields = (
         "duplicate_values",

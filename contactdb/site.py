@@ -1,5 +1,4 @@
 from functools import update_wrapper
-from urllib.parse import urlencode
 
 from constance import config
 from django.contrib.admin import AdminSite
