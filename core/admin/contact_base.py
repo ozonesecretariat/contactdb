@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.contrib.admin.utils import flatten_fieldsets
 from django.db import IntegrityError, models
-from django.db.models import ManyToManyRel, ManyToOneRel, Prefetch
+from django.db.models import ManyToManyField, ManyToManyRel, ManyToOneRel, Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.utils.html import format_html
@@ -175,7 +175,6 @@ class MergeContacts:
             "updated_at",
             "possibleduplicate",
             "possibleduplicatecontact",
-            "memberships",  # Through model, already cover by groups; can be ignored
             "conflicting_contacts",
         }
 
@@ -196,7 +195,7 @@ class MergeContacts:
             val1_empty = val1 == "" or val1 is None
             val2_empty = val2 == "" or val2 is None
 
-            if isinstance(field, ManyToManyRel):
+            if isinstance(field, (ManyToManyRel, ManyToManyField)):
                 for item in val2.all():
                     val1.add(item)
             elif isinstance(field, ManyToOneRel):
@@ -246,7 +245,7 @@ class MergeContacts:
                     # Values differ
                     has_conflict = True
             else:
-                raise RuntimeError(f"Unexpected field type: {field}")
+                raise RuntimeError(f"Unexpected field type: {field!r}")
         contact1.save()
         contact2.save()
 

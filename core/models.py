@@ -171,11 +171,14 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
+    groups = models.ManyToManyField(
+        "ContactGroup",
+        blank=True,
+        related_name="contacts",
+    )
 
     def add_to_group(self, name):
-        return GroupMembership.objects.create(
-            contact=self, group=ContactGroup.objects.get(name=name)
-        )
+        return self.groups.add(ContactGroup.objects.get(name=name))
 
 
 class PossibleDuplicate(DBView):
@@ -295,15 +298,7 @@ class ContactGroupManager(models.Manager):
 class ContactGroup(models.Model):
     name = CICharField(max_length=255, null=False, blank=False, unique=True)
     description = models.TextField(blank=True, null=True)
-    contacts = models.ManyToManyField(
-        Contact,
-        blank=True,
-        through="GroupMembership",
-        related_name="groups",
-    )
     predefined = models.BooleanField(default=False, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     objects = ContactGroupManager()
 
@@ -316,18 +311,6 @@ class ContactGroup(models.Model):
 
     def natural_key(self):
         return (self.name,)
-
-
-class GroupMembership(models.Model):
-    group = models.ForeignKey(ContactGroup, on_delete=models.CASCADE)
-    contact = models.ForeignKey(
-        Contact, on_delete=models.CASCADE, related_name="memberships"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ("group", "contact")
 
 
 class ImportFocalPointsTask(TaskRQ):

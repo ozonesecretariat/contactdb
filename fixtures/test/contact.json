@@ -33,7 +33,8 @@
       "updated_at": "2024-04-22T07:47:26.682Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": null
+      "organization": null,
+      "groups": []
     }
   },
   {
@@ -70,7 +71,8 @@
       "updated_at": "2024-04-22T07:47:26.686Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["FPLS"], ["The Wanderlust Explorers"], ["Creative Minds Consortium"]]
     }
   },
   {
@@ -107,7 +109,8 @@
       "updated_at": "2024-04-22T07:47:26.689Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Culinary Connoisseurs Collective"], ["Movie Buffs Society"]]
     }
   },
   {
@@ -144,7 +147,8 @@
       "updated_at": "2024-04-22T07:47:26.692Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 14
+      "organization": 14,
+      "groups": [["Nature Lovers League"], ["Literary Legends League"], ["Bookworm Brigade"]]
     }
   },
   {
@@ -181,7 +185,8 @@
       "updated_at": "2024-04-22T07:47:26.694Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 13
+      "organization": 13,
+      "groups": [["Focal point"]]
     }
   },
   {
@@ -218,7 +223,13 @@
       "updated_at": "2024-04-22T07:47:26.697Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 8
+      "organization": 8,
+      "groups": [
+        ["Global Gourmet Gathering"],
+        ["Tech Titans Alliance"],
+        ["Literary Legends League"],
+        ["Fitness Fanatics Fellowship"]
+      ]
     }
   },
   {
@@ -255,7 +266,13 @@
       "updated_at": "2024-04-22T07:47:26.699Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 4
+      "organization": 4,
+      "groups": [
+        ["The Wanderlust Explorers"],
+        ["Global Gourmet Gathering"],
+        ["Tech Titans Alliance"],
+        ["Literary Legends League"]
+      ]
     }
   },
   {
@@ -292,7 +309,8 @@
       "updated_at": "2024-04-22T07:47:26.702Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": [["Culinary Connoisseurs Collective"], ["Fitness Fanatics Fellowship"]]
     }
   },
   {
@@ -329,7 +347,8 @@
       "updated_at": "2024-04-22T07:47:26.704Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": [["Movie Buffs Society"]]
     }
   },
   {
@@ -366,7 +385,13 @@
       "updated_at": "2024-04-22T07:47:26.706Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 17
+      "organization": 17,
+      "groups": [
+        ["Focal point"],
+        ["Culinary Connoisseurs Collective"],
+        ["The Dream Team Connection"],
+        ["Fitness Fusion Crew"]
+      ]
     }
   },
   {
@@ -403,7 +428,8 @@
       "updated_at": "2024-04-22T07:47:26.709Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Creative Minds Consortium"]]
     }
   },
   {
@@ -440,7 +466,8 @@
       "updated_at": "2024-04-22T07:47:26.712Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 1
+      "organization": 1,
+      "groups": []
     }
   },
   {
@@ -477,7 +504,8 @@
       "updated_at": "2024-04-22T07:47:26.714Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 3
+      "organization": 3,
+      "groups": []
     }
   },
   {
@@ -514,7 +542,8 @@
       "updated_at": "2024-04-22T07:47:26.717Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 3
+      "organization": 3,
+      "groups": []
     }
   },
   {
@@ -551,7 +580,8 @@
       "updated_at": "2024-04-22T07:47:26.723Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 17
+      "organization": 17,
+      "groups": [["Tech Titans Alliance"]]
     }
   },
   {
@@ -588,7 +618,8 @@
       "updated_at": "2024-04-22T07:47:26.732Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 4
+      "organization": 4,
+      "groups": []
     }
   },
   {
@@ -625,7 +656,8 @@
       "updated_at": "2024-04-22T07:47:26.738Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 13
+      "organization": 13,
+      "groups": [["Social Sparks Syndicate"], ["Music Maniacs Association"], ["NFP"]]
     }
   },
   {
@@ -662,7 +694,8 @@
       "updated_at": "2024-04-22T07:47:26.743Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["Focal point"]]
     }
   },
   {
@@ -699,7 +732,8 @@
       "updated_at": "2024-04-22T07:47:26.749Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 13
+      "organization": 13,
+      "groups": [["Bookworm Brigade"], ["Focal point"], ["FPLS"], ["Adventure Seekers Squad"]]
     }
   },
   {
@@ -736,7 +770,8 @@
       "updated_at": "2024-04-22T07:47:26.755Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 12
+      "organization": 12,
+      "groups": [["Fitness Fanatics Fellowship"], ["Adventure Seekers Squad"], ["Music Maniacs Association"]]
     }
   },
   {
@@ -773,7 +808,13 @@
       "updated_at": "2024-04-22T07:47:26.760Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 9
+      "organization": 9,
+      "groups": [
+        ["Nature Lovers League"],
+        ["Tech Titans Alliance"],
+        ["Culinary Connoisseurs Collective"],
+        ["Movie Buffs Society"]
+      ]
     }
   },
   {
@@ -810,7 +851,8 @@
       "updated_at": "2024-04-22T07:47:26.766Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": [["The Dream Team Connection"]]
     }
   },
   {
@@ -847,7 +889,8 @@
       "updated_at": "2024-04-22T07:47:26.773Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 8
+      "organization": 8,
+      "groups": [["Nature Lovers League"], ["Movie Buffs Society"]]
     }
   },
   {
@@ -884,7 +927,8 @@
       "updated_at": "2024-04-22T07:47:26.779Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 13
+      "organization": 13,
+      "groups": []
     }
   },
   {
@@ -921,7 +965,18 @@
       "updated_at": "2024-04-22T07:47:26.785Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": [
+        ["Global Gourmet Gathering"],
+        ["NFP"],
+        ["Movie Buffs Society"],
+        ["Adventure Seekers Squad"],
+        ["The Dream Team Connection"],
+        ["Fitness Fanatics Fellowship"],
+        ["Fitness Fusion Crew"],
+        ["Literary Legends League"],
+        ["Social Sparks Syndicate"]
+      ]
     }
   },
   {
@@ -958,7 +1013,8 @@
       "updated_at": "2024-04-22T07:47:26.792Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 9
+      "organization": 9,
+      "groups": []
     }
   },
   {
@@ -995,7 +1051,8 @@
       "updated_at": "2024-04-22T07:47:26.798Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["The Dream Team Connection"], ["Culinary Connoisseurs Collective"], ["Creative Minds Consortium"]]
     }
   },
   {
@@ -1032,7 +1089,8 @@
       "updated_at": "2024-04-22T07:47:26.804Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 12
+      "organization": 12,
+      "groups": []
     }
   },
   {
@@ -1069,7 +1127,8 @@
       "updated_at": "2024-04-22T07:47:26.809Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": []
     }
   },
   {
@@ -1106,7 +1165,8 @@
       "updated_at": "2024-04-22T07:47:26.816Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 17
+      "organization": 17,
+      "groups": []
     }
   },
   {
@@ -1143,7 +1203,8 @@
       "updated_at": "2024-04-22T07:47:26.822Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 14
+      "organization": 14,
+      "groups": [["NFP"]]
     }
   },
   {
@@ -1180,7 +1241,8 @@
       "updated_at": "2024-04-22T07:47:26.827Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 8
+      "organization": 8,
+      "groups": []
     }
   },
   {
@@ -1217,7 +1279,8 @@
       "updated_at": "2024-04-22T07:47:26.831Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 6
+      "organization": 6,
+      "groups": [["Literary Legends League"], ["The Dream Team Connection"], ["Social Sparks Syndicate"]]
     }
   },
   {
@@ -1254,7 +1317,8 @@
       "updated_at": "2024-04-22T07:47:26.835Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 6
+      "organization": 6,
+      "groups": []
     }
   },
   {
@@ -1291,7 +1355,8 @@
       "updated_at": "2024-04-22T07:47:26.840Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": [["Focal point"], ["Artistic Avengers Assembly"], ["Bookworm Brigade"], ["NFP"]]
     }
   },
   {
@@ -1328,7 +1393,8 @@
       "updated_at": "2024-04-22T07:47:26.844Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 3
+      "organization": 3,
+      "groups": []
     }
   },
   {
@@ -1365,7 +1431,13 @@
       "updated_at": "2024-04-22T07:47:26.849Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": null
+      "organization": null,
+      "groups": [
+        ["Tech Titans Alliance"],
+        ["Fitness Fusion Crew"],
+        ["Culinary Connoisseurs Collective"],
+        ["The Wanderlust Explorers"]
+      ]
     }
   },
   {
@@ -1402,7 +1474,8 @@
       "updated_at": "2024-04-22T07:47:26.854Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 13
+      "organization": 13,
+      "groups": [["Bookworm Brigade"], ["Tech Titans Alliance"]]
     }
   },
   {
@@ -1439,7 +1512,8 @@
       "updated_at": "2024-04-22T07:47:26.858Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 1
+      "organization": 1,
+      "groups": [["Fitness Fusion Crew"], ["NFP"], ["Fitness Fanatics Fellowship"], ["The Wanderlust Explorers"]]
     }
   },
   {
@@ -1476,7 +1550,8 @@
       "updated_at": "2024-04-22T07:47:26.862Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": [["Fitness Fanatics Fellowship"], ["Culinary Connoisseurs Collective"], ["Social Sparks Syndicate"]]
     }
   },
   {
@@ -1513,7 +1588,8 @@
       "updated_at": "2024-04-22T07:47:26.866Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": [["Bookworm Brigade"]]
     }
   },
   {
@@ -1550,7 +1626,8 @@
       "updated_at": "2024-04-22T07:47:26.873Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 3
+      "organization": 3,
+      "groups": [["Social Sparks Syndicate"], ["The Wanderlust Explorers"], ["Tech Titans Alliance"]]
     }
   },
   {
@@ -1587,7 +1664,8 @@
       "updated_at": "2024-04-22T07:47:26.877Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["Bookworm Brigade"], ["The Wanderlust Explorers"], ["Music Maniacs Association"]]
     }
   },
   {
@@ -1624,7 +1702,13 @@
       "updated_at": "2024-04-22T07:47:26.881Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": [
+        ["Culinary Connoisseurs Collective"],
+        ["Focal point"],
+        ["Global Gourmet Gathering"],
+        ["Artistic Avengers Assembly"]
+      ]
     }
   },
   {
@@ -1661,7 +1745,8 @@
       "updated_at": "2024-04-22T07:47:26.885Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": [["FPLS"], ["Focal point"], ["Movie Buffs Society"], ["Adventure Seekers Squad"]]
     }
   },
   {
@@ -1698,7 +1783,8 @@
       "updated_at": "2024-04-22T07:47:26.890Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["Tech Titans Alliance"]]
     }
   },
   {
@@ -1735,7 +1821,8 @@
       "updated_at": "2024-04-22T07:47:26.894Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 10
+      "organization": 10,
+      "groups": [["Nature Lovers League"]]
     }
   },
   {
@@ -1772,7 +1859,8 @@
       "updated_at": "2024-04-22T07:47:26.898Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": null
+      "organization": null,
+      "groups": [["Wanderers' Circle"], ["Fitness Fanatics Fellowship"], ["Movie Buffs Society"]]
     }
   },
   {
@@ -1809,7 +1897,8 @@
       "updated_at": "2024-04-22T07:47:26.902Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 14
+      "organization": 14,
+      "groups": []
     }
   },
   {
@@ -1846,7 +1935,8 @@
       "updated_at": "2024-04-22T07:47:26.907Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": []
     }
   },
   {
@@ -1883,7 +1973,8 @@
       "updated_at": "2024-04-22T07:47:26.911Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": []
     }
   },
   {
@@ -1920,7 +2011,8 @@
       "updated_at": "2024-04-22T07:47:26.915Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": null
+      "organization": null,
+      "groups": [["FPLS"]]
     }
   },
   {
@@ -1957,7 +2049,13 @@
       "updated_at": "2024-04-22T07:47:26.920Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 1
+      "organization": 1,
+      "groups": [
+        ["Nature Lovers League"],
+        ["Music Maniacs Association"],
+        ["Literary Legends League"],
+        ["Social Sparks Syndicate"]
+      ]
     }
   },
   {
@@ -1994,7 +2092,8 @@
       "updated_at": "2024-04-22T07:47:26.925Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 15
+      "organization": 15,
+      "groups": [["Global Gourmet Gathering"]]
     }
   },
   {
@@ -2031,7 +2130,8 @@
       "updated_at": "2024-04-22T07:47:26.930Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 6
+      "organization": 6,
+      "groups": [["The Dream Team Connection"], ["Culinary Connoisseurs Collective"]]
     }
   },
   {
@@ -2068,7 +2168,8 @@
       "updated_at": "2024-04-22T07:47:26.934Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 10
+      "organization": 10,
+      "groups": []
     }
   },
   {
@@ -2105,7 +2206,8 @@
       "updated_at": "2024-04-22T07:47:26.938Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 14
+      "organization": 14,
+      "groups": [["NFP"]]
     }
   },
   {
@@ -2142,7 +2244,8 @@
       "updated_at": "2024-04-22T07:47:26.943Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 14
+      "organization": 14,
+      "groups": [["Social Sparks Syndicate"]]
     }
   },
   {
@@ -2179,7 +2282,8 @@
       "updated_at": "2024-04-22T07:47:26.948Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 7
+      "organization": 7,
+      "groups": [["Culinary Connoisseurs Collective"], ["The Wanderlust Explorers"]]
     }
   },
   {
@@ -2216,7 +2320,8 @@
       "updated_at": "2024-04-22T07:47:26.952Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 15
+      "organization": 15,
+      "groups": [["Fitness Fusion Crew"], ["Creative Minds Consortium"]]
     }
   },
   {
@@ -2253,7 +2358,8 @@
       "updated_at": "2024-04-22T07:47:26.957Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 10
+      "organization": 10,
+      "groups": [["Wanderers' Circle"], ["Movie Buffs Society"], ["Culinary Connoisseurs Collective"]]
     }
   },
   {
@@ -2290,7 +2396,8 @@
       "updated_at": "2024-04-22T07:47:26.962Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 15
+      "organization": 15,
+      "groups": [["Culinary Connoisseurs Collective"], ["Creative Minds Consortium"], ["The Wanderlust Explorers"]]
     }
   },
   {
@@ -2327,7 +2434,8 @@
       "updated_at": "2024-04-22T07:47:26.967Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 7
+      "organization": 7,
+      "groups": [["Literary Legends League"], ["Focal point"], ["NFP"], ["Movie Buffs Society"]]
     }
   },
   {
@@ -2364,7 +2472,8 @@
       "updated_at": "2024-04-22T07:47:26.971Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 12
+      "organization": 12,
+      "groups": []
     }
   },
   {
@@ -2401,7 +2510,8 @@
       "updated_at": "2024-04-22T07:47:26.975Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 3
+      "organization": 3,
+      "groups": []
     }
   },
   {
@@ -2438,7 +2548,8 @@
       "updated_at": "2024-04-22T07:47:26.980Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 14
+      "organization": 14,
+      "groups": [["Culinary Connoisseurs Collective"], ["Adventure Seekers Squad"], ["Bookworm Brigade"]]
     }
   },
   {
@@ -2475,7 +2586,8 @@
       "updated_at": "2024-04-22T07:47:26.984Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Fitness Fanatics Fellowship"], ["Creative Minds Consortium"]]
     }
   },
   {
@@ -2512,7 +2624,8 @@
       "updated_at": "2024-04-22T07:47:26.989Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 12
+      "organization": 12,
+      "groups": [["Movie Buffs Society"], ["FPLS"]]
     }
   },
   {
@@ -2549,7 +2662,8 @@
       "updated_at": "2024-04-22T07:47:26.993Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["Global Gourmet Gathering"], ["Culinary Connoisseurs Collective"], ["FPLS"], ["Bookworm Brigade"]]
     }
   },
   {
@@ -2586,7 +2700,8 @@
       "updated_at": "2024-04-22T07:47:26.998Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 5
+      "organization": 5,
+      "groups": [["Fitness Fanatics Fellowship"], ["The Wanderlust Explorers"]]
     }
   },
   {
@@ -2623,7 +2738,8 @@
       "updated_at": "2024-04-22T07:47:27.002Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Social Sparks Syndicate"]]
     }
   },
   {
@@ -2660,7 +2776,8 @@
       "updated_at": "2024-04-22T07:47:27.007Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 10
+      "organization": 10,
+      "groups": [["Adventure Seekers Squad"], ["Fitness Fusion Crew"], ["Focal point"]]
     }
   },
   {
@@ -2697,7 +2814,8 @@
       "updated_at": "2024-04-22T07:47:27.012Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Wanderers' Circle"], ["Movie Buffs Society"], ["Global Gourmet Gathering"], ["Tech Titans Alliance"]]
     }
   },
   {
@@ -2734,7 +2852,8 @@
       "updated_at": "2024-04-22T07:47:27.017Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": null
+      "organization": null,
+      "groups": [["Global Gourmet Gathering"], ["Fitness Fusion Crew"]]
     }
   },
   {
@@ -2771,7 +2890,8 @@
       "updated_at": "2024-04-22T07:47:27.021Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 11
+      "organization": 11,
+      "groups": [["Tech Titans Alliance"], ["Social Sparks Syndicate"], ["Bookworm Brigade"], ["Movie Buffs Society"]]
     }
   },
   {
@@ -2808,7 +2928,8 @@
       "updated_at": "2024-04-22T07:47:27.025Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 5
+      "organization": 5,
+      "groups": [["Artistic Avengers Assembly"], ["The Dream Team Connection"]]
     }
   },
   {
@@ -2845,7 +2966,13 @@
       "updated_at": "2024-04-22T07:47:27.029Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [
+        ["Adventure Seekers Squad"],
+        ["Fitness Fanatics Fellowship"],
+        ["The Dream Team Connection"],
+        ["Wanderers' Circle"]
+      ]
     }
   },
   {
@@ -2882,7 +3009,8 @@
       "updated_at": "2024-04-22T07:47:27.034Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 8
+      "organization": 8,
+      "groups": []
     }
   },
   {
@@ -2919,7 +3047,8 @@
       "updated_at": "2024-04-22T07:47:27.038Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 16
+      "organization": 16,
+      "groups": [["The Dream Team Connection"], ["NFP"], ["Fitness Fusion Crew"]]
     }
   },
   {
@@ -2956,7 +3085,8 @@
       "updated_at": "2024-04-22T07:47:27.043Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 7
+      "organization": 7,
+      "groups": [["The Wanderlust Explorers"], ["Global Gourmet Gathering"]]
     }
   },
   {
@@ -2993,7 +3123,8 @@
       "updated_at": "2024-04-22T07:47:27.047Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 15
+      "organization": 15,
+      "groups": [["Creative Minds Consortium"], ["Fitness Fusion Crew"], ["Movie Buffs Society"]]
     }
   },
   {
@@ -3030,7 +3161,8 @@
       "updated_at": "2024-04-22T07:47:27.052Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 8
+      "organization": 8,
+      "groups": []
     }
   },
   {
@@ -3067,7 +3199,13 @@
       "updated_at": "2024-04-22T07:47:27.056Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 2
+      "organization": 2,
+      "groups": [
+        ["Wanderers' Circle"],
+        ["The Wanderlust Explorers"],
+        ["Nature Lovers League"],
+        ["Social Sparks Syndicate"]
+      ]
     }
   },
   {
@@ -3104,7 +3242,8 @@
       "updated_at": "2024-04-22T07:47:27.063Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 16
+      "organization": 16,
+      "groups": [["Fitness Fusion Crew"], ["Creative Minds Consortium"], ["Wanderers' Circle"], ["FPLS"]]
     }
   },
   {
@@ -3141,7 +3280,8 @@
       "updated_at": "2024-04-22T07:47:27.068Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Focal point"], ["Bookworm Brigade"], ["Wanderers' Circle"], ["Adventure Seekers Squad"]]
     }
   },
   {
@@ -3178,7 +3318,13 @@
       "updated_at": "2024-04-22T07:47:27.073Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 9
+      "organization": 9,
+      "groups": [
+        ["Adventure Seekers Squad"],
+        ["Global Gourmet Gathering"],
+        ["Tech Titans Alliance"],
+        ["Nature Lovers League"]
+      ]
     }
   },
   {
@@ -3215,7 +3361,8 @@
       "updated_at": "2024-04-22T07:47:27.078Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 2
+      "organization": 2,
+      "groups": [["Music Maniacs Association"], ["Adventure Seekers Squad"], ["Focal point"]]
     }
   },
   {
@@ -3252,7 +3399,8 @@
       "updated_at": "2024-04-22T07:47:27.082Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [["Adventure Seekers Squad"], ["Fitness Fanatics Fellowship"]]
     }
   },
   {
@@ -3289,7 +3437,13 @@
       "updated_at": "2024-04-22T07:47:27.086Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 19
+      "organization": 19,
+      "groups": [
+        ["Movie Buffs Society"],
+        ["Creative Minds Consortium"],
+        ["Fitness Fanatics Fellowship"],
+        ["Culinary Connoisseurs Collective"]
+      ]
     }
   },
   {
@@ -3326,7 +3480,8 @@
       "updated_at": "2024-04-22T07:47:27.091Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 10
+      "organization": 10,
+      "groups": [["NFP"], ["Wanderers' Circle"]]
     }
   },
   {
@@ -3363,7 +3518,8 @@
       "updated_at": "2024-04-22T07:47:27.096Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 1
+      "organization": 1,
+      "groups": [["NFP"], ["Wanderers' Circle"]]
     }
   },
   {
@@ -3400,7 +3556,8 @@
       "updated_at": "2024-04-22T07:47:27.100Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 12
+      "organization": 12,
+      "groups": []
     }
   },
   {
@@ -3437,7 +3594,8 @@
       "updated_at": "2024-04-22T07:47:27.104Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["Creative Minds Consortium"], ["NFP"], ["The Wanderlust Explorers"]]
     }
   },
   {
@@ -3474,7 +3632,8 @@
       "updated_at": "2024-04-22T07:47:27.109Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 17
+      "organization": 17,
+      "groups": [["Global Gourmet Gathering"], ["The Wanderlust Explorers"], ["Fitness Fanatics Fellowship"]]
     }
   },
   {
@@ -3511,7 +3670,8 @@
       "updated_at": "2024-04-22T07:47:27.113Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 18
+      "organization": 18,
+      "groups": [["The Wanderlust Explorers"], ["Creative Minds Consortium"]]
     }
   },
   {
@@ -3548,7 +3708,8 @@
       "updated_at": "2024-04-22T07:47:27.117Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 20
+      "organization": 20,
+      "groups": [["The Dream Team Connection"], ["Music Maniacs Association"]]
     }
   },
   {
@@ -3585,7 +3746,8 @@
       "updated_at": "2024-04-22T07:47:27.121Z",
       "contact_ids": null,
       "focal_point_ids": null,
-      "organization": 17
+      "organization": 17,
+      "groups": [["Literary Legends League"]]
     }
   }
 ]

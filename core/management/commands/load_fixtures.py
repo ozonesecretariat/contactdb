@@ -36,7 +36,6 @@ class Command(BaseCommand):
             Organization,
             ContactGroup,
             Contact,
-            GroupMembership,
             ResolveConflict,
             ImportFocalPointsTask,
             # Events

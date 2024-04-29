@@ -10,7 +10,7 @@ from import_export.widgets import ForeignKeyWidget
 from common.model_admin import ModelResource
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
-from core.models import Contact, ContactGroup, GroupMembership, Organization
+from core.models import Contact, ContactGroup, Organization
 from events.models import Registration
 
 
@@ -34,10 +34,9 @@ class ContactResource(ModelResource):
 
 
 class ContactMembershipInline(admin.StackedInline):
-    fields = ("group",)
     extra = 0
-    model = GroupMembership
-    autocomplete_fields = ("group",)
+    model = Contact.groups.through
+    autocomplete_fields = ("contactgroup",)
     verbose_name = "Group Contact"
     verbose_name_ = "Group Contacts"
 
@@ -74,7 +73,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
         AutocompleteFilterFactory("event", "registrations__event"),
-        AutocompleteFilterFactory("group", "memberships__group"),
+        "groups",
         "org_head",
         "is_in_mailing_list",
         "is_use_organization_address",
@@ -193,8 +192,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             group = get_object_or_404(ContactGroup, pk=request.POST["group"])
             memberships = []
             for contact in queryset:
-                memberships.append(GroupMembership(group=group, contact=contact))
-            GroupMembership.objects.bulk_create(
+                memberships.append(
+                    Contact.groups.through(contactgroup=group, contact=contact)
+                )
+            Contact.groups.through.objects.bulk_create(
                 memberships, batch_size=1000, ignore_conflicts=True
             )
             self.message_user(
@@ -205,7 +206,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             return
 
         widget = AutocompleteSelect(
-            GroupMembership._meta.get_field("group"), admin_site=self.admin_site
+            Contact.groups.through._meta.get_field("contactgroup"),
+            admin_site=self.admin_site,
         )
         field = forms.ModelChoiceField(
             queryset=ContactGroup.objects.all(), widget=widget

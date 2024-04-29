@@ -202,7 +202,7 @@ Cypress.Commands.addAll({
         first_name: randomStr("first-name-"),
         last_name: randomStr("last-name-"),
         emails: randomStr("test-email-", 10, "@example.org"),
-        memberships: [{ group: groupName }],
+        Contact_groups: [{ contactgroup: groupName }],
         ...extraFields,
       };
       contacts.push(contact);
@@ -213,7 +213,7 @@ Cypress.Commands.addAll({
     return cy.wrap({ name: groupName, contacts });
   },
   deleteContactGroup(group) {
-    cy.triggerAction("Contacts", { memberships__group: group.name, action: "Delete selected contacts" });
+    cy.triggerAction("Contacts", { groups__id__exact: group.name, action: "Delete selected contacts" });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
     cy.contains("Successfully deleted");
 

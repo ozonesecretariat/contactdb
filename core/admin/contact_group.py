@@ -27,7 +27,7 @@ class ContactGroupAdmin(ExportMixin, ModelAdmin):
     @admin.display(description="Contacts", ordering="contacts_count")
     def contacts_count(self, obj):
         return self.get_related_link(
-            obj, "contacts", "memberships__group", obj.contacts_count
+            obj, "contacts", "groups__id__exact", obj.contacts_count
         )
 
     @admin.action(description="Send email to selected groups", permissions=["view"])
