@@ -6,6 +6,9 @@ describe("Check user permissions", () => {
         role: true,
         user: true,
       },
+      auditlog: {
+        logentry: { view: true },
+      },
       constance: {
         config: { view: true, change: true },
       },

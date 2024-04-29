@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     "django_group_model",
     "django_db_views",
     "django_object_actions",
+    "auditlog",
     # This app
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
@@ -108,7 +109,13 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_otp.middleware.OTPMiddleware",
+    "auditlog.middleware.AuditlogMiddleware",
 ]
+
+# https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
+AUDITLOG_INCLUDE_ALL_MODELS = True
+AUDITLOG_EXCLUDE_TRACKING_MODELS = ("sessions",)
+
 
 ROOT_URLCONF = "contactdb.urls"
 

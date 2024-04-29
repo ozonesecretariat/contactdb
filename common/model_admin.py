@@ -1,5 +1,6 @@
 from functools import wraps
 from django.contrib import admin
+from django.contrib.admin.options import get_content_type_for_model
 from django.shortcuts import redirect
 
 from django.template.response import TemplateResponse
@@ -130,6 +131,17 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
                 # Anything extra
                 **(extra_context or {}),
             },
+        )
+
+    def history_view(self, request, object_id, extra_context=None):
+        return redirect(
+            reverse(
+                "admin:auditlog_logentry_changelist",
+                query={
+                    "object_pk": object_id,
+                    "resource_type": get_content_type_for_model(self.model).id,
+                },
+            )
         )
 
 

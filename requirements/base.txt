@@ -1,4 +1,5 @@
 Django==4.2.*
+django-auditlog
 django-admin-autocomplete-filter
 django-admin-env-notice
 django-ckeditor
