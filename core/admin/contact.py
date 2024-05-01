@@ -1,9 +1,13 @@
 from admin_auto_filters.filters import AutocompleteFilterFactory
+from auditlog.cid import get_cid
+from auditlog.models import LogEntry
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import AutocompleteSelect
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.encoding import smart_str
 from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
@@ -190,13 +194,36 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     def add_contacts_to_group(self, request, queryset):
         if "apply" in request.POST:
             group = get_object_or_404(ContactGroup, pk=request.POST["group"])
+            group_str = smart_str(group)
             memberships = []
+            log_entries = []
             for contact in queryset:
                 memberships.append(
                     Contact.groups.through(contactgroup=group, contact=contact)
                 )
+                log_entries.append(
+                    LogEntry(
+                        actor=request.user,
+                        cid=get_cid(),
+                        object_repr=smart_str(contact),
+                        action=LogEntry.Action.UPDATE,
+                        object_pk=contact.pk,
+                        object_id=contact.id,
+                        content_type=ContentType.objects.get_for_model(self.model),
+                        changes={
+                            "groups": {
+                                "type": "m2m",
+                                "operation": "add",
+                                "objects": [group_str],
+                            }
+                        },
+                    )
+                )
             Contact.groups.through.objects.bulk_create(
                 memberships, batch_size=1000, ignore_conflicts=True
+            )
+            LogEntry.objects.bulk_create(
+                log_entries, batch_size=1000, ignore_conflicts=True
             )
             self.message_user(
                 request,
