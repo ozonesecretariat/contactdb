@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
 from django_object_actions import action, DjangoObjectActions
 from common.array_field import ArrayFilterFactory, ArrayLength
+from common.audit import bulk_audit_create
 from common.model_admin import ModelAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
@@ -140,6 +141,8 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
             ],
             ignore_conflicts=True,
         )
+        bulk_audit_create(objs, request=request)
+
         self.message_user(
             request,
             f"{len(objs)} possible duplicates dismissed",
