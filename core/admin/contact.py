@@ -44,6 +44,9 @@ class ContactMembershipInline(admin.StackedInline):
     verbose_name = "Group Contact"
     verbose_name_ = "Group Contacts"
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
@@ -53,6 +56,24 @@ class ContactRegistrationsInline(admin.StackedInline):
 
 @admin.register(Contact)
 class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+
+        for formset in formsets:
+            if formset.model == Contact.groups.through:
+                LogEntry.objects.log_m2m_changes(
+                    [obj.contactgroup for obj in formset.deleted_objects],
+                    formset.instance,
+                    "delete",
+                    "groups",
+                )
+                LogEntry.objects.log_m2m_changes(
+                    [obj.contactgroup for obj in formset.new_objects],
+                    formset.instance,
+                    "add",
+                    "groups",
+                )
+
     resource_class = ContactResource
     inlines = (
         ContactMembershipInline,
