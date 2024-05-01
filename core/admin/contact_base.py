@@ -247,7 +247,6 @@ class MergeContacts:
             else:
                 raise RuntimeError(f"Unexpected field type: {field!r}")
         contact1.save()
-        contact2.save()
 
         conflict = None
         if has_conflict:

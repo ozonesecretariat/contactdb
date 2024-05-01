@@ -145,7 +145,11 @@ class BaseContact(models.Model):
 
     @property
     def full_name(self):
-        return " ".join([self.title, self.first_name, self.last_name]).strip()
+        parts = []
+        for part in (self.title, self.first_name, self.last_name):
+            if part := part.strip():
+                parts.append(part)
+        return " ".join(parts).strip()
 
     def clean(self):
         if not self.first_name and not self.last_name:
@@ -260,6 +264,9 @@ class PossibleDuplicateContact(DBView):
 
 class DismissedDuplicate(models.Model):
     contact_ids = ArrayField(base_field=models.IntegerField(), unique=True)
+
+    def __str__(self):
+        return f"Dismissed duplicates: {self.contact_ids}"
 
 
 class ResolveConflict(BaseContact):

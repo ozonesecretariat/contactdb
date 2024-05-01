@@ -194,6 +194,9 @@ class SendEmailTask(TaskRQ):
     class Meta:
         get_latest_by = "created_on"
 
+    def __str__(self):
+        return f"To: {', '.join(self.email_to)} {self.email.subject}"
+
     @staticmethod
     def get_jobclass():
         from .jobs import SendEmailJob

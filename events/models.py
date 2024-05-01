@@ -123,6 +123,9 @@ class Registration(models.Model):
             "event",
         )
 
+    def __str__(self):
+        return f"{self.event.code} - {self.contact.full_name}"
+
 
 class LoadParticipantsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2
@@ -156,6 +159,9 @@ class LoadParticipantsFromKronosTask(TaskRQ):
 
     class Meta:
         get_latest_by = "created_on"
+
+    def __str__(self):
+        return self.event.code
 
     @staticmethod
     def get_jobclass():
