@@ -195,7 +195,12 @@ class SendEmailTask(TaskRQ):
         get_latest_by = "created_on"
 
     def __str__(self):
-        return f"To: {', '.join(self.email_to)} {self.email.subject}"
+        result = []
+        if self.email_to:
+            result.append("To:")
+            result.append(", ".join(self.email_to))
+        result.append(self.email.subject)
+        return " ".join(result)
 
     @staticmethod
     def get_jobclass():
