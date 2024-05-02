@@ -10,6 +10,7 @@
     "lint:prettier:check": "prettier --check ."
   },
   "devDependencies": {
+    "cy-verify-downloads": "0.2.4",
     "cypress": "13.8.0",
     "eslint": "8.57.0",
     "eslint-plugin-cypress": "2.15.2",

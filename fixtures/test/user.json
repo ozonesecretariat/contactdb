@@ -3,7 +3,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$600000$2KwPfhwPZIbPW0fLVEVatF$JahBhLZ1rPioxC5sjElOrN9aUaxwpaPkKrPBcRF3kCA=",
-      "last_login": "2024-04-18T08:29:04.768Z",
+      "last_login": "2024-05-02T10:37:47.509Z",
       "is_superuser": true,
       "email": "admin@example.com",
       "first_name": null,
@@ -76,7 +76,7 @@
       "created_at": "2024-04-10T10:52:18.035Z",
       "updated_at": "2024-04-10T10:52:31.151Z",
       "user_permissions": [],
-      "roles": [["Send emails"], ["Edit templates"]]
+      "roles": [["Edit templates"], ["Send emails"]]
     }
   },
   {

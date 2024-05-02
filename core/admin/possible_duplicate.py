@@ -138,8 +138,8 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
             [
                 DismissedDuplicate(contact_ids=duplicate.contact_ids)
                 for duplicate in queryset
+                if duplicate.contact_ids
             ],
-            ignore_conflicts=True,
         )
         bulk_audit_create(objs, request=request)
 

@@ -1,4 +1,5 @@
 import { randomStr } from "./utils";
+import path from "path";
 
 function exists(val) {
   if (val) {
@@ -144,9 +145,9 @@ Cypress.Commands.addAll({
       cy.fillInput(key, value);
     }
   },
-  triggerAction(modelName, filters) {
-    cy.goToModel("Contacts");
-    cy.fillInputs(filters);
+  triggerAction({ modelName, action, searchValue = "", filters = {} }) {
+    cy.performSearch({ modelName, searchValue, filters });
+    cy.fillInput("action", action);
     cy.get("#action-toggle").click();
     cy.get(".actions button").contains("Go").click();
   },
@@ -213,10 +214,36 @@ Cypress.Commands.addAll({
     return cy.wrap({ name: groupName, contacts });
   },
   deleteContactGroup(group) {
-    cy.triggerAction("Contacts", { groups__id__exact: group.name, action: "Delete selected contacts" });
+    cy.triggerAction({
+      modelName: "Contacts",
+      action: "Delete selected contacts",
+      filters: { groups__id__exact: group.name },
+    });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
     cy.contains("Successfully deleted");
 
     cy.deleteModel("Contact groups", group.name);
+  },
+  checkExport({ modelName, searchValue = "", filters = {}, filePattern, expected = [] }) {
+    cy.task("cleanDownloadsFolder");
+    cy.performSearch({ modelName, searchValue, filters });
+    cy.get("a").contains("Export").click();
+    cy.fillInput("file_format", "csv");
+    cy.get("[type=submit]").contains("Submit").click();
+    cy.verifyDownload(filePattern, { contains: true });
+    cy.task("downloads").then((files) => {
+      const downloadsFolder = Cypress.config("downloadsFolder");
+      const fullPath = path.join(
+        downloadsFolder,
+        files.find((fn) => fn.includes(filePattern)),
+      );
+
+      cy.readFile(fullPath, "utf-8").then((content) => {
+        expect(content.trim().split("\n")).to.have.length(expected.length + 1);
+        for (const value of expected) {
+          expect(content).to.contain(value);
+        }
+      });
+    });
   },
 });

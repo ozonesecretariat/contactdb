@@ -218,7 +218,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             group = get_object_or_404(ContactGroup, pk=request.POST["group"])
             group_str = smart_str(group)
             memberships = []
-            log_entries = []
             for contact in queryset:
                 memberships.append(
                     Contact.groups.through(contactgroup=group, contact=contact)
@@ -247,6 +246,9 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         widget = AutocompleteSelect(
             Contact.groups.through._meta.get_field("contactgroup"),
             admin_site=self.admin_site,
+            attrs={
+                "id": "select-contactgroup",
+            },
         )
         field = forms.ModelChoiceField(
             queryset=ContactGroup.objects.all(), widget=widget
