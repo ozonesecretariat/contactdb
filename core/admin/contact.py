@@ -10,20 +10,42 @@ from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
 from common.audit import bulk_audit_update
+from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
-from core.models import Contact, ContactGroup, Organization
+from core.jobs import ImportFocalPoints
+from core.models import Contact, ContactGroup, Country, Organization
 from events.models import Registration
+
+
+class OrganizationWidget(ForeignKeyWidget):
+    def __init__(self):
+        super().__init__(Organization, field="name")
+
+    def clean(self, value, row=None, **kwargs):
+        country = None
+        if country_code := row.get("country"):
+            country = Country.objects.get(code=country_code)
+        return ImportFocalPoints.get_organization(value, country, country)
 
 
 class ContactResource(ModelResource):
     organization = fields.Field(
         column_name="organization",
         attribute="organization",
-        widget=ForeignKeyWidget(Organization, "name"),
+        widget=OrganizationWidget(),
     )
-    prefetch_related = ("organization", "country")
+    groups = fields.Field(
+        column_name="groups",
+        attribute="groups",
+        widget=ManyToManyWidgetWithCreation(ContactGroup, field="name", create=True),
+    )
+    prefetch_related = (
+        "organization",
+        "country",
+        "groups",
+    )
 
     class Meta:
         model = Contact
@@ -33,7 +55,7 @@ class ContactResource(ModelResource):
             "created_at",
             "updated_at",
         )
-        import_id_fields = ("emails",)
+        import_id_fields = ()
 
 
 class ContactMembershipInline(admin.StackedInline):

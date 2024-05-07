@@ -7,7 +7,7 @@ from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
-from common.citext import CICharField, CITextField
+from common.citext import CICharField
 from common.model import KronosId
 
 

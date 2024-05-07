@@ -250,6 +250,7 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
                 "fields": (
                     "recipients",
                     "groups",
+                    "events",
                 )
             },
         ),
