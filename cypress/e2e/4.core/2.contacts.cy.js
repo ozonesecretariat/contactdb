@@ -40,10 +40,10 @@ describe("Check", () => {
     cy.checkExport({
       modelName: "Contacts",
       filters: {
-        country: "European Union",
+        country: "Liechtenstein",
       },
       filePattern: "Contact",
-      expected: ["astrid-spectrum@example.com", "rigel@example.com"],
+      expected: ["astrid-cassius@example.com", "cassian-xenon@example.com"],
     });
   });
   it("Check registrations link", () => {
@@ -52,7 +52,7 @@ describe("Check", () => {
       modelName: "Contacts",
       filters: {
         organization: "Warp Dynamics Institute",
-        country: "Central African Republic",
+        country: "Albania",
       },
     });
     cy.contains("1 result");
@@ -69,7 +69,7 @@ describe("Check", () => {
       modelName: "Contacts",
       filters: {
         registrations__event: "Mythos Masquerade Ball",
-        country: "Central African Republic",
+        country: "Albania",
       },
     });
     cy.contains("1 result");
