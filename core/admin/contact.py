@@ -1,3 +1,4 @@
+from functools import cached_property
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from auditlog.models import LogEntry
 from django import forms
@@ -6,15 +7,16 @@ from django.contrib.admin.widgets import AutocompleteSelect
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.encoding import smart_str
+from django.utils.safestring import mark_safe
 from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
+from common import fuzzy_search
 from common.audit import bulk_audit_update
 from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
-from core.jobs import ImportFocalPoints
 from core.models import Contact, ContactGroup, Country, Organization
 from events.models import Registration
 
@@ -27,7 +29,7 @@ class OrganizationWidget(ForeignKeyWidget):
         country = None
         if country_code := row.get("country"):
             country = Country.objects.get(code=country_code)
-        return ImportFocalPoints.get_organization(value, country, country)
+        return fuzzy_search.get_organization(value, country, country)
 
 
 class ContactResource(ModelResource):
@@ -104,8 +106,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     )
     list_display = (
         "title",
-        "first_name",
-        "last_name",
+        "get_first_name",
+        "get_last_name",
         "organization",
         "country",
         "emails",
@@ -114,8 +116,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "email_logs",
     )
     list_display_links = (
-        "first_name",
-        "last_name",
+        "get_first_name",
+        "get_last_name",
     )
     list_filter = (
         AutocompleteFilterFactory("organization", "organization"),
@@ -291,3 +293,15 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     def send_email(self, request, queryset):
         ids = ",".join(map(str, queryset.values_list("id", flat=True)))
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
+
+    @cached_property
+    def empty_value(self):
+        return mark_safe("<i>(empty)</i>")
+
+    @admin.display(description="First name", ordering="first_name")
+    def get_first_name(self, obj):
+        return obj.first_name or self.empty_value
+
+    @admin.display(description="Last name", ordering="last_name")
+    def get_last_name(self, obj):
+        return obj.last_name or self.empty_value

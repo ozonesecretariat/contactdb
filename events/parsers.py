@@ -1,9 +1,9 @@
 import logging
-import re
 from datetime import datetime
 from functools import cached_property
 
 from django.utils.timezone import make_aware
+from common.parsing import parse_list
 
 from core.models import (
     Country,
@@ -27,19 +27,6 @@ def check_diff(obj, dictionary):
         if getattr(obj, key) != value:
             return True
     return False
-
-
-def parse_list(email_list):
-    if isinstance(email_list, str):
-        email_list = [email_list]
-
-    result = set()
-    for item in email_list:
-        for addr in re.split(r"[;,]", item):
-            if addr := str(addr).strip():
-                result.add(addr)
-
-    return list(result)
 
 
 class KronosParser:

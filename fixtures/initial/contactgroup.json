@@ -22,5 +22,13 @@
       "description": null,
       "predefined": true
     }
+  },
+  {
+    "model": "core.contactgroup",
+    "fields": {
+      "name": "Legacy contacts",
+      "description": null,
+      "predefined": true
+    }
   }
 ]

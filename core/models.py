@@ -2,6 +2,7 @@ import textwrap
 
 import pycountry
 from django.core.exceptions import ValidationError
+from django.core.files.storage import storages
 from django.db import models
 from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
@@ -149,6 +150,8 @@ class BaseContact(models.Model):
         for part in (self.title, self.first_name, self.last_name):
             if part := part.strip():
                 parts.append(part)
+        if not parts:
+            return f"(no name) ({self.pk})"
         return " ".join(parts).strip()
 
     def clean(self):
@@ -335,3 +338,27 @@ class ImportFocalPointsTask(TaskRQ):
         from .jobs import ImportFocalPoints
 
         return ImportFocalPoints
+
+
+class ImportLegacyContactsTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 300
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    clear_previous = models.BooleanField(
+        default=False,
+        help_text=(
+            "Delete all contacts from the 'Legacy contacts' group before importing."
+        ),
+    )
+    json_file = models.FileField(
+        upload_to="import_legacy_contact_files/", storage=storages["protected"]
+    )
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import ImportLegacyContacts
+
+        return ImportLegacyContacts
