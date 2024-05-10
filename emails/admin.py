@@ -101,7 +101,7 @@ class ViewEmailMixIn:
     @admin.display(description="Email preview")
     def email_preview(self, obj):
         return format_html(
-            '<iframe src="{url}" sandbox="" referrerpolicy="no-referrer"></iframe>',
+            '<iframe src="{url}" referrerpolicy="no-referrer"></iframe>',
             url=reverse(
                 "admin:%s_%s_view_email" % self.opt_info,
                 kwargs={"object_id": str(obj.id)},

@@ -135,6 +135,8 @@ Cypress.Commands.addAll({
         cy.fillCKEditor(name, value);
       } else if (el.classList.contains("inline-group")) {
         cy.fillInline(name, value);
+      } else if (el.type === "file") {
+        cy.get(`[name="${name}"]`).first().selectFile(value);
       } else {
         cy.get(`[name="${name}"]`).first().type(value);
       }
@@ -192,6 +194,7 @@ Cypress.Commands.addAll({
       cy.deleteModel(modelName, identifier, filters);
       cy.checkNotFound({ modelName, searchValue: identifier, filters });
     }
+    return cy.wrap(fields);
   },
   createContactGroup(numberOfContacts = 1, extraFields = {}) {
     const groupName = randomStr("test-group-");
@@ -224,12 +227,7 @@ Cypress.Commands.addAll({
 
     cy.deleteModel("Contact groups", group.name);
   },
-  checkExport({ modelName, searchValue = "", filters = {}, filePattern, expected = [] }) {
-    cy.task("cleanDownloadsFolder");
-    cy.performSearch({ modelName, searchValue, filters });
-    cy.get("a").contains("Export").click();
-    cy.fillInput("file_format", "csv");
-    cy.get("[type=submit]").contains("Submit").click();
+  checkFile({ filePattern, expected, lineLength = null }) {
     cy.verifyDownload(filePattern, { contains: true });
     cy.task("downloads").then((files) => {
       const downloadsFolder = Cypress.config("downloadsFolder");
@@ -239,11 +237,21 @@ Cypress.Commands.addAll({
       );
 
       cy.readFile(fullPath, "utf-8").then((content) => {
-        expect(content.trim().split("\n")).to.have.length(expected.length + 1);
+        if (lineLength) {
+          expect(content.trim().split("\n")).to.have.length(lineLength);
+        }
         for (const value of expected) {
           expect(content).to.contain(value);
         }
       });
     });
+  },
+  checkExport({ modelName, searchValue = "", filters = {}, filePattern, expected = [] }) {
+    cy.task("cleanDownloadsFolder");
+    cy.performSearch({ modelName, searchValue, filters });
+    cy.get("a").contains("Export").click();
+    cy.fillInput("file_format", "csv");
+    cy.get("[type=submit]").contains("Submit").click();
+    cy.checkFile({ filePattern, expected, lineLength: expected.length + 1 });
   },
 });
