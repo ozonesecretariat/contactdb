@@ -1,0 +1,40 @@
+[
+  {
+    "model": "core.importlegacycontactstask",
+    "pk": "4a0665ef-d79f-444e-84d9-35f26fbef7fc",
+    "fields": {
+      "description": "",
+      "created_on": "2024-05-10T12:49:27.345Z",
+      "created_by": ["admin@example.com"],
+      "started_on": null,
+      "completed_on": null,
+      "progress": null,
+      "status": "PENDING",
+      "job_id": "",
+      "mode": "ASYNC",
+      "failure_reason": "",
+      "log_text": "",
+      "clear_previous": true,
+      "json_file": "import_legacy_contact_files/x.json"
+    }
+  },
+  {
+    "model": "core.importlegacycontactstask",
+    "pk": "67bd49fd-1b17-42f2-9a9a-013d20fb30f3",
+    "fields": {
+      "description": "",
+      "created_on": "2024-05-10T12:49:37.544Z",
+      "created_by": ["admin@example.com"],
+      "started_on": null,
+      "completed_on": null,
+      "progress": null,
+      "status": "PENDING",
+      "job_id": "",
+      "mode": "ASYNC",
+      "failure_reason": "",
+      "log_text": "",
+      "clear_previous": true,
+      "json_file": "import_legacy_contact_files/y.json"
+    }
+  }
+]

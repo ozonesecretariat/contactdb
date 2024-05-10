@@ -38,6 +38,7 @@ class Command(BaseCommand):
             Contact,
             ResolveConflict,
             ImportFocalPointsTask,
+            ImportLegacyContactsTask,
             # Events
             Event,
             LoadEventsFromKronosTask,

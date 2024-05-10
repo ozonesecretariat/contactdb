@@ -17,6 +17,7 @@ describe("Check user permissions", () => {
         contact: true,
         country: true,
         importfocalpointstask: { add: true, view: true },
+        importlegacycontactstask: { add: true, view: true },
         organizationtype: true,
         organization: true,
         possibleduplicate: { view: true },
