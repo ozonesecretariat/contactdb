@@ -148,7 +148,7 @@ class BaseContact(models.Model):
     def full_name(self):
         parts = []
         for part in (self.title, self.first_name, self.last_name):
-            if part := part.strip():
+            if part := (part or "").strip():
                 parts.append(part)
         if not parts:
             return f"(no name) ({self.pk})"

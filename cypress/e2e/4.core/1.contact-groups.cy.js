@@ -11,7 +11,7 @@ describe("Check", () => {
         predefined__exact: "Yes",
       },
       filePattern: "ContactGroup",
-      expected: ["Focal point", "NFP", "FPLS"],
+      expected: ["Focal point", "NFP", "FPLS", "Legacy contacts"],
     });
   });
   it("Check contacts link", () => {
@@ -37,5 +37,7 @@ describe("Check", () => {
     cy.get(".select2-selection__choice").contains("Focal point");
     cy.get(".select2-selection__choice").contains("NFP");
     cy.get(".select2-selection__choice").contains("FPLS");
+    // Should not be included as there no contacts in the groups in the test db.
+    cy.get(".select2-selection__choice").contains("Legacy contacts").should("not.exist");
   });
 });

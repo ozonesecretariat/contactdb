@@ -46,6 +46,39 @@ describe("Check", () => {
       expected: ["astrid-cassius@example.com", "cassian-xenon@example.com"],
     });
   });
+  it("Check import", () => {
+    cy.loginEdit();
+    cy.goToModel("Contacts");
+    cy.get("a").contains("Import").click();
+    cy.get("input[type=file][name=import_file]").selectFile("fixtures/test/files/test-contact-import.xlsx");
+    cy.get("input[type=submit]").contains("Submit").click();
+    cy.get("input[type=submit]").contains("Confirm import").click();
+    cy.contains("Import finished, with 2 new and 0 updated contacts.");
+
+    // Check values got imported correctly
+    cy.performSearch({
+      modelName: "Contacts",
+      searchValue: "tiny.knight@example.org",
+    });
+    cy.get("#result_list tbody tr:first-of-type th a").click();
+    cy.contains("Astral Technologies Syndicate");
+    cy.contains("Adventure Seekers Squad");
+    cy.contains("Dr. Tiny Knight");
+    cy.get("input[name=emails]").eq(0).should("have.value", "tiny.knight@example.org");
+    cy.get("input[name=emails]").eq(1).should("have.value", "tiny.knight@example.net");
+
+    // Remove the imported data
+    cy.triggerAction({
+      modelName: "Contacts",
+      action: "Delete selected contacts",
+      filters: {
+        organization: "Astral Technologies Syndicate",
+        groups__id__exact: "Adventure Seekers Squad",
+        country: "Poland",
+      },
+    });
+    cy.get("[type=submit]").contains("Yes, I’m sure").click();
+  });
   it("Check registrations link", () => {
     cy.loginView();
     cy.performSearch({

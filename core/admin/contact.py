@@ -49,6 +49,13 @@ class ContactResource(ModelResource):
         "groups",
     )
 
+    def skip_row(self, instance, original, row, import_validation_errors=None):
+        if all(not i for i in row.values()):
+            return True
+        return super().skip_row(
+            instance, original, row, import_validation_errors=import_validation_errors
+        )
+
     class Meta:
         model = Contact
         exclude = (
@@ -56,6 +63,8 @@ class ContactResource(ModelResource):
             "contact_id",
             "created_at",
             "updated_at",
+            "contact_ids",
+            "focal_point_ids",
         )
         import_id_fields = ()
 
