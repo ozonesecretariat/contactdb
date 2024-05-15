@@ -1,41 +1,34 @@
-import pytest
-
-from django.contrib.auth import get_user_model
-
-
-pytestmark = [pytest.mark.django_db]
+from django.test import TestCase
+from accounts.models import User
 
 
-def test_create_user():
-    User = get_user_model()  # noqa
-    user = User.objects.create_user(email="normal@user.com", password="foo")
-    assert user.email == "normal@user.com"
-    assert user.is_active
-    assert not user.is_superuser
+class TestUsers(TestCase):
+    def test_create_user(self):
+        user = User.objects.create_user(email="normal@user.com", password="foo")
+        self.assertEqual(user.email, "normal@user.com")
+        self.assertTrue(user.is_active)
+        self.assertFalse(user.is_superuser)
+        self.assertIsNone(getattr(user, "username", None))
 
-    with pytest.raises(AttributeError):
-        assert user.username is None
+        with self.assertRaises(TypeError):
+            User.objects.create_user()
 
-    with pytest.raises(TypeError):
-        User.objects.create_user()
+        with self.assertRaises(TypeError):
+            User.objects.create_user(email="")
 
-    with pytest.raises(TypeError):
-        User.objects.create_user(email="")
+        with self.assertRaises(TypeError):
+            User.objects.create_user(email="normal@user.com")
 
-    with pytest.raises(TypeError):
-        User.objects.create_user(email="normal@user.com")
+        with self.assertRaises(ValueError):
+            User.objects.create_user(email="", password="foo")
 
-    with pytest.raises(ValueError):
-        User.objects.create_user(email="", password="foo")
+        with self.assertRaises(ValueError):
+            User.objects.create_user(email="normal@user.com", password="")
 
-    with pytest.raises(ValueError):
-        User.objects.create_user(email="normal@user.com", password="")
-
-
-def test_create_superuser():
-    User = get_user_model()  # noqa
-    user = User.objects.create_superuser(email="super@user.com", password="foo")
-    assert user.email == "super@user.com"
-    assert user.is_active
-    assert user.is_staff
-    assert user.is_superuser
+    def test_create_superuser(self):
+        User = get_user_model()  # noqa
+        user = User.objects.create_superuser(email="super@user.com", password="foo")
+        self.assertEqual(user.email, "super@user.com")
+        self.assertTrue(user.is_active)
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)

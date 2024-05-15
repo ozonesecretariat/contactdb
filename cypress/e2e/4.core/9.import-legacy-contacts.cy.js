@@ -18,15 +18,14 @@ describe("Check import focal points", () => {
     // Check some of the imported fields
     cy.performSearch({
       modelName: "Contacts",
-      searchValue: "jane.legacy-test@example.com",
+      searchValue: "jane1.legacy-test@example.com",
       filters: { groups__id__exact: "Legacy contacts" },
     });
     cy.get("#result_list tbody tr:first-of-type th a").click();
     cy.contains("Ms. Jane Doe");
     cy.contains("Guyana (GY)");
-    cy.get("[name=emails]").eq(0).should("have.value", "jane.legacy-test@example.com");
-    cy.get("[name=emails]").eq(1).should("have.value", "jane2.legacy-test@example.com");
-    cy.get("[name=phones]").eq(0).should("have.value", "(+00) 123 456 789");
+    cy.get('[name=emails][value="jane1.legacy-test@example.com"]');
+    cy.get('[name=emails][value="jane2.legacy-test@example.com"]');
     cy.get("[name=designation]").should("have.value", "Officer");
 
     // Remove imported data

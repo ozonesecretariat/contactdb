@@ -64,8 +64,8 @@ describe("Check", () => {
     cy.contains("Astral Technologies Syndicate");
     cy.contains("Adventure Seekers Squad");
     cy.contains("Dr. Tiny Knight");
-    cy.get("input[name=emails]").eq(0).should("have.value", "tiny.knight@example.org");
-    cy.get("input[name=emails]").eq(1).should("have.value", "tiny.knight@example.net");
+    cy.get('[name=emails][value="tiny.knight@example.org"]');
+    cy.get('[name=emails][value="tiny.knight@example.net"]');
 
     // Remove the imported data
     cy.triggerAction({

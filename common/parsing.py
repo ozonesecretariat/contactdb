@@ -18,4 +18,4 @@ def parse_list(email_list):
             if addr := str(addr).strip():
                 result.add(addr)
 
-    return list(result)
+    return list(sorted(result))

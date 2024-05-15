@@ -115,5 +115,5 @@ def get_organization(names: str | list[str], party, country):
         pass
 
     return Organization.objects.create(
-        name=names[0], acronym="", country=country, government=party
+        name=names[0].strip(), acronym="", country=country, government=party
     )
