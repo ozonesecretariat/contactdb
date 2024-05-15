@@ -46,6 +46,12 @@
   max-width: 460px;
 }
 
+/* Make the submit row sticky */
+.submit-row {
+  position: sticky;
+  bottom: 0;
+}
+
 /* Fix alignment of inline checkboxes*/
 .vCheckboxLabel {
   padding: 2px 10px 0 5px !important;
