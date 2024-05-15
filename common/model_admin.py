@@ -88,6 +88,18 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
             f"admin:{opts.app_label}_{opts.model_name}_changelist", query=query
         )
 
+    def get_object_display_link(self, obj, text=None):
+        if not obj:
+            return self.get_empty_value_display()
+
+        opts = obj.__class__._meta
+        url = reverse(
+            f"admin:{opts.app_label}_{opts.model_name}_change", args=(obj.pk,)
+        )
+        return format_html(
+            '<a href="{url}">{link_text}</a>', url=url, link_text=text or obj
+        )
+
     def get_admin_list_filter_link(self, obj, name, filter_name, extra_filters=None):
         related_model = getattr(obj, name).model
 

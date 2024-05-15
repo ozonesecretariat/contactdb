@@ -79,6 +79,22 @@ describe("Check", () => {
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
   });
+  it("Check organization link", () => {
+    cy.loginView();
+    cy.performSearch({
+      modelName: "Contacts",
+      filters: {
+        organization: "Warp Dynamics Institute",
+        country: "Albania",
+      },
+    });
+    cy.contains("1 result");
+    cy.contains("Aria");
+    cy.contains("Quantum");
+    cy.get("a").contains("Warp Dynamics Institute, Guatemala").click();
+    cy.contains("View organization");
+    cy.contains("Warp Dynamics Institute, Guatemala");
+  });
   it("Check registrations link", () => {
     cy.loginView();
     cy.performSearch({

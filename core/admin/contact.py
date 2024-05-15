@@ -117,7 +117,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "title",
         "get_first_name",
         "get_last_name",
-        "organization",
+        "organization_link",
         "country",
         "emails",
         "phones",
@@ -314,3 +314,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     @admin.display(description="Last name", ordering="last_name")
     def get_last_name(self, obj):
         return obj.last_name or self.empty_value
+
+    @admin.display(description="Organization", ordering="organization")
+    def organization_link(self, obj):
+        return self.get_object_display_link(obj.organization)
