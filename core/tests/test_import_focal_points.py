@@ -29,11 +29,7 @@ class TestImportFocalPoints(TestCase):
         }
         self.mock_data = [self.fake_item]
         self.mock_request = patch("requests.get").start()
-
-        def get_data():
-            return self.mock_data
-
-        self.mock_request.return_value.json.side_effect = get_data
+        self.mock_request.return_value.json.side_effect = lambda: self.mock_data
 
     def tearDown(self):
         patch.stopall()

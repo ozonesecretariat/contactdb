@@ -105,11 +105,12 @@ class KronosEventsParser(KronosParser):
         count_created = 0
         count_updated = 0
         for event_dict in self.client.get_meetings():
-            self.task.log(logging.INFO, f"Saving event: {event_dict.get('title')}")
+            title = event_dict.get("title", "").strip()
+            self.task.log(logging.INFO, "Saving event: %s", title)
 
             d = {
                 "event_id": event_dict.get("eventId"),
-                "title": event_dict.get("title", "").strip(),
+                "title": title,
                 "code": event_dict.get("code"),
                 "start_date": self.parse_datetime(event_dict["startDate"]),
                 "end_date": self.parse_datetime(event_dict["endDate"]),
@@ -121,12 +122,10 @@ class KronosEventsParser(KronosParser):
 
             if created:
                 count_created += 1
-                self.task.log(
-                    logging.INFO, f"New event added: {event_dict.get('title')}"
-                )
+                self.task.log(logging.INFO, "New event added: %s", title)
             elif attr_changes:
                 count_updated += 1
-                self.task.log(logging.INFO, f"Event updated: {event_dict.get('title')}")
+                self.task.log(logging.INFO, "Event updated: %s", title)
         return count_created, count_updated
 
     @staticmethod
