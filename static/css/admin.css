@@ -38,12 +38,15 @@
   background-color: white;
 }
 
-/* Get rid of the horizontal scrollbar in Django admin tables! */
+/* Allow breaking of tables rows */
 #result_list tbody td,
 #result_list tbody th {
-  word-break: break-word !important;
   white-space: normal !important;
   max-width: 460px;
+}
+
+#result_list tbody tr:hover {
+  background-color: var(--selected-bg);
 }
 
 /* Make the submit row sticky */

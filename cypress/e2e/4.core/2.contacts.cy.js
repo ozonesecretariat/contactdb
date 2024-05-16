@@ -107,7 +107,7 @@ describe("Check", () => {
     cy.contains("1 result");
     cy.contains("Aria");
     cy.contains("Quantum");
-    cy.get("a").contains("9 registrations").click();
+    cy.get("a").contains("9 events").click();
     cy.contains("Select registration");
     cy.contains("Ms. Aria Quantum (Warp Dynamics Institute, Guatemala)");
     cy.contains("9 results");

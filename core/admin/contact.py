@@ -238,7 +238,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             obj,
             "registrations",
             "contact",
-            f"{obj.registration_count} registrations",
+            f"{obj.registration_count} events",
         )
 
     @admin.action(description="Merge selected contacts", permissions=["change"])
