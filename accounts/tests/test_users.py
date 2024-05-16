@@ -26,7 +26,6 @@ class TestUsers(TestCase):
             User.objects.create_user(email="normal@user.com", password="")
 
     def test_create_superuser(self):
-        User = get_user_model()  # noqa
         user = User.objects.create_superuser(email="super@user.com", password="foo")
         self.assertEqual(user.email, "super@user.com")
         self.assertTrue(user.is_active)
