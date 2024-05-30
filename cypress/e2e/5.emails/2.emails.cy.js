@@ -16,6 +16,22 @@ describe("Check", () => {
       checkDelete: false,
     });
   });
+  it.only("Check send no CC address", () => {
+    cy.loginEmails();
+    cy.checkModelAdmin({
+      modelName: "Emails",
+      nameField: "subject",
+      extraFields: {
+        recipients: "John No CC email",
+        content: "Test sending email with no CC",
+      },
+      suffix: "-email-subject",
+      checkDelete: false,
+    });
+
+    // Wait for the task to finish
+    cy.get(".field-status_display").contains("SUCCESS");
+  });
   it("Check use template placeholder", () => {
     const subject = randomStr(`email-subject-`);
     cy.loginEmails();

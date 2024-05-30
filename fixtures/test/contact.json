@@ -3749,5 +3749,43 @@
       "organization": 17,
       "groups": [["Literary Legends League"]]
     }
+  },
+  {
+    "model": "core.contact",
+    "pk": 101,
+    "fields": {
+      "title": "Mr.",
+      "honorific": "",
+      "respectful": "",
+      "first_name": "John",
+      "last_name": "No CC email",
+      "designation": "",
+      "department": "",
+      "affiliation": "",
+      "primary_lang": "",
+      "second_lang": "",
+      "third_lang": "",
+      "phones": null,
+      "mobiles": null,
+      "faxes": null,
+      "emails": "[\"john.no-cc@example.com\"]",
+      "email_ccs": null,
+      "notes": "",
+      "is_in_mailing_list": false,
+      "is_use_organization_address": false,
+      "address": "",
+      "city": "",
+      "state": "",
+      "country": "DE",
+      "postal_code": "",
+      "birth_date": null,
+      "org_head": false,
+      "created_at": "2024-04-15T12:52:01.990Z",
+      "updated_at": "2024-05-07T06:38:06.891Z",
+      "contact_ids": null,
+      "focal_point_ids": null,
+      "organization": 17,
+      "groups": [["Literary Legends League"]]
+    }
   }
 ]
