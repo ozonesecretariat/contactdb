@@ -106,8 +106,8 @@ class Email(models.Model):
 
         html_content = self.content.strip()
         if contact:
-            msg.to = contact.emails
-            msg.cc = contact.email_ccs
+            msg.to = contact.emails or []
+            msg.cc = contact.email_ccs or []
 
             for placeholder in settings.CKEDITOR_PLACEHOLDERS:
                 html_content = html_content.replace(
