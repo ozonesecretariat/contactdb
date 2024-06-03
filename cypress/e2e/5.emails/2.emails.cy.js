@@ -7,9 +7,9 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       extraFields: {
-        recipients: "Aria-Eclipse Titan",
+        recipients: "Élàra Vãngüard",
         groups: "Literary Legends League",
-        events: "Zenith Zen: Skyline Yoga Experience",
+        events: "Stéllâr Sérènade Müsïc Fêstivàl",
         content: "Test sending email",
       },
       suffix: "-email-subject",

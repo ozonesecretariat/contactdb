@@ -3,6 +3,14 @@ describe("Check", () => {
     cy.loginEdit();
     cy.checkModelAdmin({ modelName: "Organizations", extraFields: { organization_type: "OTHER" } });
   });
+  it("Check model search", () => {
+    cy.loginView();
+    cy.checkSearch({
+      modelName: "Organizations",
+      searchValue: "Exoplanetary Colonization Authority",
+      expectedValue: "Exøplănetâry Çolönizàtion Áuțhôrîtÿ",
+    });
+  });
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
