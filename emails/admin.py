@@ -342,7 +342,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     )
     list_display = (
         "email",
-        "contact",
+        "contact_link",
         "email_to",
         "email_cc",
         "created_on",
@@ -430,3 +430,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
 
     def has_add_permission(self, request):
         return False
+
+    @admin.display(description="Contact", ordering="contact")
+    def contact_link(self, obj):
+        return self.get_object_display_link(obj.contact)
