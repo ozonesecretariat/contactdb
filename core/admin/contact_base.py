@@ -19,14 +19,14 @@ class ContactAdminBase(ModelAdmin):
         "last_name",
     )
     search_fields = (
-        "first_name",
-        "last_name",
-        "designation",
-        "department",
+        "first_name__unaccent",
+        "last_name__unaccent",
+        "designation__unaccent",
+        "department__unaccent",
         "emails",
         "email_ccs",
-        "organization__name",
-        "organization__country__name",
+        "organization__name__unaccent",
+        "organization__country__name__unaccent",
     )
     autocomplete_fields = (
         "organization",

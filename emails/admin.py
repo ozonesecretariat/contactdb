@@ -335,8 +335,8 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     search_fields = (
         "email__subject",
         "email__content",
-        "contact__first_name",
-        "contact__last_name",
+        "contact__first_name__unaccent",
+        "contact__last_name__unaccent",
         "email_to",
         "email_cc",
     )
