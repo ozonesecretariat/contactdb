@@ -6,6 +6,7 @@ describe("Check possible duplicates", () => {
       searchValue: "elara@example.com",
       expectedValue: "Email: elara@example.com",
     });
+    cy.contains("Élàra Vãngüard");
   });
   it("Check dismiss", () => {
     cy.loginEdit();

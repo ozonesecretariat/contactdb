@@ -6,7 +6,7 @@ describe("Check import focal points", () => {
       searchValue: "4a0665ef-d79f-444e-84d9-35f26fbef7fc",
     });
   });
-  it.only("Check import legacy contacts", () => {
+  it("Check import legacy contacts", () => {
     cy.loginAdmin();
     cy.addModel("Import legacy contacts task", {
       json_file: "fixtures/test/files/legacy-contacts.json",

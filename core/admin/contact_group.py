@@ -9,7 +9,7 @@ from core.models import ContactGroup
 
 @admin.register(ContactGroup)
 class ContactGroupAdmin(ExportMixin, ModelAdmin):
-    search_fields = ("name", "description")
+    search_fields = ("name__unaccent", "description__unaccent")
     list_display = (
         "name",
         "predefined",
