@@ -19,7 +19,7 @@ describe("Check import focal points", () => {
     cy.performSearch({
       modelName: "Contacts",
       searchValue: "jane1.legacy-test@example.com",
-      filters: { groups__id__exact: "Legacy contacts" },
+      filters: { groups__in: "Legacy contacts" },
     });
     cy.get("#result_list tbody tr:first-of-type th a").click();
     cy.contains("Ms. Jane Doe");
@@ -33,7 +33,7 @@ describe("Check import focal points", () => {
       modelName: "Contacts",
       action: "Delete selected contacts",
       searchValue: "legacy-test@example.com",
-      filters: { groups__id__exact: "Legacy contacts" },
+      filters: { groups__in: "Legacy contacts" },
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
   });

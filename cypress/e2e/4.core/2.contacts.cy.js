@@ -9,7 +9,7 @@ describe("Check", () => {
       cy.triggerAction({
         modelName: "Contacts",
         action: "Merge selected contacts",
-        filters: { groups__id__exact: group.name },
+        filters: { groups__in: group.name },
       });
       cy.checkSearch({ modelName: "Resolve conflicts", searchValue: group.contacts[0].last_name });
       cy.get("input[value=Save]").click();
@@ -24,7 +24,7 @@ describe("Check", () => {
       cy.triggerAction({
         modelName: "Contacts",
         action: "Add selected contacts to group",
-        filters: { groups__id__exact: group.name },
+        filters: { groups__in: group.name },
       });
       cy.fillInput("group", "Focal point");
       cy.get("[type=submit]").contains("Add to group").click();
@@ -40,7 +40,7 @@ describe("Check", () => {
     cy.checkExport({
       modelName: "Contacts",
       filters: {
-        country: "Liechtenstein",
+        country__in: "Liechtenstein",
       },
       filePattern: "Contact",
       expected: ["astrid-cassius@example.com", "cassian-xenon@example.com"],
@@ -72,9 +72,9 @@ describe("Check", () => {
       modelName: "Contacts",
       action: "Delete selected contacts",
       filters: {
-        organization: "Astral Technologies Syndicate",
-        groups__id__exact: "Adventure Seekers Squad",
-        country: "Poland",
+        organization__in: "Astral Technologies Syndicate",
+        groups__in: "Adventure Seekers Squad",
+        country__in: "Poland",
       },
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
@@ -84,8 +84,8 @@ describe("Check", () => {
     cy.performSearch({
       modelName: "Contacts",
       filters: {
-        organization: "Warp Dynamics Institute",
-        country: "Albania",
+        organization__in: "Warp Dynamics Institute",
+        country__in: "Albania",
       },
     });
     cy.contains("1 result");
@@ -100,8 +100,8 @@ describe("Check", () => {
     cy.performSearch({
       modelName: "Contacts",
       filters: {
-        organization: "Warp Dynamics Institute",
-        country: "Albania",
+        organization__in: "Warp Dynamics Institute",
+        country__in: "Albania",
       },
     });
     cy.contains("1 result");
@@ -118,7 +118,7 @@ describe("Check", () => {
       modelName: "Contacts",
       filters: {
         registrations__event: "Mythos Masquerade Ball",
-        country: "Albania",
+        country__in: "Albania",
       },
     });
     cy.contains("1 result");
@@ -135,7 +135,7 @@ describe("Check", () => {
       modelName: "Contacts",
       action: "Send email to selected contacts",
       filters: {
-        organization: "Quantum Engineering Consortium",
+        organization__in: "Quantum Engineering Consortium",
       },
     });
     cy.contains("Add email");

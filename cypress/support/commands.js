@@ -220,7 +220,7 @@ Cypress.Commands.addAll({
     cy.triggerAction({
       modelName: "Contacts",
       action: "Delete selected contacts",
-      filters: { groups__id__exact: group.name },
+      filters: { groups__in: group.name },
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
     cy.contains("Successfully deleted");
