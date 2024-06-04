@@ -13,6 +13,7 @@ from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
 from common import fuzzy_search
 from common.audit import bulk_audit_update
+from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
 from common.urls import reverse
@@ -129,10 +130,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "get_last_name",
     )
     list_filter = (
-        AutocompleteFilterFactory("organization", "organization"),
-        AutocompleteFilterFactory("country", "country"),
+        AutocompleteFilterMultipleFactory("country", "country"),
+        AutocompleteFilterMultipleFactory("groups", "groups"),
+        AutocompleteFilterMultipleFactory("organization", "organization"),
         AutocompleteFilterFactory("event", "registrations__event"),
-        "groups",
         "org_head",
         "is_in_mailing_list",
         "is_use_organization_address",
