@@ -3,6 +3,20 @@ describe("Check", () => {
     cy.loginEdit();
     cy.checkModelAdmin({ modelName: "Contacts", nameField: "last_name" });
   });
+  it("Check multiselect filter", () => {
+    cy.loginView();
+    cy.performSearch({
+      modelName: "Contacts",
+      filters: {
+        country__in: ["Albania", "Chad"],
+        organization__in: ["Warp Dynamics Institute", "Galactic Research Institute for Advanced Technologies"],
+        groups__in: ["The Dream Team Connection", "Music Maniacs Association"],
+      },
+    });
+    cy.contains("aria@example.com");
+    cy.contains("axel-elio@example.com");
+    cy.contains("2 results");
+  });
   it("Check merge contacts", () => {
     cy.loginEdit();
     cy.createContactGroup(2).then((group) => {

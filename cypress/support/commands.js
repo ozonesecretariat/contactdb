@@ -8,6 +8,13 @@ function exists(val) {
   return "not.exist";
 }
 
+function forceArray(val) {
+  if (Array.isArray(val)) {
+    return val;
+  }
+  return [val];
+}
+
 Cypress.Commands.addAll({
   login(user, password, checkSuccess = true) {
     cy.visit(`/account/login/`);
@@ -98,12 +105,14 @@ Cypress.Commands.addAll({
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
     cy.contains("deleted successfully");
   },
-  chooseSelect2(name, value) {
+  chooseSelect2(name, values) {
     cy.get(`[name=${name}`).then(($el) => {
       const elId = $el.attr("id");
-      cy.get(`[name=${name}]`).parent().find(".select2").click();
-      cy.get(`[type=search][aria-controls="select2-${elId}-results"]`).type(value);
-      cy.get(`#select2-${elId}-results [role=option]`).contains(value).click();
+      for (const val of forceArray(values)) {
+        cy.get(`[name=${name}]`).parent().find(".select2").click();
+        cy.get(`[type=search][aria-controls="select2-${elId}-results"]`).type(val);
+        cy.get(`#select2-${elId}-results [role=option]`).contains(val).click();
+      }
     });
   },
   getIframeBody(selector) {
