@@ -16,7 +16,7 @@ describe("Check", () => {
       checkDelete: false,
     });
   });
-  it.only("Check send no CC address", () => {
+  it("Check send no CC address", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
       modelName: "Emails",
@@ -31,6 +31,47 @@ describe("Check", () => {
 
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS");
+  });
+  it("Check sending email with non-ASCII characters", () => {
+    cy.loginEmails();
+    cy.checkModelAdmin({
+      modelName: "Emails",
+      nameField: "subject",
+      extraFields: {
+        recipients: "🐉",
+        content: "Dear [[full_name]],\n Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>",
+      },
+      suffix: "-email-subject",
+      checkDelete: false,
+    });
+
+    // Wait for the task to finish
+    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-email a").click();
+    cy.get(".field-email_to").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
+
+    // Check placeholder interpolation in preview
+    cy.get("#fieldsetcollapser0").click();
+    // Check HTML
+    cy.getIframeBody(".field-email_preview iframe").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
+    cy.getIframeBody(".field-email_preview iframe").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
+    // Check plaintext
+    cy.get(".field-email_plaintext").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
+    cy.get(".field-email_plaintext").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
+    // Check placeholder interpolation in the raw email
+    cy.get("#fieldsetcollapser1").click();
+    cy.get(".field-email_source").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
+    cy.get(".field-email_source").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
+
+    // Check the email object itself
+    cy.get(".field-email a").click();
+    cy.contains("View email");
+    // Check HTML
+    cy.getIframeBody(".field-email_preview iframe").contains("Dear [[full_name]]");
+    cy.getIframeBody(".field-email_preview iframe").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
+    // Check plaintext
+    cy.get(".field-email_plaintext").contains("Dear [[full_name]]");
+    cy.get(".field-email_plaintext").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
   });
   it("Check use template placeholder", () => {
     const subject = randomStr(`email-subject-`);
