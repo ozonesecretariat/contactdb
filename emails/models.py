@@ -1,3 +1,4 @@
+import html
 import re
 from email import message_from_string
 from functools import cached_property
@@ -106,15 +107,19 @@ class Email(models.Model):
 
         html_content = self.content.strip()
         if contact:
-            msg.to = contact.emails
-            msg.cc = contact.email_ccs
+            msg.to = contact.emails or []
+            msg.cc = contact.email_ccs or []
 
             for placeholder in settings.CKEDITOR_PLACEHOLDERS:
                 html_content = html_content.replace(
                     f"[[{placeholder}]]", getattr(contact, placeholder)
                 )
 
-        text_content = strip_tags(html_content).replace("&nbsp;", " ").strip()
+        # Remove all HTML Tags, leaving only the plaintext
+        text_content = strip_tags(html_content)
+        # Unescape any HTML Entities such as &amp; or &nbsp;
+        text_content = html.unescape(text_content).strip()
+        # Remove all the empty lines, but keep any "paragraphs"
         text_content = re.sub(r"\n{3,}", "\n\n", text_content)
 
         msg.body = text_content

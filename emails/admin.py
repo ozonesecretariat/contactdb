@@ -38,7 +38,7 @@ class ViewEmailMixIn:
         msg = self.get_msg(obj)
         for part in msg.walk():
             if part.get_content_type() == content_type:
-                return part.get_payload(decode=True).decode()
+                return part.get_payload()
         return ""
 
     def get_urls(self):
