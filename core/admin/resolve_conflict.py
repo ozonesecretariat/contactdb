@@ -12,20 +12,20 @@ from core.models import ResolveConflict
 class ResolveConflictAdmin(ContactAdminBase):
     show_index_page_count = True
     search_fields = (
-        "first_name",
-        "last_name",
-        "designation",
-        "department",
+        "first_name__unaccent",
+        "last_name__unaccent",
+        "designation__unaccent",
+        "department__unaccent",
         "emails",
-        "organization__name",
-        "organization__country__name",
-        "existing_contact__first_name",
-        "existing_contact__last_name",
-        "existing_contact__designation",
-        "existing_contact__department",
+        "organization__name__unaccent",
+        "organization__country__name__unaccent",
+        "existing_contact__first_name__unaccent",
+        "existing_contact__last_name__unaccent",
+        "existing_contact__designation__unaccent",
+        "existing_contact__department__unaccent",
         "existing_contact__emails",
-        "existing_contact__organization__name",
-        "existing_contact__organization__country__name",
+        "existing_contact__organization__name__unaccent",
+        "existing_contact__organization__country__name__unaccent",
     )
     list_filter = (
         AutocompleteFilterFactory("organization", "organization"),

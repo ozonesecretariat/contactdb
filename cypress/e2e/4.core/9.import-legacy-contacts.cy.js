@@ -6,7 +6,7 @@ describe("Check import focal points", () => {
       searchValue: "4a0665ef-d79f-444e-84d9-35f26fbef7fc",
     });
   });
-  it.only("Check import legacy contacts", () => {
+  it("Check import legacy contacts", () => {
     cy.loginAdmin();
     cy.addModel("Import legacy contacts task", {
       json_file: "fixtures/test/files/legacy-contacts.json",
@@ -19,7 +19,7 @@ describe("Check import focal points", () => {
     cy.performSearch({
       modelName: "Contacts",
       searchValue: "jane1.legacy-test@example.com",
-      filters: { groups__id__exact: "Legacy contacts" },
+      filters: { groups__in: "Legacy contacts" },
     });
     cy.get("#result_list tbody tr:first-of-type th a").click();
     cy.contains("Ms. Jane Doe");
@@ -33,7 +33,7 @@ describe("Check import focal points", () => {
       modelName: "Contacts",
       action: "Delete selected contacts",
       searchValue: "legacy-test@example.com",
-      filters: { groups__id__exact: "Legacy contacts" },
+      filters: { groups__in: "Legacy contacts" },
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
   });

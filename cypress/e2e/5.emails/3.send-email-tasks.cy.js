@@ -19,4 +19,13 @@ describe("Check", () => {
       ],
     });
   });
+  it("Check contact link", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Send email tasks",
+      searchValue: "placeholder atlas drake",
+    });
+    cy.get("a").contains("Atlas Drake (Deep Space Exploration Agency, Jamaica)").click();
+    cy.contains("Change contact");
+  });
 });

@@ -44,7 +44,7 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
     "Resolve Conflicts"
     """
 
-    search_fields = ("event__title",)
+    search_fields = ("event__title__unaccent",)
     list_display = [
         "event",
         "created_on",
@@ -136,10 +136,10 @@ class RegistrationAdmin(ModelAdmin):
 class EventAdmin(ExportMixin, ModelAdmin):
     search_fields = (
         "code",
-        "title",
+        "title__unaccent",
         "venue_city",
         "venue_country__code",
-        "venue_country__name",
+        "venue_country__name__unaccent",
         "dates",
     )
     list_display_links = ("code", "title")

@@ -16,6 +16,14 @@ describe("Check", () => {
       },
     });
   });
+  it("Check model search", () => {
+    cy.loginView();
+    cy.checkSearch({
+      modelName: "Events",
+      searchValue: "stellar serenade music festival",
+      expectedValue: "Stéllâr Sérènade Müsïc Fêstivàl",
+    });
+  });
   it("Check export", () => {
     cy.loginAdmin();
     cy.checkExport({

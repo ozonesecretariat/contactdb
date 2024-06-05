@@ -9,13 +9,13 @@ from core.models import Organization
 @admin.register(Organization)
 class OrganizationAdmin(ExportMixin, ModelAdmin):
     search_fields = [
-        "name",
+        "name__unaccent",
         "acronym",
         "organization_type__acronym",
         "organization_type__title",
         "organization_type__description",
-        "government__name",
-        "country__name",
+        "government__name__unaccent",
+        "country__name__unaccent",
     ]
     list_filter = (
         AutocompleteFilterFactory("organization_type", "organization_type"),
