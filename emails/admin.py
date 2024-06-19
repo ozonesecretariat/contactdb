@@ -1,5 +1,6 @@
 import abc
 import io
+import textwrap
 from email import message_from_string
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django import forms
@@ -214,23 +215,66 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     list_display = (
         "subject",
         "created_at",
+        "sent_count",
         "success_count",
         "failed_count",
         "pending_count",
     )
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
-    autocomplete_fields = ("recipients", "groups", "events")
+    autocomplete_fields = (
+        "recipients",
+        "cc_recipients",
+        "bcc_recipients",
+        "groups",
+        "cc_groups",
+        "bcc_groups",
+        "events",
+    )
     prefetch_related = ("email_logs",)
     fieldsets = (
         (
-            None,
+            "To",
             {
+                "description": (
+                    "One individual mail will be sent to each of the selected "
+                    "contacts, contact group members and event participants. "
+                    "Contacts will not see addresses from this list other than "
+                    "their own."
+                ),
                 "fields": (
                     "recipients",
                     "groups",
                     "events",
-                )
+                ),
+            },
+        ),
+        (
+            "Cc",
+            {
+                "description": (
+                    "Include all the selected contacts and contact group members in "
+                    "the CC of this email. All addresses will be included in all "
+                    "emails and visible to all recipients."
+                ),
+                "fields": (
+                    "cc_recipients",
+                    "cc_groups",
+                ),
+            },
+        ),
+        (
+            "Bcc",
+            {
+                "description": (
+                    "Send a blind carbon copy for all the emails sent to the selected "
+                    "contacts and contact group members. These addresses will not be "
+                    "visible to any other recipients."
+                ),
+                "fields": (
+                    "bcc_recipients",
+                    "bcc_groups",
+                ),
             },
         ),
         (
@@ -245,12 +289,30 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     )
     view_fieldsets = (
         (
-            None,
+            "To",
             {
                 "fields": (
                     "recipients",
                     "groups",
                     "events",
+                )
+            },
+        ),
+        (
+            "Cc",
+            {
+                "fields": (
+                    "cc_recipients",
+                    "cc_groups",
+                )
+            },
+        ),
+        (
+            "Bcc",
+            {
+                "fields": (
+                    "bcc_recipients",
+                    "bcc_groups",
                 )
             },
         ),
@@ -291,7 +353,7 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
     def response_post_save_add(self, request, obj):
         tasks = []
-        for contact in obj.all_recipients:
+        for contact in obj.all_to_contacts:
             task = SendEmailTask.objects.create(
                 email=obj, contact=contact, created_by=request.user
             )
@@ -305,15 +367,27 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         )
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
 
-    def _get_count_link(self, obj, status):
-        count = len([task for task in obj.email_logs.all() if task.status == status])
+    def _get_count_link(self, obj, status=None):
+        extra_filters = {}
+        if status:
+            extra_filters["status__exact"] = status
+            count = len(
+                [task for task in obj.email_logs.all() if task.status == status]
+            )
+        else:
+            count = len(obj.email_logs.all())
+
         return self.get_related_link(
             obj,
             "email_logs",
             "email",
             text=f"{count} emails",
-            extra_filters={"status__exact": status},
+            extra_filters=extra_filters,
         )
+
+    @admin.display(description="Total")
+    def sent_count(self, obj):
+        return self._get_count_link(obj)
 
     @admin.display(description="Success")
     def success_count(self, obj):
@@ -337,14 +411,18 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "email__content",
         "contact__first_name__unaccent",
         "contact__last_name__unaccent",
+        "cc_contacts__first_name__unaccent",
+        "bcc_contacts__first_name__unaccent",
         "email_to",
         "email_cc",
+        "email_bcc",
     )
     list_display = (
         "email",
         "contact_link",
-        "email_to",
-        "email_cc",
+        "email_to_preview",
+        "email_cc_preview",
+        "email_bcc_preview",
         "created_on",
         "duration_display",
         "status_display",
@@ -352,12 +430,20 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     list_display_links = ("email", "contact")
     list_filter = (
         AutocompleteFilterFactory("email", "email"),
-        AutocompleteFilterFactory("contact", "contact"),
+        AutocompleteFilterFactory("to contact", "contact"),
+        AutocompleteFilterFactory("cc contact", "cc_contacts"),
+        AutocompleteFilterFactory("bcc contact", "bcc_contacts"),
         "created_on",
         "status",
     )
     ordering = ("-created_on",)
-    prefetch_related = ("email", "contact", "contact__organization")
+    prefetch_related = (
+        "email",
+        "contact",
+        "contact__organization",
+        "cc_contacts__organization",
+        "bcc_contacts__organization",
+    )
     fieldsets = [
         (
             None,
@@ -365,8 +451,11 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
                 "fields": (
                     "email",
                     "contact",
+                    "cc_contacts_links",
+                    "bcc_contacts_links",
                     "email_to",
                     "email_cc",
+                    "email_bcc",
                     "download_email",
                 )
             },
@@ -434,3 +523,23 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     @admin.display(description="Contact", ordering="contact")
     def contact_link(self, obj):
         return self.get_object_display_link(obj.contact)
+
+    @admin.display(description="Cc contacts")
+    def cc_contacts_links(self, obj):
+        return self.get_m2m_links(obj.cc_contacts.all())
+
+    @admin.display(description="Bcc contacts")
+    def bcc_contacts_links(self, obj):
+        return self.get_m2m_links(obj.bcc_contacts.all())
+
+    @admin.display(description="Email To", ordering="email_to")
+    def email_to_preview(self, obj):
+        return textwrap.shorten(", ".join(obj.email_to or []), 100)
+
+    @admin.display(description="Email Cc", ordering="email_cc")
+    def email_cc_preview(self, obj):
+        return textwrap.shorten(", ".join(obj.email_cc or []), 100)
+
+    @admin.display(description="Email Bcc", ordering="email_bcc")
+    def email_bcc_preview(self, obj):
+        return textwrap.shorten(", ".join(obj.email_bcc or []), 100)

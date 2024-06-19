@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.safestring import mark_safe
 from django_task.admin import TaskAdmin as BaseTaskAdmin
 from import_export import resources, widgets
 from common.boolean_widget import BooleanWidget
@@ -120,6 +121,14 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
 
         return format_html('<a href="{url}">{link_text}</a>', url=url, link_text=text)
 
+    def get_m2m_links(self, objects):
+        result = []
+        for obj in objects:
+            result.append(f"<li>{self.get_object_display_link(obj)}</li>")
+
+        result = "\n".join(result)
+        return mark_safe(f'<ul class="m2m-list">{result}</ul>')
+
     def get_intermediate_response(
         self, template, request, queryset, extra_context=None
     ):
@@ -162,7 +171,6 @@ class ModelAdmin(_CustomModelAdminMixIn, admin.ModelAdmin):
 
 
 class TaskAdmin(_CustomModelAdminMixIn, BaseTaskAdmin):
-
     def get_list_display(self, request):
         return self.list_display
 
