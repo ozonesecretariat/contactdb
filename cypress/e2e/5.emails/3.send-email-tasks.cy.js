@@ -28,7 +28,7 @@ describe("Check", () => {
     cy.get("a").contains("Atlas Drake (Deep Space Exploration Agency, Jamaica)").click();
     cy.contains("Change contact");
   });
-  it.only("Check filter Any contact", () => {
+  it("Check filter Any contact", () => {
     cy.loginAdmin();
     cy.performSearch({
       modelName: "Send email tasks",
