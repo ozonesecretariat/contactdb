@@ -2,9 +2,10 @@ import abc
 import io
 import textwrap
 from email import message_from_string
-from admin_auto_filters.filters import AutocompleteFilterFactory
+from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
 from django import forms
 from django.contrib import admin, messages
+from django.db.models import Q
 from django.http import FileResponse, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -430,6 +431,21 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         return self.get_m2m_links(obj.bcc_groups.all())
 
 
+class ContactAutocompleteFilter(AutocompleteFilter):
+    title = "contact"
+    field_name = "contact"
+    parameter_name = "any_contact"
+
+    def queryset(self, request, queryset):
+        if val := self.value():
+            return queryset.filter(
+                Q(contact__pk__exact=val)
+                | Q(cc_contacts__pk__exact=val)
+                | Q(bcc_contacts__pk__exact=val)
+            ).distinct()
+        return queryset
+
+
 @admin.register(SendEmailTask)
 class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     """View sent email logs."""
@@ -458,9 +474,10 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     list_display_links = ("email", "contact")
     list_filter = (
         AutocompleteFilterFactory("email", "email"),
-        AutocompleteFilterFactory("to contact", "contact"),
-        AutocompleteFilterFactory("cc contact", "cc_contacts"),
-        AutocompleteFilterFactory("bcc contact", "bcc_contacts"),
+        ContactAutocompleteFilter,
+        AutocompleteFilterFactory("to", "contact"),
+        AutocompleteFilterFactory("cc", "cc_contacts"),
+        AutocompleteFilterFactory("bcc", "bcc_contacts"),
         "created_on",
         "status",
     )

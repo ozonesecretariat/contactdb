@@ -162,7 +162,7 @@ class ContactAdminBase(ModelAdmin):
 
     @admin.display(description="Sent emails")
     def email_logs(self, obj):
-        return self.get_related_link(obj, "email_logs", "contact")
+        return self.get_related_link(obj, "email_logs", "any_contact")
 
 
 class MergeContacts:

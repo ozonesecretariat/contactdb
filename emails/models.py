@@ -149,18 +149,18 @@ class Email(models.Model):
 
         html_content = self.content.strip()
         if contact:
-            msg.to.extend(contact.emails)
-            msg.cc.extend(contact.email_ccs)
+            msg.to.extend(contact.emails or [])
+            msg.cc.extend(contact.email_ccs or [])
 
             for placeholder in settings.CKEDITOR_PLACEHOLDERS:
                 html_content = html_content.replace(
                     f"[[{placeholder}]]", getattr(contact, placeholder)
                 )
 
-        for contact in self.all_cc_contacts:
-            msg.cc.extend(contact.emails)
-        for contact in self.all_bcc_contacts:
-            msg.bcc.extend(contact.emails)
+        for cc_contact in self.all_cc_contacts:
+            msg.cc.extend(cc_contact.emails or [])
+        for bcc_contact in self.all_bcc_contacts:
+            msg.bcc.extend(bcc_contact.emails or [])
 
         # Remove all HTML Tags, leaving only the plaintext
         text_content = strip_tags(html_content)
