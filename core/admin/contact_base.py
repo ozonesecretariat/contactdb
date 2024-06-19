@@ -27,6 +27,7 @@ class ContactAdminBase(ModelAdmin):
         "email_ccs",
         "organization__name__unaccent",
         "organization__country__name__unaccent",
+        "notes",
     )
     autocomplete_fields = (
         "organization",

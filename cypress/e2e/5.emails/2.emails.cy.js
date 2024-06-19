@@ -90,6 +90,26 @@ describe("Check", () => {
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS");
   });
+  it("Checking sending to contact with no name", () => {
+    cy.loginEmails();
+    cy.checkModelAdmin({
+      modelName: "Emails",
+      nameField: "subject",
+      extraFields: {
+        recipients: "no-name.jane",
+        content: "Dear [[full_name]],\nYou don't actually have a name!?!!",
+      },
+      suffix: "-email-subject",
+      checkDelete: false,
+    });
+
+    // Wait for the task to finish
+    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-email a").click();
+    // Check interpolation
+    cy.get("#fieldsetcollapser0").click();
+    cy.getIframeBody(".field-email_preview iframe").contains("Dear ,");
+  });
   it("Check sending email with non-ASCII characters", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
