@@ -141,7 +141,7 @@ describe("Check", () => {
     cy.get("a").contains("Email Logs").click();
     cy.contains("Select send email task");
     cy.contains("Ms. Aria Quantum (Warp Dynamics Institute, Guatemala)");
-    cy.contains("1 result");
+    cy.contains("2 results");
   });
   it("Check send email to contacts", () => {
     cy.loginAdmin();

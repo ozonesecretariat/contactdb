@@ -67,12 +67,40 @@ class Email(models.Model):
         limit_choices_to=~Q(emails=[]),
         related_name="sent_emails",
     )
+    cc_recipients = models.ManyToManyField(
+        Contact,
+        blank=True,
+        help_text="Add these recipients in the Cc for all sent emails.",
+        limit_choices_to=~Q(emails=[]),
+        related_name="sent_emails_cc",
+    )
+    bcc_recipients = models.ManyToManyField(
+        Contact,
+        blank=True,
+        help_text="Add these recipients in the Bcc for all sent emails.",
+        limit_choices_to=~Q(emails=[]),
+        related_name="sent_emails_bcc",
+    )
     groups = models.ManyToManyField(
         ContactGroup,
         blank=True,
         help_text="Send the email to all contacts in these selected groups.",
         limit_choices_to=~Q(contacts=None),
         related_name="sent_emails",
+    )
+    cc_groups = models.ManyToManyField(
+        ContactGroup,
+        blank=True,
+        help_text="Add all contacts from this group in the Cc for all sent emails.",
+        limit_choices_to=~Q(contacts=None),
+        related_name="sent_emails_cc",
+    )
+    bcc_groups = models.ManyToManyField(
+        ContactGroup,
+        blank=True,
+        help_text="Add all contacts from this group in the Bcc for all sent emails.",
+        limit_choices_to=~Q(contacts=None),
+        related_name="sent_emails_bcc",
     )
     events = models.ManyToManyField(
         Event,
@@ -89,7 +117,7 @@ class Email(models.Model):
         return self.subject
 
     @property
-    def all_recipients(self):
+    def all_to_contacts(self):
         all_recipients = set(self.recipients.all())
         for group in self.groups.prefetch_related("contacts"):
             all_recipients.update(group.contacts.all())
@@ -100,6 +128,20 @@ class Email(models.Model):
                 all_recipients.add(registration.contact)
         return all_recipients
 
+    @property
+    def all_cc_contacts(self):
+        result = set(self.cc_recipients.all())
+        for group in self.cc_groups.all().prefetch_related("contacts"):
+            result.update(group.contacts.all())
+        return result
+
+    @property
+    def all_bcc_contacts(self):
+        result = set(self.bcc_recipients.all())
+        for group in self.bcc_groups.all().prefetch_related("contacts"):
+            result.update(group.contacts.all())
+        return result
+
     def build_email(self, contact=None):
         msg = EmailMultiAlternatives(
             subject=self.subject, from_email=settings.DEFAULT_FROM_EMAIL
@@ -107,13 +149,18 @@ class Email(models.Model):
 
         html_content = self.content.strip()
         if contact:
-            msg.to = contact.emails or []
-            msg.cc = contact.email_ccs or []
+            msg.to.extend(contact.emails or [])
+            msg.cc.extend(contact.email_ccs or [])
 
             for placeholder in settings.CKEDITOR_PLACEHOLDERS:
                 html_content = html_content.replace(
                     f"[[{placeholder}]]", getattr(contact, placeholder)
                 )
+
+        for cc_contact in self.all_cc_contacts:
+            msg.cc.extend(cc_contact.emails or [])
+        for bcc_contact in self.all_bcc_contacts:
+            msg.bcc.extend(bcc_contact.emails or [])
 
         # Remove all HTML Tags, leaving only the plaintext
         text_content = strip_tags(html_content)
@@ -175,6 +222,14 @@ class SendEmailTask(TaskRQ):
         related_name="email_logs",
         null=True,
     )
+    cc_contacts = models.ManyToManyField(
+        Contact,
+        related_name="email_logs_cc",
+    )
+    bcc_contacts = models.ManyToManyField(
+        Contact,
+        related_name="email_logs_bcc",
+    )
     email_to = ArrayField(
         blank=True,
         null=True,
@@ -186,7 +241,14 @@ class SendEmailTask(TaskRQ):
         blank=True,
         null=True,
         base_field=models.EmailField(),
-        help_text="List of email addresses this email was sent to in CC.",
+        help_text="List of email addresses this email was sent to in Cc.",
+        editable=False,
+    )
+    email_bcc = ArrayField(
+        blank=True,
+        null=True,
+        base_field=models.EmailField(),
+        help_text="List of email addresses this email was sent to in Bcc.",
         editable=False,
     )
     sent_email = models.TextField(

@@ -139,10 +139,24 @@ class BaseContact(models.Model):
     class Meta:
         abstract = True
 
+    def _get_possible_names(self):
+        yield self.full_name
+        yield from self.emails or []
+        yield from self.email_ccs or []
+        yield from self.phones or []
+        yield from self.mobiles or []
+        yield from self.faxes or []
+
     def __str__(self):
+        name = f"(no name) ({self.pk})"
+        for val in self._get_possible_names():
+            if val := val.strip():
+                name = val
+                break
+
         if self.organization:
-            return f"{self.full_name} ({self.organization})"
-        return self.full_name
+            return f"{name} ({self.organization})"
+        return name
 
     @property
     def full_name(self):
@@ -150,8 +164,7 @@ class BaseContact(models.Model):
         for part in (self.title, self.first_name, self.last_name):
             if part := (part or "").strip():
                 parts.append(part)
-        if not parts:
-            return f"(no name) ({self.pk})"
+
         return " ".join(parts).strip()
 
     def clean(self):

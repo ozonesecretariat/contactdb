@@ -27,6 +27,7 @@ class ContactAdminBase(ModelAdmin):
         "email_ccs",
         "organization__name__unaccent",
         "organization__country__name__unaccent",
+        "notes",
     )
     autocomplete_fields = (
         "organization",
@@ -162,7 +163,7 @@ class ContactAdminBase(ModelAdmin):
 
     @admin.display(description="Sent emails")
     def email_logs(self, obj):
-        return self.get_related_link(obj, "email_logs", "contact")
+        return self.get_related_link(obj, "email_logs", "any_contact")
 
 
 class MergeContacts:

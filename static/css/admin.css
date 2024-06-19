@@ -147,3 +147,13 @@ fieldset.compare .fieldBox li {
 #result_list tbody td.field-inline_actions {
   white-space: nowrap !important;
 }
+
+/* Remove extra padding in m2m lists */
+ul.m2m-list {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+ul.m2m-list li {
+  list-style: initial !important;
+}
