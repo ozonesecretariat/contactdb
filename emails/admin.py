@@ -292,9 +292,9 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
             "To",
             {
                 "fields": (
-                    "recipients",
-                    "groups",
-                    "events",
+                    "recipients_links",
+                    "groups_links",
+                    "events_links",
                 )
             },
         ),
@@ -302,8 +302,8 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
             "Cc",
             {
                 "fields": (
-                    "cc_recipients",
-                    "cc_groups",
+                    "cc_recipients_links",
+                    "cc_groups_links",
                 )
             },
         ),
@@ -311,8 +311,8 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
             "Bcc",
             {
                 "fields": (
-                    "bcc_recipients",
-                    "bcc_groups",
+                    "bcc_recipients_links",
+                    "bcc_groups_links",
                 )
             },
         ),
@@ -400,6 +400,34 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     @admin.display(description="Pending")
     def pending_count(self, obj):
         return self._get_count_link(obj, "PENDING")
+
+    @admin.display(description="Recipients")
+    def recipients_links(self, obj):
+        return self.get_m2m_links(obj.recipients.all())
+
+    @admin.display(description="Groups")
+    def groups_links(self, obj):
+        return self.get_m2m_links(obj.groups.all())
+
+    @admin.display(description="Events")
+    def events_links(self, obj):
+        return self.get_m2m_links(obj.events.all())
+
+    @admin.display(description="Cc recipients")
+    def cc_recipients_links(self, obj):
+        return self.get_m2m_links(obj.cc_recipients.all())
+
+    @admin.display(description="Cc groups")
+    def cc_groups_links(self, obj):
+        return self.get_m2m_links(obj.cc_groups.all())
+
+    @admin.display(description="Bcc recipients")
+    def bcc_recipients_links(self, obj):
+        return self.get_m2m_links(obj.bcc_recipients.all())
+
+    @admin.display(description="Bcc groups")
+    def bcc_groups_links(self, obj):
+        return self.get_m2m_links(obj.bcc_groups.all())
 
 
 @admin.register(SendEmailTask)
