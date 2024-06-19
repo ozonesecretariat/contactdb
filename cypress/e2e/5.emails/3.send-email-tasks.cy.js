@@ -28,15 +28,34 @@ describe("Check", () => {
     cy.get("a").contains("Atlas Drake (Deep Space Exploration Agency, Jamaica)").click();
     cy.contains("Change contact");
   });
-  it("Check filter Any contact", () => {
+  it.only("Check filter Any contact", () => {
     cy.loginAdmin();
     cy.performSearch({
       modelName: "Send email tasks",
       filters: {
-        any_contact: "Axel-Elio Neutron",
+        email: "Test email with Cc and Bcc",
+        any_contact: "Rigel Rift",
       },
     });
-    cy.contains("47 results");
+    cy.contains("1 result");
+
+    cy.performSearch({
+      modelName: "Send email tasks",
+      filters: {
+        email: "Test email with Cc and Bcc",
+        any_contact: "🐉",
+      },
+    });
+    cy.contains("46 result");
+
+    cy.performSearch({
+      modelName: "Send email tasks",
+      filters: {
+        email: "Test email with Cc and Bcc",
+        any_contact: "Ezra Spectrum",
+      },
+    });
+    cy.contains("46 result");
   });
   it("Check filter To contact", () => {
     cy.loginAdmin();
