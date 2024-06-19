@@ -16,6 +16,64 @@ describe("Check", () => {
       checkDelete: false,
     });
   });
+  it("Check send Cc fields", () => {
+    cy.loginEmails();
+    cy.checkModelAdmin({
+      modelName: "Emails",
+      nameField: "subject",
+      extraFields: {
+        recipients: "Thane Seren",
+        cc_recipients: "Xenon Zephyr",
+        cc_groups: "Literary Legends League",
+        content: "Testing sending email with Cc fields",
+      },
+      suffix: "-email-subject",
+      checkDelete: false,
+    });
+    // Check that only 1 email has been sent.
+    cy.contains("1 send email task");
+    // Wait for the task to finish
+    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-email a").click();
+    // Check the contacts
+    cy.get(".field-contact").contains("Thane Seren");
+    cy.get(".field-cc_contacts_links").contains("Mr. John No CC email");
+    cy.get(".field-cc_contacts_links").contains("Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉> ");
+    // Check the email addresses
+    cy.get(".field-email_to").contains("thane@example.com");
+    cy.get(".field-email_to").contains("thane.seren@example.org");
+    cy.get(".field-email_cc").contains("john.no-cc@example.com");
+    cy.get(".field-email_cc").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
+  });
+  it("Check send Bcc fields", () => {
+    cy.loginEmails();
+    cy.checkModelAdmin({
+      modelName: "Emails",
+      nameField: "subject",
+      extraFields: {
+        recipients: "Thane Seren",
+        bcc_recipients: "Xenon Zephyr",
+        bcc_groups: "Literary Legends League",
+        content: "Testing sending email with Bcc fields",
+      },
+      suffix: "-email-subject",
+      checkDelete: false,
+    });
+    // Check that only 1 email has been sent.
+    cy.contains("1 send email task");
+    // Wait for the task to finish
+    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-email a").click();
+    // Check the contacts
+    cy.get(".field-contact").contains("Thane Seren");
+    cy.get(".field-bcc_contacts_links").contains("Mr. John No CC email");
+    cy.get(".field-bcc_contacts_links").contains("Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉> ");
+    // Check the email addresses
+    cy.get(".field-email_to").contains("thane@example.com");
+    cy.get(".field-email_to").contains("thane.seren@example.org");
+    cy.get(".field-email_bcc").contains("john.no-cc@example.com");
+    cy.get(".field-email_bcc").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
+  });
   it("Check send no CC address", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
@@ -156,6 +214,18 @@ describe("Check", () => {
     cy.get("#fieldsetcollapser1").click();
     cy.get(".field-email_source").contains("lorem-ipsum.txt");
     cy.get(".field-email_source").contains("Lorem ipsum dolor sit amet, consectetur adipiscing elit");
+  });
+  it("Check total link", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Emails",
+      searchValue: "placeholder",
+    });
+    cy.contains("1 result");
+    cy.get("a").contains("30 emails").click();
+    cy.contains("Select send email task");
+    cy.contains("MP Nyx Spectrum");
+    cy.contains("30 results");
   });
   it("Check success link", () => {
     cy.loginAdmin();
