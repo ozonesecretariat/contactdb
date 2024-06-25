@@ -22,7 +22,7 @@ from events.models import (
 )
 
 
-def check_diff(obj, dictionary):
+def check_is_different(obj, dictionary):
     for key, value in dictionary.items():
         if getattr(obj, key) != value:
             return True
@@ -233,34 +233,55 @@ class KronosParticipantsParser(KronosParser):
                 for kronos_attr, model_attr in self.field_mapping.items()
             }
 
-            contact = Contact.objects.filter(contact_ids__contains=[contact_id]).first()
+            contact = (
+                Contact.objects.filter(contact_ids__contains=[contact_id])
+                .prefetch_related("conflicting_contacts")
+                .first()
+            )
             if contact:
-                if check_diff(contact, contact_defaults):
-                    self.task.log(
-                        logging.INFO,
-                        "A contact with the ID as %s is already in database; "
-                        "adding it to the temporary table for conflict resolution: %s",
-                        contact,
-                        contact_id,
-                    )
-                    ResolveConflict.objects.create(
-                        existing_contact=contact, **contact_defaults
-                    )
-                    self.task.conflicts_nr += 1
-                else:
-                    self.task.log(
-                        logging.INFO,
-                        "A contact with the same data as %s is already in database: %s",
-                        contact,
-                        contact_id,
-                    )
-                    self.task.skipped_nr += 1
+                self._handle_conflict(contact, contact_id, contact_defaults)
             else:
-                contact = Contact.objects.create(
-                    contact_ids=[contact_id], **contact_defaults
-                )
-                self.task.contacts_nr += 1
-                self.task.log(
-                    logging.INFO, "Created contact %s: %s", contact, contact_id
-                )
+                contact = self._create_contact(contact_id, contact_defaults)
             self.create_registrations(contact_dict, contact)
+
+    def _handle_conflict(self, contact, contact_id, contact_defaults):
+        if not check_is_different(contact, contact_defaults):
+            # The imported contact is identical to the one in the database currently
+            self._skip_contact(contact, contact_id)
+            return
+
+        for existing_conflict in contact.conflicting_contacts.all():
+            if not check_is_different(existing_conflict, contact_defaults):
+                # We found an identical conflict already in the database
+                self._skip_contact(contact, contact_id)
+                return
+
+        return self._create_conflict(contact, contact_id, contact_defaults)
+
+    def _create_conflict(self, contact, contact_id, contact_defaults):
+        self.task.log(
+            logging.INFO,
+            "A contact with the ID as %s is already in database; "
+            "adding it to the temporary table for conflict resolution: %s",
+            contact_id,
+            contact,
+        )
+        self.task.conflicts_nr += 1
+        return ResolveConflict.objects.create(
+            existing_contact=contact, **contact_defaults
+        )
+
+    def _skip_contact(self, contact, contact_id):
+        self.task.log(
+            logging.INFO,
+            "A contact with the same data as %s is already in database: %s",
+            contact,
+            contact_id,
+        )
+        self.task.skipped_nr += 1
+
+    def _create_contact(self, contact_id, contact_defaults):
+        contact = Contact.objects.create(contact_ids=[contact_id], **contact_defaults)
+        self.task.contacts_nr += 1
+        self.task.log(logging.INFO, "Created contact %s: %s", contact, contact_id)
+        return contact
