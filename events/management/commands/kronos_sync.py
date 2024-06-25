@@ -25,7 +25,7 @@ class Command(BaseCommand):
             sys.exit(1)
 
         all_tasks = []
-        for event in Event.objects.all():
+        for event in Event.objects.filter(event_id__isnull=False):
             print("Loading participants for", event)
             task = LoadParticipantsFromKronosTask.objects.create(event=event)
             all_tasks.append(task)
@@ -34,8 +34,4 @@ class Command(BaseCommand):
 
         if not all(task.status == "SUCCESS" for task in all_tasks):
             print("Not ALL tasks completed successfully.")
-            sys.exit(1)
-
-        if task.status != "SUCCESS":
-            print("Conflict resolution task failed!")
             sys.exit(1)
