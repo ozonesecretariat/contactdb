@@ -19,6 +19,7 @@ class ContactAdminBase(ModelAdmin):
         "last_name",
     )
     search_fields = (
+        "title__unaccent",
         "first_name__unaccent",
         "last_name__unaccent",
         "designation__unaccent",
