@@ -192,8 +192,18 @@ class EventAdmin(ExportMixin, ModelAdmin):
         permissions=["load_contacts_from_kronos"],
     )
     def load_contacts_from_kronos(self, request, queryset):
+        if invalid_events := queryset.filter(event_id__isnull=True).count():
+            self.message_user(
+                request,
+                f"{invalid_events} events not in Kronos where skipped",
+                level=messages.WARNING,
+            )
+
+        if not (valid_events := list(queryset.filter(event_id__isnull=False))):
+            return
+
         tasks = []
-        for event in queryset:
+        for event in valid_events:
             task = LoadParticipantsFromKronosTask.objects.create(
                 event=event,
                 created_by=request.user,

@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django_task.models import TaskRQ
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
@@ -139,9 +140,10 @@ class LoadParticipantsFromKronosTask(TaskRQ):
         on_delete=models.CASCADE,
         related_name="import_tasks",
         help_text="Event to import participants for in this task.",
+        limit_choices_to=Q(event_id__isnull=False),
     )
     contacts_nr = models.PositiveIntegerField(
-        default=0, editable=False, help_text="Number of newly created contacts created,"
+        default=0, editable=False, help_text="Number of newly created contacts."
     )
     registrations_nr = models.PositiveIntegerField(
         default=0, editable=False, help_text="Number of event registrations created."
