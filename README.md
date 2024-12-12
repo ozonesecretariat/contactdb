@@ -7,7 +7,8 @@
 
 Docs:
 
-- [Install Docker](docs/install_docker.md)
+- [Installing with Docker](docs/install_docker.md)
+- [Installing with GitHub actions runner](docs/install_actions_runner.md)
 
 DEV docs/guides:
 
