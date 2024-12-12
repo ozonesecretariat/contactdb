@@ -30,6 +30,7 @@ Steps for installing the application with Docker for production. _Not suitable f
   ```shell
   docker compose exec app ./manage.py load_fixtures initial
   ```
+- Setup reverse proxy to pass all requests to the docker nginx, see [example](host-nginx.example.conf)
 
 ## Updating
 
