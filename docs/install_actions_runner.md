@@ -73,7 +73,7 @@
    ```shell
    vim /home/contactdb/.env
    ```
-1. Create the docker override file starting from the [example provided](../docker-compose.override.example.yml):
+1. Create the docker override file starting from the [example provided](../compose.override.example.yml):
    ```shell
-   vim /home/contactdb/docker-compose.override.yml
+   vim /home/contactdb/compose.override.yml
    ```

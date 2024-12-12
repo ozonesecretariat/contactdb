@@ -350,6 +350,9 @@ cython_debug/
 docker-compose.yml
 docker-compose.*.yml
 docker-compose.override.yml
+compose.yml
+compose.*.yml
+compose.override.yml
 Dockerfile
 **/node_modules/
 

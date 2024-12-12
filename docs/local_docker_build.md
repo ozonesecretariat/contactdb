@@ -6,7 +6,7 @@ can be done by following these steps:
 - Make sure docker and docker-compose-plugin is installed
 - Copy override example and adjust as necessary:
   ```shell
-  cp docker-compose.override.local-build.yml docker-compose.override.yml
+  cp compose.override.local-build.yml compose.override.yml
   ```
 - Copy env example and adjust as necessary. Most values will be set to working
   defaults

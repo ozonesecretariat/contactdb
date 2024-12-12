@@ -6,12 +6,12 @@ Steps for installing the application with Docker for production. _Not suitable f
 
 - Clone the repository, or just download the relevant files:
   - [.env.example](../.env.example)
-  - [docker-compose.yml](../docker-compose.yml)
-  - [docker-compose.override.example.yml](../docker-compose.override.example.yml)
+  - [compose.yml](../compose.yml)
+  - [compose.override.example.yml](../compose.override.example.yml)
 - Make sure docker and docker-compose-plugin is installed
 - Copy override example and adjust as necessary:
   ```shell
-  cp docker-compose.override.example.yml docker-compose.override.yml
+  cp compose.override.example.yml compose.override.yml
   ```
 - Copy env example and adjust as necessary. Most values will be set to working
   defaults
