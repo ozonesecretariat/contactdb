@@ -1,0 +1,15 @@
+name: "Deploy production"
+
+concurrency: contactdb-production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-build:
+    uses: ./.github/workflows/docker-build.yml
+  deploy-staging:
+    needs: docker-build
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      runner_label: contactdb-production

@@ -1,16 +1,17 @@
-name: Deploy Staging
-
-# Ensure that only one job works on this at a time
-concurrency: staging_deployment
+concurrency: deployment
 
 on:
   workflow_call:
-
+    inputs:
+      runner_label:
+        description: "Runner label to deploy to"
+        required: true
+        type: string
 jobs:
   deploy:
     runs-on:
       - self-hosted
-      - contactdb-staging
+      - ${{ inputs.runner_label }}
     steps:
       - uses: actions/checkout@v3
       - name: Update docker-compose.yml
