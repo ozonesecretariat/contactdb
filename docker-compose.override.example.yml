@@ -11,4 +11,4 @@ services:
       - NGINX_WORKER_PROCESSES=4
     ports:
       # Map to expose the docker webserver to outside
-      - 8000:80
+      - 127.0.0.1:8000:80
