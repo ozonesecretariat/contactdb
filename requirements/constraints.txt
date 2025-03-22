@@ -39,7 +39,7 @@ et-xmlfile==1.1.0
 executing==2.0.1
 freezegun==1.5.0
 frozenlist==1.4.1
-gunicorn==22.0.0
+gunicorn==23.0.0
 idna==3.7
 iniconfig==2.0.0
 ipdb==0.13.13
