@@ -1,5 +1,3 @@
-"use strict";
-
 function initPlaceholderSelect() {
   const { CKEDITOR } = window;
 

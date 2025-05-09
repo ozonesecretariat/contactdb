@@ -14,6 +14,11 @@
   ```shell
   pytest accounts/tests/test_users.py
   ```
+- To run a specific single test
+
+  ```shell
+  pytest accounts/tests/test_users.py::TestUsers::test_create_user
+  ```
 
 ## Running E2E tests
 

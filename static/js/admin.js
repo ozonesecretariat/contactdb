@@ -1,5 +1,3 @@
-"use strict";
-
 function addArrayWidget(fieldEl, value = null) {
   const parentNode = fieldEl.querySelector(".vArrayWidgetList");
   const template = fieldEl.querySelector(".widgetTemplate .vArrayWidget");
@@ -73,7 +71,7 @@ function getNewValue(el) {
   }
   const pk = newValueEl.querySelector("[data-pk]")?.dataset.pk.trim();
 
-  let value = null;
+  let value;
   const listElement = newValueEl.querySelector("ul");
   if (listElement) {
     value = Array.from(listElement.querySelectorAll("li")).map((listEl) => listEl.innerText.trim());
@@ -94,7 +92,7 @@ function checkForDifferences() {
   for (const el of document.querySelectorAll("fieldset.compare .form-row")) {
     const newValue = getNewValue(el);
 
-    let currentInput = null;
+    let currentInput;
     let different = false;
 
     if ((currentInput = el.querySelector(".vArrayWidgetList"))) {
@@ -105,7 +103,6 @@ function checkForDifferences() {
     } else if ((currentInput = el.querySelector("select"))) {
       different = currentInput.value !== newValue.pk;
     } else if ((currentInput = el.querySelector("input[type=checkbox]"))) {
-      // eslint-disable-next-line no-ternary
       different = (currentInput.checked ? "True" : "False") !== newValue.value;
     } else if ((currentInput = el.querySelector("input, textarea"))) {
       different = currentInput.value.trim() !== newValue.value;
@@ -130,7 +127,7 @@ function copyFromNew(event) {
     return;
   }
 
-  let input = null;
+  let input;
 
   if ((input = el.querySelector(".vArrayField"))) {
     for (const existingEl of input.querySelectorAll(".vArrayWidgetList .vArrayWidget")) {

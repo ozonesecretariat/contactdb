@@ -1,3 +1,4 @@
 import "./commands";
+import { addCustomCommand } from "cy-verify-downloads";
 
-require("cy-verify-downloads").addCustomCommand();
+addCustomCommand();
