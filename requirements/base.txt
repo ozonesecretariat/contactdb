@@ -1,4 +1,4 @@
-Django==4.2.*
+Django==5.2.*
 django-auditlog
 django-admin-autocomplete-filter
 django-admin-env-notice
