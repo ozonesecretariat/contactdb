@@ -1,5 +1,3 @@
-"use strict";
-
 (function initTemplates() {
   const { CKEDITOR } = window;
   if (!CKEDITOR) {

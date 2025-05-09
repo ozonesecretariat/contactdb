@@ -1,4 +1,4 @@
-Django==4.2.*
+Django==5.2.*
 django-auditlog
 django-admin-autocomplete-filter
 django-admin-env-notice
@@ -9,7 +9,7 @@ django-environ
 django-extensions
 django-filter
 django-group-model
-django-import-export
+django-import-export[xlsx]
 django_redis
 django-rq
 django-task

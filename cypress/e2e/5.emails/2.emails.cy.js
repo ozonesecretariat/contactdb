@@ -107,7 +107,7 @@ describe("Check", () => {
     cy.get(".field-status_display").contains("SUCCESS");
     cy.get(".field-email a").click();
     // Check interpolation
-    cy.get("#fieldsetcollapser0").click();
+    cy.get("#fieldset-0-1-heading").click();
     cy.getIframeBody(".field-email_preview iframe").contains("Dear ,");
   });
   it("Check sending email with non-ASCII characters", () => {
@@ -129,7 +129,7 @@ describe("Check", () => {
     cy.get(".field-email_to").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
 
     // Check placeholder interpolation in preview
-    cy.get("#fieldsetcollapser0").click();
+    cy.get("#fieldset-0-1-heading").click();
     // Check HTML
     cy.getIframeBody(".field-email_preview iframe").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
     cy.getIframeBody(".field-email_preview iframe").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
@@ -137,7 +137,7 @@ describe("Check", () => {
     cy.get(".field-email_plaintext").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
     cy.get(".field-email_plaintext").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
     // Check placeholder interpolation in the raw email
-    cy.get("#fieldsetcollapser1").click();
+    cy.get("#fieldset-0-2-heading").click();
     cy.get(".field-email_source").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
     cy.get(".field-email_source").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
 
@@ -167,11 +167,11 @@ describe("Check", () => {
     cy.get("a").contains(subject).click();
 
     // Check placeholder interpolation in preview
-    cy.get("#fieldsetcollapser0").click();
+    cy.get("#fieldset-0-1-heading").click();
     cy.getIframeBody(".field-email_preview iframe").contains("Dear Mrs. Aria-Eclipse Titan");
     cy.get(".field-email_plaintext").contains("Dear Mrs. Aria-Eclipse Titan");
     // Check placeholder interpolation in the raw email
-    cy.get("#fieldsetcollapser1").click();
+    cy.get("#fieldset-0-2-heading").click();
     cy.get(".field-email_source").contains("Dear Mrs. Aria-Eclipse Titan");
   });
   it("Check inline image", () => {
@@ -195,11 +195,11 @@ describe("Check", () => {
     cy.get("a").contains(subject).click();
     //
     // Check image is shown in preview
-    cy.get("#fieldsetcollapser0").click();
+    cy.get("#fieldset-0-1-heading").click();
     cy.getIframeBody(".field-email_preview iframe").find("img").should("be.visible");
 
     // Check image is included in the raw HTML body of the email
-    cy.get("#fieldsetcollapser1").click();
+    cy.get("#fieldset-0-2-heading").click();
     cy.get(".field-email_source").contains('src="http://');
     cy.get(".field-email_source").contains("media/uploads");
     cy.get(".field-email_source").contains("test-logo");
@@ -223,7 +223,7 @@ describe("Check", () => {
 
     // Check download attachment
     cy.task("cleanDownloadsFolder");
-    cy.get("#fieldsetcollapser0").click();
+    cy.get("#fieldset-0-1-heading").click();
     cy.get("a").contains("lorem-ipsum.txt").click();
     cy.checkFile({
       filePattern: "lorem-ipsum",
@@ -231,7 +231,7 @@ describe("Check", () => {
     });
 
     // Check attachment in the raw email
-    cy.get("#fieldsetcollapser1").click();
+    cy.get("#fieldset-0-2-heading").click();
     cy.get(".field-email_source").contains("lorem-ipsum.txt");
     cy.get(".field-email_source").contains("Lorem ipsum dolor sit amet, consectetur adipiscing elit");
   });
