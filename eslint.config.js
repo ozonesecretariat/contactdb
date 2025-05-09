@@ -1,9 +1,12 @@
 import globals from "globals";
+import pluginVue from "eslint-plugin-vue";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import pluginCypress from "eslint-plugin-cypress/flat";
+import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 import pluginJs from "@eslint/js";
 import pluginPrettier from "eslint-config-prettier";
 
-export default [
+export default defineConfigWithVueTs([
   {
     languageOptions: {
       globals: {
@@ -20,16 +23,20 @@ export default [
     ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**", "**/node_modules/**", "**/.fs/**", "**/.venv/**"],
   },
   pluginJs.configs.all,
+  ...pluginVue.configs["flat/recommended"],
+  vueTsConfigs.recommendedTypeChecked,
   {
     ...pluginCypress.configs.recommended,
     files: ["cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}", "cypress/support/**/*.{js,ts,jsx,tsx}"],
     rules: {
       // expect() expression will be marked as errors otherwise.
+      "@typescript-eslint/no-unused-expressions": ["off"],
       "no-unused-expressions": ["off"],
       // Can't enforce camelCase since it conflicts with some python stuff
       camelcase: ["error", { properties: "never" }],
     },
   },
+  skipFormatting,
   pluginPrettier,
   {
     rules: {
@@ -79,4 +86,4 @@ export default [
       "sort-vars": "off",
     },
   },
-];
+]);

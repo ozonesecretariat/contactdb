@@ -1,10 +1,8 @@
-"use strict";
+import { defineConfig } from "cypress";
+import verifyDownloadTasks from "cy-verify-downloads";
+import { rmSync, readdirSync } from "fs";
 
-const { defineConfig } = require("cypress");
-const { verifyDownloadTasks } = require("cy-verify-downloads");
-const { rmSync, readdirSync } = require("fs");
-
-module.exports = defineConfig({
+export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:8000",
     viewportWidth: 1920,
