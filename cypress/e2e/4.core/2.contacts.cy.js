@@ -67,7 +67,7 @@ describe("Check", () => {
     cy.get("input[type=file][name=import_file]").selectFile("fixtures/test/files/test-contact-import.xlsx");
     cy.get("input[type=submit]").contains("Submit").click();
     cy.get("input[type=submit]").contains("Confirm import").click();
-    cy.contains("Import finished, with 2 new and 0 updated contacts.");
+    cy.contains("Import finished: 2 new, 0 updated, 0 deleted and 1 skipped contacts.");
 
     // Check values got imported correctly
     cy.performSearch({

@@ -259,7 +259,7 @@ Cypress.Commands.addAll({
     cy.task("cleanDownloadsFolder");
     cy.performSearch({ modelName, searchValue, filters });
     cy.get("a").contains("Export").click();
-    cy.fillInput("file_format", "csv");
+    cy.fillInput("format", "csv");
     cy.get("[type=submit]").contains("Submit").click();
     cy.checkFile({ filePattern, expected, lineLength: expected.length + 1 });
   },

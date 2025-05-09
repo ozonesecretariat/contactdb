@@ -180,6 +180,9 @@ class EmailTemplateAdmin(CKEditorTemplatesBase):
 class EmailAdminForm(forms.ModelForm):
     def full_clean(self):
         super().full_clean()
+        if not self.is_bound:
+            return
+
         if (
             not self.cleaned_data["recipients"].exists()
             and not self.cleaned_data["groups"].exists()
