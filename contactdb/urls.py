@@ -12,6 +12,7 @@ from django.contrib.auth import views as auth_views
 from common.protected_media import protected_serve
 
 urlpatterns = [
+    path("api/", include("api.urls")),
     re_path(
         r"^protected_media/(?P<path>.*)$",
         protected_serve,

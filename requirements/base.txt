@@ -10,6 +10,10 @@ django-extensions
 django-filter
 django-group-model
 django-import-export[xlsx]
+django-cors-headers
+dj-rest-auth
+djangorestframework
+drf-spectacular[sidecar]
 django_redis
 django-rq
 django-task

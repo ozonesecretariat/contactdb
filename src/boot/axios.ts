@@ -8,13 +8,39 @@ declare module "vue" {
   }
 }
 
+const apiBaseEndpoint = "/api";
+
+export let apiHost = window.location.host;
+export let apiURL = `${window.location.origin}${apiBaseEndpoint}`;
+export let apiBase = `${window.location.origin}`;
+
+if (process.env.NODE_ENV === "development") {
+  apiHost = "localhost:8000";
+  apiURL = `http://localhost:8000${apiBaseEndpoint}`;
+  apiBase = "http://localhost:8000";
+}
+
+if (process.env.PUBLIC_API_HOST) {
+  apiHost = process.env.PUBLIC_API_HOST;
+  apiURL = `${window.location.protocol}//${apiHost}${apiBaseEndpoint}`;
+  apiBase = `${window.location.protocol}//${apiHost}`;
+}
+
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: "https://api.example.com" });
+export const api = axios.create({
+  baseURL: apiURL,
+  withCredentials: true,
+  withXSRFToken: true,
+  xsrfCookieName: "csrftoken",
+  xsrfHeaderName: "X-CSRFToken",
+  headers: {},
+  maxRedirects: 5,
+});
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -27,5 +53,3 @@ export default defineBoot(({ app }) => {
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 });
-
-export { api };

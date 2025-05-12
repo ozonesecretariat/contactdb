@@ -34,6 +34,7 @@ HAS_HTTPS = env.bool("HAS_HTTPS", default=False)
 PROTOCOL = "https://" if HAS_HTTPS else "http://"
 
 BACKEND_HOST = env.list("BACKEND_HOST")
+FRONTEND_HOST = env.list("FRONTEND_HOST", default=BACKEND_HOST)
 MAIN_HOST = env.str("MAIN_HOST", default=BACKEND_HOST[0])
 
 REDIS_HOST = env.str("REDIS_HOST")
@@ -62,6 +63,12 @@ SESSION_COOKIE_SECURE = HAS_HTTPS
 # https://docs.djangoproject.com/en/4.1/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [_host.rsplit(":", 1)[0] for _host in BACKEND_HOST]
 
+# https://pypi.org/project/django-cors-headers/
+CORS_ORIGIN_WHITELIST = [(PROTOCOL + _host) for _host in FRONTEND_HOST]
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ["content-disposition"]
+CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST
+
 
 # Application definition
 
@@ -69,6 +76,7 @@ INSTALLED_APPS = [
     "django_admin_env_notice",
     # "django.contrib.admin",
     "contactdb.site.ContactDBAdminConfig",
+    "corsheaders",
     "ckeditor",
     "ckeditor_uploader",
     "django.contrib.auth",
@@ -93,7 +101,12 @@ INSTALLED_APPS = [
     "django_db_views",
     "django_object_actions",
     "auditlog",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     # This app
+    "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
     "events.apps.EventsConfig",
@@ -361,18 +374,6 @@ if SENTRY_DSN:
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
-# Kronos import
-ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
-KRONOS_HOST = env.str("KRONOS_HOST", default="")
-
-# Ozone
-KRONOS_USERNAME = env.str("KRONOS_USERNAME", default="")
-KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
-
-FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
-
-# Focal point imports
-FOCAL_POINT_ENDPOINT = "https://ors.ozone.unep.org/api/country-profiles/focal-points/"
 
 # CKEditor
 CKEDITOR_PLACEHOLDERS = (
@@ -480,8 +481,52 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+### Django Rest Framework
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": {
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    },
+}
+
+# https://dj-rest-auth.readthedocs.io/en/latest/configuration.html?
+REST_AUTH = {}
+
+# https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ContactDB API",
+    "DESCRIPTION": "ContactDB API",
+    "VERSION": None,
+    "SERVE_INCLUDE_SCHEMA": True,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+}
+
+### App settings
+
+# Kronos import
+ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
+KRONOS_HOST = env.str("KRONOS_HOST", default="")
+
+# Ozone
+KRONOS_USERNAME = env.str("KRONOS_USERNAME", default="")
+KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
+
+# Focal point imports
+FOCAL_POINT_ENDPOINT = "https://ors.ozone.unep.org/api/country-profiles/focal-points/"
+
 # Add EU ISO code which is exceptionally reserved.
 pycountry.countries.add_entry(alpha_2="EU", name="European Union")
+
+### Debug settings
 
 if DEBUG:
     DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)
