@@ -3,7 +3,7 @@ from rest_framework import serializers
 from accounts.models import User
 
 
-class CurrentUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     """
     Used to get basic info for the current user
     """
@@ -29,11 +29,12 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             "roles",
             "permissions",
         )
+        read_only_fields = ("email", "is_superuser", "is_active", "is_staff")
 
-    def get_permissions(self, obj):
+    def get_permissions(self, obj) -> list[str]:
         return list(obj.get_all_permissions())
 
-    def get_app_settings(self, obj):
+    def get_app_settings(self, obj) -> dict[str, str]:
         return {
             "sentry_dsn": settings.SENTRY_DSN,
             "environment_name": settings.ENVIRONMENT_NAME,

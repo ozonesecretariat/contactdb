@@ -4,7 +4,6 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from api.views.user import CurrentUserViewSet
 
 urlpatterns = [
     path("auth/", include("dj_rest_auth.urls")),
@@ -20,10 +19,5 @@ urlpatterns = [
         "schema/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
-    ),
-    path(
-        "current-user/",
-        CurrentUserViewSet.as_view(),
-        name="current-user",
     ),
 ]

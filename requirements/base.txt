@@ -13,6 +13,7 @@ django-import-export[xlsx]
 django-cors-headers
 dj-rest-auth
 djangorestframework
+djangorestframework-camel-case
 drf-spectacular[sidecar]
 django_redis
 django-rq

@@ -124,6 +124,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_otp.middleware.OTPMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
+    "djangorestframework_camel_case.middleware.CamelCaseMiddleWare",
 ]
 
 # https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
@@ -489,13 +490,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": (
-        "rest_framework.renderers.JSONRenderer",
-        "rest_framework.renderers.BrowsableAPIRenderer",
+        "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
+        "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer",
     ),
+    "DEFAULT_PARSER_CLASSES": (
+        # "djangorestframework_camel_case.parser.CamelCaseFormParser",
+        # "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
+        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
+    ),
+    "JSON_UNDERSCOREIZE": {
+        "no_underscore_before_number": True,
+    },
 }
 
-# https://dj-rest-auth.readthedocs.io/en/latest/configuration.html?
-REST_AUTH = {}
+# https://dj-rest-auth.readthedocs.io/en/latest/configuration.html
+REST_AUTH = {
+    "USER_DETAILS_SERIALIZER": "api.serializers.user.UserSerializer",
+}
 
 # https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
 SPECTACULAR_SETTINGS = {
@@ -506,6 +517,11 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
+    ],
+    "CAMELIZE_NAMES": True,
 }
 
 ### App settings
