@@ -1,1 +1,9 @@
 // app global css in SCSS form
+.account-card {
+  width: 100%;
+  height: min-content;
+  margin: 20px;
+  padding: 20px;
+  min-width: 768px;
+  max-width: 768px;
+}

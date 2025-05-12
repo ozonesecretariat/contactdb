@@ -24,6 +24,24 @@ export const useUserStore = defineStore("user", {
 
       return `${state.firstName} ${state.lastName}`;
     },
+    initials(state) {
+      const parts: (string | undefined)[] = [];
+      if (state.firstName.length > 0) {
+        parts.push(state.firstName[0]);
+      }
+      if (state.lastName.length > 0) {
+        parts.push(state.lastName[0]);
+      }
+
+      if (parts.length === 0) {
+        parts.push(state.email[0]);
+      }
+
+      return parts
+        .filter((p) => p)
+        .join("")
+        .toUpperCase();
+    },
   },
   actions: {
     async fetchUser() {

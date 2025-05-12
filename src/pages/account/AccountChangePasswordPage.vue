@@ -1,9 +1,29 @@
 <template>
+  <p>Change basic account information</p>
   <q-form class="q-gutter-md" @submit="onSubmit">
-    <p>Please enter your new password twice.</p>
+    <q-input
+      v-model="oldPassword"
+      autofocus
+      :type="isPwdOld ? 'password' : 'text'"
+      label="Current Password"
+      filled
+      autocomplete="current-password"
+      :error="!!errors.oldPassword"
+      :error-message="errors.oldPassword"
+    >
+      <template #prepend>
+        <q-icon name="lock" />
+      </template>
+      <template #append>
+        <q-icon
+          :name="isPwdOld ? 'visibility_off' : 'visibility'"
+          class="cursor-pointer"
+          @click="isPwdOld = !isPwdOld"
+        />
+      </template>
+    </q-input>
     <q-input
       v-model="newPassword1"
-      autofocus
       :type="isPwd1 ? 'password' : 'text'"
       label="New Password"
       filled
@@ -35,46 +55,45 @@
         <q-icon :name="isPwd2 ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd2 = !isPwd2" />
       </template>
     </q-input>
-
     <div>
-      <q-btn type="submit" color="primary" label="Change Password" class="full-width" :loading="loading" />
+      <q-btn type="submit" color="primary" label="Save" class="full-width" :loading="loading" />
     </div>
   </q-form>
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from "quasar";
 import { ref } from "vue";
+import { useUserStore } from "stores/userStore";
 import useFormErrors from "src/composables/useFormErrors";
 import { api } from "boot/axios";
-import { useRouter, useRoute } from "vue-router";
+import { useQuasar } from "quasar";
 
-const router = useRouter();
-const route = useRoute();
 const $q = useQuasar();
-const loading = ref(false);
+const userStore = useUserStore();
 const { errors, setErrors } = useFormErrors();
 
+const loading = ref(false);
+const oldPassword = ref("");
 const newPassword1 = ref("");
 const newPassword2 = ref("");
 const isPwd1 = ref(true);
 const isPwd2 = ref(true);
+const isPwdOld = ref(true);
 
 async function onSubmit() {
   errors.value = {};
   try {
     loading.value = true;
-    await api.post("/auth/password/reset/confirm/", {
+    await api.post("/auth/password/change/", {
+      oldPassword: oldPassword.value,
       newPassword1: newPassword1.value,
       newPassword2: newPassword2.value,
-      uid: route.query.uid,
-      token: route.query.token,
     });
     $q.notify({
       type: "positive",
-      message: "Password has been reset successfully!",
+      message: "Password changed successfully.",
     });
-    await router.push({ name: "login" });
+    await userStore.fetchUser();
   } catch (e) {
     setErrors(e);
   } finally {

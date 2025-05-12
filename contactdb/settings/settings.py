@@ -509,6 +509,7 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "api.serializers.user.UserSerializer",
     "PASSWORD_RESET_SERIALIZER": "api.serializers.user.PasswordResetSerializer",
+    "OLD_PASSWORD_FIELD_ENABLED": True,
 }
 
 # https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation

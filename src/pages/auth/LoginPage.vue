@@ -2,6 +2,7 @@
   <q-form v-if="step === 'auth'" class="q-gutter-md" @submit="next">
     <q-input
       v-model="email"
+      autofocus
       type="email"
       label="Email"
       filled
@@ -19,7 +20,7 @@
       :type="isPwd ? 'password' : 'text'"
       label="Password"
       filled
-      autocomplete="password"
+      autocomplete="current-password"
       :error="!!errors.password"
       :error-message="errors.password"
     >
@@ -43,6 +44,7 @@
     <p>Please input the 2FA token from your authenticator app.</p>
     <q-input
       v-model="code"
+      autofocus
       label="Code"
       mask="######"
       filled
@@ -66,6 +68,7 @@
     </p>
     <q-input
       v-model="code"
+      autofocus
       label="Backup token"
       filled
       autocomplete="otp"
@@ -79,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useQuasar } from "quasar";
 import { api } from "src/boot/axios";
 import { useRouter } from "vue-router";
@@ -137,4 +140,10 @@ async function next() {
     loading.value = false;
   }
 }
+
+watch(code, async (newCode) => {
+  if (newCode.length === 6) {
+    await next();
+  }
+});
 </script>

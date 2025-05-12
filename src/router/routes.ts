@@ -35,9 +35,47 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/IndexPage.vue") }],
+    children: [
+      {
+        name: "account",
+        path: "account/",
+        component: () => import("layouts/AccountLayout.vue"),
+        children: [
+          {
+            name: "account-settings",
+            path: "account-settings",
+            component: () => import("pages/account/AccountSettingsPage.vue"),
+            meta: {
+              header: "Account settings",
+            },
+          },
+          {
+            name: "account-change-password",
+            path: "account-change-password",
+            component: () => import("pages/account/AccountChangePasswordPage.vue"),
+            meta: {
+              header: "Change password",
+            },
+          },
+          {
+            name: "account-security",
+            path: "account-security",
+            component: () => import("pages/account/AccountSecurityPage.vue"),
+            meta: {
+              header: "Account security",
+            },
+          },
+        ],
+      },
+      {
+        path: "",
+        component: () => import("pages/IndexPage.vue"),
+        meta: {
+          header: "Home page",
+        },
+      },
+    ],
   },
-
   // Always leave this as the last one
   {
     path: "/:catchAll(.*)*",
