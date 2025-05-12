@@ -71,7 +71,7 @@ function getNewValue(el) {
   }
   const pk = newValueEl.querySelector("[data-pk]")?.dataset.pk.trim();
 
-  let value;
+  let value = null;
   const listElement = newValueEl.querySelector("ul");
   if (listElement) {
     value = Array.from(listElement.querySelectorAll("li")).map((listEl) => listEl.innerText.trim());
@@ -92,7 +92,7 @@ function checkForDifferences() {
   for (const el of document.querySelectorAll("fieldset.compare .form-row")) {
     const newValue = getNewValue(el);
 
-    let currentInput;
+    let currentInput = null;
     let different = false;
 
     if ((currentInput = el.querySelector(".vArrayWidgetList"))) {
@@ -127,7 +127,7 @@ function copyFromNew(event) {
     return;
   }
 
-  let input;
+  let input = null;
 
   if ((input = el.querySelector(".vArrayField"))) {
     for (const existingEl of input.querySelectorAll(".vArrayWidgetList .vArrayWidget")) {

@@ -2,18 +2,12 @@ import globals from "globals";
 import pluginVue from "eslint-plugin-vue";
 import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import pluginCypress from "eslint-plugin-cypress/flat";
-import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
+import prettierSkipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 import pluginJs from "@eslint/js";
 import pluginPrettier from "eslint-config-prettier";
+import pluginQuasar from "@quasar/app-vite/eslint";
 
 export default defineConfigWithVueTs([
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-    },
-  },
   {
     name: "app/files-to-lint",
     files: ["**/*.{ts,mts,tsx,js,mjs,cjs}"],
@@ -22,8 +16,16 @@ export default defineConfigWithVueTs([
     name: "app/files-to-ignore",
     ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**", "**/node_modules/**", "**/.fs/**", "**/.venv/**"],
   },
+  pluginQuasar.configs.recommended(),
   pluginJs.configs.all,
-  ...pluginVue.configs["flat/recommended"],
+  pluginVue.configs["flat/recommended"],
+  {
+    files: ["**/*.ts", "**/*.vue"],
+    rules: {
+      "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
+    },
+  },
+  // https://github.com/vuejs/eslint-config-typescript
   vueTsConfigs.recommendedTypeChecked,
   {
     ...pluginCypress.configs.recommended,
@@ -36,10 +38,27 @@ export default defineConfigWithVueTs([
       camelcase: ["error", { properties: "never" }],
     },
   },
-  skipFormatting,
-  pluginPrettier,
   {
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+
+      globals: {
+        ...globals.browser,
+        ...globals.node, // SSR, Electron, config files
+        process: "readonly", // process.env.*
+        ga: "readonly", // Google Analytics
+        cordova: "readonly",
+        Capacitor: "readonly",
+        chrome: "readonly", // BEX related
+        browser: "readonly", // BEX related
+      },
+    },
+
+    // add your custom rules here
     rules: {
+      // Make component names consistent
+      "vue/component-name-in-template-casing": ["error", "PascalCase", { registeredComponentsOnly: false }],
       // Don't force capitalized comments
       "capitalized-comments": "off",
       // Allow class methods that could be static
@@ -50,8 +69,6 @@ export default defineConfigWithVueTs([
       "func-style": "off",
       // Allow short id names
       "id-length": "off",
-      // Allow no initial declaration as it conflicts with the "no-useless-assignment" rule
-      "init-declarations": "off",
       // Disable max-params
       "max-params": "off",
       // Disable max-statements
@@ -68,6 +85,9 @@ export default defineConfigWithVueTs([
       "no-magic-numbers": "off",
       // Allow negated conditions
       "no-negated-condition": "off",
+      // The @typescript-eslint/no-unused-vars will catch any such errors without
+      // any false positives, so disable this rule.
+      "no-useless-assignment": "off",
       // Allow using function before defining them
       "no-use-before-define": ["error", { functions: false }],
       // Allow underscore dangle
@@ -86,4 +106,6 @@ export default defineConfigWithVueTs([
       "sort-vars": "off",
     },
   },
+  prettierSkipFormatting,
+  pluginPrettier,
 ]);
