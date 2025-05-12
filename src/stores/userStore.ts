@@ -10,6 +10,7 @@ export const useUserStore = defineStore("user", {
     isStaff: false,
     isSuperuser: false,
     isActive: false,
+    twoFactorEnabled: false,
     permissions: [] as string[],
     roles: [] as string[],
     appSettings: {

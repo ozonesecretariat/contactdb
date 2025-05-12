@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_superuser",
             "is_active",
             "is_staff",
+            "two_factor_enabled",
             "app_settings",
             "roles",
             "permissions",

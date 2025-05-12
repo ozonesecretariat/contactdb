@@ -59,6 +59,8 @@ export default defineConfigWithVueTs([
     rules: {
       // Make component names consistent
       "vue/component-name-in-template-casing": ["error", "kebab-case", { registeredComponentsOnly: false }],
+      // Allow promises not being waited on always.
+      "@typescript-eslint/no-floating-promises": "off",
       // Don't force capitalized comments
       "capitalized-comments": "off",
       // Allow class methods that could be static

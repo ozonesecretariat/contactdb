@@ -25,22 +25,22 @@ urlpatterns = [
     path("auth/", include("dj_rest_auth.urls")),
     # Two-factor auth setup
     path(
-        r"account/two_factor/setup/$",
+        r"account/two_factor/setup/",
         api.views.user.TwoFactorSetupView.as_view(),
         name="account-two-factor-setup",
     ),
     path(
-        r"account/two_factor/setup/qrcode/$",
+        r"account/two_factor/setup/qrcode/",
         api.views.user.TwoFactorQRGeneratorView.as_view(),
         name="account-two-factor-qr",
     ),
     path(
-        r"account/two_factor/backup/tokens/$",
+        "account/two_factor/backup/tokens/",
         api.views.user.TwoFactorBackupTokensView.as_view(),
         name="account-two-factor-backup-tokens",
     ),
     path(
-        "account/two_factor/disable/$",
+        "account/two_factor/disable/",
         api.views.user.TwoFactorDisable.as_view(),
         name="account-two-factor-disable",
     ),

@@ -16,6 +16,12 @@
           </q-avatar>
           <q-menu>
             <q-list>
+              <template v-if="userStore.isStaff">
+                <q-item v-close-popup clickable :href="apiBase">
+                  <q-item-section>Admin</q-item-section>
+                </q-item>
+                <q-separator />
+              </template>
               <q-item v-close-popup clickable :to="{ name: 'account-settings' }">
                 <q-item-section>Account settings</q-item-section>
               </q-item>
@@ -35,9 +41,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" bordered overlay>
-      <!-- drawer content -->
-    </q-drawer>
+    <q-drawer v-model="leftDrawerOpen" side="left" bordered>Drawer</q-drawer>
 
     <q-page-container>
       <router-view />
@@ -48,7 +52,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserStore } from "stores/userStore";
-import { api } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
@@ -56,7 +60,7 @@ const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
-const leftDrawerOpen = ref(false);
+const leftDrawerOpen = ref(true);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

@@ -1,7 +1,7 @@
 import two_factor
 from django_otp import devices_for_user
 from django_otp.plugins.otp_static.models import StaticToken
-from rest_framework.parsers import FormParser
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,7 +10,7 @@ from two_factor.views import QRGeneratorView, SetupView, LoginView
 
 class OTPLoginView(LoginView, APIView):
     permission_classes = (AllowAny,)
-    parser_classes = (FormParser,)
+    parser_classes = (FormParser, MultiPartParser)
 
     def post(self, *args, **kwargs):
         self.prefix = ""
@@ -42,8 +42,9 @@ class TwoFactorQRGeneratorView(QRGeneratorView):
 
 
 class TwoFactorSetupView(SetupView, APIView):
-    success_url = "core:account-two-factor-setup"
-    qrcode_url = "core:account-two-factor-qr"
+    success_url = "account-two-factor-setup"
+    qrcode_url = "account-two-factor-qr"
+    parser_classes = (FormParser, MultiPartParser)
 
     def render(self, form=None, **kwargs):
         super().render(form, **kwargs)

@@ -1,5 +1,5 @@
 <template>
-  <p>Change basic account information</p>
+  <p>Change current password</p>
   <q-form class="q-gutter-md" @submit="onSubmit">
     <q-input
       v-model="oldPassword"
