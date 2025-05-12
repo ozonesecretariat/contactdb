@@ -1,27 +1,27 @@
 <template>
-  <QLayout view="lHh Lpr lFf">
-    <QHeader elevated>
-      <QToolbar>
-        <QBtn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+  <q-layout view="lHh Lpr lFf">
+    <q-header elevated>
+      <q-toolbar>
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <QToolbarTitle>Quasar App</QToolbarTitle>
+        <q-toolbar-title>Quasar App</q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
-      </QToolbar>
-    </QHeader>
+      </q-toolbar>
+    </q-header>
 
-    <QDrawer v-model="leftDrawerOpen" show-if-above bordered>
-      <QList>
-        <QItemLabel header>Essential Links</QItemLabel>
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+      <q-list>
+        <q-item-label header>Essential Links</q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </QList>
-    </QDrawer>
+        <essential-link v-for="link in linksList" :key="link.title" v-bind="link" />
+      </q-list>
+    </q-drawer>
 
-    <QPageContainer>
-      <RouterView />
-    </QPageContainer>
-  </QLayout>
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">

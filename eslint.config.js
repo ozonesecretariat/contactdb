@@ -58,7 +58,7 @@ export default defineConfigWithVueTs([
     // add your custom rules here
     rules: {
       // Make component names consistent
-      "vue/component-name-in-template-casing": ["error", "PascalCase", { registeredComponentsOnly: false }],
+      "vue/component-name-in-template-casing": ["error", "kebab-case", { registeredComponentsOnly: false }],
       // Don't force capitalized comments
       "capitalized-comments": "off",
       // Allow class methods that could be static

@@ -1,14 +1,14 @@
 <template>
-  <QItem clickable tag="a" target="_blank" :href="link">
-    <QItemSection v-if="icon" avatar>
-      <QIcon :name="icon" />
-    </QItemSection>
+  <q-item clickable tag="a" target="_blank" :href="link">
+    <q-item-section v-if="icon" avatar>
+      <q-icon :name="icon" />
+    </q-item-section>
 
-    <QItemSection>
-      <QItemLabel>{{ title }}</QItemLabel>
-      <QItemLabel caption>{{ caption }}</QItemLabel>
-    </QItemSection>
-  </QItem>
+    <q-item-section>
+      <q-item-label>{{ title }}</q-item-label>
+      <q-item-label caption>{{ caption }}</q-item-label>
+    </q-item-section>
+  </q-item>
 </template>
 
 <script setup lang="ts">
