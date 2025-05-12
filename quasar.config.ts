@@ -79,6 +79,9 @@ export default defineConfig((/* ctx */) => ({
             lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
             useFlatConfig: true,
           },
+          overlay: {
+            initialIsOpen: false,
+          },
         },
         { server: false },
       ],
@@ -107,7 +110,7 @@ export default defineConfig((/* ctx */) => ({
     // directives: [],
 
     // Quasar plugins
-    plugins: [],
+    plugins: ["Loading", "LoadingBar", "Notify", "Dialog"],
   },
 
   // animations: 'all', // --- includes all animations

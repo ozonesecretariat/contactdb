@@ -1,5 +1,5 @@
 import { defineBoot } from "#q-app/wrappers";
-import axios, { type AxiosInstance } from "axios";
+import axios, { type AxiosError, type AxiosInstance } from "axios";
 
 declare module "vue" {
   interface ComponentCustomProperties {
@@ -43,8 +43,33 @@ export const api = axios.create({
 });
 
 export default defineBoot(({ app }) => {
-  // for use inside Vue files (Options API) through this.$axios and this.$api
+  const $q = app.config.globalProperties.$q;
 
+  // Add request interceptor
+  api.interceptors.request.use(
+    (config) => {
+      $q.loadingBar.start();
+      return config;
+    },
+    (error: AxiosError) => {
+      $q.loadingBar.stop();
+      return Promise.reject(error);
+    },
+  );
+
+  // Add response interceptor
+  api.interceptors.response.use(
+    (response) => {
+      $q.loadingBar.stop();
+      return response;
+    },
+    (error: AxiosError) => {
+      $q.loadingBar.stop();
+      return Promise.reject(error);
+    },
+  );
+
+  // for use inside Vue files (Options API) through this.$axios and this.$api
   app.config.globalProperties.$axios = axios;
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file

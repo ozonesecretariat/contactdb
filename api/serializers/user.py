@@ -1,3 +1,4 @@
+import dj_rest_auth.serializers
 from django.conf import settings
 from rest_framework import serializers
 from accounts.models import User
@@ -36,6 +37,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_app_settings(self, obj) -> dict[str, str]:
         return {
-            "sentry_dsn": settings.SENTRY_DSN,
             "environment_name": settings.ENVIRONMENT_NAME,
+        }
+
+
+class PasswordResetSerializer(dj_rest_auth.serializers.PasswordResetSerializer):
+    def get_email_options(self):
+        return {
+            "domain_override": settings.FRONTEND_HOST[0],
         }

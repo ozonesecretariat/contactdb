@@ -76,7 +76,6 @@ INSTALLED_APPS = [
     "django_admin_env_notice",
     # "django.contrib.admin",
     "contactdb.site.ContactDBAdminConfig",
-    "corsheaders",
     "ckeditor",
     "ckeditor_uploader",
     "django.contrib.auth",
@@ -105,6 +104,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "corsheaders",
     # This app
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
@@ -115,6 +115,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -500,12 +501,14 @@ REST_FRAMEWORK = {
     ),
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
+        "ignore_keys": ("__all__",),
     },
 }
 
 # https://dj-rest-auth.readthedocs.io/en/latest/configuration.html
 REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "api.serializers.user.UserSerializer",
+    "PASSWORD_RESET_SERIALIZER": "api.serializers.user.PasswordResetSerializer",
 }
 
 # https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
