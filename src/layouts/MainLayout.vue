@@ -50,17 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useUserStore } from "stores/userStore";
 import { api, apiBase } from "boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+import { useStorage } from "@vueuse/core";
 
 const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
-const leftDrawerOpen = ref(true);
+const leftDrawerOpen = useStorage("leftDrawerOpen", true);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
