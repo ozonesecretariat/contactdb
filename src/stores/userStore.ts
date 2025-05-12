@@ -5,8 +5,8 @@ import type { AxiosError } from "axios";
 export const useUserStore = defineStore("user", {
   state: () => ({
     email: "",
-    firstName: "",
-    lastName: "",
+    firstName: null as string | null,
+    lastName: null as string | null,
     isStaff: false,
     isSuperuser: false,
     isActive: false,
@@ -27,10 +27,10 @@ export const useUserStore = defineStore("user", {
     },
     initials(state) {
       const parts: (string | undefined)[] = [];
-      if (state.firstName.length > 0) {
+      if (state.firstName) {
         parts.push(state.firstName[0]);
       }
-      if (state.lastName.length > 0) {
+      if (state.lastName) {
         parts.push(state.lastName[0]);
       }
 
