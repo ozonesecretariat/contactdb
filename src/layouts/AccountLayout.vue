@@ -20,11 +20,11 @@ const route = useRoute();
 </script>
 
 <style scoped lang="scss">
-.login-card {
+.account-card {
   width: 100%;
-  padding: 20px;
+  height: min-content;
   margin: 20px;
-  min-width: 500px;
+  padding: 20px;
   max-width: 768px;
 }
 </style>

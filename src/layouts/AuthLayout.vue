@@ -27,7 +27,6 @@ const route = useRoute();
 .login-card {
   width: 100%;
   padding: 20px;
-  min-width: 400px;
   max-width: 500px;
 }
 </style>
