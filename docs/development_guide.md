@@ -23,15 +23,21 @@ settings. See [code style workflow](../.github/workflows/lint.yml)
 
 ## Starting points
 
-- [django](https://docs.djangoproject.com//)
-- [django-task](https://github.com/morlandi/django-task)
-- [pytest](https://docs.pytest.org/)
-- [vue](https://vuejs.org/)
-- [vue-router](https://router.vuejs.org/)
-- [vueuse](https://vueuse.org/)
-- [pinia](https://pinia.vuejs.org/)
-- [quasar](https://quasar.dev/)
-- [cypress](https://docs.cypress.io/)
+- API documentation can be explored with [redocs](http://localhost:8000/api/schema/redoc/)
+  or [swagger](http://localhost:8000/api/schema/swagger-ui/#/) while running locally
+- API calls can be made from the frontend using the axios `api` instance from [boot/axios.ts](../src/boot/axios.ts)
+- Backend:
+  - [django](https://docs.djangoproject.com//)
+  - [django-task](https://github.com/morlandi/django-task)
+- Frontend:
+  - [vue](https://vuejs.org/)
+  - [vue-router](https://router.vuejs.org/)
+  - [vueuse](https://vueuse.org/)
+  - [pinia](https://pinia.vuejs.org/)
+  - [quasar](https://quasar.dev/)
+- Testing:
+  - [pytest](https://docs.pytest.org/)
+  - [cypress](https://docs.cypress.io/)
 
 ## Adding a new backend dependency
 
