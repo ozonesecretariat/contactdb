@@ -16,13 +16,16 @@ function forceArray(val) {
 }
 
 Cypress.Commands.addAll({
-  login(user, password, checkSuccess = true) {
-    cy.visit(`/account/login/`);
-    cy.get("input[autocomplete=username]").type(user);
+  login(user, password, checkSuccess = true, goToAdmin = true) {
+    cy.visit("/");
+    cy.get("input[autocomplete=email]").type(user);
     cy.get("input[autocomplete=current-password]").type(password);
-    cy.get("input[type=submit]:not([hidden])").click();
+    cy.get("[type=submit]:not([hidden])").click();
     if (checkSuccess) {
-      cy.contains(`Welcome, ${user}`);
+      cy.get(`[data-user-email="${user}"]`);
+    }
+    if (checkSuccess && goToAdmin) {
+      cy.get("a").contains("Admin").click();
     }
   },
   loginAdmin() {

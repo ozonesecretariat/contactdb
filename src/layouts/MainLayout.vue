@@ -15,7 +15,7 @@
             <q-icon :name="isDarkMode ? 'dark_mode' : 'light_mode'" />
           </q-avatar>
         </q-btn>
-        <q-btn round flat>
+        <q-btn round flat :data-user-email="userStore.email">
           <q-avatar color="secondary">
             {{ userStore.initials }}
           </q-avatar>
@@ -89,7 +89,7 @@ const menuItems = computed(() => [
     type: "separator" as const,
   },
   {
-    label: "Logout",
+    label: "Log out",
     icon: "logout",
     click: logout,
   },

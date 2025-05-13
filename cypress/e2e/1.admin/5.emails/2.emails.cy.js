@@ -1,4 +1,4 @@
-import { randomStr } from "../../support/utils";
+import { randomStr } from "../../../support/utils";
 
 describe("Check", () => {
   it("Check send", () => {

@@ -3,8 +3,9 @@ import verifyDownloadTasks from "cy-verify-downloads";
 import { rmSync, readdirSync } from "fs";
 
 export default defineConfig({
+  chromeWebSecurity: false,
   e2e: {
-    baseUrl: "http://localhost:8000",
+    baseUrl: "http://localhost:8080",
     viewportWidth: 1920,
     viewportHeight: 1080,
     setupNodeEvents(on, config) {

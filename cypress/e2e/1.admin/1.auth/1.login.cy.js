@@ -3,7 +3,7 @@ describe("Check login", () => {
     cy.loginAdmin();
     cy.get("body").contains("Welcome, admin@example.com");
     cy.get("button").contains("Log out").click();
-    cy.get("h1").contains("Enter credentials");
+    cy.contains("Login");
   });
   it("Check bad login", () => {
     cy.visit("/");
@@ -16,9 +16,9 @@ describe("Check login", () => {
   });
   it("Check forgot password", () => {
     cy.visit("/");
-    cy.get("a").contains("Forgotten your password").click();
+    cy.get("a").contains("Forgot password?").click();
     cy.get("input[type=email]").type("invalid@example.com");
-    cy.get("input[type=submit]").click();
-    cy.get("h1").contains("Password reset sent");
+    cy.get("[type=submit]").click();
+    cy.contains("Password reset instructions have been sent");
   });
 });
