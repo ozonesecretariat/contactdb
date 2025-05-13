@@ -93,7 +93,7 @@ async function onSubmit() {
       type: "positive",
       message: "Password changed successfully.",
     });
-    await userStore.fetchUser();
+    await userStore.load();
   } catch (e) {
     setErrors(e);
   } finally {

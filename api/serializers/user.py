@@ -16,7 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
         slug_field="name",
     )
     permissions = serializers.SerializerMethodField()
-    app_settings = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -28,7 +27,6 @@ class UserSerializer(serializers.ModelSerializer):
             "is_active",
             "is_staff",
             "two_factor_enabled",
-            "app_settings",
             "roles",
             "permissions",
         )
@@ -36,12 +34,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_permissions(self, obj) -> list[str]:
         return list(obj.get_all_permissions())
-
-    def get_app_settings(self, obj) -> dict[str, str | bool]:
-        return {
-            "environment_name": settings.ENVIRONMENT_NAME,
-            "require_2fa": config.REQUIRE_2FA,
-        }
 
 
 class PasswordResetSerializer(dj_rest_auth.serializers.PasswordResetSerializer):

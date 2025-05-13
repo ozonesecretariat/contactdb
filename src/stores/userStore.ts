@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import type { AxiosError } from "axios";
 
 const initialState = {
+  initialized: false,
   email: "",
   firstName: null as string | null,
   lastName: null as string | null,
@@ -12,11 +13,6 @@ const initialState = {
   twoFactorEnabled: false,
   permissions: [] as string[],
   roles: [] as string[],
-  appSettings: {
-    environmentName: "",
-    require2fa: false,
-  },
-  initialized: false,
 };
 
 export const useUserStore = defineStore("user", {
@@ -52,7 +48,7 @@ export const useUserStore = defineStore("user", {
     },
   },
   actions: {
-    async fetchUser() {
+    async load() {
       try {
         const response = (await api.get("/auth/user/")).data;
         Object.assign(this, response);

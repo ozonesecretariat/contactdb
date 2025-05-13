@@ -45,7 +45,7 @@ async function generateBackupTokens() {
 async function disableAndReload() {
   try {
     await api.post("/account/two_factor/disable/");
-    await userStore.fetchUser();
+    await userStore.load();
   } catch (e) {
     setErrors(e);
   }

@@ -137,7 +137,7 @@ async function next() {
       // eslint-disable-next-line require-atomic-updates
       step.value = "token";
     } else {
-      await userStore.fetchUser();
+      await userStore.load();
       $q.notify({
         type: "positive",
         message: "Login successful!",

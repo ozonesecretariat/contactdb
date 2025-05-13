@@ -59,7 +59,7 @@ async function onSubmit() {
       type: "positive",
       message: "Account details updated.",
     });
-    await userStore.fetchUser();
+    await userStore.load();
   } catch (e) {
     setErrors(e);
   } finally {

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, re_path
 from django.urls import path
 from django.views.decorators.cache import never_cache
+from django.views.generic import RedirectView
 from two_factor.urls import urlpatterns as tf_urls
 from django.contrib.auth.decorators import login_required
 from ckeditor_uploader import views
@@ -20,27 +21,6 @@ admin_urlpatterns = [
         never_cache(login_required(views.browse)),
         name="ckeditor_browse",
     ),
-    path("", include(tf_urls)),
-    path(
-        "password_reset/",
-        auth_views.PasswordResetView.as_view(),
-        name="admin_password_reset",
-    ),
-    path(
-        "password_reset/done/",
-        auth_views.PasswordResetDoneView.as_view(),
-        name="password_reset_done",
-    ),
-    path(
-        "reset/<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(),
-        name="password_reset_confirm",
-    ),
-    path(
-        "reset/done/",
-        auth_views.PasswordResetCompleteView.as_view(),
-        name="password_reset_complete",
-    ),
     path("", admin.site.urls),
 ]
 
@@ -54,6 +34,7 @@ urlpatterns = [
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     path("admin/", include(admin_urlpatterns)),
     path("api/", include("api.urls")),
+    path("", RedirectView.as_view(pattern_name="admin:index")),
 ]
 
 

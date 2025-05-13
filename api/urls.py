@@ -8,6 +8,7 @@ from rest_framework import routers
 
 import api.views.user
 from api.views.event import EventViewSet
+from api.views.misc import AppSettingsView
 
 router = routers.SimpleRouter()
 router.register("events", EventViewSet)
@@ -49,5 +50,10 @@ urlpatterns = [
         "account/two_factor/disable/",
         api.views.user.TwoFactorDisable.as_view(),
         name="account-two-factor-disable",
+    ),
+    path(
+        "app-settings/",
+        AppSettingsView.as_view(),
+        name="app-settings",
     ),
 ] + router.urls

@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface MenuItem {

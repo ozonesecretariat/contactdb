@@ -105,7 +105,7 @@ async function generateBackupTokens() {
 }
 
 async function reloadStore() {
-  await userStore.fetchUser();
+  await userStore.load();
 }
 
 watch(code, async (newCode) => {
