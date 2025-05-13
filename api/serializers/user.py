@@ -1,4 +1,5 @@
 import dj_rest_auth.serializers
+from constance import config
 from django.conf import settings
 from rest_framework import serializers
 from accounts.models import User
@@ -36,9 +37,10 @@ class UserSerializer(serializers.ModelSerializer):
     def get_permissions(self, obj) -> list[str]:
         return list(obj.get_all_permissions())
 
-    def get_app_settings(self, obj) -> dict[str, str]:
+    def get_app_settings(self, obj) -> dict[str, str | bool]:
         return {
             "environment_name": settings.ENVIRONMENT_NAME,
+            "require_2fa": config.REQUIRE_2FA,
         }
 
 

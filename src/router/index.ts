@@ -47,6 +47,10 @@ export default defineRouter((/* { store, ssrContext } */) => {
       );
 
       if (to.meta.requireAuthentication && !userStore.isLoggedIn) {
+        $q.notify({
+          type: "warning",
+          message: "Must be logged in to view this page.",
+        });
         return { name: "login" };
       }
 
@@ -55,8 +59,20 @@ export default defineRouter((/* { store, ssrContext } */) => {
       }
 
       if (!hasPermissions) {
+        $q.notify({
+          type: "warning",
+          message: "Your account does not have the required permissions to access this page.",
+        });
         return { name: "home" };
       }
+    }
+
+    if (!userStore.twoFactorEnabled && userStore.appSettings.require2fa && to.name !== "account-security") {
+      $q.notify({
+        type: "info",
+        message: "Two factor authentication is required for this account. Please update your settings to continue.",
+      });
+      return { name: "account-security" };
     }
 
     return true;

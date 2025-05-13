@@ -14,12 +14,13 @@ const initialState = {
   roles: [] as string[],
   appSettings: {
     environmentName: "",
+    require2fa: false,
   },
   initialized: false,
 };
 
 export const useUserStore = defineStore("user", {
-  state: () => ({ ...initialState }),
+  state: () => structuredClone(initialState),
   getters: {
     fullName(state) {
       if (!state.firstName && !state.lastName) {
