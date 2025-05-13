@@ -487,6 +487,7 @@ CKEDITOR_CONFIGS = {
 
 ### Django Rest Framework
 REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.PageNumberPagination",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
     ),

@@ -74,12 +74,17 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        name: "events",
+        path: "events",
+        component: () => import("pages/EventsPage.vue"),
+        meta: {
+          header: "Events",
+        },
+      },
+      {
         name: "home",
         path: "",
-        component: () => import("pages/IndexPage.vue"),
-        meta: {
-          header: "Home page",
-        },
+        redirect: { name: "events" },
       },
     ],
   },
