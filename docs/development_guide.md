@@ -26,6 +26,12 @@ settings. See [code style workflow](../.github/workflows/lint.yml)
 - [django](https://docs.djangoproject.com//)
 - [django-task](https://github.com/morlandi/django-task)
 - [pytest](https://docs.pytest.org/)
+- [vue](https://vuejs.org/)
+- [vue-router](https://router.vuejs.org/)
+- [vueuse](https://vueuse.org/)
+- [pinia](https://pinia.vuejs.org/)
+- [quasar](https://quasar.dev/)
+- [cypress](https://docs.cypress.io/)
 
 ## Adding a new backend dependency
 
