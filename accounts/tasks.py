@@ -8,6 +8,6 @@ def reset_password(email):
     form = PasswordResetForm({"email": email})
     form.full_clean()
     form.save(
-        domain_override=settings.MAIN_HOST,
+        domain_override=settings.MAIN_BACKEND_HOST,
         use_https=settings.HAS_HTTPS,
     )

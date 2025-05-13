@@ -35,7 +35,9 @@ PROTOCOL = "https://" if HAS_HTTPS else "http://"
 
 BACKEND_HOST = env.list("BACKEND_HOST")
 FRONTEND_HOST = env.list("FRONTEND_HOST", default=BACKEND_HOST)
-MAIN_HOST = env.str("MAIN_HOST", default=BACKEND_HOST[0])
+
+MAIN_FRONTEND_HOST = env.str("MAIN_FRONTEND_HOST", default=FRONTEND_HOST[0])
+MAIN_BACKEND_HOST = env.str("MAIN_BACKEND_HOST", default=BACKEND_HOST[0])
 
 REDIS_HOST = env.str("REDIS_HOST")
 REDIS_PORT = env.int("REDIS_PORT", default=6379)
@@ -61,7 +63,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = HAS_HTTPS
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = [_host.rsplit(":", 1)[0] for _host in BACKEND_HOST]
+ALLOWED_HOSTS = [_host.rsplit(":", 1)[0] for _host in BACKEND_HOST + FRONTEND_HOST]
 
 # https://pypi.org/project/django-cors-headers/
 CORS_ORIGIN_WHITELIST = [(PROTOCOL + _host) for _host in FRONTEND_HOST]

@@ -91,7 +91,6 @@ import useFormErrors from "src/composables/useFormErrors";
 
 const $q = useQuasar();
 const route = useRoute();
-const router = useRouter();
 const userStore = useUserStore();
 
 const email = ref("");
@@ -103,16 +102,14 @@ const { errors, setErrors } = useFormErrors();
 const loading = ref(false);
 const step = ref("auth");
 
-function isSafeRedirect(path: string | null) {
-  if (!path) return false;
-
-  try {
-    const url = new URL(path, window.location.origin);
-    return url.hostname === window.location.hostname;
-  } catch {
-    // If the path is relative, it will throw, which is fine.
-    return path.startsWith("/") && !path.startsWith("//");
+function getSafeRedirect(path: string | null | undefined) {
+  const url = new URL(path ?? "/", window.location.origin);
+  if (url.hostname === window.location.hostname) {
+    return url.href;
   }
+  // eslint-disable-next-line no-console
+  console.error("Unsafe redirect detected:", path);
+  return new URL("/", window.location.origin).href;
 }
 
 async function next() {
@@ -145,8 +142,7 @@ async function next() {
         type: "positive",
         message: "Login successful!",
       });
-      const nextPath = route.query.next?.toString() || "/";
-      await router.push(isSafeRedirect(nextPath) ? nextPath : "/");
+      window.location.href = getSafeRedirect(route.query.next?.toString());
     }
   } catch (e) {
     setErrors(e);

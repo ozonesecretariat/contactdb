@@ -49,7 +49,7 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             name: "account-settings",
-            path: "account-settings",
+            path: "settings",
             component: () => import("pages/account/AccountSettingsPage.vue"),
             meta: {
               header: "Account settings",
@@ -57,7 +57,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: "account-change-password",
-            path: "account-change-password",
+            path: "password",
             component: () => import("pages/account/AccountChangePasswordPage.vue"),
             meta: {
               header: "Change password",
@@ -65,7 +65,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: "account-security",
-            path: "account-security",
+            path: "security",
             component: () => import("pages/account/AccountSecurityPage.vue"),
             meta: {
               header: "Account security",

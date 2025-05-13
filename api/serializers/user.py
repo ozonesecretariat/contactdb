@@ -47,5 +47,5 @@ class UserSerializer(serializers.ModelSerializer):
 class PasswordResetSerializer(dj_rest_auth.serializers.PasswordResetSerializer):
     def get_email_options(self):
         return {
-            "domain_override": settings.FRONTEND_HOST[0],
+            "domain_override": settings.MAIN_FRONTEND_HOST,
         }
