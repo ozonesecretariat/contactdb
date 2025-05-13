@@ -4,6 +4,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/auth/",
     component: () => import("layouts/AuthLayout.vue"),
+    meta: {
+      requireAnonymous: true,
+    },
     children: [
       {
         name: "login",
@@ -35,6 +38,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
+    meta: {
+      requireAuthentication: true,
+    },
     children: [
       {
         name: "account",
@@ -68,6 +74,7 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        name: "home",
         path: "",
         component: () => import("pages/IndexPage.vue"),
         meta: {

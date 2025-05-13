@@ -4,12 +4,20 @@
     <q-input
       v-model="firstName"
       autofocus
+      autocomplete="family-name"
       label="First name"
       filled
       :error="!!errors.firstName"
       :error-message="errors.firstName"
     />
-    <q-input v-model="lastName" label="Last name" filled :error="!!errors.lastName" :error-message="errors.lastName" />
+    <q-input
+      v-model="lastName"
+      autocomplete="given-name"
+      label="Last name"
+      filled
+      :error="!!errors.lastName"
+      :error-message="errors.lastName"
+    />
     <q-input
       :model-value="userStore.email"
       label="Email"

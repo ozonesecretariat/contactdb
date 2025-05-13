@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from "stores/userStore";
-import { api, apiBase } from "boot/axios";
+import { apiBase } from "boot/axios";
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import { useStorage } from "@vueuse/core";
@@ -69,7 +69,7 @@ function toggleLeftDrawer() {
 async function logout() {
   $q.loading.show();
   try {
-    await api.post("/auth/logout/");
+    await userStore.logoutUser();
     await router.push({ name: "login" });
   } finally {
     $q.loading.hide();

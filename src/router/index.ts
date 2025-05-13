@@ -1,6 +1,8 @@
 import { defineRouter } from "#q-app/wrappers";
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import routes from "./routes";
+import { useUserStore } from "stores/userStore";
+import { useQuasar } from "quasar";
 
 // If not building with SSR mode, you can
 // directly export the Router instantiation;
@@ -19,7 +21,7 @@ export default defineRouter((/* { store, ssrContext } */) => {
     createHistory = createWebHashHistory;
   }
 
-  return createRouter({
+  const router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
 
@@ -28,4 +30,37 @@ export default defineRouter((/* { store, ssrContext } */) => {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
+
+  router.beforeEach(async (to) => {
+    const userStore = useUserStore();
+    const $q = useQuasar();
+
+    if (!userStore.initialized) {
+      $q.loading.show();
+      await userStore.fetchUser();
+      $q.loading.hide();
+    }
+
+    for (const route of to.matched) {
+      const hasPermissions = (route.meta.requiredPermissions ?? []).every((permission) =>
+        userStore.permissions.includes(permission),
+      );
+
+      if (to.meta.requireAuthentication && !userStore.isLoggedIn) {
+        return { name: "login" };
+      }
+
+      if (to.meta.requireAnonymous && userStore.isLoggedIn) {
+        return { name: "home" };
+      }
+
+      if (!hasPermissions) {
+        return { name: "home" };
+      }
+    }
+
+    return true;
+  });
+
+  return router;
 });

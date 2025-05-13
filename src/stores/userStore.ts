@@ -2,21 +2,24 @@ import { api } from "boot/axios";
 import { defineStore } from "pinia";
 import type { AxiosError } from "axios";
 
+const initialState = {
+  email: "",
+  firstName: null as string | null,
+  lastName: null as string | null,
+  isStaff: false,
+  isSuperuser: false,
+  isActive: false,
+  twoFactorEnabled: false,
+  permissions: [] as string[],
+  roles: [] as string[],
+  appSettings: {
+    environmentName: "",
+  },
+  initialized: false,
+};
+
 export const useUserStore = defineStore("user", {
-  state: () => ({
-    email: "",
-    firstName: null as string | null,
-    lastName: null as string | null,
-    isStaff: false,
-    isSuperuser: false,
-    isActive: false,
-    twoFactorEnabled: false,
-    permissions: [] as string[],
-    roles: [] as string[],
-    appSettings: {
-      environmentName: "",
-    },
-  }),
+  state: () => ({ ...initialState }),
   getters: {
     fullName(state) {
       if (!state.firstName && !state.lastName) {
@@ -43,6 +46,9 @@ export const useUserStore = defineStore("user", {
         .join("")
         .toUpperCase();
     },
+    isLoggedIn(state) {
+      return state.email && state.isActive;
+    },
   },
   actions: {
     async fetchUser() {
@@ -57,7 +63,13 @@ export const useUserStore = defineStore("user", {
           default:
             throw e;
         }
+      } finally {
+        this.initialized = true;
       }
+    },
+    async logoutUser() {
+      await api.post("/auth/logout/");
+      Object.assign(this, initialState);
     },
   },
 });
