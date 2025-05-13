@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
+      <q-toolbar class="q-gutter-sm q-pa-xs">
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
@@ -10,6 +10,11 @@
         </q-toolbar-title>
         <q-space />
 
+        <q-btn round flat @click="toggleDarkMode">
+          <q-avatar size="sm">
+            <q-icon :name="isDarkMode ? 'dark_mode' : 'light_mode'" />
+          </q-avatar>
+        </q-btn>
         <q-btn round flat>
           <q-avatar color="secondary">
             {{ userStore.initials }}
@@ -22,11 +27,8 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" side="left" bordered>
-      <q-list>
-        <menu-list :items="drawerItems" />
-      </q-list>
+      <menu-list :items="drawerItems" />
     </q-drawer>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -47,6 +49,13 @@ const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const leftDrawerOpen = useStorage("leftDrawerOpen", true);
+const isDarkMode = useStorage<boolean>("isDarkMode", window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value;
+  $q.dark.set(isDarkMode.value);
+}
+$q.dark.set(isDarkMode.value);
 
 const menuItems = computed(() => [
   {
