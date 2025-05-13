@@ -46,15 +46,15 @@ export default defineRouter((/* { store, ssrContext } */) => {
         userStore.permissions.includes(permission),
       );
 
-      if (to.meta.requireAuthentication && !userStore.isLoggedIn) {
+      if (route.meta.requireAuthentication && !userStore.isLoggedIn) {
         $q.notify({
           type: "warning",
           message: "Must be logged in to view this page.",
         });
-        return { name: "login" };
+        return { name: "login", query: { next: to.fullPath } };
       }
 
-      if (to.meta.requireAnonymous && userStore.isLoggedIn) {
+      if (route.meta.requireAnonymous && userStore.isLoggedIn) {
         return { name: "home" };
       }
 

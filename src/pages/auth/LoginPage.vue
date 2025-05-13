@@ -85,11 +85,12 @@
 import { ref, watch } from "vue";
 import { useQuasar } from "quasar";
 import { api } from "src/boot/axios";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from "stores/userStore";
 import useFormErrors from "src/composables/useFormErrors";
 
 const $q = useQuasar();
+const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 
@@ -101,6 +102,18 @@ const { errors, setErrors } = useFormErrors();
 
 const loading = ref(false);
 const step = ref("auth");
+
+function isSafeRedirect(path: string | null) {
+  if (!path) return false;
+
+  try {
+    const url = new URL(path, window.location.origin);
+    return url.hostname === window.location.hostname;
+  } catch {
+    // If the path is relative, it will throw, which is fine.
+    return path.startsWith("/") && !path.startsWith("//");
+  }
+}
 
 async function next() {
   const data = new FormData();
@@ -132,7 +145,8 @@ async function next() {
         type: "positive",
         message: "Login successful!",
       });
-      await router.push("/");
+      const nextPath = route.query.next?.toString() || "/";
+      await router.push(isSafeRedirect(nextPath) ? nextPath : "/");
     }
   } catch (e) {
     setErrors(e);
