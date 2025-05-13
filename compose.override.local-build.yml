@@ -18,4 +18,4 @@ services:
       dockerfile: docker/nginx.docker
     ports:
       # Map to expose the docker webserver to outside
-      - 8000:80
+      - 8080:80

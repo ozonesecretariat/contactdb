@@ -61,7 +61,7 @@ const menuItems = computed(() => [
   {
     label: "Admin",
     icon: "admin_panel_settings",
-    href: apiBase,
+    href: `${apiBase}/admin/`,
     show: userStore.isStaff,
   },
   {

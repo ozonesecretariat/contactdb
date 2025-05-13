@@ -11,19 +11,12 @@ from ckeditor_uploader import views
 from django.contrib.auth import views as auth_views
 from common.protected_media import protected_serve
 
-urlpatterns = [
-    path("api/", include("api.urls")),
-    re_path(
-        r"^protected_media/(?P<path>.*)$",
-        protected_serve,
-        kwargs={"document_root": settings.PROTECTED_MEDIA_ROOT},
-    ),
-    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
-    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+
+admin_urlpatterns = [
     path("django_task/", include("django_task.urls", namespace="django_task")),
-    path(r"ckeditor/upload/", login_required(views.upload), name="ckeditor_upload"),
+    path("ckeditor/upload/", login_required(views.upload), name="ckeditor_upload"),
     path(
-        r"ckeditor/browse/",
+        "ckeditor/browse/",
         never_cache(login_required(views.browse)),
         name="ckeditor_browse",
     ),
@@ -49,6 +42,18 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("", admin.site.urls),
+]
+
+urlpatterns = [
+    re_path(
+        r"^protected_media/(?P<path>.*)$",
+        protected_serve,
+        kwargs={"document_root": settings.PROTECTED_MEDIA_ROOT},
+    ),
+    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    path("admin/", include(admin_urlpatterns)),
+    path("api/", include("api.urls")),
 ]
 
 

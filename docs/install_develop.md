@@ -6,7 +6,7 @@ This document describes installation steps required to install locally for devel
 
 ## Preparing environment
 
-- Install node (>=20)
+- Install node (>=22)
 - Install python and python-dev (>=3.12)
 - Install and start postgresql (>=15)
 - Install and start redis (>=7)
@@ -17,7 +17,7 @@ This document describes installation steps required to install locally for devel
 - _(Recommended)_ create and activate a python virtualenv
 - Clone this repository
 
-## Installing Backend for development
+## Installing app for development
 
 - Configure local settings, starting from the dev example; ensure that the DB connection details are correctly set
   ```shell
@@ -43,11 +43,15 @@ This document describes installation steps required to install locally for devel
   ```shell
   ./manage.py runserver
   ```
+- Start frontend with hot-reload
+  ```shell
+  npm run dev
+  ```
 - _(optional)_ Start worker. _**NOTE** Worker does not have hot-reload, changes to the code will require a restart_
   ```shell
   ./manage.py rqworker
   ```
-- Check backend is running correctly at http://localhost:8000 and login with credentials created with seed_db:
+- Check that the app is running correctly at http://localhost:8080 and login with credentials created with seed_db:
   - admin@example.com / admin
 
 ## Updating the application
@@ -56,6 +60,7 @@ This document describes installation steps required to install locally for devel
 - Update third-party packages required at runtime.
   ```shell
   pip install -c requirements/constraints.txt -r requirements/dev.txt
+  npm install
   ```
 - Run migrations:
   ```shell
@@ -68,7 +73,7 @@ This document describes installation steps required to install locally for devel
   ```shell
   cp .env.develop.docker.example .env
   ```
-- Copy the compose ovveride file to create an override
+- Copy the compose override file to create an override
   ```shell
   cp compose.override.local-build.yml compose.override.yml
   ```
@@ -77,10 +82,12 @@ This document describes installation steps required to install locally for devel
   docker compose build
   docker compose up -d
   ```
-- Create superuser
+- Add testing data
   ```shell
-  docker compose exec app ./manage.py createsuperuser
+  docker compose exec app   ./manage.py seed_db
   ```
+- Check that the app is running correctly at http://localhost:8080 and login with credentials created with seed_db:
+  - admin@example.com / admin
 
 ## Where to go from here?
 

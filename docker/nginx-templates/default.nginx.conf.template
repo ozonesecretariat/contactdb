@@ -1,3 +1,11 @@
+# Disable caching for "html" files in the SPA as caching the "index.html" file
+# will cache older version of the SPA.
+
+map $sent_http_content_type $expires {
+  default 365d;
+  text/html off;
+}
+
 server {
     listen 80;
 
@@ -19,7 +27,12 @@ server {
         expires 365d;
     }
 
-    location / {
+    location ~ ^/(admin|api)/ {
         include /etc/nginx/conf.d/proxy_pass_backend;
+    }
+
+    location / {
+        expires $expires;
+        try_files $uri $uri/ /index.html;
     }
 }
