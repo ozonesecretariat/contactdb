@@ -4,8 +4,14 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from rest_framework import routers
 
 import api.views.user
+from api.views.event import EventViewSet
+
+router = routers.SimpleRouter()
+router.register("events", EventViewSet)
+
 
 urlpatterns = [
     # API DOCS
@@ -44,4 +50,4 @@ urlpatterns = [
         api.views.user.TwoFactorDisable.as_view(),
         name="account-two-factor-disable",
     ),
-]
+] + router.urls
