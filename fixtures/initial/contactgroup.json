@@ -3,7 +3,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "FPLS",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -11,7 +11,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "NFP",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -19,7 +19,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Focal point",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -27,7 +27,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Legacy contacts",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   }
