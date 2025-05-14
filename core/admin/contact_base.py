@@ -268,7 +268,7 @@ class MergeContacts:
                 "Need at least 2 contacts to merge.",
                 messages.ERROR,
             )
-            return
+            return None
 
         conflicts = []
         main_contact = all_contacts[0]
@@ -282,7 +282,8 @@ class MergeContacts:
                 f"{len(all_contacts)} merged successfully.",
                 messages.SUCCESS,
             )
-        elif len(conflicts) == 1:
+            return None
+        if len(conflicts) == 1:
             self.message_user(
                 request,
                 (
@@ -300,15 +301,14 @@ class MergeContacts:
                     },
                 )
             )
-        else:
-            self.message_user(
-                request,
-                (
-                    f"{len(conflicts)} contacts could not be merged automatically. "
-                    f"Please click below to resolve each conflict manually."
-                ),
-                messages.WARNING,
-            )
-            return redirect(
-                self.get_admin_list_link(ResolveConflict, {"contact": main_contact.id})
-            )
+        self.message_user(
+            request,
+            (
+                f"{len(conflicts)} contacts could not be merged automatically. "
+                f"Please click below to resolve each conflict manually."
+            ),
+            messages.WARNING,
+        )
+        return redirect(
+            self.get_admin_list_link(ResolveConflict, {"contact": main_contact.id})
+        )

@@ -47,7 +47,7 @@ class KronosParser:
 
     def get_country(self, code: str):
         if not code:
-            return
+            return None
 
         obj, created = Country.objects.get_or_create(code=code.upper())
         obj.clean()
@@ -77,7 +77,7 @@ class KronosParser:
 
     def get_org(self, org_dict):
         if "organizationId" not in org_dict:
-            return
+            return None
 
         obj, created = Organization.objects.get_or_create(
             organization_id=org_dict["organizationId"],
@@ -243,13 +243,13 @@ class KronosParticipantsParser(KronosParser):
         if not check_is_different(contact, contact_defaults):
             # The imported contact is identical to the one in the database currently
             self._skip_contact(contact, contact_id)
-            return
+            return None
 
         for existing_conflict in contact.conflicting_contacts.all():
             if not check_is_different(existing_conflict, contact_defaults):
                 # We found an identical conflict already in the database
                 self._skip_contact(contact, contact_id)
-                return
+                return None
 
         return self._create_conflict(contact, contact_id, contact_defaults)
 

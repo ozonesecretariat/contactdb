@@ -277,7 +277,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                 f"{len(memberships)} contacts added to {group!r}",
                 messages.SUCCESS,
             )
-            return
+            return None
 
         widget = AutocompleteSelect(
             Contact.groups.through._meta.get_field("contactgroup"),

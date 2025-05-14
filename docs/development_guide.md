@@ -12,10 +12,11 @@
   ```bash
   npm run lint:eslint
   ```
-- The Python code uses the [black style guide](https://black.readthedocs.io/en/stable/) for extra automatic linting. Can
-  be integrated into your IDE or manually run with:
+- The Python code uses [ruff](https://docs.astral.sh/ruff/) for automatic linting and
+  formating. Can be integrated into your IDE or manually run with:
   ```bash
-  black .
+  ruff format
+  ruff check --fix
   ```
 
 A workflow is integrated into GitHub action to check that any code push has been first processed with the project

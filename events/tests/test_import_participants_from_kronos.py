@@ -33,7 +33,9 @@ class TestImportEvents(TestCase):
             "country": "ao",
             "createdBy": "Zephyr McFluffernutter",
             "createdOn": "2015-07-03T00:00:00.000Z",
-            "department": "The Department of Quantum Agriculture and Temporal Horticulture",
+            "department": (
+                "The Department of Quantum Agriculture and Temporal Horticulture",
+            ),
             "designation": "Chief Synergy Architect",
             "emailCcs": [],
             "emails": ["zephyr.m@example.com"],

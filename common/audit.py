@@ -7,7 +7,7 @@ from django.utils.encoding import smart_str
 
 def _bulk_audit(objs, action, get_changes, request=None):
     if not objs:
-        return
+        return None
 
     actor = request.user if request else None
     cid = get_cid()

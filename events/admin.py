@@ -200,7 +200,7 @@ class EventAdmin(ExportMixin, ModelAdmin):
             )
 
         if not (valid_events := list(queryset.filter(event_id__isnull=False))):
-            return
+            return None
 
         tasks = []
         for event in valid_events:

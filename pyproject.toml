@@ -69,11 +69,7 @@ select = [
     "G", # flake8-logging-format
     "T20", # flake8-print
     "RSE", # flake8-raise
-    "RET504", # flake8-return
-    "RET505",
-    "RET506",
-    "RET507",
-    "RET508",
+    "RET", # flake8-return
     "SIM", # flake8-simplify
     "INT", # flake8-gettext
     "PTH", # flake8-use-pathlib

@@ -248,8 +248,8 @@ class PossibleDuplicate(DBView):
                 ) AS duplicate_fields,  
                 contact_ids,
                 EXISTS(
-                    SELECT 1 FROM core_dismissedduplicate 
-                    WHERE core_dismissedduplicate.contact_ids = duplicate_groups.contact_ids
+                    SELECT 1 FROM core_dismissedduplicate as dd
+                    WHERE dd.contact_ids = duplicate_groups.contact_ids
                 ) AS is_dismissed
             FROM ({}) AS duplicate_groups
             GROUP BY contact_ids

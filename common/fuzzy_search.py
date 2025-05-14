@@ -27,7 +27,7 @@ def search_multiple(querysets: [QuerySet], name: str, fields: [str]):
 def search_names(original_query: QuerySet, name: str, fields: [str]):
     name = (name or "").strip()
     if not name:
-        return
+        return None
 
     model = original_query.model
 

@@ -39,6 +39,7 @@ class IsDismissedFilter(admin.SimpleListFilter):
             return queryset.filter(is_dismissed=False)
         if val == "1":
             return queryset.filter(is_dismissed=True)
+        return queryset.none()
 
 
 @admin.register(PossibleDuplicate)
