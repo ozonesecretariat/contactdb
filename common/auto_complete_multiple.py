@@ -86,7 +86,7 @@ def AutocompleteFilterMultipleFactory(  # noqa: N802
       AutocompleteFilterFactory('My title', 'fourth__third__second__first')
     Be sure to include distinct in the model admin get_queryset() if the second form
     is used.
-    
+
     Assumes: parameter_name == f'fourth__third__second__{field_name}'
       * title: The title for the filter.
       * base_parameter_name: The field to use for the filter.
