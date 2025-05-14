@@ -135,7 +135,7 @@ Cypress.Commands.addAll({
     cy.contains(checkedValue);
   },
   chooseSelect2(name, values) {
-    cy.get(`[name=${name}`).then(($el) => {
+    cy.get(`[name=${name}]`).then(($el) => {
       const elId = $el.attr("id");
       for (const val of forceArray(values)) {
         cy.get(`[name=${name}]`).parent().find(".select2").click();
@@ -228,6 +228,10 @@ Cypress.Commands.addAll({
   goToModelAdd(modelName) {
     cy.goToModel(modelName);
     cy.get(".object-tools a.addlink").contains("Add").click();
+
+    if (modelName === "Emails" || modelName === "Email templates") {
+      cy.waitForCKEditor();
+    }
   },
   login(user, password, checkSuccess = true, goToAdmin = true) {
     cy.visit("/");
@@ -281,5 +285,11 @@ Cypress.Commands.addAll({
     cy.fillInput("action", action);
     cy.get("#action-toggle").click();
     cy.get(".actions button").contains("Go").click();
+  },
+  waitForCKEditor() {
+    // Tests can run faster than CKEditor can initialize. So wait for it to be done.
+    cy.window().should((win) => {
+      expect(win).to.have.property("CKEDITOR");
+    });
   },
 });
