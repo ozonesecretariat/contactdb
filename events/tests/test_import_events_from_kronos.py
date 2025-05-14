@@ -1,8 +1,7 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 from django.test import TestCase
-from django.utils.timezone import UTC
 
 from events.models import Event, LoadEventsFromKronosTask
 
