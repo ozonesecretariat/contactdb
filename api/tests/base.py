@@ -21,3 +21,12 @@ class BaseAPITestCase(APITestCase):
 
     def login_view_user(self):
         self.client.login(email="test-view@example.com", password="test")
+
+    def login_non_staff_user(self):
+        self.client.login(email="test-non-staff@example.com", password="test")
+
+    def login_non_staff_view_user(self):
+        self.client.login(email="test-non-staff-view@example.com", password="test")
+
+    def login_non_staff_no_access_user(self):
+        self.client.login(email="test-non-staff-no-access@example.com", password="test")

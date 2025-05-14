@@ -12,7 +12,7 @@
     >
       <template #top-left>Events</template>
       <template #top-right>
-        <q-input v-model="search" borderless dense debounce="200" placeholder="Search" autofocus>
+        <q-input v-model="search" borderless dense debounce="200" placeholder="Search" autofocus role="search">
           <template #append>
             <q-icon name="search" />
           </template>

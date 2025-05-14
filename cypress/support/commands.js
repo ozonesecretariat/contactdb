@@ -28,23 +28,38 @@ Cypress.Commands.addAll({
       cy.get("a").contains("Admin").click();
     }
   },
-  loginAdmin() {
-    cy.login("admin@example.com", "admin");
+  loginAdmin(goToAdmin = true) {
+    cy.login("admin@example.com", "admin", true, goToAdmin);
   },
-  loginEdit() {
-    cy.login("test-edit@example.com", "test");
+  loginEdit(goToAdmin = true) {
+    cy.login("test-edit@example.com", "test", true, goToAdmin);
   },
-  loginEmails() {
-    cy.login("test-emails@example.com", "test");
+  loginEmails(goToAdmin = true) {
+    cy.login("test-emails@example.com", "test", true, goToAdmin);
   },
-  loginKronos() {
-    cy.login("test-kronos@example.com", "test");
+  loginKronos(goToAdmin = true) {
+    cy.login("test-kronos@example.com", "test", true, goToAdmin);
   },
-  loginNoAccess() {
-    cy.login("test-no-access@example.com", "test");
+  loginNoAccess(goToAdmin = true) {
+    cy.login("test-no-access@example.com", "test", true, goToAdmin);
   },
-  loginView() {
-    cy.login("test-view@example.com", "test");
+  loginView(goToAdmin = true) {
+    cy.login("test-view@example.com", "test", true, goToAdmin);
+  },
+  loginNonStaff(goToAdmin = true) {
+    cy.login("test-non-staff@example.com", "test", true, goToAdmin);
+  },
+  loginNonStaffView(goToAdmin = true) {
+    cy.login("test-non-staff-view@example.com", "test", true, goToAdmin);
+  },
+  loginNonStaffNoAccess(goToAdmin = true) {
+    cy.login("test-non-staff-no-access@example.com", "test", true, goToAdmin);
+  },
+  checkNav(label) {
+    return cy.get(".q-drawer [role=listitem]").contains(label);
+  },
+  checkNavActive(label) {
+    return cy.get(".q-router-link--exact-active").contains(label);
   },
   checkAccess(accessSpec) {
     cy.get("#content-main").then(($mainContent) => {

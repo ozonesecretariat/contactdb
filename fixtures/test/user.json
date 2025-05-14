@@ -81,7 +81,7 @@
       "created_at": "2024-04-10T10:52:18.035Z",
       "updated_at": "2024-04-10T10:52:31.151Z",
       "user_permissions": [],
-      "roles": [["Send emails"], ["Edit templates"]]
+      "roles": [["Edit templates"], ["Send emails"]]
     }
   },
   {
@@ -94,6 +94,7 @@
       "first_name": null,
       "last_name": null,
       "is_active": false,
+      "is_staff": false,
       "created_at": "2024-04-16T06:21:48.182Z",
       "updated_at": "2024-04-16T06:22:05.567Z",
       "user_permissions": [],
@@ -113,6 +114,57 @@
       "is_staff": true,
       "created_at": "2024-04-16T06:31:08.960Z",
       "updated_at": "2024-04-16T06:33:46.448Z",
+      "user_permissions": [],
+      "roles": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$q1BuRg3GFfS406tJWvAyEq$NncInzDzXJ2ZjyfQF8uX0MEReZzw+LR3Roglpo75U7Y=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-non-staff@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-05-14T06:40:02.985Z",
+      "updated_at": "2025-05-14T06:40:03.002Z",
+      "user_permissions": [],
+      "roles": [["Edit contacts"], ["Edit events"]]
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$FrnjB2VqDdWkLIIF5To4or$LrqlGYCRYsicNSo0l85NlnuFd8RD0Q00OhnOezZ+n5Q=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-non-staff-view@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-05-14T06:40:54.153Z",
+      "updated_at": "2025-05-14T06:40:54.173Z",
+      "user_permissions": [],
+      "roles": [["View contacts"], ["View events"]]
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$qZBQGZSDEe6zhW3NQdgAWc$a3cMWVcGVDaa9FARZ/sbITxs8L4EqAhQRlgh4Jz6Ij0=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-non-staff-no-access@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-05-14T06:45:03.583Z",
+      "updated_at": "2025-05-14T06:45:03.593Z",
       "user_permissions": [],
       "roles": []
     }
