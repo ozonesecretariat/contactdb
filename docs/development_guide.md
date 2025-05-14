@@ -43,20 +43,13 @@ settings. See [code style workflow](../.github/workflows/lint.yml)
 
 To add a new dependency:
 
-- Add it to either [base.txt](../requirements/base.txt) if the dependency needs to be run in production
-  or [dev.txt](../requirements/dev.txt) if the dependency is only needed for developing.
-- Create a new virtualenv and activate it
-  ```bash
-  virtualenv .venv && source .venv/bin/activate
+- To add a new main dependency, run:
+  ```shell
+  uv add foo
   ```
-- Install all dependencies
-  ```bash
-  pip install -r requirements/dev.txt -r requirements/prod.txt -c requirements/constraints.txt
-  ```
-- Resolve any dependency problems, if any
-- Freeze the new constraints
-  ```bash
-  pip freeze > requirements/constraints.txt
+- To add a new dev dependency, run:
+  ```shell
+  uv add --dev foo
   ```
 
 ## Testing data

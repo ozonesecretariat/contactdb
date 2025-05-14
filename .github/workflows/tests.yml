@@ -40,7 +40,6 @@ jobs:
           docker compose top
       - name: "Install dev dependencies"
         run: |
-          docker compose exec -T app pip install -c requirements/constraints.txt -r requirements/dev.txt
           npm ci
       - name: "Backend tests"
         run: |

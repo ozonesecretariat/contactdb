@@ -3,14 +3,19 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: docker/app.dev.docker
+      dockerfile: docker/app.docker
+      args:
+        UV_ARGS: "--group dev"
+    command: ["./manage.py", "runserver", "0:8000"]
     volumes:
       - .:/app
 
   worker:
     build:
       context: .
-      dockerfile: docker/app.dev.docker
+      dockerfile: docker/app.docker
+      args:
+        UV_ARGS: "--group dev"
 
   nginx:
     build:

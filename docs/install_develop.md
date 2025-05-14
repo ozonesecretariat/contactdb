@@ -7,14 +7,13 @@ This document describes installation steps required to install locally for devel
 ## Preparing environment
 
 - Install node (>=22)
-- Install python and python-dev (>=3.12)
+- Install uv (>=0.7.3)
 - Install and start postgresql (>=15)
 - Install and start redis (>=7)
 - Create a postgresql database and user:
   ```shell
   sudo -u postgres createuser -Pds contactdb && sudo -u postgres createdb contactdb
   ```
-- _(Recommended)_ create and activate a python virtualenv
 - Clone this repository
 
 ## Installing app for development
@@ -25,8 +24,12 @@ This document describes installation steps required to install locally for devel
   ```
 - Install dependencies
   ```shell
-  pip install -c requirements/constraints.txt -r requirements/dev.txt
+  uv sync
   npm install
+  ```
+- Activate virtualenv (or run all commands with `uv run`)
+  ```shell
+  source .venv/bin/activate
   ```
 - Run migrations
   ```shell
@@ -59,7 +62,7 @@ This document describes installation steps required to install locally for devel
 - Update the code with the latest version
 - Update third-party packages required at runtime.
   ```shell
-  pip install -c requirements/constraints.txt -r requirements/dev.txt
+  uv sync
   npm install
   ```
 - Run migrations:
@@ -84,7 +87,7 @@ This document describes installation steps required to install locally for devel
   ```
 - Add testing data
   ```shell
-  docker compose exec app   ./manage.py seed_db
+  docker compose exec app ./manage.py seed_db
   ```
 - Check that the app is running correctly at http://localhost:8080 and login with credentials created with seed_db:
   - admin@example.com / admin
