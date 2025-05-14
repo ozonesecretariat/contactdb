@@ -1,6 +1,8 @@
 from copy import deepcopy
 from unittest.mock import patch
+
 from django.test import TestCase
+
 from core.models import Contact, Organization, ResolveConflict
 from events.models import Event, LoadParticipantsFromKronosTask
 

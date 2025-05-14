@@ -1,17 +1,16 @@
-import os
-from datetime import datetime
+from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils.timezone import make_aware
 
 from core.models import (
     Contact,
-    Organization,
     ContactGroup,
+    Organization,
     ResolveConflict,
 )
-from emails.models import EmailAttachment, Email
+from emails.models import Email, EmailAttachment
 from events.models import Event
 
 
@@ -148,12 +147,8 @@ def kronos_event(db):
         event_id="520345543cbd0495c00001879",
         code="005639",
         title="Event title",
-        start_date=make_aware(
-            datetime.strptime("2017-11-18T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
-        ),
-        end_date=make_aware(
-            datetime.strptime("2017-11-18T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
-        ),
+        start_date=datetime(2017, 11, 18, tzinfo=UTC),
+        end_date=datetime(2017, 11, 18, tzinfo=UTC),
         venue_country="ca",
         venue_city="Montreal",
         dates="13 November 2010",
@@ -219,4 +214,4 @@ def email_file(db, email):
 
     yield email_file
 
-    os.remove(email_file.path)
+    Path(email_file.path).unlink()

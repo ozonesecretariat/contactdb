@@ -1,11 +1,10 @@
-import two_factor
 from django_otp import devices_for_user
 from django_otp.plugins.otp_static.models import StaticToken
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from two_factor.views import QRGeneratorView, SetupView, LoginView
+from two_factor.views import LoginView, QRGeneratorView, SetupView
 
 
 class OTPLoginView(LoginView, APIView):
@@ -78,7 +77,7 @@ class TwoFactorBackupTokensView(APIView):
         tokens = []
         device = self.get_device()
         device.token_set.all().delete()
-        for n in range(self.number_of_tokens):
+        for _unused in range(self.number_of_tokens):
             token = StaticToken.random_token()
             device.token_set.create(token=token)
             tokens.append(token)

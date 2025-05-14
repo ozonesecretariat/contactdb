@@ -1,7 +1,7 @@
 """Inspired from https://github.com/django-import-export/django-import-export/issues/318#issuecomment-861813245"""
 
-from import_export.widgets import ManyToManyWidget
 from django.db.models import QuerySet
+from import_export.widgets import ManyToManyWidget
 
 
 class ManyToManyWidgetWithCreation(ManyToManyWidget):
@@ -41,7 +41,4 @@ class ManyToManyWidgetWithCreation(ManyToManyWidget):
                 )
 
         # Use `filter` to re-locate all the objects in the list.
-
-        model_objects = self.model.objects.filter(**{f"{self.field}__in": object_list})
-
-        return model_objects
+        return self.model.objects.filter(**{f"{self.field}__in": object_list})

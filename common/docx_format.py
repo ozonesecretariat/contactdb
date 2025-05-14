@@ -1,4 +1,5 @@
 import io
+
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Pt, RGBColor
@@ -45,7 +46,7 @@ class DOCX(Format):
         headers = [name.title().replace("_", " ") for name in dataset.headers]
 
         for row in dataset:
-            for header, value in zip(headers, row):
+            for header, value in zip(headers, row, strict=False):
                 paragraph = doc.add_paragraph(header + ": ", style="FieldStyle")
                 paragraph.add_run(value, style="RunStyle")
             doc.add_page_break()

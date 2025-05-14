@@ -49,3 +49,54 @@ dev = [
     "pytest-subtests>=0.14.1",
     "ruff>=0.11.9",
 ]
+
+[tool.ruff.lint]
+select = [
+    "E4", # pycodestyle
+    "E7",
+    "E9",
+    "F", # pyflakes
+    "I", # isort
+    "N", # pep8-naming
+    "S", # flake8-bandit
+    "FBT", # flake8-boolean-trap
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "DTZ", # flake8-datetimez
+    "T10", # flake8-debugger
+    "DJ", # flake8-django
+    "LOG", # flake8-logging
+    "G", # flake8-logging-format
+    "T20", # flake8-print
+    "RSE", # flake8-raise
+    "RET504", # flake8-return
+    "RET505",
+    "RET506",
+    "RET507",
+    "RET508",
+    "SIM", # flake8-simplify
+    "INT", # flake8-gettext
+    "PTH", # flake8-use-pathlib
+    "NPY", # numpy rules
+    "PT", # flake8-pytest
+]
+ignore = [
+  # Allow boolean default positional arguments, as django has many of those.
+  "FBT002",
+  # Allow using mark_safe
+  "S308",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/conftest.py" = [
+  # Allow hardcoded passwords in tests
+  "S106",
+]
+"**/tests/*" = [
+  # Allow hardcoded passwords in tests
+  "S106",
+  # Allow unittest style asserts
+  "PT009",
+  # Allow unittest style assertRaises
+  "PT027",
+]

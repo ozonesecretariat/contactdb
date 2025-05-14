@@ -2,6 +2,7 @@ import html
 import re
 from email import message_from_string
 from functools import cached_property
+
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -11,6 +12,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
+
 from common.array_field import ArrayField
 from core.models import Contact, ContactGroup
 from events.models import Event
@@ -188,7 +190,6 @@ class EmailAttachment(models.Model):
     file = models.FileField(upload_to="email_files/", storage=storages["protected"])
     name = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
         help_text=(
             "Name to use for the attachment, defaults to the uploaded filename "
@@ -254,7 +255,6 @@ class SendEmailTask(TaskRQ):
     sent_email = models.TextField(
         default="",
         blank=True,
-        null=True,
         help_text="Complete copy of the sent email.",
     )
 

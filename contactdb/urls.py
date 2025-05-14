@@ -1,17 +1,13 @@
+from ckeditor_uploader import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, re_path
-from django.urls import path
+from django.contrib.auth.decorators import login_required
+from django.urls import include, path, re_path
 from django.views.decorators.cache import never_cache
 from django.views.generic import RedirectView
-from two_factor.urls import urlpatterns as tf_urls
-from django.contrib.auth.decorators import login_required
-from ckeditor_uploader import views
 
-from django.contrib.auth import views as auth_views
 from common.protected_media import protected_serve
-
 
 admin_urlpatterns = [
     path("ckeditor/upload/", login_required(views.upload), name="ckeditor_upload"),

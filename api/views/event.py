@@ -1,5 +1,6 @@
 from rest_framework import filters
 from rest_framework.viewsets import ReadOnlyModelViewSet
+
 from api.serializers.event import EventSerializer
 from events.models import Event
 

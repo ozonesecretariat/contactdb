@@ -1,6 +1,7 @@
 import logging
 
 from django_task.job import Job
+
 from emails.models import SendEmailTask
 
 

@@ -10,12 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-import os
 import socket
 from pathlib import Path
 
 import environ
 import pycountry
+from import_export.formats.base_formats import DEFAULT_FORMATS
+
 from common.docx_format import DOCX
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 
-if os.path.exists(str(BASE_DIR / ".env")):
+if Path(str(BASE_DIR / ".env")).is_file():
     env.read_env(str(BASE_DIR / ".env"))
 
 
@@ -356,8 +357,6 @@ CONSTANCE_CONFIG_FIELDSETS = (
 IMPORT_EXPORT_IMPORT_PERMISSION_CODE = "add"
 IMPORT_EXPORT_EXPORT_PERMISSION_CODE = "view"
 IMPORT_EXPORT_CHUNK_SIZE = 1000
-
-from import_export.formats.base_formats import DEFAULT_FORMATS
 
 IMPORT_EXPORT_FORMATS = DEFAULT_FORMATS + [DOCX]
 

@@ -5,6 +5,7 @@ from django.db.models import ManyToManyField, ManyToManyRel, ManyToOneRel, Prefe
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.utils.html import format_html
+
 from common.array_field import ArrayField
 from common.model_admin import ModelAdmin
 from common.urls import reverse
@@ -186,7 +187,8 @@ class MergeContacts:
                 continue
 
             if field.is_relation and getattr(field, "multiple", False):
-                assert field.related_name, f"Missing related name: {field}"
+                if not field.related_name:
+                    raise RuntimeError(f"Missing related name: {field}")
                 name = field.related_name
             else:
                 name = field.name
@@ -236,11 +238,11 @@ class MergeContacts:
                 if val1 == val2:
                     # Values are equal nothing to do
                     continue
-                elif val1_empty and val2_empty:
+                if val1_empty and val2_empty:
                     # Values are empty but different (e.g. "" vs None).
                     # No conflict.
                     continue
-                elif val1_empty or val2_empty:
+                if val1_empty or val2_empty:
                     # Only one value is empty, use the non-empty one
                     setattr(contact1, name, val1 or val2)
                 else:
@@ -284,8 +286,8 @@ class MergeContacts:
             self.message_user(
                 request,
                 (
-                    f"One contact could not be merged automatically. "
-                    f"Please resolve the conflicts manually and click save."
+                    "One contact could not be merged automatically. "
+                    "Please resolve the conflicts manually and click save."
                 ),
                 messages.WARNING,
             )

@@ -1,4 +1,5 @@
 from django import template
+
 from common.urls import reverse
 
 register = template.Library()

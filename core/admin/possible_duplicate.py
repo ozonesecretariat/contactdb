@@ -2,7 +2,8 @@ from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
-from django_object_actions import action, DjangoObjectActions
+from django_object_actions import DjangoObjectActions, action
+
 from common.array_field import ArrayFilterFactory, ArrayLength
 from common.audit import bulk_audit_create
 from common.model_admin import ModelAdmin
@@ -75,7 +76,6 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     }
     fields = ("identical_values", "contacts_display", "is_dismissed")
     change_actions = ("merge_possible_duplicate", "dismiss_duplicate")
-    inline_actions = change_actions
     actions = ("dismiss_duplicates",)
 
     def get_index_page_count(self):
@@ -123,7 +123,7 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         DismissedDuplicate.objects.get_or_create(contact_ids=obj.contact_ids)
         self.message_user(
             request,
-            f"Possible duplicate dismissed",
+            "Possible duplicate dismissed",
             level=messages.SUCCESS,
         )
         return redirect(self.get_admin_list_link(self.model))

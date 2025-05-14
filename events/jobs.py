@@ -1,5 +1,7 @@
 import logging
+
 from django_task.job import Job
+
 from events.parsers import KronosEventsParser, KronosParticipantsParser
 
 

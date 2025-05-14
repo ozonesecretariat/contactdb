@@ -1,7 +1,7 @@
 import dj_rest_auth.serializers
-from constance import config
 from django.conf import settings
 from rest_framework import serializers
+
 from accounts.models import User
 
 

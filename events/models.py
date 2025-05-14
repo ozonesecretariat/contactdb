@@ -2,9 +2,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django_task.models import TaskRQ
+
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
-from core.models import Contact, Country, ContactGroup
+from core.models import Contact, Country
 
 
 class LoadEventsFromKronosTask(TaskRQ):
@@ -109,11 +110,7 @@ class Registration(models.Model):
     )
     status = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
-    priority_pass_code = models.CharField(
-        max_length=150,
-        blank=True,
-        null=True,
-    )
+    priority_pass_code = models.CharField(max_length=150, blank=True)
     date = models.DateTimeField()
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField()

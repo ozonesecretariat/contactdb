@@ -1,8 +1,7 @@
 import sys
-from django.conf import settings
 
-from django.core.management import BaseCommand
-from django.core.management import call_command
+from django.conf import settings
+from django.core.management import BaseCommand, call_command
 from redis import StrictRedis
 
 
@@ -24,7 +23,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, noinput=False, **options):
         if not noinput:
-            print(
+            self.stderr.write(
                 "This will IRREVERSIBLY DESTROY all data currently in the  database! "
                 "Are you sure you want to continue?",
                 end=" ",

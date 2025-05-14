@@ -1,6 +1,5 @@
 from django.db.models import CharField, EmailField, TextField
 
-
 # Django is deprecating support for CIText, so ship our own instead.
 # The alternative of using a non-deterministic DB collation has one big
 # downside: no support for LIKE. So makes searches on such columns impossible.

@@ -1,6 +1,9 @@
 import json
+from pathlib import Path
+
 from django.core.management.base import BaseCommand
-from core.models import Organization, Contact
+
+from core.models import Contact, Organization
 from events.models import Event, Registration
 
 
@@ -16,12 +19,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         def check_field(field, subfield):
             if subfield == "role" or subfield == "dateOfBirth":
-                return field[subfield] if subfield in field else None
+                return field.get(subfield, None)
             if subfield == "tags":
-                return field[subfield] if subfield in field else []
-            return field[subfield] if subfield in field else ""
+                return field.get(subfield, [])
+            return field.get(subfield, "")
 
-        with open(options["path"], "r") as f:
+        with Path(options["path"]).open("r") as f:
             json_obj = json.load(f)
             for record in json_obj["records"]:
                 organization, _ = Organization.objects.get_or_create(

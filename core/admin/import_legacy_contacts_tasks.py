@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from common.model_admin import TaskAdmin
 from core.models import ImportLegacyContactsTask
 

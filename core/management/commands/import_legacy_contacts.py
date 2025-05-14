@@ -2,9 +2,10 @@
 
 import argparse
 import sys
-from django.core.files import File
 
+from django.core.files import File
 from django.core.management.base import BaseCommand, CommandParser
+
 from core.models import ImportLegacyContactsTask
 
 

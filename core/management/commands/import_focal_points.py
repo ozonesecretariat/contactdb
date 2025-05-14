@@ -1,6 +1,7 @@
 """Script to run import focal points from cmd line."""
 
 from django.core.management.base import BaseCommand
+
 from core.models import ImportFocalPointsTask
 
 

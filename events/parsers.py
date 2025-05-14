@@ -1,14 +1,12 @@
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from functools import cached_property
 
-from django.utils.timezone import make_aware
 from common.parsing import parse_list
-
 from core.models import (
+    Contact,
     Country,
     Organization,
-    Contact,
     OrganizationType,
     ResolveConflict,
 )
@@ -23,10 +21,7 @@ from events.models import (
 
 
 def check_is_different(obj, dictionary):
-    for key, value in dictionary.items():
-        if getattr(obj, key) != value:
-            return True
-    return False
+    return any(getattr(obj, key) != value for key, value in dictionary.items())
 
 
 class KronosParser:
@@ -43,12 +38,12 @@ class KronosParser:
 
     def parse_date(self, value):
         try:
-            return datetime.strptime(value, "%Y-%m-%d").date()
+            return datetime.strptime(value, "%Y-%m-%d").astimezone(UTC).date()
         except (TypeError, ValueError):
             return None
 
     def parse_datetime(self, value):
-        return make_aware(datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ"))
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").astimezone(UTC)
 
     def get_country(self, code: str):
         if not code:
