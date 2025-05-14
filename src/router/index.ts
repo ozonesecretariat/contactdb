@@ -50,9 +50,19 @@ async function initializeStores() {
   }
 
   if (promises.length > 0) {
-    $q.loading.show();
-    await Promise.all(promises);
-    $q.loading.hide();
+    try {
+      $q.loading.show();
+      await Promise.all(promises);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      $q.notify({
+        message: "Unknown error while loading data, please try again later.",
+        type: "negative",
+      });
+    } finally {
+      $q.loading.hide();
+    }
   }
 }
 
