@@ -1,14 +1,12 @@
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from functools import cached_property
 
-from django.utils.timezone import make_aware
 from common.parsing import parse_list
-
 from core.models import (
+    Contact,
     Country,
     Organization,
-    Contact,
     OrganizationType,
     ResolveConflict,
 )
@@ -23,10 +21,7 @@ from events.models import (
 
 
 def check_is_different(obj, dictionary):
-    for key, value in dictionary.items():
-        if getattr(obj, key) != value:
-            return True
-    return False
+    return any(getattr(obj, key) != value for key, value in dictionary.items())
 
 
 class KronosParser:
@@ -43,16 +38,16 @@ class KronosParser:
 
     def parse_date(self, value):
         try:
-            return datetime.strptime(value, "%Y-%m-%d").date()
+            return datetime.strptime(value, "%Y-%m-%d").astimezone(UTC).date()
         except (TypeError, ValueError):
             return None
 
     def parse_datetime(self, value):
-        return make_aware(datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ"))
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").astimezone(UTC)
 
     def get_country(self, code: str):
         if not code:
-            return
+            return None
 
         obj, created = Country.objects.get_or_create(code=code.upper())
         obj.clean()
@@ -82,7 +77,7 @@ class KronosParser:
 
     def get_org(self, org_dict):
         if "organizationId" not in org_dict:
-            return
+            return None
 
         obj, created = Organization.objects.get_or_create(
             organization_id=org_dict["organizationId"],
@@ -248,13 +243,13 @@ class KronosParticipantsParser(KronosParser):
         if not check_is_different(contact, contact_defaults):
             # The imported contact is identical to the one in the database currently
             self._skip_contact(contact, contact_id)
-            return
+            return None
 
         for existing_conflict in contact.conflicting_contacts.all():
             if not check_is_different(existing_conflict, contact_defaults):
                 # We found an identical conflict already in the database
                 self._skip_contact(contact, contact_id)
-                return
+                return None
 
         return self._create_conflict(contact, contact_id, contact_defaults)
 

@@ -3,6 +3,7 @@ from django.core.files.storage import storages
 from django.db import models
 from django.http import HttpResponseForbidden
 from django.views.static import serve
+
 from common.permissions import has_model_permission
 
 

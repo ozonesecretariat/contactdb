@@ -5,11 +5,10 @@ Based on admin_auto_filters/filters.py from upstream.
 """
 
 from admin_auto_filters.filters import (
-    _get_rel_model,
     AutocompleteFilter,
+    _get_rel_model,
     generate_choice_field,
 )
-
 from django import VERSION as DJANGO_VERSION
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.widgets import AutocompleteSelectMultiple as Base
@@ -78,21 +77,23 @@ class AutocompleteFilterMultiple(AutocompleteFilter):
         return val.split(",")
 
 
-def AutocompleteFilterMultipleFactory(
+def AutocompleteFilterMultipleFactory(  # noqa: N802
     title, base_parameter_name, viewname="", use_pk_exact=False, label_by=str
 ):
     """
     An autocomplete widget filter with a customizable title. Use like this:
-        AutocompleteFilterFactory('My title', 'field_name')
-        AutocompleteFilterFactory('My title', 'fourth__third__second__first')
-    Be sure to include distinct in the model admin get_queryset() if the second form is used.
+      AutocompleteFilterFactory('My title', 'field_name')
+      AutocompleteFilterFactory('My title', 'fourth__third__second__first')
+    Be sure to include distinct in the model admin get_queryset() if the second form
+    is used.
+
     Assumes: parameter_name == f'fourth__third__second__{field_name}'
-        * title: The title for the filter.
-        * base_parameter_name: The field to use for the filter.
-        * viewname: The name of the custom AutocompleteJsonView URL to use, if any.
-        * use_pk_exact: Whether to use '__pk__exact' in the parameter name when possible.
-        * label_by: How to generate the static label for the widget - a callable, the name
-          of a model callable, or the name of a model field.
+      * title: The title for the filter.
+      * base_parameter_name: The field to use for the filter.
+      * viewname: The name of the custom AutocompleteJsonView URL to use, if any.
+      * use_pk_exact: Whether to use '__pk__exact' in the parameter name when possible.
+      * label_by: How to generate the static label for the widget - a callable, the name
+        of a model callable, or the name of a model field.
     """
 
     class NewMetaFilter(type(AutocompleteFilterMultiple)):
@@ -117,7 +118,6 @@ def AutocompleteFilterMultipleFactory(
         def get_autocomplete_url(self, request, model_admin):
             if viewname == "":
                 return super().get_autocomplete_url(request, model_admin)
-            else:
-                return reverse(viewname)
+            return reverse(viewname)
 
     return NewFilter

@@ -1,3 +1,4 @@
+import contextlib
 import textwrap
 
 import pycountry
@@ -6,6 +7,7 @@ from django.core.files.storage import storages
 from django.db import models
 from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
+from psycopg import sql
 
 from common.array_field import ArrayField
 from common.citext import CICharField
@@ -14,8 +16,8 @@ from common.model import KronosId
 
 class Country(models.Model):
     code = CICharField(max_length=2, primary_key=True)
-    name = CICharField(max_length=255, null=True, blank=True)
-    official_name = CICharField(max_length=255, null=True, blank=True)
+    name = CICharField(max_length=255, blank=True)
+    official_name = CICharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ("name",)
@@ -27,24 +29,20 @@ class Country(models.Model):
     def clean(self):
         self.code = self.code.upper()
         if not self.name:
-            try:
+            with contextlib.suppress(AttributeError, LookupError):
                 self.name = pycountry.countries.get(alpha_2=self.code).name
-            except (AttributeError, LookupError):
-                pass
         if not self.official_name:
-            try:
+            with contextlib.suppress(AttributeError, LookupError):
                 self.official_name = pycountry.countries.get(
                     alpha_2=self.code
                 ).official_name
-            except (AttributeError, LookupError):
-                pass
 
 
 class OrganizationType(models.Model):
     organization_type_id = KronosId()
     acronym = CICharField(max_length=50, primary_key=True)
-    title = CICharField(max_length=250, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    title = CICharField(max_length=250, blank=True)
+    description = models.TextField(blank=True)
 
     class Meta:
         ordering = ("title",)
@@ -83,13 +81,13 @@ class Organization(models.Model):
         related_name="+",
     )
 
+    class Meta:
+        ordering = ["name", "country__name"]
+
     def __str__(self):
         if self.country:
             return self.name + ", " + self.country.name
         return self.name
-
-    class Meta:
-        ordering = ["name", "country__name"]
 
 
 class BaseContact(models.Model):
@@ -139,14 +137,6 @@ class BaseContact(models.Model):
     class Meta:
         abstract = True
 
-    def _get_possible_names(self):
-        yield self.full_name
-        yield from self.emails or []
-        yield from self.email_ccs or []
-        yield from self.phones or []
-        yield from self.mobiles or []
-        yield from self.faxes or []
-
     def __str__(self):
         name = f"(no name) ({self.pk})"
         for val in self._get_possible_names():
@@ -157,6 +147,14 @@ class BaseContact(models.Model):
         if self.organization:
             return f"{name} ({self.organization})"
         return name
+
+    def _get_possible_names(self):
+        yield self.full_name
+        yield from self.emails or []
+        yield from self.email_ccs or []
+        yield from self.phones or []
+        yield from self.mobiles or []
+        yield from self.faxes or []
 
     @property
     def full_name(self):
@@ -235,7 +233,9 @@ class PossibleDuplicate(DBView):
         """
         union_query = " UNION ALL ".join([query_template % field for field in fields])
 
-        return f"""
+        return (
+            sql.SQL(
+                """
             SELECT 
                 array_to_string(
                     array_agg(duplicate_value ORDER BY duplicate_value), ','
@@ -248,13 +248,17 @@ class PossibleDuplicate(DBView):
                 ) AS duplicate_fields,  
                 contact_ids,
                 EXISTS(
-                    SELECT 1 FROM core_dismissedduplicate 
-                    WHERE core_dismissedduplicate.contact_ids = duplicate_groups.contact_ids
+                    SELECT 1 FROM core_dismissedduplicate as dd
+                    WHERE dd.contact_ids = duplicate_groups.contact_ids
                 ) AS is_dismissed
-            FROM ({union_query}) AS duplicate_groups
+            FROM ({}) AS duplicate_groups
             GROUP BY contact_ids
             ORDER BY id, contact_ids
         """
+            )
+            .format(sql.SQL(union_query))
+            .as_string()
+        )
 
     class Meta:
         managed = False
@@ -266,13 +270,19 @@ class PossibleDuplicateContact(DBView):
 
     @staticmethod
     def view_definition():
-        return f"""
+        return (
+            sql.SQL(
+                """
             SELECT 
                 row_number() over ()    AS id,
                 unnest(contact_ids)     AS contact_id,  
                 subq.id                 AS duplicate_values_id
-            FROM ({PossibleDuplicate.view_definition()}) AS subq
+            FROM ({}) AS subq
         """
+            )
+            .format(sql.SQL(PossibleDuplicate.view_definition()))
+            .as_string()
+        )
 
     class Meta:
         managed = False
@@ -320,7 +330,7 @@ class ContactGroupManager(models.Manager):
 
 class ContactGroup(models.Model):
     name = CICharField(max_length=255, null=False, blank=False, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
     predefined = models.BooleanField(default=False, editable=False)
 
     objects = ContactGroupManager()

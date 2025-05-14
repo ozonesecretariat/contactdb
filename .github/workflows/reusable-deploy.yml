@@ -12,6 +12,8 @@ jobs:
     runs-on:
       - self-hosted
       - ${{ inputs.runner_label }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Update compose.yml

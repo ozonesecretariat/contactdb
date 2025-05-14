@@ -1,7 +1,9 @@
 from copy import copy
+
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.utils.html import format_html
+
 from common.urls import reverse
 from core.admin import ContactAdminBase
 from core.admin.contact_base import MERGE_FROM_PARAM

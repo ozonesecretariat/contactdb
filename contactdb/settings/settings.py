@@ -10,12 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-import os
 import socket
 from pathlib import Path
 
 import environ
 import pycountry
+from import_export.formats.base_formats import DEFAULT_FORMATS
+
 from common.docx_format import DOCX
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 
-if os.path.exists(str(BASE_DIR / ".env")):
+if Path(str(BASE_DIR / ".env")).is_file():
     env.read_env(str(BASE_DIR / ".env"))
 
 
@@ -34,7 +35,10 @@ HAS_HTTPS = env.bool("HAS_HTTPS", default=False)
 PROTOCOL = "https://" if HAS_HTTPS else "http://"
 
 BACKEND_HOST = env.list("BACKEND_HOST")
-MAIN_HOST = env.str("MAIN_HOST", default=BACKEND_HOST[0])
+FRONTEND_HOST = env.list("FRONTEND_HOST", default=BACKEND_HOST)
+
+MAIN_FRONTEND_HOST = env.str("MAIN_FRONTEND_HOST", default=FRONTEND_HOST[0])
+MAIN_BACKEND_HOST = env.str("MAIN_BACKEND_HOST", default=BACKEND_HOST[0])
 
 REDIS_HOST = env.str("REDIS_HOST")
 REDIS_PORT = env.int("REDIS_PORT", default=6379)
@@ -60,7 +64,13 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = HAS_HTTPS
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = [_host.rsplit(":", 1)[0] for _host in BACKEND_HOST]
+ALLOWED_HOSTS = [_host.rsplit(":", 1)[0] for _host in BACKEND_HOST + FRONTEND_HOST]
+
+# https://pypi.org/project/django-cors-headers/
+CORS_ORIGIN_WHITELIST = [(PROTOCOL + _host) for _host in FRONTEND_HOST]
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ["content-disposition"]
+CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST
 
 
 # Application definition
@@ -93,7 +103,13 @@ INSTALLED_APPS = [
     "django_db_views",
     "django_object_actions",
     "auditlog",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+    "corsheaders",
     # This app
+    "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
     "events.apps.EventsConfig",
@@ -102,6 +118,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -111,6 +128,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_otp.middleware.OTPMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
+    "djangorestframework_camel_case.middleware.CamelCaseMiddleWare",
 ]
 
 # https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
@@ -340,8 +358,6 @@ IMPORT_EXPORT_IMPORT_PERMISSION_CODE = "add"
 IMPORT_EXPORT_EXPORT_PERMISSION_CODE = "view"
 IMPORT_EXPORT_CHUNK_SIZE = 1000
 
-from import_export.formats.base_formats import DEFAULT_FORMATS
-
 IMPORT_EXPORT_FORMATS = DEFAULT_FORMATS + [DOCX]
 
 # Sentry
@@ -361,18 +377,6 @@ if SENTRY_DSN:
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
-# Kronos import
-ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
-KRONOS_HOST = env.str("KRONOS_HOST", default="")
-
-# Ozone
-KRONOS_USERNAME = env.str("KRONOS_USERNAME", default="")
-KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
-
-FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
-
-# Focal point imports
-FOCAL_POINT_ENDPOINT = "https://ors.ozone.unep.org/api/country-profiles/focal-points/"
 
 # CKEditor
 CKEDITOR_PLACEHOLDERS = (
@@ -480,12 +484,76 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+### Django Rest Framework
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.PageNumberPagination",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("api.permissions.DjangoModelPermissions",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": (
+        "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
+        "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer",
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        # "djangorestframework_camel_case.parser.CamelCaseFormParser",
+        # "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
+        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
+    ),
+    "JSON_UNDERSCOREIZE": {
+        "no_underscore_before_number": True,
+        "ignore_keys": ("__all__",),
+    },
+}
+
+# https://dj-rest-auth.readthedocs.io/en/latest/configuration.html
+REST_AUTH = {
+    "USER_DETAILS_SERIALIZER": "api.serializers.user.UserSerializer",
+    "PASSWORD_RESET_SERIALIZER": "api.serializers.user.PasswordResetSerializer",
+    "OLD_PASSWORD_FIELD_ENABLED": True,
+}
+
+# https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ContactDB API",
+    "DESCRIPTION": "ContactDB API",
+    "VERSION": None,
+    "SERVE_INCLUDE_SCHEMA": True,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
+    ],
+    "CAMELIZE_NAMES": True,
+}
+
+### App settings
+
+# Kronos import
+ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
+KRONOS_HOST = env.str("KRONOS_HOST", default="")
+
+# Ozone
+KRONOS_USERNAME = env.str("KRONOS_USERNAME", default="")
+KRONOS_PASSWORD = env.str("KRONOS_PASSWORD", default="")
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = env.int("FILE_UPLOAD_MAX_MEMORY_SIZE", 2621440)
+
+# Focal point imports
+FOCAL_POINT_ENDPOINT = "https://ors.ozone.unep.org/api/country-profiles/focal-points/"
+
 # Add EU ISO code which is exceptionally reserved.
 pycountry.countries.add_entry(alpha_2="EU", name="European Union")
 
-if DEBUG:
-    DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)
+### Debug settings
 
+DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)
+
+
+if DEBUG:
     INTERNAL_IPS = ["127.0.0.1"]
 
     if DJANGO_DEBUG_TOOLBAR:

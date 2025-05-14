@@ -41,7 +41,7 @@ Prepare env:
 
 Interactive running options:
 
-- Open interactive Cypress test runner and manually run specs from there
+- Open the interactive Cypress test runner and manually run specs from there
   ```shell
   npm run test:open
   ```
@@ -52,7 +52,7 @@ Headless running options:
   ```shell
   npm run test
   ```
-- Run single spec headless
+- Run a single spec headless
   ```shell
-  npm run test -- -s cypress/e2e/1.login/1.login.cy.js
+  npm run test -- -s cypress/e2e/1.admin/1.login/1.login.cy.js
   ```

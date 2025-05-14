@@ -360,3 +360,4 @@ Dockerfile
 .static
 .venv
 **/dist/
+.quasar

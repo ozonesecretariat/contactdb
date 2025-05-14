@@ -1,11 +1,13 @@
 import logging
+
 import requests
 from django.conf import settings
 from django_task.job import Job
+
 from common import fuzzy_search
+from common.parsing import parse_list
 from common.scheduler import cron
 from core.models import Contact, ImportFocalPointsTask
-from common.parsing import parse_list
 
 TITLES = {
     "Abog",
@@ -25,7 +27,6 @@ TITLES = {
     "Rev",
     "Sr",
     "Sra",
-    "H.E",
     "H.E",
     "Honorable",
 }
@@ -52,7 +53,8 @@ class ImportFocalPoints(Job):
 
         try:
             title, other = first_name.split(None, 1)
-            assert title in KNOWN_TITLES
+            if title not in KNOWN_TITLES:
+                raise ValueError(f"Unknown title: {title}")
             first_name = other
         except (ValueError, AssertionError):
             title = ""
@@ -85,7 +87,7 @@ class ImportFocalPoints(Job):
         url = settings.FOCAL_POINT_ENDPOINT
         task.log(logging.INFO, "Loading focal points from: %s", url)
 
-        resp = requests.get(url)
+        resp = requests.get(url, timeout=30)
         resp.raise_for_status()
 
         created, skipped = 0, 0

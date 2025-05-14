@@ -37,6 +37,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         user = self.create_user(email, password, **extra_fields)
         user.is_superuser = True
+        user.is_staff = True
         user.save()
         return user
 
@@ -54,6 +55,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             "disable an account instead of deleting."
         ),
     )
+    is_staff = models.BooleanField(
+        verbose_name="Staff",
+        default=False,
+        help_text="Designates whether the user can log into this admin site.",
+    )
+
     roles = models.ManyToManyField(
         Role,
         blank=True,
@@ -81,7 +88,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def two_factor_enabled(self):
         return bool(default_device(self))
-
-    @property
-    def is_staff(self):
-        return True

@@ -12,7 +12,6 @@ function initPlaceholderSelect() {
   }
 
   CKEDITOR.plugins.add("placeholder_select", {
-    requires: ["richcombo"],
     init(editor) {
       const placeholders = [];
 
@@ -29,31 +28,32 @@ function initPlaceholderSelect() {
       }
 
       editor.ui.addRichCombo("placeholder_select", {
-        label: "Placeholder",
-        title: "Placeholder",
-        voiceLabel: "Placeholder",
         className: "cke_format",
-        multiSelect: false,
-        panel: {
-          css: [CKEDITOR.skin.getPath("editor")].concat(config.contentsCss),
-          voiceLabel: editor.lang.panelVoiceLabel,
-        },
-
         init() {
           this.startGroup("Placeholder");
           for (const attrs of placeholders) {
             this.add(...attrs);
           }
         },
-
+        label: "Placeholder",
+        multiSelect: false,
         onClick(value) {
           editor.focus();
           editor.fire("saveSnapshot");
           editor.insertHtml(value);
           editor.fire("saveSnapshot");
         },
+        panel: {
+          css: [CKEDITOR.skin.getPath("editor")].concat(config.contentsCss),
+          voiceLabel: editor.lang.panelVoiceLabel,
+        },
+
+        title: "Placeholder",
+
+        voiceLabel: "Placeholder",
       });
     },
+    requires: ["richcombo"],
   });
 }
 

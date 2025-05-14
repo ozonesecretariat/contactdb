@@ -1,15 +1,15 @@
 from admin_auto_filters.filters import AutocompleteFilterFactory
-from django.contrib import admin
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.contrib.auth.admin import GroupAdmin
 from django.contrib.auth.models import Group
 from django.db.models import Count
 from django_otp import devices_for_user, user_has_device
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
+
 from common.model_admin import ModelAdmin
 
-from .models import User, Role
+from .models import Role, User
 from .tasks import reset_password
 
 admin.site.unregister(Group)

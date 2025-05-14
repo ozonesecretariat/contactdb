@@ -1,13 +1,13 @@
 from collections import Counter
+
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.widgets import AdminTextInputWidget
+from django.contrib.postgres.fields import ArrayField as DjangoArrayField
 from django.contrib.postgres.forms.array import SimpleArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Func
 from django.forms import Widget
-
-from django.contrib.postgres.fields import ArrayField as DjangoArrayField
 
 
 class ArrayFieldWidget(Widget):
@@ -68,7 +68,7 @@ class ArrayField(DjangoArrayField):
                 raise ValidationError(f"Duplicate value: {item!r}")
 
 
-def ArrayFilterFactory(_parameter_name, _title=None):
+def ArrayFilterFactory(_parameter_name, _title=None):  # noqa: N802
     class ArrayFieldListFilter(SimpleListFilter):
         title = _title or _parameter_name
         parameter_name = _parameter_name

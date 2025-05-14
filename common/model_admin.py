@@ -1,14 +1,15 @@
 from functools import wraps
+
 from django.contrib import admin
 from django.contrib.admin.options import get_content_type_for_model
 from django.shortcuts import redirect
-
 from django.template.response import TemplateResponse
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 from django_task.admin import TaskAdmin as BaseTaskAdmin
 from import_export import resources, widgets
+
 from common.boolean_widget import BooleanWidget
 from common.urls import reverse
 

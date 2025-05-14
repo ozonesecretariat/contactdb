@@ -1,9 +1,9 @@
-from .contact import *
-from .contact_group import *
-from .country import *
-from .import_focal_points_task import *
-from .import_legacy_contacts_tasks import *
-from .organization import *
-from .organization_type import *
-from .possible_duplicate import *
-from .resolve_conflict import *
+from .contact import *  # noqa: F403
+from .contact_group import *  # noqa: F403
+from .country import *  # noqa: F403
+from .import_focal_points_task import *  # noqa: F403
+from .import_legacy_contacts_tasks import *  # noqa: F403
+from .organization import *  # noqa: F403
+from .organization_type import *  # noqa: F403
+from .possible_duplicate import *  # noqa: F403
+from .resolve_conflict import *  # noqa: F403

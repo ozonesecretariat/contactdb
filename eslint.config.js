@@ -1,38 +1,66 @@
-import globals from "globals";
-import pluginCypress from "eslint-plugin-cypress/flat";
 import pluginJs from "@eslint/js";
+import pluginQuasar from "@quasar/app-vite/eslint";
+import prettierSkipFormatting from "@vue/eslint-config-prettier/skip-formatting";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import pluginPrettier from "eslint-config-prettier";
+import pluginCypress from "eslint-plugin-cypress/flat";
+import perfectionist from "eslint-plugin-perfectionist";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
 
-export default [
+export default defineConfigWithVueTs([
   {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
+    files: ["**/*.{ts,mts,tsx,js,mjs,cjs}"],
+    name: "app/files-to-lint",
+  },
+  {
+    ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**", "**/node_modules/**", "**/.fs/**", "**/.venv/**"],
+    name: "app/files-to-ignore",
+  },
+  perfectionist.configs["recommended-natural"],
+  pluginQuasar.configs.recommended(),
+  pluginJs.configs.all,
+  pluginVue.configs["flat/recommended"],
+  {
+    files: ["**/*.ts", "**/*.vue"],
+    rules: {
+      "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
     },
   },
-  {
-    name: "app/files-to-lint",
-    files: ["**/*.{ts,mts,tsx,js,mjs,cjs}"],
-  },
-  {
-    name: "app/files-to-ignore",
-    ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**", "**/node_modules/**", "**/.fs/**", "**/.venv/**"],
-  },
-  pluginJs.configs.all,
+  // https://github.com/vuejs/eslint-config-typescript
+  vueTsConfigs.recommendedTypeChecked,
   {
     ...pluginCypress.configs.recommended,
     files: ["cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}", "cypress/support/**/*.{js,ts,jsx,tsx}"],
     rules: {
       // expect() expression will be marked as errors otherwise.
-      "no-unused-expressions": ["off"],
+      "@typescript-eslint/no-unused-expressions": ["off"],
       // Can't enforce camelCase since it conflicts with some python stuff
       camelcase: ["error", { properties: "never" }],
+      "no-unused-expressions": ["off"],
     },
   },
-  pluginPrettier,
   {
+    languageOptions: {
+      ecmaVersion: "latest",
+      globals: {
+        ...globals.browser,
+        ...globals.node, // SSR, Electron, config files
+        browser: "readonly", // BEX related
+        Capacitor: "readonly",
+        chrome: "readonly", // BEX related
+        cordova: "readonly",
+        ga: "readonly", // Google Analytics
+        process: "readonly", // process.env.*
+      },
+
+      sourceType: "module",
+    },
+
+    // add your custom rules here
     rules: {
+      // Allow promises not being waited on always.
+      "@typescript-eslint/no-floating-promises": "off",
       // Don't force capitalized comments
       "capitalized-comments": "off",
       // Allow class methods that could be static
@@ -43,14 +71,12 @@ export default [
       "func-style": "off",
       // Allow short id names
       "id-length": "off",
-      // Allow no initial declaration as it conflicts with the "no-useless-assignment" rule
-      "init-declarations": "off",
+      "max-lines": "off",
+      "max-lines-per-function": "off",
       // Disable max-params
       "max-params": "off",
       // Disable max-statements
       "max-statements": "off",
-      "max-lines": "off",
-      "max-lines-per-function": "off",
       // Enforce separate lines for multiline comments
       "multiline-comment-style": ["error", "separate-lines"],
       // Allow use of "continue"
@@ -61,12 +87,15 @@ export default [
       "no-magic-numbers": "off",
       // Allow negated conditions
       "no-negated-condition": "off",
-      // Allow using function before defining them
-      "no-use-before-define": ["error", { functions: false }],
-      // Allow underscore dangle
-      "no-underscore-dangle": "off",
       // Allow ternary
       "no-ternary": "off",
+      // Allow underscore dangle
+      "no-underscore-dangle": "off",
+      // Allow using function before defining them
+      "no-use-before-define": ["error", { functions: false }],
+      // The @typescript-eslint/no-unused-vars will catch any such errors without
+      // any false positives, so disable this rule.
+      "no-useless-assignment": "off",
       // Allow warning comments
       "no-warning-comments": "off",
       // Force separate var declaration
@@ -77,6 +106,10 @@ export default [
       "sort-imports": "off",
       "sort-keys": "off",
       "sort-vars": "off",
+      // Make component names consistent
+      "vue/component-name-in-template-casing": ["error", "kebab-case", { registeredComponentsOnly: false }],
     },
   },
-];
+  prettierSkipFormatting,
+  pluginPrettier,
+]);

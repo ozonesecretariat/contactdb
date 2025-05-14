@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: docker/app.docker
+      args:
+        UV_ARGS: "--group dev"
     environment:
       - GUNICORN_CMD_ARGS=--workers=2 --threads=2
 
@@ -10,6 +12,8 @@ services:
     build:
       context: .
       dockerfile: docker/app.docker
+      args:
+        UV_ARGS: "--group dev"
 
   nginx:
     build:
@@ -18,4 +22,4 @@ services:
     environment:
       - NGINX_WORKER_PROCESSES=2
     ports:
-      - 8000:80
+      - 8080:80

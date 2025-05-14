@@ -1,13 +1,29 @@
 import logging
 
-from django.core.management import BaseCommand
-from django.core.management import call_command
+from django.conf import settings
+from django.core.management import BaseCommand, call_command
 
-from accounts.models import *
-from core.models import *
-from emails.models import *
-from events.models import *
-
+from accounts.models import Role, User
+from core.models import (
+    Contact,
+    ContactGroup,
+    Country,
+    ImportFocalPointsTask,
+    ImportLegacyContactsTask,
+    Organization,
+    OrganizationType,
+    ResolveConflict,
+)
+from emails.models import Email, EmailTemplate, SendEmailTask
+from events.models import (
+    Event,
+    LoadEventsFromKronosTask,
+    LoadParticipantsFromKronosTask,
+    Registration,
+    RegistrationRole,
+    RegistrationStatus,
+    RegistrationTag,
+)
 
 logger = logging.getLogger("contactdb")
 

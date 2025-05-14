@@ -2,6 +2,7 @@ import abc
 import io
 import textwrap
 from email import message_from_string
+
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
 from django import forms
 from django.contrib import admin, messages
@@ -17,8 +18,8 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.urls import reverse
 from emails.models import (
-    EmailAttachment,
     Email,
+    EmailAttachment,
     EmailTemplate,
     SendEmailTask,
 )

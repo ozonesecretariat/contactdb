@@ -3,14 +3,19 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: docker/app.dev.docker
+      dockerfile: docker/app.docker
+      args:
+        UV_ARGS: "--group dev"
+    command: ["./manage.py", "runserver", "0:8000"]
     volumes:
       - .:/app
 
   worker:
     build:
       context: .
-      dockerfile: docker/app.dev.docker
+      dockerfile: docker/app.docker
+      args:
+        UV_ARGS: "--group dev"
 
   nginx:
     build:
@@ -18,4 +23,4 @@ services:
       dockerfile: docker/nginx.docker
     ports:
       # Map to expose the docker webserver to outside
-      - 8000:80
+      - 8080:80

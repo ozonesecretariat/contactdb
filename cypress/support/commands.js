@@ -1,5 +1,6 @@
-import { randomStr } from "./utils";
 import path from "path";
+
+import { randomStr } from "./utils";
 
 function exists(val) {
   if (val) {
@@ -16,32 +17,11 @@ function forceArray(val) {
 }
 
 Cypress.Commands.addAll({
-  login(user, password, checkSuccess = true) {
-    cy.visit(`/account/login/`);
-    cy.get("input[autocomplete=username]").type(user);
-    cy.get("input[autocomplete=current-password]").type(password);
-    cy.get("input[type=submit]:not([hidden])").click();
-    if (checkSuccess) {
-      cy.contains(`Welcome, ${user}`);
-    }
-  },
-  loginAdmin() {
-    cy.login("admin@example.com", "admin");
-  },
-  loginEdit() {
-    cy.login("test-edit@example.com", "test");
-  },
-  loginEmails() {
-    cy.login("test-emails@example.com", "test");
-  },
-  loginKronos() {
-    cy.login("test-kronos@example.com", "test");
-  },
-  loginNoAccess() {
-    cy.login("test-no-access@example.com", "test");
-  },
-  loginView() {
-    cy.login("test-view@example.com", "test");
+  addModel(modelName, fields) {
+    cy.goToModelAdd(modelName);
+    cy.fillInputs(fields);
+    cy.get("input[value=Save]").click();
+    cy.contains("was added successfully");
   },
   checkAccess(accessSpec) {
     cy.get("#content-main").then(($mainContent) => {
@@ -86,27 +66,76 @@ Cypress.Commands.addAll({
       expect(Array.from(remainingApps), "Expecting all apps to be checked").to.be.empty;
     });
   },
-  goToModel(modelName) {
-    cy.get("tbody a").contains(modelName).click();
+  checkExport({ expected = [], filePattern, filters = {}, modelName, searchValue = "" }) {
+    cy.task("cleanDownloadsFolder");
+    cy.performSearch({ filters, modelName, searchValue });
+    cy.get("a").contains("Export").click();
+    cy.fillInput("format", "csv");
+    cy.get("[type=submit]").contains("Submit").click();
+    cy.checkFile({ expected, filePattern, lineLength: expected.length + 1 });
   },
-  goToModelAdd(modelName) {
-    cy.goToModel(modelName);
-    cy.get(".object-tools a.addlink").contains("Add").click();
+  checkFile({ expected, filePattern, lineLength = null }) {
+    cy.verifyDownload(filePattern, { contains: true });
+    cy.task("downloads").then((files) => {
+      const downloadsFolder = Cypress.config("downloadsFolder");
+      const fullPath = path.join(
+        downloadsFolder,
+        files.find((fn) => fn.includes(filePattern)),
+      );
+
+      cy.readFile(fullPath, "utf-8").then((content) => {
+        if (lineLength) {
+          expect(content.trim().split("\n")).to.have.length(lineLength);
+        }
+        for (const value of expected) {
+          expect(content).to.contain(value);
+        }
+      });
+    });
   },
-  addModel(modelName, fields) {
-    cy.goToModelAdd(modelName);
-    cy.fillInputs(fields);
-    cy.get("input[value=Save]").click();
-    cy.contains("was added successfully");
+  checkModelAdmin({
+    checkDelete = true,
+    extraFields = {},
+    filters = {},
+    modelName,
+    nameField = "name",
+    searchValue = null,
+    suffix = "",
+  }) {
+    let identifier = searchValue;
+    const fields = { ...extraFields };
+
+    if (nameField) {
+      fields[nameField] = randomStr(`test-${modelName}-`, 10, suffix);
+      identifier ??= fields[nameField];
+    }
+    cy.addModel(modelName, fields);
+    if (checkDelete) {
+      cy.deleteModel(modelName, identifier, filters);
+      cy.checkNotFound({ filters, modelName, searchValue: identifier });
+    }
+    return cy.wrap(fields);
   },
-  deleteModel(modelName, searchValue, filters = {}) {
-    cy.checkSearch({ modelName, searchValue, filters });
-    cy.get("a").contains("Delete").click();
-    cy.get("[type=submit]").contains("Yes, I’m sure").click();
-    cy.contains("deleted successfully");
+  checkNav(label) {
+    return cy.get(".q-drawer [role=listitem]").contains(label);
+  },
+  checkNavActive(label) {
+    return cy.get(".q-router-link--exact-active").contains(label);
+  },
+  checkNotFound({ filters = {}, modelName, searchValue = "" }) {
+    cy.performSearch({ filters, modelName, searchValue });
+    cy.contains("0 results");
+  },
+  checkSearch({ expectedValue = null, filters = {}, modelName, searchValue = "" }) {
+    const checkedValue = expectedValue ?? searchValue;
+
+    cy.performSearch({ filters, modelName, searchValue });
+    cy.contains("1 result");
+    cy.get("#result_list a").contains(checkedValue).click();
+    cy.contains(checkedValue);
   },
   chooseSelect2(name, values) {
-    cy.get(`[name=${name}`).then(($el) => {
+    cy.get(`[name=${name}]`).then(($el) => {
       const elId = $el.attr("id");
       for (const val of forceArray(values)) {
         cy.get(`[name=${name}]`).parent().find(".select2").click();
@@ -115,8 +144,42 @@ Cypress.Commands.addAll({
       }
     });
   },
-  getIframeBody(selector) {
-    return cy.get(selector).its("0.contentDocument.body").should("not.be.empty").then(cy.wrap);
+  createContactGroup(numberOfContacts = 1, extraFields = {}) {
+    const groupName = randomStr("test-group-");
+    cy.addModel("Contact groups", { name: groupName });
+
+    const contacts = [];
+    for (let i = 0; i < numberOfContacts; i += 1) {
+      const contact = {
+        Contact_groups: [{ contactgroup: groupName }],
+        emails: randomStr("test-email-", 10, "@example.org"),
+        first_name: randomStr("first-name-"),
+        last_name: randomStr("last-name-"),
+        ...extraFields,
+      };
+      contacts.push(contact);
+
+      cy.addModel("Contacts", contact);
+    }
+
+    return cy.wrap({ contacts, name: groupName });
+  },
+  deleteContactGroup(group) {
+    cy.triggerAction({
+      action: "Delete selected contacts",
+      filters: { groups__in: group.name },
+      modelName: "Contacts",
+    });
+    cy.get("[type=submit]").contains("Yes, I’m sure").click();
+    cy.contains("Successfully deleted");
+
+    cy.deleteModel("Contact groups", group.name);
+  },
+  deleteModel(modelName, searchValue, filters = {}) {
+    cy.checkSearch({ filters, modelName, searchValue });
+    cy.get("a").contains("Delete").click();
+    cy.get("[type=submit]").contains("Yes, I’m sure").click();
+    cy.contains("deleted successfully");
   },
   fillCKEditor(name, value) {
     cy.getIframeBody(`.field-${name} iframe`).type(value);
@@ -156,13 +219,60 @@ Cypress.Commands.addAll({
       cy.fillInput(key, value);
     }
   },
-  triggerAction({ modelName, action, searchValue = "", filters = {} }) {
-    cy.performSearch({ modelName, searchValue, filters });
-    cy.fillInput("action", action);
-    cy.get("#action-toggle").click();
-    cy.get(".actions button").contains("Go").click();
+  getIframeBody(selector) {
+    return cy.get(selector).its("0.contentDocument.body").should("not.be.empty").then(cy.wrap);
   },
-  performSearch({ modelName, searchValue = "", filters = {} }) {
+  goToModel(modelName) {
+    cy.get("tbody a").contains(modelName).click();
+  },
+  goToModelAdd(modelName) {
+    cy.goToModel(modelName);
+    cy.get(".object-tools a.addlink").contains("Add").click();
+
+    if (modelName === "Emails" || modelName === "Email templates") {
+      cy.waitForCKEditor();
+    }
+  },
+  login(user, password, checkSuccess = true, goToAdmin = true) {
+    cy.visit("/");
+    cy.get("input[autocomplete=email]").type(user);
+    cy.get("input[autocomplete=current-password]").type(password);
+    cy.get("[type=submit]:not([hidden])").click();
+    if (checkSuccess) {
+      cy.get(`[data-user-email="${user}"]`);
+    }
+    if (checkSuccess && goToAdmin) {
+      cy.get("a").contains("Admin").click();
+    }
+  },
+  loginAdmin(goToAdmin = true) {
+    cy.login("admin@example.com", "admin", true, goToAdmin);
+  },
+  loginEdit(goToAdmin = true) {
+    cy.login("test-edit@example.com", "test", true, goToAdmin);
+  },
+  loginEmails(goToAdmin = true) {
+    cy.login("test-emails@example.com", "test", true, goToAdmin);
+  },
+  loginKronos(goToAdmin = true) {
+    cy.login("test-kronos@example.com", "test", true, goToAdmin);
+  },
+  loginNoAccess(goToAdmin = true) {
+    cy.login("test-no-access@example.com", "test", true, goToAdmin);
+  },
+  loginNonStaff(goToAdmin = true) {
+    cy.login("test-non-staff@example.com", "test", true, goToAdmin);
+  },
+  loginNonStaffNoAccess(goToAdmin = true) {
+    cy.login("test-non-staff-no-access@example.com", "test", true, goToAdmin);
+  },
+  loginNonStaffView(goToAdmin = true) {
+    cy.login("test-non-staff-view@example.com", "test", true, goToAdmin);
+  },
+  loginView(goToAdmin = true) {
+    cy.login("test-view@example.com", "test", true, goToAdmin);
+  },
+  performSearch({ filters = {}, modelName, searchValue = "" }) {
     cy.goToModel(modelName);
     cy.fillInputs(filters);
     if (searchValue) {
@@ -170,97 +280,16 @@ Cypress.Commands.addAll({
       cy.get("input[value=Search]").click();
     }
   },
-  checkNotFound({ modelName, searchValue = "", filters = {} }) {
-    cy.performSearch({ modelName, searchValue, filters });
-    cy.contains("0 results");
+  triggerAction({ action, filters = {}, modelName, searchValue = "" }) {
+    cy.performSearch({ filters, modelName, searchValue });
+    cy.fillInput("action", action);
+    cy.get("#action-toggle").click();
+    cy.get(".actions button").contains("Go").click();
   },
-  checkSearch({ modelName, searchValue = "", expectedValue = null, filters = {} }) {
-    const checkedValue = expectedValue ?? searchValue;
-
-    cy.performSearch({ modelName, searchValue, filters });
-    cy.contains("1 result");
-    cy.get("#result_list a").contains(checkedValue).click();
-    cy.contains(checkedValue);
-  },
-  checkModelAdmin({
-    modelName,
-    nameField = "name",
-    extraFields = {},
-    suffix = "",
-    checkDelete = true,
-    filters = {},
-    searchValue = null,
-  }) {
-    let identifier = searchValue;
-    const fields = { ...extraFields };
-
-    if (nameField) {
-      fields[nameField] = randomStr(`test-${modelName}-`, 10, suffix);
-      identifier ??= fields[nameField];
-    }
-    cy.addModel(modelName, fields);
-    if (checkDelete) {
-      cy.deleteModel(modelName, identifier, filters);
-      cy.checkNotFound({ modelName, searchValue: identifier, filters });
-    }
-    return cy.wrap(fields);
-  },
-  createContactGroup(numberOfContacts = 1, extraFields = {}) {
-    const groupName = randomStr("test-group-");
-    cy.addModel("Contact groups", { name: groupName });
-
-    const contacts = [];
-    for (let i = 0; i < numberOfContacts; i += 1) {
-      const contact = {
-        first_name: randomStr("first-name-"),
-        last_name: randomStr("last-name-"),
-        emails: randomStr("test-email-", 10, "@example.org"),
-        Contact_groups: [{ contactgroup: groupName }],
-        ...extraFields,
-      };
-      contacts.push(contact);
-
-      cy.addModel("Contacts", contact);
-    }
-
-    return cy.wrap({ name: groupName, contacts });
-  },
-  deleteContactGroup(group) {
-    cy.triggerAction({
-      modelName: "Contacts",
-      action: "Delete selected contacts",
-      filters: { groups__in: group.name },
+  waitForCKEditor() {
+    // Tests can run faster than CKEditor can initialize. So wait for it to be done.
+    cy.window().should((win) => {
+      expect(win).to.have.property("CKEDITOR");
     });
-    cy.get("[type=submit]").contains("Yes, I’m sure").click();
-    cy.contains("Successfully deleted");
-
-    cy.deleteModel("Contact groups", group.name);
-  },
-  checkFile({ filePattern, expected, lineLength = null }) {
-    cy.verifyDownload(filePattern, { contains: true });
-    cy.task("downloads").then((files) => {
-      const downloadsFolder = Cypress.config("downloadsFolder");
-      const fullPath = path.join(
-        downloadsFolder,
-        files.find((fn) => fn.includes(filePattern)),
-      );
-
-      cy.readFile(fullPath, "utf-8").then((content) => {
-        if (lineLength) {
-          expect(content.trim().split("\n")).to.have.length(lineLength);
-        }
-        for (const value of expected) {
-          expect(content).to.contain(value);
-        }
-      });
-    });
-  },
-  checkExport({ modelName, searchValue = "", filters = {}, filePattern, expected = [] }) {
-    cy.task("cleanDownloadsFolder");
-    cy.performSearch({ modelName, searchValue, filters });
-    cy.get("a").contains("Export").click();
-    cy.fillInput("format", "csv");
-    cy.get("[type=submit]").contains("Submit").click();
-    cy.checkFile({ filePattern, expected, lineLength: expected.length + 1 });
   },
 });

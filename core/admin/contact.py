@@ -1,4 +1,5 @@
 from functools import cached_property
+
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from auditlog.models import LogEntry
 from django import forms
@@ -11,6 +12,7 @@ from django.utils.safestring import mark_safe
 from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
+
 from common import fuzzy_search
 from common.audit import bulk_audit_update
 from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
@@ -275,7 +277,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                 f"{len(memberships)} contacts added to {group!r}",
                 messages.SUCCESS,
             )
-            return
+            return None
 
         widget = AutocompleteSelect(
             Contact.groups.through._meta.get_field("contactgroup"),

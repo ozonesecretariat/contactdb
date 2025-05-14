@@ -1,6 +1,8 @@
 import json
 import logging
+
 from django_task.job import Job
+
 from common import fuzzy_search
 from common.parsing import parse_list
 from core.models import Contact, ContactGroup
@@ -11,9 +13,8 @@ class ImportLegacyContacts(Job):
     def get_addresses(cls, item: dict):
         result = []
         for key, value in item.items():
-            if key.lower().startswith("address line"):
-                if value := value.strip():
-                    result.append(value)
+            if key.lower().startswith("address line") and (value := value.strip()):
+                result.append(value)
         return result
 
     @classmethod

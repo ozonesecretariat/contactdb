@@ -16,6 +16,8 @@ on:
 jobs:
   suite:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,7 +40,6 @@ jobs:
           docker compose top
       - name: "Install dev dependencies"
         run: |
-          docker compose exec -T app pip install -c requirements/constraints.txt -r requirements/dev.txt
           npm ci
       - name: "Backend tests"
         run: |

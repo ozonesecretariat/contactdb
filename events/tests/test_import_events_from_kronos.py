@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from unittest.mock import patch
+
 from django.test import TestCase
-from django.utils.timezone import make_naive
+
 from events.models import Event, LoadEventsFromKronosTask
 
 
@@ -43,8 +44,8 @@ class TestImportEvents(TestCase):
         event = Event.objects.first()
 
         self.assertEqual(event.event_id, "abcdefg123456789")
-        self.assertEqual(make_naive(event.start_date), datetime(2010, 7, 1))
-        self.assertEqual(make_naive(event.end_date), datetime(2010, 7, 10))
+        self.assertEqual(event.start_date, datetime(2010, 7, 1, tzinfo=UTC))
+        self.assertEqual(event.end_date, datetime(2010, 7, 10, tzinfo=UTC))
         self.assertEqual(event.dates, "1-10 July 2010")
         self.assertEqual(event.title, "Quantum Quest: A Science Adventure Symposium")
         self.assertEqual(event.venue_city, "Kathmandu")

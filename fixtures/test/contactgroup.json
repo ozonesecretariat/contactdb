@@ -3,7 +3,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "FPLS",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -11,7 +11,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "NFP",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -19,7 +19,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Focal point",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -27,7 +27,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Legacy contacts",
-      "description": null,
+      "description": "",
       "predefined": true
     }
   },
@@ -35,7 +35,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "The Wanderlust Explorers",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -43,7 +43,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Tech Titans Alliance",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -51,7 +51,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Culinary Connoisseurs Collective",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -59,7 +59,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Fitness Fanatics Fellowship",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -67,7 +67,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Bookworm Brigade",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -75,7 +75,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Creative Minds Consortium",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -83,7 +83,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Nature Lovers League",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -91,7 +91,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Movie Buffs Society",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -99,7 +99,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Adventure Seekers Squad",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -107,7 +107,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Music Maniacs Association",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -115,7 +115,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "The Dream Team Connection",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -123,7 +123,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Social Sparks Syndicate",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -131,7 +131,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Global Gourmet Gathering",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -139,7 +139,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Fitness Fusion Crew",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -147,7 +147,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Literary Legends League",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -155,7 +155,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Artistic Avengers Assembly",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -163,7 +163,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Wanderers' Circle",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -171,7 +171,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Cinema Savants Society",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -179,7 +179,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Trailblazers Tribe",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   },
@@ -187,7 +187,7 @@
     "model": "core.contactgroup",
     "fields": {
       "name": "Harmony Haven Hub",
-      "description": null,
+      "description": "",
       "predefined": false
     }
   }

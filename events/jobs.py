@@ -1,5 +1,7 @@
 import logging
+
 from django_task.job import Job
+
 from events.parsers import KronosEventsParser, KronosParticipantsParser
 
 
@@ -10,7 +12,10 @@ class LoadEventsFromKronos(Job):
 
         parser = KronosEventsParser(task=task)
         count_created, count_updated = parser.parse_event_list()
-        task.description = f"Imported {count_created} new events and updated {count_updated} existing events."
+        task.description = (
+            f"Imported {count_created} new events and "
+            f"updated {count_updated} existing events."
+        )
         task.save()
 
     @staticmethod

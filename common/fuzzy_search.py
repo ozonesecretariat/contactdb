@@ -2,6 +2,7 @@ import pycountry
 from django.db.models import Q, QuerySet, TextField
 from django.db.models.functions import Cast
 from django.utils.text import smart_split
+
 from common.parsing import remove_punctuation
 from core.models import Country, Organization
 
@@ -10,8 +11,7 @@ def get_names_to_search(name):
     name = name.strip()
 
     name_no_punctuation = remove_punctuation(name)
-    names_to_search = [name, name_no_punctuation, *smart_split(name_no_punctuation)]
-    return names_to_search
+    return [name, name_no_punctuation, *smart_split(name_no_punctuation)]
 
 
 def search_multiple(querysets: [QuerySet], name: str, fields: [str]):
@@ -27,7 +27,7 @@ def search_multiple(querysets: [QuerySet], name: str, fields: [str]):
 def search_names(original_query: QuerySet, name: str, fields: [str]):
     name = (name or "").strip()
     if not name:
-        return
+        return None
 
     model = original_query.model
 
@@ -55,7 +55,7 @@ def search_names(original_query: QuerySet, name: str, fields: [str]):
 
         try:
             return query.get()
-        except (model.DoesNotExist, model.MultipleObjectsReturned) as e:
+        except (model.DoesNotExist, model.MultipleObjectsReturned):
             continue
     raise model.DoesNotExist
 

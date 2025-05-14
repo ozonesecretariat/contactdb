@@ -30,6 +30,7 @@ class KronosClient:
             headers=headers,
             json=json_data or {},
             params=params or {},
+            timeout=60,
         )
 
         resp.raise_for_status()
