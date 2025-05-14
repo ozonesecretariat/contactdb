@@ -491,7 +491,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": ("api.permissions.DjangoModelPermissions",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": (
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
@@ -551,9 +551,10 @@ pycountry.countries.add_entry(alpha_2="EU", name="European Union")
 
 ### Debug settings
 
-if DEBUG:
-    DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)
+DJANGO_DEBUG_TOOLBAR = env.bool("DJANGO_DEBUG_TOOLBAR", default=True)
 
+
+if DEBUG:
     INTERNAL_IPS = ["127.0.0.1"]
 
     if DJANGO_DEBUG_TOOLBAR:
