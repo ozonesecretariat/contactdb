@@ -14,7 +14,6 @@ from common.protected_media import protected_serve
 
 
 admin_urlpatterns = [
-    path("django_task/", include("django_task.urls", namespace="django_task")),
     path("ckeditor/upload/", login_required(views.upload), name="ckeditor_upload"),
     path(
         "ckeditor/browse/",
@@ -32,6 +31,9 @@ urlpatterns = [
     ),
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    # XXX Cannot set this under a different prefix as the URL is hardcoded in the
+    # XXX django task js scripts.
+    path("django_task/", include("django_task.urls", namespace="django_task")),
     path("admin/", include(admin_urlpatterns)),
     path("api/", include("api.urls")),
     path("", RedirectView.as_view(pattern_name="admin:index")),

@@ -27,7 +27,7 @@ server {
         expires 365d;
     }
 
-    location ~ ^/(admin|api)/ {
+    location ~ ^/(admin|api|django_task)/ {
         include /etc/nginx/conf.d/proxy_pass_backend;
     }
 
