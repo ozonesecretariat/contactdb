@@ -38,13 +38,14 @@ class OTPLoginView(LoginView, APIView):
 
 
 class TwoFactorQRGeneratorView(QRGeneratorView):
-    pass
+    permission_classes = (IsAuthenticated,)
 
 
 class TwoFactorSetupView(SetupView, APIView):
     success_url = "account-two-factor-setup"
     qrcode_url = "account-two-factor-qr"
     parser_classes = (FormParser, MultiPartParser)
+    permission_classes = (IsAuthenticated,)
 
     def render(self, form=None, **kwargs):
         super().render(form, **kwargs)
@@ -90,6 +91,8 @@ class TwoFactorBackupTokensView(APIView):
 
 
 class TwoFactorDisable(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request, **kwargs):
         for device in devices_for_user(self.request.user):
             device.delete()
