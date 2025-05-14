@@ -62,11 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUserStore } from "stores/userStore";
-import useFormErrors from "src/composables/useFormErrors";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import useFormErrors from "src/composables/useFormErrors";
+import { useUserStore } from "stores/userStore";
+import { ref } from "vue";
 
 const $q = useQuasar();
 const userStore = useUserStore();
@@ -85,13 +85,13 @@ async function onSubmit() {
   try {
     loading.value = true;
     await api.post("/auth/password/change/", {
-      oldPassword: oldPassword.value,
       newPassword1: newPassword1.value,
       newPassword2: newPassword2.value,
+      oldPassword: oldPassword.value,
     });
     $q.notify({
-      type: "positive",
       message: "Password changed successfully.",
+      type: "positive",
     });
     await userStore.load();
   } catch (e) {

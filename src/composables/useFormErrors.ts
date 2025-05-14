@@ -1,10 +1,10 @@
+import type { AxiosError } from "axios";
+
+import { useQuasar } from "quasar";
 import { ref } from "vue";
 
-import type { AxiosError } from "axios";
-import { useQuasar } from "quasar";
-
 export type DRFErrorMessage = string | string[];
-export type DRFError = { details: Record<string, DRFErrorMessage> } | Record<string, DRFErrorMessage>;
+export type DRFErrorResponse = Record<string, DRFErrorMessage> | { details: Record<string, DRFErrorMessage> };
 
 export default function useFormErrors() {
   const $q = useQuasar();
@@ -13,7 +13,7 @@ export default function useFormErrors() {
     errors,
     setErrors: (axiosError: unknown) => {
       const result: Record<string, string> = {};
-      const data = (axiosError as AxiosError<DRFError>).response?.data;
+      const data = (axiosError as AxiosError<DRFErrorResponse>).response?.data;
       const reason = data?.details ? data.details : data;
 
       if (!reason) {
@@ -25,8 +25,8 @@ export default function useFormErrors() {
       }
 
       $q.notify({
-        type: "negative",
         message: result.nonFieldErrors ?? result.__all__ ?? "Could not submit form.",
+        type: "negative",
       });
 
       errors.value = result;

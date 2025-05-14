@@ -6,9 +6,9 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
-      modelName: "Registration statuses",
-      filePattern: "RegistrationStatus",
       expected: ["Accredited", "Nominated", "Registered"],
+      filePattern: "RegistrationStatus",
+      modelName: "Registration statuses",
     });
   });
 });

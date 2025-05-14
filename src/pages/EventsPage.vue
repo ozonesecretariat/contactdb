@@ -23,21 +23,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useAsyncState } from "@vueuse/core";
-import { api } from "boot/axios";
 import type { MeetingEvent } from "src/types/event";
 
+import { useAsyncState } from "@vueuse/core";
+import { api } from "boot/axios";
+import { computed, ref } from "vue";
+
 const columns = [
-  { name: "code", label: "Code", field: "code", sortable: true },
-  { name: "title", label: "Title", field: "title", sortable: true },
-  { name: "startDate", label: "Start date", field: "startDate", sortable: true },
-  { name: "endDate", label: "End date", field: "endDate", sortable: true },
-  { name: "venueCountry", label: "Venue country", field: (row: MeetingEvent) => row.venueCountry.name, sortable: true },
-  { name: "venueCity", label: "Venue city", field: "venueCity", sortable: true },
-  { name: "dates", label: "Dates", field: "dates", sortable: true },
+  { field: "code", label: "Code", name: "code", sortable: true },
+  { field: "title", label: "Title", name: "title", sortable: true },
+  { field: "startDate", label: "Start date", name: "startDate", sortable: true },
+  { field: "endDate", label: "End date", name: "endDate", sortable: true },
+  { field: (row: MeetingEvent) => row.venueCountry.name, label: "Venue country", name: "venueCountry", sortable: true },
+  { field: "venueCity", label: "Venue city", name: "venueCity", sortable: true },
+  { field: "dates", label: "Dates", name: "dates", sortable: true },
 ];
-const { state, isLoading } = useAsyncState(async () => (await api.get("/events/")).data, []);
+const { isLoading, state } = useAsyncState(async () => (await api.get("/events/")).data, []);
 const search = ref("");
 
 const events = computed(() => {

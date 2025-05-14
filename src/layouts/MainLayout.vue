@@ -36,13 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useUserStore } from "stores/userStore";
-import { apiBase } from "boot/axios";
-import { useRoute, useRouter } from "vue-router";
-import { useQuasar } from "quasar";
 import { useStorage } from "@vueuse/core";
+import { apiBase } from "boot/axios";
 import MenuList from "components/MenuList.vue";
+import { useQuasar } from "quasar";
+import { useUserStore } from "stores/userStore";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const $q = useQuasar();
 const route = useRoute();
@@ -59,18 +59,18 @@ $q.dark.set(isDarkMode.value);
 
 const menuItems = computed(() => [
   {
-    label: "Account settings",
     icon: "account_circle",
+    label: "Account settings",
     to: { name: "account-settings" },
   },
   {
-    label: "Account security",
     icon: "security",
+    label: "Account security",
     to: { name: "account-security" },
   },
   {
-    label: "Change password",
     icon: "password",
+    label: "Change password",
     to: { name: "account-change-password" },
   },
   {
@@ -78,21 +78,21 @@ const menuItems = computed(() => [
     type: "separator" as const,
   },
   {
-    label: "Log out",
-    icon: "logout",
     click: logout,
+    icon: "logout",
+    label: "Log out",
   },
 ]);
 
 const drawerItems = computed(() => [
   {
-    label: "Home",
     icon: "home",
+    label: "Home",
     to: { name: "home" },
   },
   {
-    label: "Events",
     icon: "event",
+    label: "Events",
     to: { name: "events" },
   },
   {
@@ -100,17 +100,13 @@ const drawerItems = computed(() => [
     type: "separator" as const,
   },
   {
-    label: "Admin",
-    icon: "admin_panel_settings",
     href: `${apiBase}/admin/`,
+    icon: "admin_panel_settings",
+    label: "Admin",
     show: userStore.isStaff,
   },
   ...menuItems.value,
 ]);
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
 
 async function logout() {
   $q.loading.show();
@@ -120,5 +116,9 @@ async function logout() {
   } finally {
     $q.loading.hide();
   }
+}
+
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>

@@ -6,12 +6,12 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
-      modelName: "Contact groups",
+      expected: ["Focal point", "NFP", "FPLS", "Legacy contacts"],
+      filePattern: "ContactGroup",
       filters: {
         predefined__exact: "Yes",
       },
-      filePattern: "ContactGroup",
-      expected: ["Focal point", "NFP", "FPLS", "Legacy contacts"],
+      modelName: "Contact groups",
     });
   });
   it("Check contacts link", () => {
@@ -27,11 +27,11 @@ describe("Check", () => {
   it("Check send email to groups", () => {
     cy.loginAdmin();
     cy.triggerAction({
-      modelName: "Contact groups",
       action: "Send email to selected groups",
       filters: {
         predefined__exact: "Yes",
       },
+      modelName: "Contact groups",
     });
     cy.contains("Add email");
     cy.get(".select2-selection__choice").contains("Focal point");

@@ -48,10 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useUserStore } from "stores/userStore";
 import { api, apiURL } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
+import { useUserStore } from "stores/userStore";
+import { ref, watch } from "vue";
 
 const userStore = useUserStore();
 
@@ -63,20 +63,6 @@ const step = ref(1);
 const code = ref("");
 const backupTokens = ref<string[]>([]);
 
-async function initStep() {
-  const data = new FormData();
-  data.append("two_factor_setup_view-current_step", "welcome");
-
-  try {
-    loading.value = true;
-    await api.post("/account/two_factor/setup/", data);
-    step.value += 1;
-  } catch (e) {
-    setErrors(e);
-  } finally {
-    loading.value = false;
-  }
-}
 async function completeStep() {
   const data = new FormData();
   data.append("two_factor_setup_view-current_step", "generator");
@@ -96,6 +82,20 @@ async function generateBackupTokens() {
   try {
     loading.value = true;
     backupTokens.value = (await api.post("/account/two_factor/backup/tokens/")).data.tokens;
+    step.value += 1;
+  } catch (e) {
+    setErrors(e);
+  } finally {
+    loading.value = false;
+  }
+}
+async function initStep() {
+  const data = new FormData();
+  data.append("two_factor_setup_view-current_step", "welcome");
+
+  try {
+    loading.value = true;
+    await api.post("/account/two_factor/setup/", data);
     step.value += 1;
   } catch (e) {
     setErrors(e);

@@ -6,12 +6,12 @@ describe("Check", () => {
   it("Check multiselect filter", () => {
     cy.loginView();
     cy.performSearch({
-      modelName: "Contacts",
       filters: {
         country__in: ["Albania", "Chad"],
-        organization__in: ["Warp Dynamics Institute", "Galactic Research Institute for Advanced Technologies"],
         groups__in: ["The Dream Team Connection", "Music Maniacs Association"],
+        organization__in: ["Warp Dynamics Institute", "Galactic Research Institute for Advanced Technologies"],
       },
+      modelName: "Contacts",
     });
     cy.contains("aria@example.com");
     cy.contains("axel-elio@example.com");
@@ -21,9 +21,9 @@ describe("Check", () => {
     cy.loginEdit();
     cy.createContactGroup(2).then((group) => {
       cy.triggerAction({
-        modelName: "Contacts",
         action: "Merge selected contacts",
         filters: { groups__in: group.name },
+        modelName: "Contacts",
       });
       cy.checkSearch({ modelName: "Resolve conflicts", searchValue: group.contacts[0].last_name });
       cy.get("input[value=Save]").click();
@@ -36,9 +36,9 @@ describe("Check", () => {
     cy.loginEdit();
     cy.createContactGroup(2).then((group) => {
       cy.triggerAction({
-        modelName: "Contacts",
         action: "Add selected contacts to group",
         filters: { groups__in: group.name },
+        modelName: "Contacts",
       });
       cy.fillInput("group", "Focal point");
       cy.get("[type=submit]").contains("Add to group").click();
@@ -52,12 +52,12 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
-      modelName: "Contacts",
+      expected: ["astrid-cassius@example.com", "cassian-xenon@example.com"],
+      filePattern: "Contact",
       filters: {
         country__in: "Liechtenstein",
       },
-      filePattern: "Contact",
-      expected: ["astrid-cassius@example.com", "cassian-xenon@example.com"],
+      modelName: "Contacts",
     });
   });
   it("Check import", () => {
@@ -84,24 +84,24 @@ describe("Check", () => {
 
     // Remove the imported data
     cy.triggerAction({
-      modelName: "Contacts",
       action: "Delete selected contacts",
       filters: {
-        organization__in: "Astral Technologies Syndicate",
-        groups__in: "Adventure Seekers Squad",
         country__in: "Poland",
+        groups__in: "Adventure Seekers Squad",
+        organization__in: "Astral Technologies Syndicate",
       },
+      modelName: "Contacts",
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
   });
   it("Check organization link", () => {
     cy.loginView();
     cy.performSearch({
-      modelName: "Contacts",
       filters: {
-        organization__in: "Warp Dynamics Institute",
         country__in: "Albania",
+        organization__in: "Warp Dynamics Institute",
       },
+      modelName: "Contacts",
     });
     cy.contains("1 result");
     cy.contains("Aria");
@@ -113,11 +113,11 @@ describe("Check", () => {
   it("Check registrations link", () => {
     cy.loginView();
     cy.performSearch({
-      modelName: "Contacts",
       filters: {
-        organization__in: "Warp Dynamics Institute",
         country__in: "Albania",
+        organization__in: "Warp Dynamics Institute",
       },
+      modelName: "Contacts",
     });
     cy.contains("1 result");
     cy.contains("Aria");
@@ -130,11 +130,11 @@ describe("Check", () => {
   it("Check email log link", () => {
     cy.loginAdmin();
     cy.performSearch({
-      modelName: "Contacts",
       filters: {
-        registrations__event: "Mythos Masquerade Ball",
         country__in: "Albania",
+        registrations__event: "Mythos Masquerade Ball",
       },
+      modelName: "Contacts",
     });
     cy.contains("1 result");
     cy.contains("Aria");
@@ -147,11 +147,11 @@ describe("Check", () => {
   it("Check send email to contacts", () => {
     cy.loginAdmin();
     cy.triggerAction({
-      modelName: "Contacts",
       action: "Send email to selected contacts",
       filters: {
         organization__in: "Quantum Engineering Consortium",
       },
+      modelName: "Contacts",
     });
     cy.contains("Add email");
     cy.get(".select2-selection__choice").contains("Axel Nyx");

@@ -20,17 +20,17 @@ function handleArrayFieldEvent(event) {
   let widgetTarget = actionTarget.closest(".vArrayWidget");
 
   switch (actionTarget.dataset.arrayAction) {
-    case "remove":
-      widgetTarget.remove();
-      break;
-    case "moveup":
-      widgetTarget.previousElementSibling?.before(widgetTarget);
+    case "add":
+      widgetTarget = addArrayWidget(actionTarget.closest(".vArrayField"));
       break;
     case "movedown":
       widgetTarget.nextElementSibling?.after(widgetTarget);
       break;
-    case "add":
-      widgetTarget = addArrayWidget(actionTarget.closest(".vArrayField"));
+    case "moveup":
+      widgetTarget.previousElementSibling?.before(widgetTarget);
+      break;
+    case "remove":
+      widgetTarget.remove();
       break;
     default:
       return;
@@ -62,30 +62,6 @@ function arrayEquals(a1, a2) {
     }
   }
   return true;
-}
-
-function getNewValue(el) {
-  const newValueEl = el.querySelector(".fieldBox:not(.field-copy_widget) .readonly");
-  if (!newValueEl) {
-    return {};
-  }
-  const pk = newValueEl.querySelector("[data-pk]")?.dataset.pk.trim();
-
-  let value = null;
-  const listElement = newValueEl.querySelector("ul");
-  if (listElement) {
-    value = Array.from(listElement.querySelectorAll("li")).map((listEl) => listEl.innerText.trim());
-    if (value.length === 0) {
-      value = null;
-    }
-  } else {
-    value = newValueEl.innerText.trim();
-    if (value === "-") {
-      value = null;
-    }
-  }
-
-  return { pk, value };
 }
 
 function checkForDifferences() {
@@ -149,6 +125,30 @@ function copyFromNew(event) {
   }
 
   checkForDifferences();
+}
+
+function getNewValue(el) {
+  const newValueEl = el.querySelector(".fieldBox:not(.field-copy_widget) .readonly");
+  if (!newValueEl) {
+    return {};
+  }
+  const pk = newValueEl.querySelector("[data-pk]")?.dataset.pk.trim();
+
+  let value = null;
+  const listElement = newValueEl.querySelector("ul");
+  if (listElement) {
+    value = Array.from(listElement.querySelectorAll("li")).map((listEl) => listEl.innerText.trim());
+    if (value.length === 0) {
+      value = null;
+    }
+  } else {
+    value = newValueEl.innerText.trim();
+    if (value === "-") {
+      value = null;
+    }
+  }
+
+  return { pk, value };
 }
 
 document.addEventListener("DOMContentLoaded", () => {

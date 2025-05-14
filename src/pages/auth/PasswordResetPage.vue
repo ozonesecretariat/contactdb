@@ -21,10 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from "quasar";
-import { ref } from "vue";
-import useFormErrors from "src/composables/useFormErrors";
 import { api } from "boot/axios";
+import { useQuasar } from "quasar";
+import useFormErrors from "src/composables/useFormErrors";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -42,8 +42,8 @@ async function onSubmit() {
       email: email.value,
     });
     $q.notify({
-      type: "positive",
       message: "Password reset instructions have been sent to your email!",
+      type: "positive",
     });
     await router.push({ name: "login" });
   } catch (e) {

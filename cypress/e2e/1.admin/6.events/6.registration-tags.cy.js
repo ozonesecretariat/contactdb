@@ -6,9 +6,9 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
-      modelName: "Registration tags",
-      filePattern: "RegistrationTag",
       expected: ["credential", "online", "viewer", "visa"],
+      filePattern: "RegistrationTag",
+      modelName: "Registration tags",
     });
   });
 });

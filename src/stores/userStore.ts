@@ -1,22 +1,44 @@
-import { api } from "boot/axios";
-import { defineStore } from "pinia";
 import type { AxiosError } from "axios";
 
+import { api } from "boot/axios";
+import { defineStore } from "pinia";
+
 const initialState = {
-  initialized: false,
   email: "",
-  firstName: null as string | null,
-  lastName: null as string | null,
+  firstName: null as null | string,
+  initialized: false,
+  isActive: false,
   isStaff: false,
   isSuperuser: false,
-  isActive: false,
-  twoFactorEnabled: false,
+  lastName: null as null | string,
   permissions: [] as string[],
   roles: [] as string[],
+  twoFactorEnabled: false,
 };
 
 export const useUserStore = defineStore("user", {
-  state: () => structuredClone(initialState),
+  actions: {
+    async load() {
+      try {
+        const response = (await api.get("/auth/user/")).data;
+        Object.assign(this, response);
+      } catch (e) {
+        switch ((e as AxiosError).status) {
+          case 401:
+          case 403:
+            break;
+          default:
+            throw e;
+        }
+      } finally {
+        this.initialized = true;
+      }
+    },
+    async logoutUser() {
+      await api.post("/auth/logout/");
+      Object.assign(this, initialState);
+    },
+  },
   getters: {
     fullName(state) {
       if (!state.firstName && !state.lastName) {
@@ -47,26 +69,5 @@ export const useUserStore = defineStore("user", {
       return state.email && state.isActive;
     },
   },
-  actions: {
-    async load() {
-      try {
-        const response = (await api.get("/auth/user/")).data;
-        Object.assign(this, response);
-      } catch (e) {
-        switch ((e as AxiosError).status) {
-          case 403:
-          case 401:
-            break;
-          default:
-            throw e;
-        }
-      } finally {
-        this.initialized = true;
-      }
-    },
-    async logoutUser() {
-      await api.post("/auth/logout/");
-      Object.assign(this, initialState);
-    },
-  },
+  state: () => structuredClone(initialState),
 });

@@ -6,10 +6,10 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
+      expected: ["Delegate", "Unofficial Delegate"],
+      filePattern: "RegistrationRole",
       modelName: "Registration roles",
       searchValue: "delegate",
-      filePattern: "RegistrationRole",
-      expected: ["Delegate", "Unofficial Delegate"],
     });
   });
 });

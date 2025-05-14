@@ -82,12 +82,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import { useQuasar } from "quasar";
 import { api } from "src/boot/axios";
-import { useRoute } from "vue-router";
-import { useUserStore } from "stores/userStore";
 import useFormErrors from "src/composables/useFormErrors";
+import { useUserStore } from "stores/userStore";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 const $q = useQuasar();
 const route = useRoute();
@@ -102,7 +102,7 @@ const { errors, setErrors } = useFormErrors();
 const loading = ref(false);
 const step = ref("auth");
 
-function getSafeRedirect(path: string | null | undefined) {
+function getSafeRedirect(path: null | string | undefined) {
   const url = new URL(path ?? "/", window.location.origin);
   if (url.hostname === window.location.hostname) {
     return url.href;
@@ -116,11 +116,11 @@ async function next() {
   const data = new FormData();
   data.append("current_step", step.value);
   switch (step.value) {
-    case "token":
-      data.append("token-otp_token", code.value);
-      break;
     case "backup":
       data.append("backup-otp_token", code.value);
+      break;
+    case "token":
+      data.append("token-otp_token", code.value);
       break;
     case "auth":
     default:
@@ -139,8 +139,8 @@ async function next() {
     } else {
       await userStore.load();
       $q.notify({
-        type: "positive",
         message: "Login successful!",
+        type: "positive",
       });
       window.location.href = getSafeRedirect(route.query.next?.toString());
     }

@@ -1,4 +1,7 @@
 import { defineRouter } from "#q-app/wrappers";
+import { useQuasar } from "quasar";
+import { useAppSettingsStore } from "stores/appSettingsStore";
+import { useUserStore } from "stores/userStore";
 import {
   createMemoryHistory,
   createRouter,
@@ -7,10 +10,26 @@ import {
   type RouteLocationNormalizedGeneric,
   type RouteRecordNormalized,
 } from "vue-router";
+
 import routes from "./routes";
-import { useUserStore } from "stores/userStore";
-import { useAppSettingsStore } from "stores/appSettingsStore";
-import { useQuasar } from "quasar";
+
+/**
+ * Checks if the current user has the required permissions to access the given route.
+ */
+export function hasRoutePermission(matched: RouteRecordNormalized[]) {
+  const userStore = useUserStore();
+  return matched.every((route) => {
+    if (route.meta.requireStaff && !userStore.isStaff) {
+      return false;
+    }
+
+    if (route.meta.requireSuperuser && !userStore.isSuperuser) {
+      return false;
+    }
+
+    return (route.meta.requirePermissions ?? []).every((permission) => userStore.permissions.includes(permission));
+  });
+}
 
 /**
  * Initializes the necessary stores by checking their initialization state and loading them if required.
@@ -38,24 +57,6 @@ async function initializeStores() {
 }
 
 /**
- * Checks if the current user has the required permissions to access the given route.
- */
-export function hasRoutePermission(matched: RouteRecordNormalized[]) {
-  const userStore = useUserStore();
-  return matched.every((route) => {
-    if (route.meta.requireStaff && !userStore.isStaff) {
-      return false;
-    }
-
-    if (route.meta.requireSuperuser && !userStore.isSuperuser) {
-      return false;
-    }
-
-    return (route.meta.requirePermissions ?? []).every((permission) => userStore.permissions.includes(permission));
-  });
-}
-
-/**
  * Guards navigation based on user authentication, permissions, and application settings.
  * Ensures the user meets the requirements for accessing the desired route.
  */
@@ -71,8 +72,8 @@ async function permissionGuard(to: RouteLocationNormalizedGeneric) {
   for (const route of to.matched) {
     if (route.meta.requireAuthentication && !userStore.isLoggedIn) {
       $q.notify({
-        type: "warning",
         message: "Must be logged in to view this page.",
+        type: "warning",
       });
       return { name: "login", query: { next: to.fullPath } };
     }
@@ -84,16 +85,16 @@ async function permissionGuard(to: RouteLocationNormalizedGeneric) {
 
   if (!hasRoutePermission(to.matched)) {
     $q.notify({
-      type: "warning",
       message: "Your account does not have the required permissions to access this page.",
+      type: "warning",
     });
     return { name: "home" };
   }
 
   if (!userStore.twoFactorEnabled && appSettingsStore.require2fa && to.name !== "account-security") {
     $q.notify({
-      type: "info",
       message: "Two factor authentication is required for this account. Please update your settings to continue.",
+      type: "info",
     });
     return { name: "account-security" };
   }
@@ -119,13 +120,13 @@ export default defineRouter((/* { store, ssrContext } */) => {
   }
 
   const router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
-    routes,
-
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+    routes,
+
+    scrollBehavior: () => ({ left: 0, top: 0 }),
   });
 
   router.beforeEach(permissionGuard);

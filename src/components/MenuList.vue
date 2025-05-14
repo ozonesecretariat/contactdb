@@ -13,18 +13,18 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter, type RouteLocationRaw } from "vue-router";
-import { computed } from "vue";
 import { hasRoutePermission } from "src/router";
+import { computed } from "vue";
+import { type RouteLocationRaw, useRouter } from "vue-router";
 
 export interface MenuItem {
-  label: string;
-  icon?: string;
-  to?: RouteLocationRaw;
-  href?: string;
   click?: () => void;
-  type?: "separator" | "item";
+  href?: string;
+  icon?: string;
+  label: string;
   show?: boolean;
+  to?: RouteLocationRaw;
+  type?: "item" | "separator";
 }
 
 export interface MenuListProps {

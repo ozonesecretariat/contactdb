@@ -43,11 +43,11 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from "quasar";
-import { ref } from "vue";
-import useFormErrors from "src/composables/useFormErrors";
 import { api } from "boot/axios";
-import { useRouter, useRoute } from "vue-router";
+import { useQuasar } from "quasar";
+import useFormErrors from "src/composables/useFormErrors";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
@@ -67,12 +67,12 @@ async function onSubmit() {
     await api.post("/auth/password/reset/confirm/", {
       newPassword1: newPassword1.value,
       newPassword2: newPassword2.value,
-      uid: route.query.uid,
       token: route.query.token,
+      uid: route.query.uid,
     });
     $q.notify({
-      type: "positive",
       message: "Password has been reset successfully!",
+      type: "positive",
     });
     await router.push({ name: "login" });
   } catch (e) {

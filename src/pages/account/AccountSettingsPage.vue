@@ -33,11 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUserStore } from "stores/userStore";
-import useFormErrors from "src/composables/useFormErrors";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import useFormErrors from "src/composables/useFormErrors";
+import { useUserStore } from "stores/userStore";
+import { ref } from "vue";
 
 const $q = useQuasar();
 const userStore = useUserStore();
@@ -56,8 +56,8 @@ async function onSubmit() {
       lastName: lastName.value,
     });
     $q.notify({
-      type: "positive",
       message: "Account details updated.",
+      type: "positive",
     });
     await userStore.load();
   } catch (e) {

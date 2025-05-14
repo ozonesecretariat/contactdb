@@ -3,20 +3,20 @@ describe("Check user permissions", () => {
     cy.loginEdit();
     cy.checkAccess({
       core: {
-        contactgroup: true,
         contact: true,
+        contactgroup: true,
         country: true,
-        organizationtype: true,
         organization: true,
+        organizationtype: true,
         possibleduplicate: { view: true },
         resolveconflict: { view: true },
       },
       events: {
         event: true,
+        registration: true,
         registrationrole: true,
         registrationstatus: true,
         registrationtag: true,
-        registration: true,
       },
     });
   });

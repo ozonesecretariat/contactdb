@@ -1,21 +1,23 @@
-import globals from "globals";
-import pluginVue from "eslint-plugin-vue";
-import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
-import pluginCypress from "eslint-plugin-cypress/flat";
-import prettierSkipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 import pluginJs from "@eslint/js";
-import pluginPrettier from "eslint-config-prettier";
 import pluginQuasar from "@quasar/app-vite/eslint";
+import prettierSkipFormatting from "@vue/eslint-config-prettier/skip-formatting";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import pluginPrettier from "eslint-config-prettier";
+import pluginCypress from "eslint-plugin-cypress/flat";
+import perfectionist from "eslint-plugin-perfectionist";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
 
 export default defineConfigWithVueTs([
   {
-    name: "app/files-to-lint",
     files: ["**/*.{ts,mts,tsx,js,mjs,cjs}"],
+    name: "app/files-to-lint",
   },
   {
-    name: "app/files-to-ignore",
     ignores: ["**/dist/**", "**/dist-ssr/**", "**/coverage/**", "**/node_modules/**", "**/.fs/**", "**/.venv/**"],
+    name: "app/files-to-ignore",
   },
+  perfectionist.configs["recommended-natural"],
   pluginQuasar.configs.recommended(),
   pluginJs.configs.all,
   pluginVue.configs["flat/recommended"],
@@ -33,32 +35,30 @@ export default defineConfigWithVueTs([
     rules: {
       // expect() expression will be marked as errors otherwise.
       "@typescript-eslint/no-unused-expressions": ["off"],
-      "no-unused-expressions": ["off"],
       // Can't enforce camelCase since it conflicts with some python stuff
       camelcase: ["error", { properties: "never" }],
+      "no-unused-expressions": ["off"],
     },
   },
   {
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module",
-
       globals: {
         ...globals.browser,
         ...globals.node, // SSR, Electron, config files
-        process: "readonly", // process.env.*
-        ga: "readonly", // Google Analytics
-        cordova: "readonly",
+        browser: "readonly", // BEX related
         Capacitor: "readonly",
         chrome: "readonly", // BEX related
-        browser: "readonly", // BEX related
+        cordova: "readonly",
+        ga: "readonly", // Google Analytics
+        process: "readonly", // process.env.*
       },
+
+      sourceType: "module",
     },
 
     // add your custom rules here
     rules: {
-      // Make component names consistent
-      "vue/component-name-in-template-casing": ["error", "kebab-case", { registeredComponentsOnly: false }],
       // Allow promises not being waited on always.
       "@typescript-eslint/no-floating-promises": "off",
       // Don't force capitalized comments
@@ -71,12 +71,12 @@ export default defineConfigWithVueTs([
       "func-style": "off",
       // Allow short id names
       "id-length": "off",
+      "max-lines": "off",
+      "max-lines-per-function": "off",
       // Disable max-params
       "max-params": "off",
       // Disable max-statements
       "max-statements": "off",
-      "max-lines": "off",
-      "max-lines-per-function": "off",
       // Enforce separate lines for multiline comments
       "multiline-comment-style": ["error", "separate-lines"],
       // Allow use of "continue"
@@ -87,15 +87,15 @@ export default defineConfigWithVueTs([
       "no-magic-numbers": "off",
       // Allow negated conditions
       "no-negated-condition": "off",
+      // Allow ternary
+      "no-ternary": "off",
+      // Allow underscore dangle
+      "no-underscore-dangle": "off",
+      // Allow using function before defining them
+      "no-use-before-define": ["error", { functions: false }],
       // The @typescript-eslint/no-unused-vars will catch any such errors without
       // any false positives, so disable this rule.
       "no-useless-assignment": "off",
-      // Allow using function before defining them
-      "no-use-before-define": ["error", { functions: false }],
-      // Allow underscore dangle
-      "no-underscore-dangle": "off",
-      // Allow ternary
-      "no-ternary": "off",
       // Allow warning comments
       "no-warning-comments": "off",
       // Force separate var declaration
@@ -106,6 +106,8 @@ export default defineConfigWithVueTs([
       "sort-imports": "off",
       "sort-keys": "off",
       "sort-vars": "off",
+      // Make component names consistent
+      "vue/component-name-in-template-casing": ["error", "kebab-case", { registeredComponentsOnly: false }],
     },
   },
   prettierSkipFormatting,

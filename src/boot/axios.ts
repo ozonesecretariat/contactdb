@@ -3,8 +3,8 @@ import axios, { type AxiosError, type AxiosInstance } from "axios";
 
 declare module "vue" {
   interface ComponentCustomProperties {
-    $axios: AxiosInstance;
     $api: AxiosInstance;
+    $axios: AxiosInstance;
   }
 }
 
@@ -34,12 +34,12 @@ if (process.env.PUBLIC_API_HOST) {
 // for each client)
 export const api = axios.create({
   baseURL: apiURL,
+  headers: {},
+  maxRedirects: 5,
   withCredentials: true,
   withXSRFToken: true,
   xsrfCookieName: "csrftoken",
   xsrfHeaderName: "X-CSRFToken",
-  headers: {},
-  maxRedirects: 5,
 });
 
 export default defineBoot(({ app }) => {

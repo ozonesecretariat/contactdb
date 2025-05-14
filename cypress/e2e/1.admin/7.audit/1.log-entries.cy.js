@@ -2,9 +2,9 @@ describe("Check", () => {
   it("Check search", () => {
     cy.loginAdmin();
     cy.checkSearch({
+      expectedValue: "Romania (RO)",
       modelName: "Log entries",
       searchValue: "romania",
-      expectedValue: "Romania (RO)",
     });
     cy.get("a").contains("History").click();
     cy.contains("1 result");

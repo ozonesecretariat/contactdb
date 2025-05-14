@@ -1,35 +1,35 @@
 describe("Check", () => {
   it("Check model admin", () => {
     cy.loginEdit();
-    cy.checkModelAdmin({ modelName: "Organizations", extraFields: { organization_type: "OTHER" } });
+    cy.checkModelAdmin({ extraFields: { organization_type: "OTHER" }, modelName: "Organizations" });
   });
   it("Check model search", () => {
     cy.loginView();
     cy.checkSearch({
+      expectedValue: "Exøplănetâry Çolönizàtion Áuțhôrîtÿ",
       modelName: "Organizations",
       searchValue: "Exoplanetary Colonization Authority",
-      expectedValue: "Exøplănetâry Çolönizàtion Áuțhôrîtÿ",
     });
   });
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
-      modelName: "Organizations",
+      expected: ["Extraterrestrial Relations Bureau", "Intergalactic Defense Coalition"],
+      filePattern: "Organization",
       filters: {
         country: "Uruguay",
       },
-      filePattern: "Organization",
-      expected: ["Extraterrestrial Relations Bureau", "Intergalactic Defense Coalition"],
+      modelName: "Organizations",
     });
   });
   it("Check contacts link", () => {
     cy.loginView();
     cy.performSearch({
-      modelName: "Organizations",
       filters: {
-        organization_type: "Exhibitors",
         government: "Chile",
+        organization_type: "Exhibitors",
       },
+      modelName: "Organizations",
     });
     cy.contains("Quantum Entanglement Research Consortium");
     cy.get("a").contains("8 contacts").click();

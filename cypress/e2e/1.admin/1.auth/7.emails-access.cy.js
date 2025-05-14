@@ -3,12 +3,12 @@ describe("Check user permissions", () => {
     cy.loginEmails();
     cy.checkAccess({
       core: {
-        contactgroup: { view: true },
         contact: { view: true },
+        contactgroup: { view: true },
       },
       emails: {
-        emailtemplate: true,
         email: { add: true, view: true },
+        emailtemplate: true,
         sendemailtask: { view: true },
       },
       events: {

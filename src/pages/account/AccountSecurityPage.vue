@@ -4,10 +4,9 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "stores/userStore";
-
-import ManageTwoFactorPage from "pages/account/ManageTwoFactorPage.vue";
 import EnableTwoFactorPage from "pages/account/EnableTwoFactorPage.vue";
+import ManageTwoFactorPage from "pages/account/ManageTwoFactorPage.vue";
+import { useUserStore } from "stores/userStore";
 
 const userStore = useUserStore();
 </script>

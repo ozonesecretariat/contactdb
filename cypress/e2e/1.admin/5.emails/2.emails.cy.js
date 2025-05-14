@@ -4,31 +4,31 @@ describe("Check", () => {
   it("Check send", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        content: "Test sending email",
+        events: "Stéllâr Sérènade Müsïc Fêstivàl",
+        groups: "Literary Legends League",
+        recipients: "Élàra Vãngüard",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "Élàra Vãngüard",
-        groups: "Literary Legends League",
-        events: "Stéllâr Sérènade Müsïc Fêstivàl",
-        content: "Test sending email",
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
   });
   it("Check send Cc fields", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        cc_groups: "Literary Legends League",
+        cc_recipients: "Xenon Zephyr",
+        content: "Testing sending email with Cc fields",
+        recipients: "Thane Seren",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "Thane Seren",
-        cc_recipients: "Xenon Zephyr",
-        cc_groups: "Literary Legends League",
-        content: "Testing sending email with Cc fields",
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
@@ -48,16 +48,16 @@ describe("Check", () => {
   it("Check send Bcc fields", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        bcc_groups: "Literary Legends League",
+        bcc_recipients: "Xenon Zephyr",
+        content: "Testing sending email with Bcc fields",
+        recipients: "Thane Seren",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "Thane Seren",
-        bcc_recipients: "Xenon Zephyr",
-        bcc_groups: "Literary Legends League",
-        content: "Testing sending email with Bcc fields",
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
@@ -77,14 +77,14 @@ describe("Check", () => {
   it("Check send no CC address", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        content: "Test sending email with no CC",
+        recipients: "John No CC email",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "John No CC email",
-        content: "Test sending email with no CC",
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
 
     // Wait for the task to finish
@@ -93,14 +93,14 @@ describe("Check", () => {
   it("Checking sending to contact with no name", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        content: "Dear [[full_name]],\nYou don't actually have a name!?!!",
+        recipients: "no-name.jane",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "no-name.jane",
-        content: "Dear [[full_name]],\nYou don't actually have a name!?!!",
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
 
     // Wait for the task to finish
@@ -113,14 +113,14 @@ describe("Check", () => {
   it("Check sending email with non-ASCII characters", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        content: "Dear [[full_name]],\n Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>",
+        recipients: "🐉",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "🐉",
-        content: "Dear [[full_name]],\n Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>",
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
 
     // Wait for the task to finish
@@ -207,15 +207,15 @@ describe("Check", () => {
   it("Check use attachments", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        attachments: [{ file: "fixtures/test/files/lorem-ipsum.txt" }],
+        content: "Test sending email with attachments",
+        recipients: "Aria-Eclipse Titan",
+      },
       modelName: "Emails",
       nameField: "subject",
-      extraFields: {
-        recipients: "Aria-Eclipse Titan",
-        content: "Test sending email with attachments",
-        attachments: [{ file: "fixtures/test/files/lorem-ipsum.txt" }],
-      },
       suffix: "-email-subject",
-      checkDelete: false,
     });
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS");
@@ -226,8 +226,8 @@ describe("Check", () => {
     cy.get("#fieldset-0-1-heading").click();
     cy.get("a").contains("lorem-ipsum.txt").click();
     cy.checkFile({
-      filePattern: "lorem-ipsum",
       expected: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit"],
+      filePattern: "lorem-ipsum",
     });
 
     // Check attachment in the raw email

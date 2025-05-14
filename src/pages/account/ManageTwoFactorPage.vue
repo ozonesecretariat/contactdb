@@ -22,25 +22,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { api } from "boot/axios";
-import useFormErrors from "src/composables/useFormErrors";
 import { useQuasar } from "quasar";
+import useFormErrors from "src/composables/useFormErrors";
 import { useUserStore } from "stores/userStore";
+import { ref } from "vue";
 
 const $q = useQuasar();
 const userStore = useUserStore();
 
 const backupTokens = ref<string[]>([]);
 const { setErrors } = useFormErrors();
-
-async function generateBackupTokens() {
-  try {
-    backupTokens.value = (await api.post("/account/two_factor/backup/tokens/")).data.tokens;
-  } catch (e) {
-    setErrors(e);
-  }
-}
 
 async function disableAndReload() {
   try {
@@ -53,18 +45,26 @@ async function disableAndReload() {
 
 function disableTwoFactor() {
   $q.dialog({
-    title: "Disable 2FA",
+    cancel: true,
     message:
       "Disabling two factor authentication for your account will significantly reduce your account's security. Are you sure?",
-    cancel: true,
-    persistent: true,
     ok: {
-      label: "Disable",
       color: "negative",
+      label: "Disable",
     },
+    persistent: true,
+    title: "Disable 2FA",
   }).onOk(() => {
     disableAndReload();
   });
+}
+
+async function generateBackupTokens() {
+  try {
+    backupTokens.value = (await api.post("/account/two_factor/backup/tokens/")).data.tokens;
+  } catch (e) {
+    setErrors(e);
+  }
 }
 </script>
 

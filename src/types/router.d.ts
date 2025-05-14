@@ -3,10 +3,10 @@ import "vue-router";
 declare module "vue-router" {
   interface RouteMeta {
     header?: string;
-    requireAuthentication?: boolean;
     requireAnonymous?: boolean;
+    requireAuthentication?: boolean;
+    requirePermissions?: string[];
     requireStaff?: boolean;
     requireSuperuser?: boolean;
-    requirePermissions?: string[];
   }
 }

@@ -6,10 +6,10 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
+      expected: ["Interpreters", "Industry"],
+      filePattern: "OrganizationType",
       modelName: "Organization types",
       searchValue: "in",
-      filePattern: "OrganizationType",
-      expected: ["Interpreters", "Industry"],
     });
   });
 });
