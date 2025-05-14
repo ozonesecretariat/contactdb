@@ -34,7 +34,12 @@ const columns = [
   { field: "title", label: "Title", name: "title", sortable: true },
   { field: "startDate", label: "Start date", name: "startDate", sortable: true },
   { field: "endDate", label: "End date", name: "endDate", sortable: true },
-  { field: (row: MeetingEvent) => row.venueCountry.name, label: "Venue country", name: "venueCountry", sortable: true },
+  {
+    field: (row: MeetingEvent) => row.venueCountry?.name ?? "",
+    label: "Venue country",
+    name: "venueCountry",
+    sortable: true,
+  },
   { field: "venueCity", label: "Venue city", name: "venueCity", sortable: true },
   { field: "dates", label: "Dates", name: "dates", sortable: true },
 ];
@@ -48,9 +53,9 @@ const events = computed(() => {
       event.code.toLowerCase().includes(text) ||
       event.title.toLowerCase().includes(text) ||
       event.venueCity.toLowerCase().includes(text) ||
-      event.venueCountry.code.toLowerCase().includes(text) ||
-      event.venueCountry.name.toLowerCase().includes(text) ||
-      event.venueCountry.officialName.toLowerCase().includes(text),
+      event.venueCountry?.code.toLowerCase().includes(text) ||
+      event.venueCountry?.name.toLowerCase().includes(text) ||
+      event.venueCountry?.officialName.toLowerCase().includes(text),
   );
 });
 </script>

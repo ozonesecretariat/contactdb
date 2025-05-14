@@ -7,5 +7,5 @@ export interface MeetingEvent {
   startDate: string;
   title: string;
   venueCity: string;
-  venueCountry: Country;
+  venueCountry: Country | null;
 }
