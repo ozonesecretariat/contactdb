@@ -27,13 +27,19 @@ import type { MeetingEvent } from "src/types/event";
 
 import { useAsyncState } from "@vueuse/core";
 import { api } from "boot/axios";
+import { formatDate } from "src/intl";
 import { computed, ref } from "vue";
 
 const columns = [
   { field: "code", label: "Code", name: "code", sortable: true },
   { field: "title", label: "Title", name: "title", sortable: true },
-  { field: "startDate", label: "Start date", name: "startDate", sortable: true },
-  { field: "endDate", label: "End date", name: "endDate", sortable: true },
+  {
+    field: (row: MeetingEvent) => formatDate(row.startDate),
+    label: "Start date",
+    name: "startDate",
+    sortable: true,
+  },
+  { field: (row: MeetingEvent) => formatDate(row.endDate), label: "End date", name: "endDate", sortable: true },
   {
     field: (row: MeetingEvent) => row.venueCountry?.name ?? "",
     label: "Venue country",
