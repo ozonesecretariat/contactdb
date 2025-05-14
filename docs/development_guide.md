@@ -58,3 +58,21 @@ To add a new dependency:
   ```bash
   pip freeze > requirements/constraints.txt
   ```
+
+## Testing data
+
+Testing data can be added to the database using the seed_db management command.
+
+```shell
+./manage.py seed_db
+```
+
+This will add various users with the different access permissions that can be used with
+the following credentials:
+
+- admin@example.com / admin
+- test-edit@example.com / test
+- test-emails@example.com / test
+- test-kronos@example.com / test
+- test-no-access@example.com / test
+- test-view@example.com / test

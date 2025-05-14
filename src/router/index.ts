@@ -5,6 +5,7 @@ import {
   createWebHashHistory,
   createWebHistory,
   type RouteLocationNormalizedGeneric,
+  type RouteRecordNormalized,
 } from "vue-router";
 import routes from "./routes";
 import { useUserStore } from "stores/userStore";
@@ -37,6 +38,24 @@ async function initializeStores() {
 }
 
 /**
+ * Checks if the current user has the required permissions to access the given route.
+ */
+export function hasRoutePermission(matched: RouteRecordNormalized[]) {
+  const userStore = useUserStore();
+  return matched.every((route) => {
+    if (route.meta.requireStaff && !userStore.isStaff) {
+      return false;
+    }
+
+    if (route.meta.requireSuperuser && !userStore.isSuperuser) {
+      return false;
+    }
+
+    return (route.meta.requirePermissions ?? []).every((permission) => userStore.permissions.includes(permission));
+  });
+}
+
+/**
  * Guards navigation based on user authentication, permissions, and application settings.
  * Ensures the user meets the requirements for accessing the desired route.
  */
@@ -50,10 +69,6 @@ async function permissionGuard(to: RouteLocationNormalizedGeneric) {
 
   // Check the matched routes and all of it's parents
   for (const route of to.matched) {
-    const hasPermissions = (route.meta.requiredPermissions ?? []).every((permission) =>
-      userStore.permissions.includes(permission),
-    );
-
     if (route.meta.requireAuthentication && !userStore.isLoggedIn) {
       $q.notify({
         type: "warning",
@@ -65,14 +80,14 @@ async function permissionGuard(to: RouteLocationNormalizedGeneric) {
     if (route.meta.requireAnonymous && userStore.isLoggedIn) {
       return { name: "home" };
     }
+  }
 
-    if (!hasPermissions) {
-      $q.notify({
-        type: "warning",
-        message: "Your account does not have the required permissions to access this page.",
-      });
-      return { name: "home" };
-    }
+  if (!hasRoutePermission(to.matched)) {
+    $q.notify({
+      type: "warning",
+      message: "Your account does not have the required permissions to access this page.",
+    });
+    return { name: "home" };
   }
 
   if (!userStore.twoFactorEnabled && appSettingsStore.require2fa && to.name !== "account-security") {

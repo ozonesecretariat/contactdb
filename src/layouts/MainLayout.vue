@@ -59,17 +59,6 @@ $q.dark.set(isDarkMode.value);
 
 const menuItems = computed(() => [
   {
-    label: "Admin",
-    icon: "admin_panel_settings",
-    href: `${apiBase}/admin/`,
-    show: userStore.isStaff,
-  },
-  {
-    label: "Admin separator",
-    type: "separator" as const,
-    show: userStore.isStaff,
-  },
-  {
     label: "Account settings",
     icon: "account_circle",
     to: { name: "account-settings" },
@@ -97,9 +86,24 @@ const menuItems = computed(() => [
 
 const drawerItems = computed(() => [
   {
+    label: "Home",
+    icon: "home",
+    to: { name: "home" },
+  },
+  {
     label: "Events",
     icon: "event",
     to: { name: "events" },
+  },
+  {
+    label: "Account separator",
+    type: "separator" as const,
+  },
+  {
+    label: "Admin",
+    icon: "admin_panel_settings",
+    href: `${apiBase}/admin/`,
+    show: userStore.isStaff,
   },
   ...menuItems.value,
 ]);

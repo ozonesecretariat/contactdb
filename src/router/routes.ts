@@ -79,12 +79,19 @@ const routes: RouteRecordRaw[] = [
         component: () => import("pages/EventsPage.vue"),
         meta: {
           header: "Events",
+          requirePermissions: ["events.view_event"],
         },
       },
       {
         name: "home",
         path: "",
-        redirect: { name: "events" },
+        component: () => import("pages/HomePage.vue"),
+        meta: {
+          header: "",
+          // Home page should be accessible to every authenticated user,
+          // otherwise it will trigger an infinite redirect.
+          requirePermissions: [],
+        },
       },
     ],
   },
