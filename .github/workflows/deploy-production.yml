@@ -2,6 +2,9 @@ name: "Deploy production"
 
 concurrency: contactdb-production
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
 
