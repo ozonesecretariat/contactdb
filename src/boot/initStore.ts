@@ -1,12 +1,13 @@
 import { defineBoot } from "#q-app/wrappers";
 import * as Sentry from "@sentry/vue";
+import { createSentryPiniaPlugin } from "@sentry/vue";
 import { useAppSettingsStore } from "stores/appSettingsStore";
 import { useUserStore } from "stores/userStore";
 
 /**
  * Initializes the application store and configure sentry.
  */
-export default defineBoot(async ({ app }) => {
+export default defineBoot(async ({ app, router, store }) => {
   const $q = app.config.globalProperties.$q;
   const userStore = useUserStore();
   const appSettingsStore = useAppSettingsStore();
@@ -29,7 +30,9 @@ export default defineBoot(async ({ app }) => {
     Sentry.init({
       app,
       dsn: appSettingsStore.sentryDsn,
-      integrations: [],
+      environment: appSettingsStore.environmentName,
+      integrations: [Sentry.browserTracingIntegration({ router })],
     });
+    store.use(createSentryPiniaPlugin());
   }
 });
