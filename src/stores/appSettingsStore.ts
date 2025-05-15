@@ -12,5 +12,6 @@ export const useAppSettingsStore = defineStore("appSettings", {
     environmentName: "",
     initialized: false,
     require2fa: false,
+    sentryDsn: "",
   }),
 });

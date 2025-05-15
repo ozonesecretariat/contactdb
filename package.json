@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@quasar/extras": "1.16.17",
+    "@sentry/vue": "9.19.0",
     "@vueuse/core": "13.1.0",
     "axios": "1.9.0",
     "pinia": "3.0.2",

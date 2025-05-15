@@ -18,5 +18,6 @@ class AppSettingsView(APIView):
             {
                 "environment_name": settings.ENVIRONMENT_NAME,
                 "require_2fa": config.REQUIRE_2FA,
+                "sentry_dsn": settings.SENTRY_DSN,
             }
         )

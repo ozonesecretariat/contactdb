@@ -32,51 +32,13 @@ export function hasRoutePermission(matched: RouteRecordNormalized[]) {
 }
 
 /**
- * Initializes the necessary stores by checking their initialization state and loading them if required.
- * If any store requires initialization, a loading indicator is displayed while the initialization completes.
- *
- * Resolves once all required stores are initialized.
- */
-async function initializeStores() {
-  const $q = useQuasar();
-  const userStore = useUserStore();
-  const appSettingsStore = useAppSettingsStore();
-
-  const promises = [];
-  for (const store of [userStore, appSettingsStore]) {
-    if (!store.initialized) {
-      promises.push(store.load());
-    }
-  }
-
-  if (promises.length > 0) {
-    try {
-      $q.loading.show();
-      await Promise.all(promises);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-      $q.notify({
-        message: "Unknown error while loading data, please try again later.",
-        type: "negative",
-      });
-    } finally {
-      $q.loading.hide();
-    }
-  }
-}
-
-/**
  * Guards navigation based on user authentication, permissions, and application settings.
  * Ensures the user meets the requirements for accessing the desired route.
  */
-async function permissionGuard(to: RouteLocationNormalizedGeneric) {
+function permissionGuard(to: RouteLocationNormalizedGeneric) {
   const userStore = useUserStore();
   const appSettingsStore = useAppSettingsStore();
   const $q = useQuasar();
-
-  // Ensure stores are initialized
-  await initializeStores();
 
   // Check the matched routes and all of it's parents
   for (const route of to.matched) {
