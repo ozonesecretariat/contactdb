@@ -81,6 +81,8 @@ class Organization(models.Model):
         related_name="+",
     )
 
+    primary_contacts = models.ManyToManyField("Contact", related_name="primary_for_orgs")
+    secondary_contacts = models.ManyToManyField("Contact", related_name="secondary_for_orgs")
     include_in_invitation = models.BooleanField(default=False)
 
     class Meta:
@@ -191,11 +193,8 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
-    # Is this contact simply an email address for the organization?
-    is_organization_email = models.BooleanField(default=False)
-    # Primary & secondary contact flags for related organization
-    is_organization_primary_contact = models.BooleanField(default=False)
-    is_organization_secondary_contact = models.BooleanField(default=False)
+    # Is this contact simply a placeholder for an organization email address?
+    is_organization = models.BooleanField(default=False)
 
     groups = models.ManyToManyField(
         "ContactGroup",
