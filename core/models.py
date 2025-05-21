@@ -80,6 +80,8 @@ class Organization(models.Model):
         blank=True,
         related_name="+",
     )
+    # Organization-level emails, not related to a specific contact
+    emails = ArrayField(base_field=models.EmailField(), blank=True, null=True)
 
     include_in_invitation = models.BooleanField(default=False)
 
@@ -191,6 +193,9 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
+    organization_primary_contact = models.BooleanField(default=False)
+    organization_secondary_contact = models.BooleanField(default=False)
+
     groups = models.ManyToManyField(
         "ContactGroup",
         blank=True,
