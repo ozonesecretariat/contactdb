@@ -17,6 +17,6 @@ export default defineConfig({
       ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
       interval: 100,
       usePolling: true,
-    }
+    },
   },
 });
