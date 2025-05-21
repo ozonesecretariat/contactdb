@@ -26,7 +26,7 @@ class Command(BaseCommand):
             self.stderr.write(
                 "This will IRREVERSIBLY DESTROY all data currently in the  database! "
                 "Are you sure you want to continue?",
-                end=" ",
+                ending=" ",
             )
             if input("[Y/n] ") != "Y":
                 sys.exit(1)
