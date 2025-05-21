@@ -33,9 +33,4 @@ class Migration(migrations.Migration):
             name='include_in_invitation',
             field=models.BooleanField(default=False),
         ),
-        migrations.AlterField(
-            model_name='importlegacycontactstask',
-            name='json_file',
-            field=models.FileField(storage=django.core.files.storage.FileSystemStorage(base_url='/protected_media/', location=pathlib.PurePosixPath('/Users/sorinstelian/edw/contactdb/.fs/protected_media')), upload_to='import_legacy_contact_files/'),
-        ),
     ]
