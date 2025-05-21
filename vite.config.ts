@@ -13,10 +13,10 @@ export default defineConfig({
   },
   server: {
     watch: {
-      usePolling: true,
-      interval: 100,
       followSymlinks: false,
       ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"]
+      interval: 100,
+      usePolling: true,
     }
   },
 });
