@@ -30,6 +30,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "country",
         "government",
         "contacts_count",
+        "include_in_invitation",
     )
     readonly_fields = ("organization_id",)
     autocomplete_fields = ("country", "government", "organization_type")

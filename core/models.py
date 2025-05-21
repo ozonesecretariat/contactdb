@@ -81,6 +81,8 @@ class Organization(models.Model):
         related_name="+",
     )
 
+    include_in_invitation = models.BooleanField(default=False)
+
     class Meta:
         ordering = ["name", "country__name"]
 
