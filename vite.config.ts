@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     watch: {
       followSymlinks: false,
-      ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"]
+      ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
       interval: 100,
       usePolling: true,
     }
