@@ -79,14 +79,29 @@ class KronosParser:
         if "organizationId" not in org_dict:
             return None
 
+        org_type = self.get_org_type(org_dict)
+        include_in_invitation = True
+        if org_type.acronym.lower() == "gov" and "#invite" not in org_dict.get(
+            "notes", ""
+        ):
+            include_in_invitation = False
+
         obj, created = Organization.objects.get_or_create(
             organization_id=org_dict["organizationId"],
             defaults={
                 "name": org_dict.get("name", "").strip(),
                 "acronym": org_dict.get("acronym", "").strip(),
-                "organization_type": self.get_org_type(org_dict),
+                "organization_type": org_type,
                 "government": self.get_country(org_dict.get("government")),
                 "country": self.get_country(org_dict.get("country")),
+                "state": org_dict.get("state"),
+                "city": org_dict.get("city"),
+                "postal_code": org_dict.get("postalCode"),
+                "address": org_dict.get("address"),
+                "phones": org_dict.get("phones"),
+                "faxes": org_dict.get("faxes"),
+                "websites": org_dict.get("webs"),
+                "include_in_invitation": include_in_invitation,
             },
         )
         if created:
@@ -211,33 +226,51 @@ class KronosParticipantsParser(KronosParser):
             )
 
     def parse_contact_list(self, event_id):
+        event_orgs = {
+            org["organizationId"]: org
+            for org in self.client.get_organizations_for_event(event_id)
+        }
+
         for contact_dict in self.client.get_participants(event_id):
-            contact_id = contact_dict["contactId"]
-            contact_dict["dateOfBirth"] = self.parse_date(
-                contact_dict.get("dateOfBirth")
-            )
-            contact_dict["country"] = self.get_country(contact_dict.get("country"))
-            contact_dict["organization"] = self.get_org(
-                contact_dict.get("organization", {})
-            )
-            contact_dict["emails"] = parse_list(contact_dict.get("emails"))
-            contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
+            # The organization dict in the contact dict is not complete, replace it
+            # the full version from the other API if available.
+            org_id = contact_dict.get("organization", {}).get("organizationId", None)
+            try:
+                contact_dict["organization"] = event_orgs[org_id]
+            except KeyError:
+                self.task.log(
+                    logging.WARNING,
+                    "Could not find full organization info for org: %s",
+                    org_id,
+                )
 
-            contact_defaults = {
-                model_attr: contact_dict.get(kronos_attr)
-                for kronos_attr, model_attr in self.field_mapping.items()
-            }
+            self._handle_contact(contact_dict)
 
-            contact = (
-                Contact.objects.filter(contact_ids__contains=[contact_id])
-                .prefetch_related("conflicting_contacts")
-                .first()
-            )
-            if contact:
-                self._handle_conflict(contact, contact_id, contact_defaults)
-            else:
-                contact = self._create_contact(contact_id, contact_defaults)
-            self.create_registrations(contact_dict, contact)
+    def _handle_contact(self, contact_dict):
+        contact_id = contact_dict["contactId"]
+        contact_dict["dateOfBirth"] = self.parse_date(contact_dict.get("dateOfBirth"))
+        contact_dict["country"] = self.get_country(contact_dict.get("country"))
+        contact_dict["organization"] = self.get_org(
+            contact_dict.get("organization", {})
+        )
+        contact_dict["emails"] = parse_list(contact_dict.get("emails"))
+        contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
+
+        contact_defaults = {
+            model_attr: contact_dict.get(kronos_attr)
+            for kronos_attr, model_attr in self.field_mapping.items()
+        }
+
+        contact = (
+            Contact.objects.filter(contact_ids__contains=[contact_id])
+            .prefetch_related("conflicting_contacts")
+            .first()
+        )
+        if contact:
+            self._handle_conflict(contact, contact_id, contact_defaults)
+        else:
+            contact = self._create_contact(contact_id, contact_defaults)
+        self.create_registrations(contact_dict, contact)
 
     def _handle_conflict(self, contact, contact_id, contact_defaults):
         if not check_is_different(contact, contact_defaults):

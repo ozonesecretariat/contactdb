@@ -80,7 +80,15 @@ class Organization(models.Model):
         blank=True,
         related_name="+",
     )
+    state = models.CharField(max_length=250, default="", blank=True)
+    city = models.CharField(max_length=250, default="", blank=True)
+    postal_code = models.CharField(max_length=250, default="", blank=True)
+    address = models.TextField(default="", blank=True)
 
+    phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    websites = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    
     primary_contacts = models.ManyToManyField(
         "Contact", related_name="primary_for_orgs"
     )
