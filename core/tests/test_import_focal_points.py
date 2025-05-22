@@ -115,6 +115,13 @@ class TestImportFocalPoints(TestCase):
         contact = Contact.objects.first()
         self.assertEqual(contact.country.code, "GB")
 
+    def test_check_fuzzy_country_hardcoded_match(self):
+        # The full name in our DB is "The Islamic Republic of Afghanistan"
+        self.fake_item["party"] = "The Islamic Emirate of Afghanistan"
+        call_command("import_focal_points")
+        contact = Contact.objects.first()
+        self.assertEqual(contact.country.code, "AF")
+
     def test_check_fuzzy_country_multi_match(self):
         # This case cannot be resolved with 100% accuracy since there are two
         # countries with similar names:
@@ -130,10 +137,27 @@ class TestImportFocalPoints(TestCase):
         self.assertEqual(Contact.objects.count(), 0)
 
     def test_check_organization_match_name(self):
-        org = Organization.objects.create(name="Intergalactic Defense Coalition")
+        org = Organization.objects.create(
+            name="Intergalactic Defense Coalition",
+            country=Country.objects.get(code="PT"),
+        )
         call_command("import_focal_points")
         contact = Contact.objects.first()
         self.assertEqual(contact.organization, org)
+
+    def test_check_organization_match_name_partial(self):
+        org = Organization.objects.create(
+            name="Defense Coalition",
+            country=Country.objects.get(code="PT"),
+        )
+        call_command("import_focal_points")
+        contact = Contact.objects.first()
+        # There is only a partial match, so instead we create a new organization
+        self.assertNotEqual(contact.organization, org)
+        self.assertEqual(
+            contact.organization.name,
+            "Intergalactic Defense Coalition",
+        )
 
     def test_check_organization_match_alt_names(self):
         org = Organization.objects.create(
@@ -142,6 +166,7 @@ class TestImportFocalPoints(TestCase):
                 "Intergalactic Defense Alliance",
                 "intergalactic defense coalition",
             ],
+            country=Country.objects.get(code="PT"),
         )
         call_command("import_focal_points")
         contact = Contact.objects.first()
@@ -149,7 +174,7 @@ class TestImportFocalPoints(TestCase):
 
     def test_check_organization_fuzzy_match(self):
         org = Organization.objects.create(
-            name="Int. Defense Coalition",
+            name="The Intergalactic, Defense Coalition",
             country=Country.objects.get(code="PT"),
         )
         call_command("import_focal_points")
@@ -158,11 +183,11 @@ class TestImportFocalPoints(TestCase):
 
     def test_check_organization_multi_match(self):
         org1 = Organization.objects.create(
-            name="Int. Defense Coalition",
+            name="Intergalactic. Defense Coalition",
             country=Country.objects.get(code="PT"),
         )
         org2 = Organization.objects.create(
-            name="Int Defense Coalition",
+            name="Defense Coalition, Intergalactic",
             country=Country.objects.get(code="PT"),
         )
         call_command("import_focal_points")
