@@ -1,3 +1,4 @@
+
 import pycountry
 from django.db.models import Q, QuerySet, TextField
 from django.db.models.functions import Cast
@@ -6,12 +7,15 @@ from django.utils.text import smart_split
 from common.parsing import remove_punctuation
 from core.models import Country, Organization
 
+# Countries whose names cannot be deduced from the official name via fuzzy search.
+COUNTRY_MAP = {
+    "The Islamic Emirate of Afghanistan": "AF",
+}
+
 
 def get_names_to_search(name):
     name = name.strip()
-
-    name_no_punctuation = remove_punctuation(name)
-    return [name, name_no_punctuation, *smart_split(name_no_punctuation)]
+    return [name, remove_punctuation(name)]
 
 
 def search_multiple(querysets: [QuerySet], name: str, fields: [str]):
@@ -72,6 +76,7 @@ def get_country(names: str | list[str]):
         names = [names]
 
     for name in names:
+        name = COUNTRY_MAP.get(name, name)
         try:
             return search_names(
                 Country.objects.all(),
@@ -100,19 +105,20 @@ def get_organization(names: str | list[str], party, country):
     if not isinstance(names, list):
         names = [names]
 
-    querysets = [
-        Organization.objects.filter(country=country),
-        Organization.objects.filter(government=country),
-        Organization.objects.filter(country=party),
-        Organization.objects.filter(government=party),
-        Organization.objects.all(),
-    ]
+    querysets = []
+    if country:
+        querysets.append(Organization.objects.filter(country=country))
+        querysets.append(Organization.objects.filter(government=country))
+    if party:
+        querysets.append(Organization.objects.filter(country=party))
+        querysets.append(Organization.objects.filter(government=party))
 
-    try:
-        for name in names:
-            return search_multiple(querysets, name, ["name", "alt_names"])
-    except LookupError:
-        pass
+    if querysets:
+        try:
+            for name in names:
+                return search_multiple(querysets, name, ["name", "alt_names"])
+        except LookupError:
+            pass
 
     return Organization.objects.create(
         name=names[0].strip(), acronym="", country=country, government=party
