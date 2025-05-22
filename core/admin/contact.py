@@ -8,6 +8,7 @@ from django.contrib.admin.widgets import AutocompleteSelect
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.encoding import smart_str
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from import_export import fields
 from import_export.admin import ImportExportMixin
@@ -20,7 +21,13 @@ from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
-from core.models import Contact, ContactGroup, Country, Organization
+from core.models import (
+    Contact,
+    ContactGroup,
+    ContactOrganizationHistory,
+    Country,
+    Organization,
+)
 from events.models import Registration
 
 
@@ -89,6 +96,21 @@ class ContactRegistrationsInline(admin.StackedInline):
     autocomplete_fields = ("event", "status", "role", "tags")
 
 
+class OrganizationHistoryInline(admin.StackedInline):
+    extra = 0
+    model = ContactOrganizationHistory
+    autocomplete_fields = ("organization",)
+    fields = (
+        "organization",
+        "designation",
+        "department",
+        "start_date",
+        "end_date",
+        "notes",
+    )
+    ordering = ("-start_date",)
+
+
 @admin.register(Contact)
 class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     def save_related(self, request, form, formsets, change):
@@ -115,6 +137,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     inlines = (
         ContactMembershipInline,
         ContactRegistrationsInline,
+        OrganizationHistoryInline,
     )
     list_display = (
         "title",
@@ -170,13 +193,15 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             "Organization",
             {
                 "fields": (
+                    "is_organization",
                     "organization",
                     "designation",
                     "department",
                     "affiliation",
                     "org_head",
                     "is_use_organization_address",
-                    "is_organization",
+                    "is_primary_contact",
+                    "is_secondary_contact",
                 )
             },
         ),
@@ -227,6 +252,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     readonly_fields = ContactAdminBase.readonly_fields + (
         "contact_ids",
         "focal_point_ids",
+        "is_primary_contact",
+        "is_secondary_contact",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -237,6 +264,19 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "merge_contacts",
     ]
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        formfield = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == "organization" and request.resolver_match.kwargs.get(
+            "object_id"
+        ):
+            formfield.help_text = format_html(
+                '<div class="help warning">'
+                "⚠️ <strong>Important:</strong> When changing organization, save immediately "
+                "to ensure correct history. Make other changes in a separate update."
+                "</div>"
+            )
+        return formfield
+
     @admin.display(description="Events", ordering="registration_count")
     def registrations_link(self, obj):
         return self.get_related_link(
@@ -245,6 +285,14 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             "contact",
             f"{obj.registration_count} events",
         )
+
+    @admin.display(description="Is primary contact for organization", boolean=True)
+    def is_primary_contact(self, obj):
+        return obj.primary_for_orgs.filter(id=obj.organization_id).exists()
+
+    @admin.display(description="Is secondary contact for organization", boolean=True)
+    def is_secondary_contact(self, obj):
+        return obj.secondary_for_orgs.filter(id=obj.organization_id).exists()
 
     @admin.action(description="Merge selected contacts", permissions=["change"])
     def merge_contacts(self, request, queryset):

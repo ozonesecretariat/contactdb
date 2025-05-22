@@ -183,6 +183,42 @@ class BaseContact(models.Model):
             )
 
 
+class ContactOrganizationHistory(models.Model):
+    contact = models.ForeignKey(
+        "Contact", on_delete=models.CASCADE, related_name="organization_history"
+    )
+    organization = models.ForeignKey(
+        "Organization", on_delete=models.SET_NULL, null=True, blank=True
+    )
+    designation = models.TextField(default="", blank=True)
+    department = models.TextField(default="", blank=True)
+    affiliation = models.TextField(default="", blank=True)
+    org_head = models.BooleanField(
+        default=False, blank=True, verbose_name="head of organization"
+    )
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        # Assuming that start/end dates will generally not be known/populated,
+        # so ordering by "-created_at" as generally most recent added entry would be
+        # the most recent in real-life.
+        ordering = ["-created_at"]
+        verbose_name_plural = "Contact organization histories"
+
+    def __str__(self):
+        return f"{self.contact} at {self.organization} (added {self.created_at.date()})"
+
+    def clean(self):
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise ValidationError(
+                {"end_date": "End date cannot be earlier than start date"}
+            )
+
+
 class Contact(BaseContact):
     contact_ids = ArrayField(
         base_field=models.TextField(), null=True, blank=True, editable=False
@@ -197,8 +233,10 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
-    # Is this contact simply a placeholder for an organization email address?
-    is_organization = models.BooleanField(default=False)
+    is_organization = models.BooleanField(
+        default=False,
+        help_text="Is this contact just a placeholder for an organization email address?",
+    )
 
     groups = models.ManyToManyField(
         "ContactGroup",
@@ -206,8 +244,43 @@ class Contact(BaseContact):
         related_name="contacts",
     )
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overriding __init__ to track the original organization_id when loading the object
+        from the database - this helps detect changes in the organization field.
+        """
+        super().__init__(*args, **kwargs)
+        self._original_organization_id = self.organization_id if self.pk else None
+
+    def save(self, *args, **kwargs):
+        if (
+            self.pk
+            and self.organization_id != self._original_organization_id
+            and self._original_organization_id
+        ):
+            # Organization has changed, create history entry for the previous one
+            ContactOrganizationHistory.objects.create(
+                contact=self,
+                organization_id=self._original_organization_id,
+                designation=self.designation,
+                department=self.department,
+                affiliation=self.affiliation,
+                org_head=self.org_head,
+                notes="Organization changed via admin",
+            )
+
+        super().save(*args, **kwargs)
+        # Update the tracked organization ID after save
+        self._original_organization_id = self.organization_id
+
     def add_to_group(self, name):
         return self.groups.add(ContactGroup.objects.get(name=name))
+
+    @property
+    def past_organizations(self):
+        return self.organization_history.exclude(
+            organization=self.organization
+        ).select_related("organization")
 
 
 class PossibleDuplicate(DBView):
