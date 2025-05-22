@@ -1,6 +1,9 @@
 describe("Check", () => {
   it("Check model admin", () => {
     cy.loginEdit();
-    cy.checkModelAdmin({ modelName: "Event tags" });
+    cy.checkModelAdmin({
+      modelName: "Event tags",
+      nameField: "name",
+    });
   });
 });
