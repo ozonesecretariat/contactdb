@@ -1,0 +1,11 @@
+[
+  {
+    "model": "events.eventtag",
+    "pk": 1,
+    "fields": {
+      "name": "MOP36",
+      "description": "36th Meeeting of the Parties",
+      "created_at": "2023-09-03T00:00:00Z"
+    }
+  }
+]

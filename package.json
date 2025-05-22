@@ -5,7 +5,7 @@
   "productName": "ContactDB",
   "description": "ContactDB",
   "scripts": {
-    "dev": "quasar dev",
+    "dev": "cross-env CHOKIDAR_USEPOLLING=1 NODE_OPTIONS=--max-old-space-size=8192 quasar dev",
     "build": "quasar build",
     "postinstall": "quasar prepare",
     "type-check": "vue-tsc --build",
@@ -39,6 +39,7 @@
     "@vue/eslint-config-typescript": "14.5.0",
     "@vue/tsconfig": "0.7.0",
     "autoprefixer": "10.4.21",
+    "cross-env": "^7.0.3",
     "cy-verify-downloads": "0.2.6",
     "cypress": "14.3.3",
     "eslint": "9.26.0",
