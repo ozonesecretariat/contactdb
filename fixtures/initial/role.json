@@ -6,6 +6,7 @@
       "permissions": [
         ["view_contact", "core", "contact"],
         ["view_contactgroup", "core", "contactgroup"],
+        ["view_contactorganizationhistory", "core", "contactorganizationhistory"],
         ["view_country", "core", "country"],
         ["view_organization", "core", "organization"],
         ["view_organizationtype", "core", "organizationtype"]
@@ -39,6 +40,10 @@
         ["change_contactgroup", "core", "contactgroup"],
         ["delete_contactgroup", "core", "contactgroup"],
         ["view_contactgroup", "core", "contactgroup"],
+        ["add_contactorganizationhistory", "core", "contactorganizationhistory"],
+        ["change_contactorganizationhistory", "core", "contactorganizationhistory"],
+        ["delete_contactorganizationhistory", "core", "contactorganizationhistory"],
+        ["view_contactorganizationhistory", "core", "contactorganizationhistory"],
         ["add_country", "core", "country"],
         ["change_country", "core", "country"],
         ["delete_country", "core", "country"],
