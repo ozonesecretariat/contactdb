@@ -155,8 +155,14 @@ class KronosParticipantsParser(KronosParser):
 
         org_type = self.get_org_type(org_dict)
         if org_type.acronym.lower() == "gov":
+            # GOV orgs have the invite "flag" manually included in notes in Kronos.
+            # So it's "safe" to import it as is, because they have been validated,
+            # manually there.
             include_in_invitation = "#invite" in org_dict.get("notes", "")
         else:
+            # For other types of orgs, the notes don't include the invite status.
+            # So as a default, include orgs that have participated in recent events.
+            # Users will need to validate if this is correct or not.
             include_in_invitation = (
                 self.event.start_date and self.event.start_date.year >= 2024
             )
@@ -183,6 +189,12 @@ class KronosParticipantsParser(KronosParser):
         )
         if created:
             self.task.log(logging.INFO, "Created Organization: %r", obj)
+        elif include_in_invitation and not obj.include_in_invitation:
+            # Org was initially created from an older event, so we need to update it
+            # here. Override even if users have made manual changes since then, as that
+            # is very unlikely.
+            obj.include_in_invitation = True
+            obj.save()
 
         return obj
 
