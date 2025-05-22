@@ -3,7 +3,6 @@ describe("Check", () => {
     cy.loginEdit();
     cy.checkModelAdmin({
       modelName: "Event tags",
-      nameField: "name",
     });
   });
 });

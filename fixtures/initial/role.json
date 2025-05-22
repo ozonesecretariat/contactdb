@@ -21,7 +21,8 @@
         ["view_registration", "events", "registration"],
         ["view_registrationrole", "events", "registrationrole"],
         ["view_registrationstatus", "events", "registrationstatus"],
-        ["view_registrationtag", "events", "registrationtag"]
+        ["view_registrationtag", "events", "registrationtag"],
+        ["view_eventtag", "events", "eventtag"]
       ]
     }
   },
@@ -80,7 +81,11 @@
         ["add_registrationtag", "events", "registrationtag"],
         ["change_registrationtag", "events", "registrationtag"],
         ["delete_registrationtag", "events", "registrationtag"],
-        ["view_registrationtag", "events", "registrationtag"]
+        ["view_registrationtag", "events", "registrationtag"],
+        ["add_eventtag", "events", "eventtag"],
+        ["change_eventtag", "events", "eventtag"],
+        ["delete_eventtag", "events", "eventtag"],
+        ["view_eventtag", "events", "eventtag"]
       ]
     }
   },
