@@ -70,3 +70,21 @@ class KronosClient:
 
     def get_countries(self):
         return self.send_kronos("/api/v2018/countries")
+
+    def get_organizations_for_event(self, event_id: str):
+        limit = 1000
+        total_count: int | None = None
+        results = []
+        post_data = {"eventIds": [event_id], "limit": limit, "skip": 0}
+
+        while total_count is None or len(results) < total_count:
+            page_result = self.send_kronos(
+                "/api/v2018/organizations/query",
+                json_data=post_data,
+                method="POST",
+            )
+            total_count = page_result["totalRecordCount"]
+            results.extend(page_result["records"])
+            post_data["skip"] += limit
+
+        return results

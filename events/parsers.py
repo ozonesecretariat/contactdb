@@ -75,25 +75,6 @@ class KronosParser:
         self.task.log(logging.INFO, "Created Organization Type: %r", obj)
         return obj
 
-    def get_org(self, org_dict):
-        if "organizationId" not in org_dict:
-            return None
-
-        obj, created = Organization.objects.get_or_create(
-            organization_id=org_dict["organizationId"],
-            defaults={
-                "name": org_dict.get("name", "").strip(),
-                "acronym": org_dict.get("acronym", "").strip(),
-                "organization_type": self.get_org_type(org_dict),
-                "government": self.get_country(org_dict.get("government")),
-                "country": self.get_country(org_dict.get("country")),
-            },
-        )
-        if created:
-            self.task.log(logging.INFO, "Created Organization: %r", obj)
-
-        return obj
-
 
 class KronosEventsParser(KronosParser):
     def parse_event_list(self):
@@ -164,6 +145,59 @@ class KronosParticipantsParser(KronosParser):
         "dateOfBirth": "birth_date",
     }
 
+    def __init__(self, task):
+        super().__init__(task=task)
+        self.event: Event = task.event
+
+    def get_org(self, org_dict):
+        if "organizationId" not in org_dict:
+            return None
+
+        org_type = self.get_org_type(org_dict)
+        if org_type.acronym.lower() == "gov":
+            # GOV orgs have the invite "flag" manually included in notes in Kronos.
+            # So it's "safe" to import it as is, because they have been validated,
+            # manually there.
+            include_in_invitation = "#invite" in org_dict.get("notes", "")
+        else:
+            # For other types of orgs, the notes don't include the invite status.
+            # So as a default, include orgs that have participated in recent events.
+            # Users will need to validate if this is correct or not.
+            include_in_invitation = (
+                self.event.start_date and self.event.start_date.year >= 2024
+            )
+
+        obj, created = Organization.objects.get_or_create(
+            organization_id=org_dict["organizationId"],
+            defaults={
+                "name": org_dict.get("name", "").strip(),
+                "acronym": org_dict.get("acronym", "").strip(),
+                "organization_type": org_type,
+                "government": self.get_country(org_dict.get("government")),
+                "country": self.get_country(org_dict.get("country")),
+                "state": org_dict.get("state", "").strip(),
+                "city": org_dict.get("city", "").strip(),
+                "postal_code": org_dict.get("postalCode", "").strip(),
+                "address": org_dict.get("address", "").strip(),
+                "phones": org_dict.get("phones", []),
+                "faxes": org_dict.get("faxes", []),
+                "websites": org_dict.get("webs", []),
+                "emails": parse_list(org_dict.get("emails", [])),
+                "email_ccs": parse_list(org_dict.get("emailCcs", [])),
+                "include_in_invitation": include_in_invitation,
+            },
+        )
+        if created:
+            self.task.log(logging.INFO, "Created Organization: %r", obj)
+        elif include_in_invitation and not obj.include_in_invitation:
+            # Org was initially created from an older event, so we need to update it
+            # here. Override even if users have made manual changes since then, as that
+            # is very unlikely.
+            obj.include_in_invitation = True
+            obj.save()
+
+        return obj
+
     def create_registrations(self, contact_dict, contact):
         for registration in contact_dict["registrationStatuses"]:
             if registration is None:
@@ -210,34 +244,67 @@ class KronosParticipantsParser(KronosParser):
                 event,
             )
 
-    def parse_contact_list(self, event_id):
-        for contact_dict in self.client.get_participants(event_id):
-            contact_id = contact_dict["contactId"]
-            contact_dict["dateOfBirth"] = self.parse_date(
-                contact_dict.get("dateOfBirth")
-            )
-            contact_dict["country"] = self.get_country(contact_dict.get("country"))
-            contact_dict["organization"] = self.get_org(
-                contact_dict.get("organization", {})
-            )
-            contact_dict["emails"] = parse_list(contact_dict.get("emails"))
-            contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
+    def parse_contact_list(self):
+        event_orgs = {
+            org["organizationId"]: org
+            for org in self.client.get_organizations_for_event(self.event.event_id)
+        }
 
-            contact_defaults = {
-                model_attr: contact_dict.get(kronos_attr)
-                for kronos_attr, model_attr in self.field_mapping.items()
-            }
+        for contact_dict in self.client.get_participants(self.event.event_id):
+            # The organization dict in the contact dict is not complete, replace it
+            # the full version from the other API if available.
+            org_id = contact_dict.get("organization", {}).get("organizationId", None)
+            try:
+                contact_dict["organization"] = event_orgs[org_id]
+            except KeyError:
+                self.task.log(
+                    logging.WARNING,
+                    "Could not find full organization info for org: %s",
+                    org_id,
+                )
 
-            contact = (
-                Contact.objects.filter(contact_ids__contains=[contact_id])
-                .prefetch_related("conflicting_contacts")
-                .first()
-            )
-            if contact:
-                self._handle_conflict(contact, contact_id, contact_defaults)
-            else:
-                contact = self._create_contact(contact_id, contact_defaults)
-            self.create_registrations(contact_dict, contact)
+            self._handle_contact(contact_dict)
+
+        # Handle M2M relationship for Org
+        for org_dict in event_orgs.values():
+            try:
+                org = Organization.objects.get(
+                    organization_id=org_dict["organizationId"]
+                )
+            except Organization.DoesNotExist:
+                continue
+
+            # Ignore if any contacts are not found, as they should be found whenever
+            # we parse the event they participated in. Otherwise, the email/email_ccs
+            # are still available in the org's fields.
+            org.primary_contacts.add(*org.filter_contacts_by_emails(org.emails))
+            org.secondary_contacts.add(*org.filter_contacts_by_emails(org.email_ccs))
+
+    def _handle_contact(self, contact_dict):
+        contact_id = contact_dict["contactId"]
+        contact_dict["dateOfBirth"] = self.parse_date(contact_dict.get("dateOfBirth"))
+        contact_dict["country"] = self.get_country(contact_dict.get("country"))
+        contact_dict["organization"] = self.get_org(
+            contact_dict.get("organization", {})
+        )
+        contact_dict["emails"] = parse_list(contact_dict.get("emails"))
+        contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
+
+        contact_defaults = {
+            model_attr: contact_dict.get(kronos_attr)
+            for kronos_attr, model_attr in self.field_mapping.items()
+        }
+
+        contact = (
+            Contact.objects.filter(contact_ids__contains=[contact_id])
+            .prefetch_related("conflicting_contacts")
+            .first()
+        )
+        if contact:
+            self._handle_conflict(contact, contact_id, contact_defaults)
+        else:
+            contact = self._create_contact(contact_id, contact_defaults)
+        self.create_registrations(contact_dict, contact)
 
     def _handle_conflict(self, contact, contact_id, contact_defaults):
         if not check_is_different(contact, contact_defaults):
