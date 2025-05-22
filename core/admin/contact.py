@@ -270,9 +270,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             "object_id"
         ):
             formfield.help_text = format_html(
-                '<div class="help warning">'
-                "⚠️ <strong>Important:</strong> When changing organization, save immediately "
-                "to ensure correct history. Make other changes in a separate update."
+                "<div class='helptext'>"
+                "⚠️ <strong>Important:</strong> When changing a contact's organization, "
+                "save immediately to ensure correct history. Make changes to any other "
+                "fields in a separate update."
                 "</div>"
             )
         return formfield
