@@ -81,8 +81,12 @@ class Organization(models.Model):
         related_name="+",
     )
 
-    primary_contacts = models.ManyToManyField("Contact", related_name="primary_for_orgs")
-    secondary_contacts = models.ManyToManyField("Contact", related_name="secondary_for_orgs")
+    primary_contacts = models.ManyToManyField(
+        "Contact", related_name="primary_for_orgs"
+    )
+    secondary_contacts = models.ManyToManyField(
+        "Contact", related_name="secondary_for_orgs"
+    )
     include_in_invitation = models.BooleanField(default=False)
 
     class Meta:
