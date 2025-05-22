@@ -39,6 +39,56 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
     annotate_query = {
         "contacts_count": Count("contacts"),
     }
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "name",
+                    "acronym",
+                    "organization_type",
+                    "government",
+                )
+            },
+        ),
+        (
+            "Contacts",
+            {
+                "fields": (
+                    "primary_contacts",
+                    "secondary_contacts",
+                )
+            }
+        ),
+        (
+            "Contact info",
+            {
+                "fields": (
+                    "phones",
+                    "faxes",
+                    "websites",
+                )
+            },
+        ),
+        (
+            "Address",
+            {
+                "fields": (
+                    "country",
+                    ("city", "state", "postal_code"),
+                    "address",
+                )
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": (
+                    "organization_id",
+                ),
+            },
+        ),
+    )
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name in ["primary_contacts", "secondary_contacts"]:
