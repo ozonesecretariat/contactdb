@@ -28,7 +28,7 @@ class LoadParticipantsFromKronos(Job):
     def execute(job, task):
         task.log(logging.INFO, "Loading participants from Kronos")
         parser = KronosParticipantsParser(task=task)
-        parser.parse_contact_list(task.event.event_id)
+        parser.parse_contact_list()
         task.save()
 
     @staticmethod

@@ -48,6 +48,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
                     "acronym",
                     "organization_type",
                     "government",
+                    "include_in_invitation",
                 )
             },
         ),

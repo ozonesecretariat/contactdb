@@ -105,6 +105,11 @@ class Organization(models.Model):
             return self.name + ", " + self.country.name
         return self.name
 
+    def filter_contacts_by_emails(self, emails: list[str]):
+        return self.contacts.filter(
+            models.Q(emails__overlap=emails) | models.Q(email_ccs__overlap=emails)
+        )
+
 
 class BaseContact(models.Model):
     organization = None

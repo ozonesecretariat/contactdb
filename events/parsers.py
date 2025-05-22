@@ -75,40 +75,6 @@ class KronosParser:
         self.task.log(logging.INFO, "Created Organization Type: %r", obj)
         return obj
 
-    def get_org(self, org_dict):
-        if "organizationId" not in org_dict:
-            return None
-
-        org_type = self.get_org_type(org_dict)
-        include_in_invitation = True
-        if org_type.acronym.lower() == "gov" and "#invite" not in org_dict.get(
-            "notes", ""
-        ):
-            include_in_invitation = False
-
-        obj, created = Organization.objects.get_or_create(
-            organization_id=org_dict["organizationId"],
-            defaults={
-                "name": org_dict.get("name", "").strip(),
-                "acronym": org_dict.get("acronym", "").strip(),
-                "organization_type": org_type,
-                "government": self.get_country(org_dict.get("government")),
-                "country": self.get_country(org_dict.get("country")),
-                "state": org_dict.get("state"),
-                "city": org_dict.get("city"),
-                "postal_code": org_dict.get("postalCode"),
-                "address": org_dict.get("address"),
-                "phones": org_dict.get("phones"),
-                "faxes": org_dict.get("faxes"),
-                "websites": org_dict.get("webs"),
-                "include_in_invitation": include_in_invitation,
-            },
-        )
-        if created:
-            self.task.log(logging.INFO, "Created Organization: %r", obj)
-
-        return obj
-
 
 class KronosEventsParser(KronosParser):
     def parse_event_list(self):
@@ -179,6 +145,45 @@ class KronosParticipantsParser(KronosParser):
         "dateOfBirth": "birth_date",
     }
 
+    def __init__(self, task):
+        super().__init__(task=task)
+        self.event: Event = task.event
+
+    def get_org(self, org_dict):
+        if "organizationId" not in org_dict:
+            return None
+
+        org_type = self.get_org_type(org_dict)
+        if org_type.acronym.lower() == "gov":
+            include_in_invitation = "#invite" in org_dict.get("notes", "")
+        else:
+            include_in_invitation = (
+                self.event.start_date and self.event.start_date.year >= 2024
+            )
+
+        obj, created = Organization.objects.get_or_create(
+            organization_id=org_dict["organizationId"],
+            defaults={
+                "name": org_dict.get("name", "").strip(),
+                "acronym": org_dict.get("acronym", "").strip(),
+                "organization_type": org_type,
+                "government": self.get_country(org_dict.get("government")),
+                "country": self.get_country(org_dict.get("country")),
+                "state": org_dict.get("state"),
+                "city": org_dict.get("city"),
+                "postal_code": org_dict.get("postalCode"),
+                "address": org_dict.get("address"),
+                "phones": org_dict.get("phones"),
+                "faxes": org_dict.get("faxes"),
+                "websites": org_dict.get("webs"),
+                "include_in_invitation": include_in_invitation,
+            },
+        )
+        if created:
+            self.task.log(logging.INFO, "Created Organization: %r", obj)
+
+        return obj
+
     def create_registrations(self, contact_dict, contact):
         for registration in contact_dict["registrationStatuses"]:
             if registration is None:
@@ -225,13 +230,13 @@ class KronosParticipantsParser(KronosParser):
                 event,
             )
 
-    def parse_contact_list(self, event_id):
+    def parse_contact_list(self):
         event_orgs = {
             org["organizationId"]: org
-            for org in self.client.get_organizations_for_event(event_id)
+            for org in self.client.get_organizations_for_event(self.event.event_id)
         }
 
-        for contact_dict in self.client.get_participants(event_id):
+        for contact_dict in self.client.get_participants(self.event.event_id):
             # The organization dict in the contact dict is not complete, replace it
             # the full version from the other API if available.
             org_id = contact_dict.get("organization", {}).get("organizationId", None)
@@ -245,6 +250,22 @@ class KronosParticipantsParser(KronosParser):
                 )
 
             self._handle_contact(contact_dict)
+
+        # Handle M2M relationship for Org
+        for org_dict in event_orgs.values():
+            try:
+                org = Organization.objects.get(
+                    organization_id=org_dict["organizationId"]
+                )
+            except Organization.DoesNotExist:
+                continue
+
+            org.primary_contacts.add(
+                *org.filter_contacts_by_emails(org_dict.get("emails", []))
+            )
+            org.secondary_contacts.add(
+                *org.filter_contacts_by_emails(org_dict.get("emailCcs", []))
+            )
 
     def _handle_contact(self, contact_dict):
         contact_id = contact_dict["contactId"]
