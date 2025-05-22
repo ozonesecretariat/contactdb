@@ -68,7 +68,7 @@ describe("Check", () => {
     cy.fillInput("format", "xlsx");
     cy.get("input[type=submit]").contains("Submit").click();
     cy.get("input[type=submit]").contains("Confirm import").click();
-    cy.contains("Import finished: 2 new, 0 updated, 0 deleted and 1 skipped contacts.");
+    cy.contains("Import finished: 2 new, 0 updated, 0 deleted and 0 skipped contacts.");
 
     // Check values got imported correctly
     cy.performSearch({
@@ -86,7 +86,7 @@ describe("Check", () => {
     cy.triggerAction({
       action: "Delete selected contacts",
       filters: {
-        country__in: "Poland",
+        country__in: "Nicaragua",
         groups__in: "Adventure Seekers Squad",
         organization__in: "Astral Technologies Syndicate",
       },
