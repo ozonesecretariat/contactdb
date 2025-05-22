@@ -15,6 +15,7 @@ class KronosId(models.CharField):
                 "was not imported from Kronos."
             ),
         )
+        kwargs.setdefault("verbose_name", "Kronos ID")
         super().__init__(*args, **kwargs)
 
 

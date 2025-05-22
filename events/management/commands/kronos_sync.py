@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
         all_tasks = []
         for event in Event.objects.filter(event_id__isnull=False):
-            self.stderr.write("Loading participants for", event)
+            self.stderr.write("Loading participants for :%s" % event)
             task = LoadParticipantsFromKronosTask.objects.create(event=event)
             all_tasks.append(task)
             task.run(is_async=False)

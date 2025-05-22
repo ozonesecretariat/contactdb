@@ -10,7 +10,7 @@ from django_task.models import TaskRQ
 from psycopg import sql
 
 from common.array_field import ArrayField
-from common.citext import CICharField
+from common.citext import CICharField, CIEmailField
 from common.model import KronosId
 
 
@@ -80,6 +80,16 @@ class Organization(models.Model):
         blank=True,
         related_name="+",
     )
+    state = models.CharField(max_length=250, default="", blank=True)
+    city = models.CharField(max_length=250, default="", blank=True)
+    postal_code = models.CharField(max_length=250, default="", blank=True)
+    address = models.TextField(default="", blank=True)
+
+    phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    websites = ArrayField(null=True, base_field=models.TextField(), blank=True)
+    emails = ArrayField(null=True, base_field=CIEmailField(), blank=True)
+    email_ccs = ArrayField(null=True, base_field=CIEmailField(), blank=True)
 
     primary_contacts = models.ManyToManyField(
         "Contact", related_name="primary_for_orgs"
@@ -96,6 +106,11 @@ class Organization(models.Model):
         if self.country:
             return self.name + ", " + self.country.name
         return self.name
+
+    def filter_contacts_by_emails(self, emails: list[str]):
+        return self.contacts.filter(
+            models.Q(emails__overlap=emails) | models.Q(email_ccs__overlap=emails)
+        )
 
 
 class BaseContact(models.Model):
@@ -120,8 +135,8 @@ class BaseContact(models.Model):
     phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
     mobiles = ArrayField(null=True, base_field=models.TextField(), blank=True)
     faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    emails = ArrayField(null=True, base_field=models.EmailField(), blank=True)
-    email_ccs = ArrayField(null=True, base_field=models.EmailField(), blank=True)
+    emails = ArrayField(null=True, base_field=CIEmailField(), blank=True)
+    email_ccs = ArrayField(null=True, base_field=CIEmailField(), blank=True)
     notes = models.TextField(default="", blank=True)
     is_in_mailing_list = models.BooleanField(default=False, blank=True)
     is_use_organization_address = models.BooleanField(default=False, blank=True)
