@@ -25,6 +25,22 @@ class LoadEventsFromKronosTask(TaskRQ):
         return LoadEventsFromKronos
 
 
+class EventTag(models.Model):
+    name = CICharField(max_length=250, null=False, blank=False, unique=True)
+    description = models.TextField(
+        blank=True, help_text="Optional description of the tag"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name = "event tag"
+        verbose_name_plural = "event tags"
+
+    def __str__(self):
+        return self.name
+
+
 class Event(models.Model):
     event_id = KronosId()
     code = models.CharField(max_length=50, blank=False, null=False, unique=True)
@@ -39,6 +55,13 @@ class Event(models.Model):
     )
     venue_city = models.CharField(max_length=150)
     dates = models.CharField(max_length=255)
+
+    tags = models.ManyToManyField(
+        EventTag,
+        blank=True,
+        related_name="events",
+        help_text="Tags to categorize and group related events",
+    )
 
     def __str__(self):
         return f"{self.code} {self.title}"

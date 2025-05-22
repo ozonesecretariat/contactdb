@@ -139,6 +139,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "org_head",
         "is_in_mailing_list",
         "is_use_organization_address",
+        "is_organization",
     )
     fieldsets = (
         (
@@ -175,6 +176,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     "affiliation",
                     "org_head",
                     "is_use_organization_address",
+                    "is_organization",
                 )
             },
         ),

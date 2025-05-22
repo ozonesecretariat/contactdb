@@ -9,6 +9,7 @@ from common.permissions import has_model_permission
 from common.urls import reverse
 from events.models import (
     Event,
+    EventTag,
     LoadEventsFromKronosTask,
     LoadParticipantsFromKronosTask,
     Registration,
@@ -132,6 +133,15 @@ class RegistrationAdmin(ModelAdmin):
         return ", ".join(map(str, obj.tags.all()))
 
 
+@admin.register(EventTag)
+class EventTagAdmin(ExportMixin, ModelAdmin):
+    search_fields = ("name",)
+    list_display = ("name", "description")
+    list_display_links = ("name",)
+    ordering = ("name",)
+    prefetch_related = ("events",)
+
+
 @admin.register(Event)
 class EventAdmin(ExportMixin, ModelAdmin):
     search_fields = (
@@ -141,6 +151,7 @@ class EventAdmin(ExportMixin, ModelAdmin):
         "venue_country__code",
         "venue_country__name__unaccent",
         "dates",
+        "tags__name",
     )
     list_display_links = ("code", "title")
     list_display = (
@@ -152,10 +163,12 @@ class EventAdmin(ExportMixin, ModelAdmin):
         "end_date",
         "dates",
         "registrations_count",
+        "tags_display",
     )
-    autocomplete_fields = ("venue_country",)
+    autocomplete_fields = ("venue_country", "tags")
     list_filter = (
         AutocompleteFilterFactory("venue country", "venue_country"),
+        AutocompleteFilterFactory("tags", "tags"),
         "start_date",
         "end_date",
     )
@@ -181,6 +194,10 @@ class EventAdmin(ExportMixin, ModelAdmin):
             "event",
             f"{obj.registration_count} participants",
         )
+
+    @admin.display(description="Tags")
+    def tags_display(self, obj):
+        return ", ".join(map(str, obj.tags.all()))
 
     def has_load_contacts_from_kronos_permission(self, request):
         return self.has_add_permission(request) and has_model_permission(

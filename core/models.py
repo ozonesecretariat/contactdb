@@ -81,6 +81,14 @@ class Organization(models.Model):
         related_name="+",
     )
 
+    primary_contacts = models.ManyToManyField(
+        "Contact", related_name="primary_for_orgs"
+    )
+    secondary_contacts = models.ManyToManyField(
+        "Contact", related_name="secondary_for_orgs"
+    )
+    include_in_invitation = models.BooleanField(default=True)
+
     class Meta:
         ordering = ["name", "country__name"]
 
@@ -189,6 +197,9 @@ class Contact(BaseContact):
         blank=True,
         related_name="contacts",
     )
+    # Is this contact simply a placeholder for an organization email address?
+    is_organization = models.BooleanField(default=False)
+
     groups = models.ManyToManyField(
         "ContactGroup",
         blank=True,
