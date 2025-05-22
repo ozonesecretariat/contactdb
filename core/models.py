@@ -88,7 +88,9 @@ class Organization(models.Model):
     phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
     faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
     websites = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    
+    emails = ArrayField(null=True, base_field=CIEmailField(), blank=True)
+    email_ccs = ArrayField(null=True, base_field=CIEmailField(), blank=True)
+
     primary_contacts = models.ManyToManyField(
         "Contact", related_name="primary_for_orgs"
     )

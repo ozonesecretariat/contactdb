@@ -176,6 +176,8 @@ class KronosParticipantsParser(KronosParser):
                 "phones": org_dict.get("phones", []),
                 "faxes": org_dict.get("faxes", []),
                 "websites": org_dict.get("webs", []),
+                "emails": parse_list(org_dict.get("emails", [])),
+                "email_ccs": parse_list(org_dict.get("emailCcs", [])),
                 "include_in_invitation": include_in_invitation,
             },
         )
@@ -260,13 +262,11 @@ class KronosParticipantsParser(KronosParser):
             except Organization.DoesNotExist:
                 continue
 
-            for email in org_dict.get("emails", []):
-                assert org.filter_contacts_by_emails([email]).exists(), (org, email)
-                org.primary_contacts.add(*org.filter_contacts_by_emails([email]))
-
-            for email in org_dict.get("emailsCcs", []):
-                assert org.filter_contacts_by_emails([email]).exists(), (org, email)
-                org.secondary_contacts.add(*org.filter_contacts_by_emails([email]))
+            # Ignore if any contacts are not found, as they should be found whenever
+            # we parse the event they participated in. Otherwise, the email/email_ccs
+            # are still available in the org's fields.
+            org.primary_contacts.add(*org.filter_contacts_by_emails(org.emails))
+            org.secondary_contacts.add(*org.filter_contacts_by_emails(org.email_ccs))
 
     def _handle_contact(self, contact_dict):
         contact_id = contact_dict["contactId"]

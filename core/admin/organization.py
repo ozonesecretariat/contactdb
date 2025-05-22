@@ -59,7 +59,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
                     "primary_contacts",
                     "secondary_contacts",
                 )
-            }
+            },
         ),
         (
             "Contact info",
@@ -68,6 +68,8 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
                     "phones",
                     "faxes",
                     "websites",
+                    "emails",
+                    "email_ccs",
                 )
             },
         ),
@@ -84,9 +86,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         (
             "Metadata",
             {
-                "fields": (
-                    "organization_id",
-                ),
+                "fields": ("organization_id",),
             },
         ),
     )

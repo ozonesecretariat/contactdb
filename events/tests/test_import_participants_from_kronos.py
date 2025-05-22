@@ -125,7 +125,6 @@ class TestImportEvents(TestCase):
             lambda *args: [self.fake_org]
         )
 
-
     def tearDown(self):
         patch.stopall()
 
@@ -158,6 +157,7 @@ class TestImportEvents(TestCase):
         self.assertEqual(organization.government.name, "Poland")
         self.assertEqual(organization.address, "real place")
         self.assertEqual(organization.postal_code, "123456789")
+        self.assertEqual(organization.emails, ["zephyr.m@example.com"])
 
         self.assertEqual(organization.primary_contacts.count(), 1)
         self.assertEqual(organization.primary_contacts.first(), contact)
@@ -180,7 +180,7 @@ class TestImportEvents(TestCase):
         self.event.start_date = timezone.now()
         self.event.end_date = timezone.now()
         self.event.save()
-        
+
         self.fake_org["organizationTypeId"] = self.biz_id
         self.load_participants()
         organization = Organization.objects.first()
