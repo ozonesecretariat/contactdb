@@ -1,4 +1,3 @@
-
 import pycountry
 from django.db.models import Q, QuerySet, TextField
 from django.db.models.functions import Cast
