@@ -10,7 +10,7 @@ from django_task.models import TaskRQ
 from psycopg import sql
 
 from common.array_field import ArrayField
-from common.citext import CICharField
+from common.citext import CICharField, CIEmailField
 from common.model import KronosId
 
 
@@ -133,8 +133,8 @@ class BaseContact(models.Model):
     phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
     mobiles = ArrayField(null=True, base_field=models.TextField(), blank=True)
     faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
-    emails = ArrayField(null=True, base_field=models.EmailField(), blank=True)
-    email_ccs = ArrayField(null=True, base_field=models.EmailField(), blank=True)
+    emails = ArrayField(null=True, base_field=CIEmailField(), blank=True)
+    email_ccs = ArrayField(null=True, base_field=CIEmailField(), blank=True)
     notes = models.TextField(default="", blank=True)
     is_in_mailing_list = models.BooleanField(default=False, blank=True)
     is_use_organization_address = models.BooleanField(default=False, blank=True)

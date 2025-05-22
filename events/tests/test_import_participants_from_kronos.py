@@ -186,6 +186,11 @@ class TestImportEvents(TestCase):
         organization = Organization.objects.first()
         self.assertEqual(organization.include_in_invitation, True)
 
+    def test_match_case_insensitive(self):
+        self.fake_org["emails"][0] = self.fake_org["emails"][0].upper()
+        self.load_participants()
+        organization = Organization.objects.first()
+        self.assertEqual(organization.primary_contacts.count(), 1)
 
     def test_load_participant_conflict(self):
         self.load_participants()

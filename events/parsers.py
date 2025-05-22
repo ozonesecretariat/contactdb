@@ -260,12 +260,13 @@ class KronosParticipantsParser(KronosParser):
             except Organization.DoesNotExist:
                 continue
 
-            org.primary_contacts.add(
-                *org.filter_contacts_by_emails(org_dict.get("emails", []))
-            )
-            org.secondary_contacts.add(
-                *org.filter_contacts_by_emails(org_dict.get("emailCcs", []))
-            )
+            for email in org_dict.get("emails", []):
+                assert org.filter_contacts_by_emails([email]).exists(), (org, email)
+                org.primary_contacts.add(*org.filter_contacts_by_emails([email]))
+
+            for email in org_dict.get("emailsCcs", []):
+                assert org.filter_contacts_by_emails([email]).exists(), (org, email)
+                org.secondary_contacts.add(*org.filter_contacts_by_emails([email]))
 
     def _handle_contact(self, contact_dict):
         contact_id = contact_dict["contactId"]
