@@ -87,7 +87,7 @@ class Organization(models.Model):
     secondary_contacts = models.ManyToManyField(
         "Contact", related_name="secondary_for_orgs"
     )
-    include_in_invitation = models.BooleanField(default=False)
+    include_in_invitation = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["name", "country__name"]
