@@ -23,6 +23,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("organization_type", "organization_type"),
         AutocompleteFilterFactory("country", "country"),
         AutocompleteFilterFactory("government", "government"),
+        "include_in_invitation",
     )
     list_display = (
         "name",
