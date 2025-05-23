@@ -5,13 +5,14 @@ from auditlog.models import LogEntry
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import AutocompleteSelect
-from django.db.models import Count
+from django.db.models import BooleanField, Case, Count, Value, When
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
 from import_export import fields
 from import_export.admin import ImportExportMixin
 from import_export.widgets import ForeignKeyWidget
+from more_admin_filters import BooleanAnnotationFilter
 
 from common import fuzzy_search
 from common.audit import bulk_audit_update
@@ -125,6 +126,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "emails",
         "phones",
         "registrations_link",
+        "primary",
+        "secondary",
         "email_logs",
     )
     list_display_links = (
@@ -137,9 +140,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         AutocompleteFilterMultipleFactory("organization", "organization"),
         AutocompleteFilterFactory("event", "registrations__event"),
         "org_head",
-        "is_in_mailing_list",
-        "is_use_organization_address",
-        "is_organization",
+        BooleanAnnotationFilter.init("primary"),
+        BooleanAnnotationFilter.init("secondary"),
     )
     fieldsets = (
         (
@@ -230,6 +232,16 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     )
     annotate_query = {
         "registration_count": Count("registrations"),
+        "primary": Case(
+            When(primary_for_orgs__isnull=False, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        ),
+        "secondary": Case(
+            When(secondary_for_orgs__isnull=False, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        ),
     }
     actions = [
         "send_email",
@@ -245,6 +257,14 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             "contact",
             f"{obj.registration_count} events",
         )
+
+    @admin.display(ordering="primary", boolean=True)
+    def primary(self, obj):
+        return obj.primary
+
+    @admin.display(ordering="secondary", boolean=True)
+    def secondary(self, obj):
+        return obj.secondary
 
     @admin.action(description="Merge selected contacts", permissions=["change"])
     def merge_contacts(self, request, queryset):

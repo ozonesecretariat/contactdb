@@ -113,6 +113,7 @@ dependencies = [
     { name = "django-filter" },
     { name = "django-group-model" },
     { name = "django-import-export", extra = ["xlsx"] },
+    { name = "django-more-admin-filters" },
     { name = "django-object-actions" },
     { name = "django-redis" },
     { name = "django-rq" },
@@ -161,6 +162,7 @@ requires-dist = [
     { name = "django-filter", specifier = ">=25.1" },
     { name = "django-group-model", specifier = ">=1.0.1" },
     { name = "django-import-export", extras = ["xlsx"], specifier = ">=4.3.7" },
+    { name = "django-more-admin-filters", specifier = ">=1.12" },
     { name = "django-object-actions", specifier = ">=5.0.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-rq", specifier = ">=3.0.1" },
@@ -458,6 +460,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e6/91/c63f136f553ec24fc46ccf20ac7292a8df04815b383975b6f3f7f0060217/django_js_asset-3.1.2.tar.gz", hash = "sha256:1fc7584199ed1941ed7c8e7b87ca5524bb0f2ba941561d2a104e88ee9f07bedd", size = 9471, upload-time = "2025-03-04T15:22:49.789Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a6/cf/b208767db5e56b5189829f753eec6a14ee75d074922dc2bd19220b22a34d/django_js_asset-3.1.2-py3-none-any.whl", hash = "sha256:b5ffe376aebbd73b7af886d675ac9f43ca63b39540190fa8409c9f8e79145f68", size = 5905, upload-time = "2025-03-04T15:22:51.152Z" },
+]
+
+[[package]]
+name = "django-more-admin-filters"
+version = "1.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2d/2c/0332ae4d2e2b668b6f736423efa11c63f59fa85b264da58e70ff22b738e0/django_more_admin_filters-1.12.tar.gz", hash = "sha256:7ee9bff0e644ff4021ac17e7e20152a0eeabe5185f7a827cce38faa9d4d1248a", size = 15797, upload-time = "2025-03-16T16:04:44.204Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a6/b4/5f3dba20a6a88f6d545361330d020f67167f63151bc2a9cfac2123aec428/django_more_admin_filters-1.12-py3-none-any.whl", hash = "sha256:012800bae780f973a3d88140873786d0cd9c03ef1155e148c022351b0aa226b0", size = 112598, upload-time = "2025-03-16T16:04:37.044Z" },
 ]
 
 [[package]]
