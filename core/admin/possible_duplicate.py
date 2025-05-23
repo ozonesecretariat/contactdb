@@ -242,6 +242,7 @@ class PossibleDuplicateOrganizationAdmin(DjangoObjectActions, ModelAdmin):
             super()
             .get_queryset(*args, **kwargs)
             .order_by("-field_count", "-organization_count")
+            .distinct()
         )
 
     @admin.display(description="Actions")
