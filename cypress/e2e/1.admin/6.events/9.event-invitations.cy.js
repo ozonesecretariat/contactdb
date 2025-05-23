@@ -3,8 +3,8 @@ describe("Check", () => {
     cy.loginEdit();
     cy.checkModelAdmin({
       extraFields: {
-        event: "Yoga Experience",
         country: "Uruguay",
+        event: "Yoga Experience",
       },
       modelName: "Event invitations",
       nameField: null,
