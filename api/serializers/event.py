@@ -24,5 +24,5 @@ class EventSerializer(serializers.ModelSerializer):
             "venue_country",
             "venue_city",
             "dates",
-            "tags",
+            "groups",
         )
