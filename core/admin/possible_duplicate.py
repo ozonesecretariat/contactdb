@@ -48,6 +48,7 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     list_display = (
         "identical_values",
         "contacts_display",
+        "organization_display",
         "inline_actions",
     )
     list_filter = (
@@ -168,5 +169,18 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         urls = []
         for contact in obj.contacts.all():
             url = reverse("admin:core_contact_change", args=(contact.id,))
-            urls.append(f"<a href={url}>{contact}</a>")
+            urls.append(f"<a href={url}>{contact.display_name}</a>")
+        return mark_safe("<br/>".join(urls))
+
+    @admin.display(description="Organization")
+    def organization_display(self, obj):
+        urls = []
+        for contact in obj.contacts.all():
+            if contact.organization:
+                url = reverse(
+                    "admin:core_organization_change", args=(contact.organization.id,)
+                )
+                urls.append(f"<a href={url}>{contact.organization}</a>")
+            else:
+                urls.append("-")
         return mark_safe("<br/>".join(urls))

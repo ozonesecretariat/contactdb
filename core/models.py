@@ -161,15 +161,7 @@ class BaseContact(models.Model):
         abstract = True
 
     def __str__(self):
-        name = f"(no name) ({self.pk})"
-        for val in self._get_possible_names():
-            if val := val.strip():
-                name = val
-                break
-
-        if self.organization:
-            return f"{name} ({self.organization})"
-        return name
+        return self.display_name_with_org
 
     def _get_possible_names(self):
         yield self.full_name
@@ -187,6 +179,21 @@ class BaseContact(models.Model):
                 parts.append(part)
 
         return " ".join(parts).strip()
+
+    @property
+    def display_name(self):
+        name = f"(no name) ({self.pk})"
+        for val in self._get_possible_names():
+            if val := val.strip():
+                name = val
+                break
+        return name
+
+    @property
+    def display_name_with_org(self):
+        if self.organization:
+            return f"{self.display_name} ({self.organization})"
+        return self.display_name
 
     def clean(self):
         if not self.first_name and not self.last_name:
