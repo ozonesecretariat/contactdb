@@ -52,7 +52,8 @@
         ["change_organizationtype", "core", "organizationtype"],
         ["delete_organizationtype", "core", "organizationtype"],
         ["view_organizationtype", "core", "organizationtype"],
-        ["view_possibleduplicate", "core", "possibleduplicate"],
+        ["view_possibleduplicatecontact", "core", "possibleduplicatecontact"],
+        ["view_possibleduplicateorganization", "core", "possibleduplicateorganization"],
         ["delete_resolveconflict", "core", "resolveconflict"],
         ["view_resolveconflict", "core", "resolveconflict"]
       ]
@@ -119,7 +120,8 @@
         ["change_organizationtype", "core", "organizationtype"],
         ["delete_organizationtype", "core", "organizationtype"],
         ["view_organizationtype", "core", "organizationtype"],
-        ["view_possibleduplicate", "core", "possibleduplicate"],
+        ["view_possibleduplicatecontact", "core", "possibleduplicatecontact"],
+        ["view_possibleduplicateorganization", "core", "possibleduplicateorganization"],
         ["delete_resolveconflict", "core", "resolveconflict"],
         ["view_resolveconflict", "core", "resolveconflict"],
         ["add_event", "events", "event"],

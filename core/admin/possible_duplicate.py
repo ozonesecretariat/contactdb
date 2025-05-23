@@ -10,7 +10,14 @@ from common.model_admin import ModelAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
 from core.admin import MergeContacts
-from core.models import Contact, DismissedDuplicate, PossibleDuplicate
+from core.models import (
+    Contact,
+    DismissedDuplicateContact,
+    DismissedDuplicateOrganization,
+    Organization,
+    PossibleDuplicateContact,
+    PossibleDuplicateOrganization,
+)
 
 
 class IsDismissedFilter(admin.SimpleListFilter):
@@ -42,12 +49,13 @@ class IsDismissedFilter(admin.SimpleListFilter):
         return queryset.none()
 
 
-@admin.register(PossibleDuplicate)
-class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
+@admin.register(PossibleDuplicateContact)
+class PossibleDuplicateContactAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
     show_index_page_count = True
     list_display = (
         "identical_values",
         "contacts_display",
+        "organization_display",
         "inline_actions",
     )
     list_filter = (
@@ -75,7 +83,11 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         "field_count": ArrayLength("duplicate_fields"),
         "contact_count": ArrayLength("contact_ids"),
     }
-    fields = ("identical_values", "contacts_display", "is_dismissed")
+    fields = (
+        "identical_values",
+        ("contacts_display", "organization_display"),
+        "is_dismissed",
+    )
     change_actions = ("merge_possible_duplicate", "dismiss_duplicate")
     actions = ("dismiss_duplicates",)
 
@@ -121,7 +133,7 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         permissions=["resolve_duplicates"],
     )
     def dismiss_duplicate(self, request, obj):
-        DismissedDuplicate.objects.get_or_create(contact_ids=obj.contact_ids)
+        DismissedDuplicateContact.objects.get_or_create(contact_ids=obj.contact_ids)
         self.message_user(
             request,
             "Possible duplicate dismissed",
@@ -135,9 +147,9 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         permissions=["resolve_duplicates"],
     )
     def dismiss_duplicates(self, request, queryset):
-        objs = DismissedDuplicate.objects.bulk_create(
+        objs = DismissedDuplicateContact.objects.bulk_create(
             [
-                DismissedDuplicate(contact_ids=duplicate.contact_ids)
+                DismissedDuplicateContact(contact_ids=duplicate.contact_ids)
                 for duplicate in queryset
                 if duplicate.contact_ids
             ],
@@ -168,5 +180,154 @@ class PossibleDuplicateAdmin(MergeContacts, DjangoObjectActions, ModelAdmin):
         urls = []
         for contact in obj.contacts.all():
             url = reverse("admin:core_contact_change", args=(contact.id,))
-            urls.append(f"<a href={url}>{contact}</a>")
+            urls.append(f"<a href={url}>{contact.display_name}</a>")
+        return mark_safe("<br/>".join(urls))
+
+    @admin.display(description="Organization")
+    def organization_display(self, obj):
+        urls = []
+        for contact in obj.contacts.all():
+            if contact.organization:
+                url = reverse(
+                    "admin:core_organization_change", args=(contact.organization.id,)
+                )
+                urls.append(f"<a href={url}>{contact.organization}</a>")
+            else:
+                urls.append("-")
+        return mark_safe("<br/>".join(urls))
+
+
+@admin.register(PossibleDuplicateOrganization)
+class PossibleDuplicateOrganizationAdmin(DjangoObjectActions, ModelAdmin):
+    show_index_page_count = True
+    list_display = (
+        "identical_values",
+        "organization_display",
+        "inline_actions",
+    )
+    list_filter = (
+        IsDismissedFilter,
+        AutocompleteFilterFactory(
+            "organization type", "organizations__organization_type"
+        ),
+        AutocompleteFilterFactory("government", "organizations__government"),
+        AutocompleteFilterFactory("country", "organizations__country"),
+    )
+    search_fields = (
+        "duplicate_values",
+        "organizations__name",
+        "organizations__alt_names",
+        "organizations__acronym",
+        "organizations__country__name",
+        "organizations__government__name",
+    )
+    prefetch_related = (
+        "organizations",
+        "organizations__country",
+        "organizations__government",
+    )
+    annotate_query = {
+        "field_count": ArrayLength("duplicate_fields"),
+        "organization_count": ArrayLength("organization_ids"),
+    }
+    fields = ("identical_values", "organization_display", "is_dismissed")
+    change_actions = ("dismiss_duplicate",)
+    actions = ("dismiss_duplicates",)
+
+    def get_index_page_count(self):
+        return self.model.objects.filter(is_dismissed=False).count()
+
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .order_by("-field_count", "-organization_count")
+            .distinct()
+        )
+
+    @admin.display(description="Actions")
+    def inline_actions(self, obj):
+        return mark_safe(
+            " ".join(
+                [
+                    # self.get_inline_action(obj, "merge_possible_duplicate", "default"),
+                    self.get_inline_action(obj, "dismiss_duplicate"),
+                ]
+            )
+        )
+
+    def has_resolve_duplicates_permission(self, request):
+        return (
+            self.has_view_permission(request)
+            and has_model_permission(request, Organization, "change")
+            and has_model_permission(request, Organization, "delete")
+        )
+
+    #
+    # @action(
+    #     label="Merge",
+    #     description="Merge contacts",
+    #     permissions=["resolve_duplicates"],
+    # )
+    # def merge_possible_duplicate(self, request, obj):
+    #     return self.merge_action(request, obj.contacts.all())
+
+    @action(
+        label="Dismiss",
+        description="Dismiss this potential duplicate",
+        permissions=["resolve_duplicates"],
+    )
+    def dismiss_duplicate(self, request, obj):
+        DismissedDuplicateOrganization.objects.get_or_create(
+            organization_ids=obj.organization_ids
+        )
+        self.message_user(
+            request,
+            "Possible duplicate dismissed",
+            level=messages.SUCCESS,
+        )
+        return redirect(self.get_admin_list_link(self.model))
+
+    @action(
+        label="Dismiss",
+        description="Dismiss selected duplicates",
+        permissions=["resolve_duplicates"],
+    )
+    def dismiss_duplicates(self, request, queryset):
+        objs = DismissedDuplicateOrganization.objects.bulk_create(
+            [
+                DismissedDuplicateOrganization(
+                    organization_ids=duplicate.organization_ids
+                )
+                for duplicate in queryset
+                if duplicate.organization_ids
+            ],
+        )
+        bulk_audit_create(objs, request=request)
+
+        self.message_user(
+            request,
+            f"{len(objs)} possible duplicates dismissed",
+            level=messages.SUCCESS,
+        )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
+
+    @admin.display(description="Identical values", ordering="id")
+    def identical_values(self, obj):
+        return mark_safe("<br/>".join(obj.duplicate_values))
+
+    @admin.display(description="Organizations", ordering="organization_count")
+    def organization_display(self, obj):
+        urls = []
+        for org in obj.organizations.all():
+            url = reverse("admin:core_organization_change", args=(org.id,))
+            urls.append(f"<a href={url}>{org}</a>")
         return mark_safe("<br/>".join(urls))

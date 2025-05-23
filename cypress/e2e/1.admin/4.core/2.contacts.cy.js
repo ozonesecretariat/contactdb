@@ -106,9 +106,9 @@ describe("Check", () => {
     cy.contains("1 result");
     cy.contains("Aria");
     cy.contains("Quantum");
-    cy.get("a").contains("Warp Dynamics Institute, Guatemala").click();
+    cy.get("a").contains("Warp Dynamics Institute, Cuba").click();
     cy.contains("View organization");
-    cy.contains("Warp Dynamics Institute, Guatemala");
+    cy.contains("Warp Dynamics Institute, Cuba");
   });
   it("Check registrations link", () => {
     cy.loginView();
@@ -124,7 +124,7 @@ describe("Check", () => {
     cy.contains("Quantum");
     cy.get("a").contains("9 events").click();
     cy.contains("Select registration");
-    cy.contains("Ms. Aria Quantum (Warp Dynamics Institute, Guatemala)");
+    cy.contains("Ms. Aria Quantum (Warp Dynamics Institute, Cuba)");
     cy.contains("9 results");
   });
   it("Check email log link", () => {
@@ -141,7 +141,7 @@ describe("Check", () => {
     cy.contains("Quantum");
     cy.get("a").contains("Email Logs").click();
     cy.contains("Select send email task");
-    cy.contains("Ms. Aria Quantum (Warp Dynamics Institute, Guatemala)");
+    cy.contains("Ms. Aria Quantum (Warp Dynamics Institute, Cuba)");
     cy.contains("2 results");
   });
   it("Check send email to contacts", () => {

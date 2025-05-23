@@ -176,8 +176,8 @@ class MergeContacts:
             "contact_id",
             "created_at",
             "updated_at",
-            "possibleduplicate",
             "possibleduplicatecontact",
+            "possibleduplicatecontactrelationship",
             "conflicting_contacts",
         }
 
