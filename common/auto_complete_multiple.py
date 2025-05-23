@@ -104,6 +104,8 @@ def AutocompleteFilterMultipleFactory(  # noqa: N802
             super_new.use_pk_exact = use_pk_exact
             field_names = str(base_parameter_name).split(LOOKUP_SEP)
             super_new.field_name = field_names[-1]
+            if len(field_names) > 1:
+                super_new.parameter_name = base_parameter_name + "__in"
             return super_new
 
     class NewFilter(AutocompleteFilterMultiple, metaclass=NewMetaFilter):
