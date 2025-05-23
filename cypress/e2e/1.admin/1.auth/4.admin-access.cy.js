@@ -20,7 +20,8 @@ describe("Check user permissions", () => {
         importlegacycontactstask: { add: true, view: true },
         organization: true,
         organizationtype: true,
-        possibleduplicate: { view: true },
+        possibleduplicatecontact: { view: true },
+        possibleduplicateorganization: { view: true },
         resolveconflict: { view: true },
       },
       emails: {

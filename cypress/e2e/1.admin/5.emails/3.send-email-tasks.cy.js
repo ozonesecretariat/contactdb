@@ -25,7 +25,7 @@ describe("Check", () => {
       modelName: "Send email tasks",
       searchValue: "placeholder atlas drake",
     });
-    cy.get("a").contains("Atlas Drake (Deep Space Exploration Agency, Jamaica)").click();
+    cy.get("a").contains("Atlas Drake (Deep Space Exploration Agency, Tuvalu)").click();
     cy.contains("Change contact");
   });
   it("Check filter Any contact", () => {

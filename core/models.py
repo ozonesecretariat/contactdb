@@ -103,6 +103,8 @@ class Organization(models.Model):
         ordering = ["name", "country__name"]
 
     def __str__(self):
+        if self.government:
+            return self.name + ", " + self.government.name
         if self.country:
             return self.name + ", " + self.country.name
         return self.name
@@ -161,15 +163,7 @@ class BaseContact(models.Model):
         abstract = True
 
     def __str__(self):
-        name = f"(no name) ({self.pk})"
-        for val in self._get_possible_names():
-            if val := val.strip():
-                name = val
-                break
-
-        if self.organization:
-            return f"{name} ({self.organization})"
-        return name
+        return self.display_name_with_org
 
     def _get_possible_names(self):
         yield self.full_name
@@ -187,6 +181,21 @@ class BaseContact(models.Model):
                 parts.append(part)
 
         return " ".join(parts).strip()
+
+    @property
+    def display_name(self):
+        name = f"(no name) ({self.pk})"
+        for val in self._get_possible_names():
+            if val := val.strip():
+                name = val
+                break
+        return name
+
+    @property
+    def display_name_with_org(self):
+        if self.organization:
+            return f"{self.display_name} ({self.organization})"
+        return self.display_name
 
     def clean(self):
         if not self.first_name and not self.last_name:
@@ -225,12 +234,14 @@ class Contact(BaseContact):
         return self.groups.add(ContactGroup.objects.get(name=name))
 
 
-class PossibleDuplicate(DBView):
+class PossibleDuplicateContact(DBView):
     id = models.TextField(primary_key=True)
     duplicate_fields = ArrayField(base_field=models.TextField())
     duplicate_values = ArrayField(base_field=models.TextField())
     contact_ids = ArrayField(base_field=models.IntegerField())
-    contacts = models.ManyToManyField(Contact, through="PossibleDuplicateContact")
+    contacts = models.ManyToManyField(
+        Contact, through="PossibleDuplicateContactRelationship"
+    )
     is_dismissed = models.BooleanField(default=False)
 
     @staticmethod
@@ -243,10 +254,6 @@ class PossibleDuplicate(DBView):
             {
                 "field_name": "Email",
                 "field": "TRIM(LOWER(unnest(emails)))",
-            },
-            {
-                "field_name": "Email Cc",
-                "field": "TRIM(LOWER(unnest(email_ccs)))",
             },
         )
         query_template = """
@@ -274,7 +281,7 @@ class PossibleDuplicate(DBView):
                 ) AS duplicate_fields,  
                 contact_ids,
                 EXISTS(
-                    SELECT 1 FROM core_dismissedduplicate as dd
+                    SELECT 1 FROM core_dismissedduplicatecontact as dd
                     WHERE dd.contact_ids = duplicate_groups.contact_ids
                 ) AS is_dismissed
             FROM ({}) AS duplicate_groups
@@ -290,9 +297,11 @@ class PossibleDuplicate(DBView):
         managed = False
 
 
-class PossibleDuplicateContact(DBView):
+class PossibleDuplicateContactRelationship(DBView):
     contact = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
-    duplicate_values = models.ForeignKey(PossibleDuplicate, on_delete=models.DO_NOTHING)
+    duplicate_values = models.ForeignKey(
+        PossibleDuplicateContact, on_delete=models.DO_NOTHING
+    )
 
     @staticmethod
     def view_definition():
@@ -306,7 +315,7 @@ class PossibleDuplicateContact(DBView):
             FROM ({}) AS subq
         """
             )
-            .format(sql.SQL(PossibleDuplicate.view_definition()))
+            .format(sql.SQL(PossibleDuplicateContact.view_definition()))
             .as_string()
         )
 
@@ -314,11 +323,107 @@ class PossibleDuplicateContact(DBView):
         managed = False
 
 
-class DismissedDuplicate(models.Model):
+class DismissedDuplicateContact(models.Model):
     contact_ids = ArrayField(base_field=models.IntegerField(), unique=True)
 
     def __str__(self):
         return f"Dismissed duplicates: {self.contact_ids}"
+
+
+class PossibleDuplicateOrganization(DBView):
+    id = models.TextField(primary_key=True)
+    duplicate_fields = ArrayField(base_field=models.TextField())
+    duplicate_values = ArrayField(base_field=models.TextField())
+    organization_ids = ArrayField(base_field=models.IntegerField())
+    organizations = models.ManyToManyField(
+        Organization, through="PossibleDuplicateOrganizationRelationship"
+    )
+    is_dismissed = models.BooleanField(default=False)
+
+    @staticmethod
+    def view_definition():
+        fields = (
+            {
+                "field_name": "Name and government",
+                "field": "concat(TRIM(LOWER(organization.name)), ', ', TRIM(LOWER(government.name)))",
+            },
+        )
+        query_template = """
+            SELECT '%(field_name)s'                         AS duplicate_type, 
+                   concat('%(field_name)s: ', %(field)s)    AS duplicate_value,
+                   array_agg(id ORDER BY id)::int[]         AS organization_ids
+            FROM core_organization organization 
+            LEFT JOIN public.core_country government 
+                ON organization.government_id = government.code
+            LEFT JOIN public.core_country country 
+                ON organization.country_id = country.code    
+            GROUP BY duplicate_value
+            HAVING count(1) > 1
+        """
+        union_query = " UNION ALL ".join([query_template % field for field in fields])
+
+        return (
+            sql.SQL(
+                """
+            SELECT 
+                array_to_string(
+                    array_agg(duplicate_value ORDER BY duplicate_value), ','
+                ) AS id,  
+                array_agg(
+                    duplicate_value ORDER BY duplicate_value
+                ) AS duplicate_values,  
+                array_agg(
+                    duplicate_type ORDER BY duplicate_type
+                ) AS duplicate_fields,  
+                organization_ids,
+                EXISTS(
+                    SELECT 1 FROM core_dismissedduplicateorganization as dd
+                    WHERE dd.organization_ids = duplicate_groups.organization_ids
+                ) AS is_dismissed
+            FROM ({}) AS duplicate_groups
+            GROUP BY organization_ids
+            ORDER BY id, organization_ids
+        """
+            )
+            .format(sql.SQL(union_query))
+            .as_string()
+        )
+
+    class Meta:
+        managed = False
+
+
+class PossibleDuplicateOrganizationRelationship(DBView):
+    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING)
+    duplicate_values = models.ForeignKey(
+        PossibleDuplicateOrganization, on_delete=models.DO_NOTHING
+    )
+
+    @staticmethod
+    def view_definition():
+        return (
+            sql.SQL(
+                """
+            SELECT 
+                row_number() over ()        AS id,
+                unnest(organization_ids)    AS organization_id,  
+                subq.id                     AS duplicate_values_id
+            FROM ({}) AS subq
+        """
+            )
+            .format(sql.SQL(PossibleDuplicateOrganization.view_definition()))
+            .as_string()
+        )
+
+    class Meta:
+        managed = False
+
+
+class DismissedDuplicateOrganization(models.Model):
+    organization_ids = ArrayField(base_field=models.IntegerField(), unique=True)
+
+    def __str__(self):
+        return f"Dismissed duplicate organizations: {self.organization_ids}"
 
 
 class ResolveConflict(BaseContact):

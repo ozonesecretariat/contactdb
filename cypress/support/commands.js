@@ -164,6 +164,24 @@ Cypress.Commands.addAll({
 
     return cy.wrap({ contacts, name: groupName });
   },
+  createOrganizationType(numberOfOrganizations = 1, extraFields = {}) {
+    const orgType = randomStr("test-type-");
+    cy.addModel("Organization types", { acronym: orgType, title: orgType });
+
+    const organizations = [];
+    for (let i = 0; i < numberOfOrganizations; i += 1) {
+      const org = {
+        name: randomStr("test-org-", 10),
+        organization_type: orgType,
+        ...extraFields,
+      };
+      organizations.push(org);
+
+      cy.addModel("Organizations", org);
+    }
+
+    return cy.wrap({ organizations, title: orgType });
+  },
   deleteContactGroup(group) {
     cy.triggerAction({
       action: "Delete selected contacts",
@@ -180,6 +198,17 @@ Cypress.Commands.addAll({
     cy.get("a").contains("Delete").click();
     cy.get("[type=submit]").contains("Yes, I’m sure").click();
     cy.contains("deleted successfully");
+  },
+  deleteOrganizationType(orgType) {
+    cy.triggerAction({
+      action: "Delete selected organizations",
+      filters: { organization_type: orgType.title },
+      modelName: "Organizations",
+    });
+    cy.get("[type=submit]").contains("Yes, I’m sure").click();
+    cy.contains("Successfully deleted");
+
+    cy.deleteModel("Organization types", orgType.title);
   },
   fillCKEditor(name, value) {
     cy.getIframeBody(`.field-${name} iframe`).type(value);

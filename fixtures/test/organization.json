@@ -258,5 +258,96 @@
       "government": "GT",
       "country": "EE"
     }
+  },
+  {
+    "model": "core.organization",
+    "pk": 21,
+    "fields": {
+      "organization_id": null,
+      "name": "Photonics and Quantum Technologies Alliance",
+      "alt_names": null,
+      "acronym": "PQTA",
+      "organization_type": "EXHIBITOR",
+      "government": "CL",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 22,
+    "fields": {
+      "organization_id": null,
+      "name": "Photonics and Quantum Technologies Alliance",
+      "alt_names": null,
+      "acronym": "PQTA",
+      "organization_type": "EXHIBITOR",
+      "government": "CL",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 23,
+    "fields": {
+      "organization_id": null,
+      "name": "Photonics and Quantum Technologies Alliance",
+      "alt_names": null,
+      "acronym": "PQTA",
+      "organization_type": "EXHIBITOR",
+      "government": "CL",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 24,
+    "fields": {
+      "organization_id": null,
+      "name": "Advanced Quantum Computing Institute",
+      "alt_names": null,
+      "acronym": "AQCI",
+      "organization_type": "EXHIBITOR",
+      "government": "CL",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 25,
+    "fields": {
+      "organization_id": null,
+      "name": "Advanced Quantum Computing Institute",
+      "alt_names": null,
+      "acronym": "",
+      "organization_type": "GOV",
+      "government": "CL",
+      "country": "KR"
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 26,
+    "fields": {
+      "organization_id": null,
+      "name": "Center for Quantum Simulation Technologies",
+      "alt_names": null,
+      "acronym": "CQST",
+      "organization_type": "OTHER",
+      "government": "CL",
+      "country": null
+    }
+  },
+  {
+    "model": "core.organization",
+    "pk": 27,
+    "fields": {
+      "organization_id": null,
+      "name": "Center for Quantum Simulation Technologies",
+      "alt_names": null,
+      "acronym": "CQST",
+      "organization_type": "EXHIBITOR",
+      "government": "CL",
+      "country": "KR"
+    }
   }
 ]
