@@ -11,7 +11,8 @@ describe("Check user permissions", () => {
       },
       events: {
         event: { view: true },
-        eventtag: { view: true },
+        eventgroup: { view: true },
+        eventinvitation: { view: true },
         registration: { view: true },
         registrationrole: { view: true },
         registrationstatus: { view: true },

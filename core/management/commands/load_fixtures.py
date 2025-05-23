@@ -17,7 +17,8 @@ from core.models import (
 from emails.models import Email, EmailTemplate, SendEmailTask
 from events.models import (
     Event,
-    EventTag,
+    EventGroup,
+    EventInvitation,
     LoadEventsFromKronosTask,
     LoadParticipantsFromKronosTask,
     Registration,
@@ -58,7 +59,8 @@ class Command(BaseCommand):
             ImportLegacyContactsTask,
             # Events
             Event,
-            EventTag,
+            EventGroup,
+            EventInvitation,
             LoadEventsFromKronosTask,
             LoadParticipantsFromKronosTask,
             Registration,
