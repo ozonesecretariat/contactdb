@@ -138,6 +138,9 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         AutocompleteFilterMultipleFactory("country", "country"),
         AutocompleteFilterMultipleFactory("groups", "groups"),
         AutocompleteFilterMultipleFactory("organization", "organization"),
+        AutocompleteFilterMultipleFactory(
+            "organization type", "organization__organization_type"
+        ),
         AutocompleteFilterFactory("event", "registrations__event"),
         "org_head",
         BooleanAnnotationFilter.init("primary"),
