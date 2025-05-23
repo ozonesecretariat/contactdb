@@ -244,10 +244,6 @@ class PossibleDuplicate(DBView):
                 "field_name": "Email",
                 "field": "TRIM(LOWER(unnest(emails)))",
             },
-            {
-                "field_name": "Email Cc",
-                "field": "TRIM(LOWER(unnest(email_ccs)))",
-            },
         )
         query_template = """
             SELECT '%(field_name)s'                         AS duplicate_type, 
