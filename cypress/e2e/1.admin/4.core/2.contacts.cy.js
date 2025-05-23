@@ -10,6 +10,7 @@ describe("Check", () => {
         country__in: ["Albania", "Chad"],
         groups__in: ["The Dream Team Connection", "Music Maniacs Association"],
         organization__in: ["Warp Dynamics Institute", "Galactic Research Institute for Advanced Technologies"],
+        organization__organization_type__in: ["IGOs", "UN Agencies"],
       },
       modelName: "Contacts",
     });
