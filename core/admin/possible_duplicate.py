@@ -262,6 +262,7 @@ class PossibleDuplicateOrganizationAdmin(DjangoObjectActions, ModelAdmin):
             and has_model_permission(request, Organization, "change")
             and has_model_permission(request, Organization, "delete")
         )
+
     #
     # @action(
     #     label="Merge",
@@ -277,7 +278,9 @@ class PossibleDuplicateOrganizationAdmin(DjangoObjectActions, ModelAdmin):
         permissions=["resolve_duplicates"],
     )
     def dismiss_duplicate(self, request, obj):
-        DismissedDuplicateOrganization.objects.get_or_create(organization_ids=obj.organization_ids)
+        DismissedDuplicateOrganization.objects.get_or_create(
+            organization_ids=obj.organization_ids
+        )
         self.message_user(
             request,
             "Possible duplicate dismissed",
@@ -293,7 +296,9 @@ class PossibleDuplicateOrganizationAdmin(DjangoObjectActions, ModelAdmin):
     def dismiss_duplicates(self, request, queryset):
         objs = DismissedDuplicateOrganization.objects.bulk_create(
             [
-                DismissedDuplicateOrganization(organization_ids=duplicate.organization_ids)
+                DismissedDuplicateOrganization(
+                    organization_ids=duplicate.organization_ids
+                )
                 for duplicate in queryset
                 if duplicate.organization_ids
             ],
