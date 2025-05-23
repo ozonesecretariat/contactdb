@@ -249,6 +249,7 @@ class EventAdmin(ExportMixin, ModelAdmin):
 @admin.register(EventInvitation)
 class EventInvitationAdmin(admin.ModelAdmin):
     list_display = (
+        "__str__",
         "organization",
         "event_or_group",
         "country",
@@ -256,6 +257,7 @@ class EventInvitationAdmin(admin.ModelAdmin):
         "link_accessed",
         "created_at",
     )
+    list_display_links = ("__str__",)
 
     list_filter = (
         AutocompleteFilterFactory("event", "event"),

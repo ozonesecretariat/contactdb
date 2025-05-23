@@ -170,8 +170,9 @@ class EventInvitation(models.Model):
         ]
 
     def __str__(self):
+        invitee = self.country or self.organization
         target = self.event_group or self.event
-        return f"Invitation for {self.organization} to {target}"
+        return f"Invitation for {invitee} to {target}"
 
     def clean(self):
         if not self.event_group and not self.event:
