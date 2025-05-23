@@ -18,6 +18,7 @@ from emails.models import Email, EmailTemplate, SendEmailTask
 from events.models import (
     Event,
     EventGroup,
+    EventInvitation,
     LoadEventsFromKronosTask,
     LoadParticipantsFromKronosTask,
     Registration,
@@ -59,6 +60,7 @@ class Command(BaseCommand):
             # Events
             Event,
             EventGroup,
+            EventInvitation,
             LoadEventsFromKronosTask,
             LoadParticipantsFromKronosTask,
             Registration,

@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -85,6 +87,107 @@ class Event(models.Model):
                     "end_date": msg,
                 }
             )
+
+
+class EventInvitation(models.Model):
+    event_group = models.ForeignKey(
+        EventGroup,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="invitations",
+    )
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="invitations",
+    )
+
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="event_invitations",
+        help_text="When country is set, all GOV organizations in country are invited",
+    )
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="event_invitations",
+    )
+
+    token = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        help_text="Unique token for invitation link",
+    )
+    link_accessed = models.BooleanField(
+        default=False, help_text="Whether the invitation link has been accessed"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["event_group", "country"],
+                condition=models.Q(
+                    event_group__isnull=False,
+                    country__isnull=False,
+                ),
+                name="unique_eventgroup_country",
+            ),
+            models.UniqueConstraint(
+                fields=["event_group", "organization"],
+                condition=models.Q(
+                    event_group__isnull=False,
+                    organization__isnull=False,
+                ),
+                name="unique_eventgroup_organization",
+            ),
+            models.UniqueConstraint(
+                fields=["event", "country"],
+                condition=models.Q(
+                    event__isnull=False,
+                    country__isnull=False,
+                ),
+                name="unique_event_country",
+            ),
+            models.UniqueConstraint(
+                fields=["event", "organization"],
+                condition=models.Q(
+                    event__isnull=False,
+                    organization__isnull=False,
+                ),
+                name="unique_event_organization",
+            ),
+        ]
+
+    def __str__(self):
+        target = self.event_group or self.event
+        return f"Invitation for {self.organization} to {target}"
+
+    def clean(self):
+        if not self.event_group and not self.event:
+            raise ValidationError("Either event_group or event must be specified")
+        if self.event_group and self.event:
+            raise ValidationError("Cannot specify both event_group and event")
+
+        if not self.country and not self.organization:
+            raise ValidationError("Either country or organization must be specified")
+        if self.country and self.organization:
+            raise ValidationError("Cannot specify both country and organization")
+
+    @property
+    def invitation_link(self):
+        # TODO: use reverse() when actual view is created
+        return f"/events/invitation/{self.token}/"
 
 
 class RegistrationTag(models.Model):

@@ -2,6 +2,7 @@ from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count
 from django.shortcuts import redirect
+from django.utils.html import format_html
 from import_export.admin import ExportMixin
 
 from common.model_admin import ModelAdmin, TaskAdmin
@@ -10,6 +11,7 @@ from common.urls import reverse
 from events.models import (
     Event,
     EventGroup,
+    EventInvitation,
     LoadEventsFromKronosTask,
     LoadParticipantsFromKronosTask,
     Registration,
@@ -242,3 +244,75 @@ class EventAdmin(ExportMixin, ModelAdmin):
     def send_email(self, request, queryset):
         ids = ",".join(map(str, queryset.values_list("id", flat=True)))
         return redirect(reverse("admin:emails_email_add") + "?events=" + ids)
+
+
+@admin.register(EventInvitation)
+class EventInvitationAdmin(admin.ModelAdmin):
+    list_display = (
+        "organization",
+        "event_or_group",
+        "country",
+        "invitation_link",
+        "link_accessed",
+        "created_at",
+    )
+
+    list_filter = (
+        AutocompleteFilterFactory("event", "event"),
+        AutocompleteFilterFactory("event_group", "event_group"),
+        AutocompleteFilterFactory("organization", "organization"),
+        AutocompleteFilterFactory("country", "country"),
+        "link_accessed",
+    )
+
+    readonly_fields = ("token", "link_accessed", "created_at", "invitation_link")
+
+    search_fields = (
+        "organization__name",
+        "event__title",
+        "event_group__name",
+        "country__name",
+    )
+
+    autocomplete_fields = ("event", "event_group", "organization", "country")
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("event_group", "event"),
+                    ("organization", "country"),
+                )
+            },
+        ),
+        (
+            "Invitation Details",
+            {
+                "fields": (
+                    "token",
+                    "invitation_link",
+                    "link_accessed",
+                    "created_at",
+                )
+            },
+        ),
+    )
+
+    @admin.display(description="Target")
+    def event_or_group(self, obj):
+        return obj.event_group or obj.event
+
+    @admin.display(description="Invitation Link")
+    def invitation_link(self, obj):
+        return format_html(
+            '<a href="{}" target="_blank">{}</a>',
+            obj.invitation_link,
+            "View Invitation Link",
+        )
+
+    def save_model(self, request, obj, form, change):
+        # Reset link_accessed when creating new invitation
+        if not change:  # New invitation
+            obj.link_accessed = False
+        super().save_model(request, obj, form, change)

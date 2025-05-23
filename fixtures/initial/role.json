@@ -22,7 +22,8 @@
         ["view_registrationrole", "events", "registrationrole"],
         ["view_registrationstatus", "events", "registrationstatus"],
         ["view_registrationtag", "events", "registrationtag"],
-        ["view_eventgroup", "events", "eventgroup"]
+        ["view_eventgroup", "events", "eventgroup"],
+        ["view_eventinvitation", "events", "eventinvitation"]
       ]
     }
   },
@@ -85,7 +86,11 @@
         ["add_eventgroup", "events", "eventgroup"],
         ["change_eventgroup", "events", "eventgroup"],
         ["delete_eventgroup", "events", "eventgroup"],
-        ["view_eventgroup", "events", "eventgroup"]
+        ["view_eventgroup", "events", "eventgroup"],
+        ["add_eventinvitation", "events", "eventinvitation"],
+        ["change_eventinvitation", "events", "eventinvitation"],
+        ["delete_eventinvitation", "events", "eventinvitation"],
+        ["view_eventinvitation", "events", "eventinvitation"]
       ]
     }
   },
