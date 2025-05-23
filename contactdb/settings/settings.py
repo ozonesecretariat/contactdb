@@ -108,6 +108,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "corsheaders",
+    "more_admin_filters",
     # This app
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",

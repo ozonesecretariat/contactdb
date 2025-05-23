@@ -18,6 +18,7 @@ dependencies = [
     "django-filter>=25.1",
     "django-group-model>=1.0.1",
     "django-import-export[xlsx]>=4.3.7",
+    "django-more-admin-filters>=1.12",
     "django-object-actions>=5.0.0",
     "django-redis>=5.4.0",
     "django-rq>=3.0.1",
@@ -79,6 +80,7 @@ select = [
 ignore = [
   # Allow boolean default positional arguments, as django has many of those.
   "FBT002",
+  "FBT003",
   # Allow using mark_safe
   "S308",
 ]
