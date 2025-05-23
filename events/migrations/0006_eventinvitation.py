@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0011_alter_importlegacycontactstask_json_file"),
         ("events", "0005_eventgroup_remove_event_tags_event_groups_and_more"),
     ]
 
