@@ -1,6 +1,6 @@
 [
   {
-    "model": "events.eventtag",
+    "model": "events.eventgroup",
     "pk": 1,
     "fields": {
       "name": "MOP36",

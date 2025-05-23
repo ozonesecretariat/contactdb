@@ -13,7 +13,7 @@ describe("Check user permissions", () => {
       },
       events: {
         event: true,
-        eventtag: true,
+        eventgroup: true,
         registration: true,
         registrationrole: true,
         registrationstatus: true,

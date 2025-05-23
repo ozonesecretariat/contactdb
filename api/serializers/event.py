@@ -1,18 +1,18 @@
 from rest_framework import serializers
 
 from api.serializers.country import CountrySerializer
-from events.models import Event, EventTag
+from events.models import Event, EventGroup
 
 
-class EventTagSerializer(serializers.ModelSerializer):
+class EventGroupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EventTag
+        model = EventGroup
         fields = ("name", "description")
 
 
 class EventSerializer(serializers.ModelSerializer):
     venue_country = CountrySerializer()
-    tags = EventTagSerializer(many=True, read_only=True)
+    groups = EventGroupSerializer(many=True, read_only=True)
 
     class Meta:
         model = Event
