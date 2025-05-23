@@ -21,6 +21,7 @@ from emails.models import (
     Email,
     EmailAttachment,
     EmailTemplate,
+    InvitationEmail,
     SendEmailTask,
 )
 
@@ -209,13 +210,12 @@ class EmailAttachmentAdmin(admin.TabularInline):
     extra = 0
 
 
-@admin.register(Email)
-class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
-    """Send emails in bulk to a contact list, groups of contacts or all registered
-    event participants.
+class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
+    """
+    Base admin class for common functionality in all email-related admins
+    (e.g. base emails and event invitations).
     """
 
-    form = EmailAdminForm
     inlines = (EmailAttachmentAdmin,)
     list_display = (
         "subject",
@@ -227,6 +227,62 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     )
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
+
+    def get_email_object(self, obj: Email) -> Email:
+        return obj
+
+    def get_msg_source(self, obj: Email) -> str:
+        return obj.build_email().message().as_string()
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def _get_count_link(self, obj, status=None):
+        extra_filters = {}
+        if status:
+            extra_filters["status__exact"] = status
+            count = len(
+                [task for task in obj.email_logs.all() if task.status == status]
+            )
+        else:
+            count = len(obj.email_logs.all())
+
+        return self.get_related_link(
+            obj,
+            "email_logs",
+            "email",
+            text=f"{count} emails",
+            extra_filters=extra_filters,
+        )
+
+    @admin.display(description="Total")
+    def sent_count(self, obj):
+        return self._get_count_link(obj)
+
+    @admin.display(description="Success")
+    def success_count(self, obj):
+        return self._get_count_link(obj, "SUCCESS")
+
+    @admin.display(description="Failed")
+    def failed_count(self, obj):
+        return self._get_count_link(obj, "FAILURE")
+
+    @admin.display(description="Pending")
+    def pending_count(self, obj):
+        return self._get_count_link(obj, "PENDING")
+
+
+@admin.register(Email)
+class EmailAdmin(BaseEmailAdmin):
+    """
+    Send emails in bulk to a contact list, groups of contacts or all registered
+    event participants.
+    """
+
+    form = EmailAdminForm
     autocomplete_fields = (
         "recipients",
         "cc_recipients",
@@ -339,17 +395,12 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         ),
     )
 
-    def get_email_object(self, obj: Email) -> Email:
-        return obj
-
-    def get_msg_source(self, obj: Email) -> str:
-        return obj.build_email().message().as_string()
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .exclude(email_type=Email.EmailTypeChoices.EVENT_INVITE)
+        )
 
     def get_inlines(self, request, obj):
         if obj:
@@ -358,6 +409,7 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
     def response_post_save_add(self, request, obj):
         tasks = []
+        # Send emails to individual contacts
         for contact in obj.all_to_contacts:
             task = SendEmailTask.objects.create(
                 email=obj, contact=contact, created_by=request.user
@@ -371,40 +423,6 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
             level=messages.SUCCESS,
         )
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
-
-    def _get_count_link(self, obj, status=None):
-        extra_filters = {}
-        if status:
-            extra_filters["status__exact"] = status
-            count = len(
-                [task for task in obj.email_logs.all() if task.status == status]
-            )
-        else:
-            count = len(obj.email_logs.all())
-
-        return self.get_related_link(
-            obj,
-            "email_logs",
-            "email",
-            text=f"{count} emails",
-            extra_filters=extra_filters,
-        )
-
-    @admin.display(description="Total")
-    def sent_count(self, obj):
-        return self._get_count_link(obj)
-
-    @admin.display(description="Success")
-    def success_count(self, obj):
-        return self._get_count_link(obj, "SUCCESS")
-
-    @admin.display(description="Failed")
-    def failed_count(self, obj):
-        return self._get_count_link(obj, "FAILURE")
-
-    @admin.display(description="Pending")
-    def pending_count(self, obj):
-        return self._get_count_link(obj, "PENDING")
 
     @admin.display(description="Recipients")
     def recipients_links(self, obj):
@@ -433,6 +451,98 @@ class EmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     @admin.display(description="Bcc groups")
     def bcc_groups_links(self, obj):
         return self.get_m2m_links(obj.bcc_groups.all())
+
+
+@admin.register(InvitationEmail)
+class InvitationEmailAdmin(BaseEmailAdmin):
+    """
+    Admin class for viewing and sending invitations emails.
+    """
+
+    exclude = [
+        "recipients",
+        "cc_recipients",
+        "bcc_recipients",
+        "groups",
+        "cc_groups",
+        "bcc_groups",
+        "email_type",
+    ]
+
+    fieldsets = (
+        (
+            "Recipients",
+            {
+                "description": (
+                    "Select organization types to send invitations. Primary contacts "
+                    "will be set as To recipients, secondary contacts as CC."
+                ),
+                "fields": ("organization_types",),
+            },
+        ),
+        (
+            "Events",
+            {
+                "description": ("Send invitation emails for this specific event."),
+                "fields": ("events",),
+            },
+        ),
+        (
+            "Email content",
+            {
+                "description": (
+                    "For event invitations, use the [[invitation_link]] placeholder; "
+                    "this will automatically insert the correct link for each "
+                    "organization and event."
+                ),
+                "fields": (
+                    "subject",
+                    "content",
+                ),
+            },
+        ),
+    )
+    autocomplete_fields = ("organization_types", "events")
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .filter(email_type=Email.EmailTypeChoices.EVENT_INVITE)
+        )
+
+    def save_model(self, request, obj, form, change):
+        obj.email_type = Email.EmailTypeChoices.EVENT_INVITE
+        super().save_model(request, obj, form, change)
+
+    def response_post_save_add(self, request, obj):
+        from .services import get_organization_recipients
+
+        tasks = []
+        event = obj.events.first() if obj.events.exists() else None
+        org_recipients = get_organization_recipients(
+            obj.organization_types.all(), event
+        )
+
+        for org, data in org_recipients.items():
+            if data["to"] or data["cc"]:
+                task = SendEmailTask.objects.create(
+                    email=obj,
+                    organization=org,
+                    invitation=data["invitation"],
+                    created_by=request.user,
+                )
+                task.contacts_to.set(data["to"])
+                task.contacts_cc.set(data["cc"])
+                task.run(is_async=True)
+                tasks.append(task)
+
+        self.message_user(
+            request,
+            f"{len(tasks)} invitation emails scheduled for sending",
+            messages.SUCCESS,
+        )
+        return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
 
 
 class ContactAutocompleteFilter(AutocompleteFilter):

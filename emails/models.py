@@ -14,7 +14,7 @@ from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
-from core.models import Contact, ContactGroup
+from core.models import Contact, ContactGroup, OrganizationType
 from events.models import Event
 
 
@@ -62,6 +62,16 @@ class EmailTemplate(models.Model):
 
 
 class Email(models.Model):
+    class EmailTypeChoices(models.TextChoices):
+        EVENT_INVITE = "EVENT INVITE", "Event Invite"
+        EVENT_NOTIFICATION = "EVENT_NOTIFICATION", "Event Notification"
+
+    email_type = models.CharField(
+        max_length=32,
+        choices=EmailTypeChoices.choices,
+        default=EmailTypeChoices.EVENT_NOTIFICATION,
+    )
+
     recipients = models.ManyToManyField(
         Contact,
         blank=True,
@@ -111,6 +121,12 @@ class Email(models.Model):
         limit_choices_to=~Q(registrations=None),
         related_name="sent_emails",
     )
+    organization_types = models.ManyToManyField(
+        OrganizationType,
+        blank=True,
+        help_text="Send the email to primary contacts of these organization types.",
+        related_name="sent_emails",
+    )
     subject = models.CharField(max_length=900)
     content = RichTextUploadingField(validators=[validate_placeholders])
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -155,6 +171,14 @@ class Email(models.Model):
             msg.cc.extend(contact.email_ccs or [])
 
             for placeholder in settings.CKEDITOR_PLACEHOLDERS:
+                if (
+                    placeholder == "invitation_link"
+                    and hasattr(self, "invitation")
+                    and self.invitation
+                ):
+                    html_content = html_content.replace(
+                        f"[[{placeholder}]]", getattr(self.invitation, placeholder)
+                    )
                 html_content = html_content.replace(
                     f"[[{placeholder}]]", getattr(contact, placeholder)
                 )
@@ -207,6 +231,17 @@ class EmailAttachment(models.Model):
         return self.name or self.file.name
 
 
+class InvitationEmail(Email):
+    """
+    Proxy model for Email so we can have separate admin forms for different email types.
+    """
+
+    class Meta:
+        proxy = True
+        verbose_name = "Invitation Email"
+        verbose_name_plural = "Invitation Emails"
+
+
 class SendEmailTask(TaskRQ):
     DEFAULT_VERBOSITY = 2
     TASK_QUEUE = "default"
@@ -222,6 +257,20 @@ class SendEmailTask(TaskRQ):
         on_delete=models.SET_NULL,
         related_name="email_logs",
         null=True,
+    )
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="email_tasks",
+    )
+    invitation = models.ForeignKey(
+        "events.EventInvitation",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="email_tasks",
     )
     cc_contacts = models.ManyToManyField(
         Contact,
@@ -292,3 +341,24 @@ class SendEmailTask(TaskRQ):
             if part.get_content_type() == "text/html":
                 return part.get_payload(decode=True).decode()
         return ""
+
+    def build_email(self):
+        context = self.get_context()
+        html_content = self.email.content
+
+        # Replace placeholders
+        for placeholder, value in context.items():
+            html_content = html_content.replace(f"[[{placeholder}]]", str(value))
+        if self.contact:
+            # Handle single contact case
+            return super().build_email()
+
+        # Handle organization case
+        email_to = [
+            contact.email for contact in self.contacts_to.all() if contact.email
+        ]
+        email_cc = [
+            contact.email for contact in self.contacts_cc.all() if contact.email
+        ]
+
+        return self.email.build_email(to=email_to, cc=email_cc)
