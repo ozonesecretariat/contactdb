@@ -565,8 +565,8 @@
     "fields": {
         "name": "European Union",
         "official_name": "",
-        "region": null,
-        "subregion": null
+        "region": "A2",
+        "subregion": "EU"
     }
 },
 {
