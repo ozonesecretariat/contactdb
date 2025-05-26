@@ -3,7 +3,13 @@ from api.tests.base import BaseAPITestCase
 
 class TestEventsAPI(BaseAPITestCase):
     url = "/api/events/"
-    fixtures = [*BaseAPITestCase.fixtures, "initial/country", "test/event"]
+    fixtures = [
+        *BaseAPITestCase.fixtures,
+        "initial/country",
+        "initial/region",
+        "initial/subregion",
+        "test/event",
+    ]
 
     def test_get_events_admin(self):
         self.login_admin()

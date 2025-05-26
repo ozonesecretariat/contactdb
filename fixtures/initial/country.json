@@ -1,1586 +1,1982 @@
 [
-  {
+{
     "model": "core.country",
     "pk": "AD",
     "fields": {
-      "name": "Andorra",
-      "official_name": "Principality of Andorra"
+        "name": "Andorra",
+        "official_name": "Principality of Andorra",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AE",
     "fields": {
-      "name": "United Arab Emirates",
-      "official_name": "United Arab Emirates"
+        "name": "United Arab Emirates",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AF",
     "fields": {
-      "name": "Afghanistan",
-      "official_name": "Islamic Republic of Afghanistan"
+        "name": "Afghanistan",
+        "official_name": "Islamic Republic of Afghanistan",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AG",
     "fields": {
-      "name": "Antigua and Barbuda",
-      "official_name": "Antigua and Barbuda"
+        "name": "Antigua and Barbuda",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AL",
     "fields": {
-      "name": "Albania",
-      "official_name": "Republic of Albania"
+        "name": "Albania",
+        "official_name": "Republic of Albania",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AM",
     "fields": {
-      "name": "Armenia",
-      "official_name": "Republic of Armenia"
+        "name": "Armenia",
+        "official_name": "Republic of Armenia",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AO",
     "fields": {
-      "name": "Angola",
-      "official_name": "Republic of Angola"
+        "name": "Angola",
+        "official_name": "Republic of Angola",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AR",
     "fields": {
-      "name": "Argentina",
-      "official_name": "Argentine Republic"
+        "name": "Argentina",
+        "official_name": "Argentine Republic",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AT",
     "fields": {
-      "name": "Austria",
-      "official_name": "Republic of Austria"
+        "name": "Austria",
+        "official_name": "Republic of Austria",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AU",
     "fields": {
-      "name": "Australia",
-      "official_name": "Australia"
+        "name": "Australia",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "036"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "AZ",
     "fields": {
-      "name": "Azerbaijan",
-      "official_name": "Republic of Azerbaijan"
+        "name": "Azerbaijan",
+        "official_name": "Republic of Azerbaijan",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BA",
     "fields": {
-      "name": "Bosnia and Herzegovina",
-      "official_name": "Republic of Bosnia and Herzegovina"
+        "name": "Bosnia and Herzegovina",
+        "official_name": "Republic of Bosnia and Herzegovina",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BB",
     "fields": {
-      "name": "Barbados",
-      "official_name": "Barbados"
+        "name": "Barbados",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BD",
     "fields": {
-      "name": "Bangladesh",
-      "official_name": "People's Republic of Bangladesh"
+        "name": "Bangladesh",
+        "official_name": "People's Republic of Bangladesh",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BE",
     "fields": {
-      "name": "Belgium",
-      "official_name": "Kingdom of Belgium"
+        "name": "Belgium",
+        "official_name": "Kingdom of Belgium",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BF",
     "fields": {
-      "name": "Burkina Faso",
-      "official_name": "Burkina Faso"
+        "name": "Burkina Faso",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BG",
     "fields": {
-      "name": "Bulgaria",
-      "official_name": "Republic of Bulgaria"
+        "name": "Bulgaria",
+        "official_name": "Republic of Bulgaria",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BH",
     "fields": {
-      "name": "Bahrain",
-      "official_name": "Kingdom of Bahrain"
+        "name": "Bahrain",
+        "official_name": "Kingdom of Bahrain",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BI",
     "fields": {
-      "name": "Burundi",
-      "official_name": "Republic of Burundi"
+        "name": "Burundi",
+        "official_name": "Republic of Burundi",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BJ",
     "fields": {
-      "name": "Benin",
-      "official_name": "Republic of Benin"
+        "name": "Benin",
+        "official_name": "Republic of Benin",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BN",
     "fields": {
-      "name": "Brunei Darussalam",
-      "official_name": "Brunei Darussalam"
+        "name": "Brunei Darussalam",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BO",
     "fields": {
-      "name": "Bolivia, Plurinational State of",
-      "official_name": "Plurinational State of Bolivia"
+        "name": "Bolivia, Plurinational State of",
+        "official_name": "Plurinational State of Bolivia",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BR",
     "fields": {
-      "name": "Brazil",
-      "official_name": "Federative Republic of Brazil"
+        "name": "Brazil",
+        "official_name": "Federative Republic of Brazil",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BS",
     "fields": {
-      "name": "Bahamas",
-      "official_name": "Commonwealth of the Bahamas"
+        "name": "Bahamas",
+        "official_name": "Commonwealth of the Bahamas",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BT",
     "fields": {
-      "name": "Bhutan",
-      "official_name": "Kingdom of Bhutan"
+        "name": "Bhutan",
+        "official_name": "Kingdom of Bhutan",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BW",
     "fields": {
-      "name": "Botswana",
-      "official_name": "Republic of Botswana"
+        "name": "Botswana",
+        "official_name": "Republic of Botswana",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BY",
     "fields": {
-      "name": "Belarus",
-      "official_name": "Republic of Belarus"
+        "name": "Belarus",
+        "official_name": "Republic of Belarus",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "BZ",
     "fields": {
-      "name": "Belize",
-      "official_name": "Belize"
+        "name": "Belize",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CA",
     "fields": {
-      "name": "Canada",
-      "official_name": "Canada"
+        "name": "Canada",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "021"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CD",
     "fields": {
-      "name": "Congo, The Democratic Republic of the",
-      "official_name": "Congo, The Democratic Republic of the"
+        "name": "Congo, The Democratic Republic of the",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CF",
     "fields": {
-      "name": "Central African Republic",
-      "official_name": "Central African Republic"
+        "name": "Central African Republic",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CG",
     "fields": {
-      "name": "Congo",
-      "official_name": "Republic of the Congo"
+        "name": "Congo",
+        "official_name": "Republic of the Congo",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CH",
     "fields": {
-      "name": "Switzerland",
-      "official_name": "Swiss Confederation"
+        "name": "Switzerland",
+        "official_name": "Swiss Confederation",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CI",
     "fields": {
-      "name": "Côte d'Ivoire",
-      "official_name": "Republic of Côte d'Ivoire"
+        "name": "Côte d'Ivoire",
+        "official_name": "Republic of Côte d'Ivoire",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CK",
     "fields": {
-      "name": "Cook Islands",
-      "official_name": "Cook Islands"
+        "name": "Cook Islands",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CL",
     "fields": {
-      "name": "Chile",
-      "official_name": "Republic of Chile"
+        "name": "Chile",
+        "official_name": "Republic of Chile",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CM",
     "fields": {
-      "name": "Cameroon",
-      "official_name": "Republic of Cameroon"
+        "name": "Cameroon",
+        "official_name": "Republic of Cameroon",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CN",
     "fields": {
-      "name": "China",
-      "official_name": "People's Republic of China"
+        "name": "China",
+        "official_name": "People's Republic of China",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CO",
     "fields": {
-      "name": "Colombia",
-      "official_name": "Republic of Colombia"
+        "name": "Colombia",
+        "official_name": "Republic of Colombia",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CR",
     "fields": {
-      "name": "Costa Rica",
-      "official_name": "Republic of Costa Rica"
+        "name": "Costa Rica",
+        "official_name": "Republic of Costa Rica",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CU",
     "fields": {
-      "name": "Cuba",
-      "official_name": "Republic of Cuba"
+        "name": "Cuba",
+        "official_name": "Republic of Cuba",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CV",
     "fields": {
-      "name": "Cabo Verde",
-      "official_name": "Republic of Cabo Verde"
+        "name": "Cabo Verde",
+        "official_name": "Republic of Cabo Verde",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CY",
     "fields": {
-      "name": "Cyprus",
-      "official_name": "Republic of Cyprus"
+        "name": "Cyprus",
+        "official_name": "Republic of Cyprus",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "CZ",
     "fields": {
-      "name": "Czechia",
-      "official_name": "Czech Republic"
+        "name": "Czechia",
+        "official_name": "Czech Republic",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "DE",
     "fields": {
-      "name": "Germany",
-      "official_name": "Federal Republic of Germany"
+        "name": "Germany",
+        "official_name": "Federal Republic of Germany",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "DJ",
     "fields": {
-      "name": "Djibouti",
-      "official_name": "Republic of Djibouti"
+        "name": "Djibouti",
+        "official_name": "Republic of Djibouti",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "DK",
     "fields": {
-      "name": "Denmark",
-      "official_name": "Kingdom of Denmark"
+        "name": "Denmark",
+        "official_name": "Kingdom of Denmark",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "DM",
     "fields": {
-      "name": "Dominica",
-      "official_name": "Commonwealth of Dominica"
+        "name": "Dominica",
+        "official_name": "Commonwealth of Dominica",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "DO",
     "fields": {
-      "name": "Dominican Republic",
-      "official_name": "Dominican Republic"
+        "name": "Dominican Republic",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "DZ",
     "fields": {
-      "name": "Algeria",
-      "official_name": "People's Democratic Republic of Algeria"
+        "name": "Algeria",
+        "official_name": "People's Democratic Republic of Algeria",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "EC",
     "fields": {
-      "name": "Ecuador",
-      "official_name": "Republic of Ecuador"
+        "name": "Ecuador",
+        "official_name": "Republic of Ecuador",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "EE",
     "fields": {
-      "name": "Estonia",
-      "official_name": "Republic of Estonia"
+        "name": "Estonia",
+        "official_name": "Republic of Estonia",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "EG",
     "fields": {
-      "name": "Egypt",
-      "official_name": "Arab Republic of Egypt"
+        "name": "Egypt",
+        "official_name": "Arab Republic of Egypt",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ER",
     "fields": {
-      "name": "Eritrea",
-      "official_name": "the State of Eritrea"
+        "name": "Eritrea",
+        "official_name": "the State of Eritrea",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ES",
     "fields": {
-      "name": "Spain",
-      "official_name": "Kingdom of Spain"
+        "name": "Spain",
+        "official_name": "Kingdom of Spain",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ET",
     "fields": {
-      "name": "Ethiopia",
-      "official_name": "Federal Democratic Republic of Ethiopia"
+        "name": "Ethiopia",
+        "official_name": "Federal Democratic Republic of Ethiopia",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "EU",
     "fields": {
-      "name": "European Union",
-      "official_name": "European Union"
+        "name": "European Union",
+        "official_name": "",
+        "region": null,
+        "subregion": null
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "FI",
     "fields": {
-      "name": "Finland",
-      "official_name": "Republic of Finland"
+        "name": "Finland",
+        "official_name": "Republic of Finland",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "FJ",
     "fields": {
-      "name": "Fiji",
-      "official_name": "Republic of Fiji"
+        "name": "Fiji",
+        "official_name": "Republic of Fiji",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "FM",
     "fields": {
-      "name": "Micronesia, Federated States of",
-      "official_name": "Federated States of Micronesia"
+        "name": "Micronesia, Federated States of",
+        "official_name": "Federated States of Micronesia",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "FR",
     "fields": {
-      "name": "France",
-      "official_name": "French Republic"
+        "name": "France",
+        "official_name": "French Republic",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GA",
     "fields": {
-      "name": "Gabon",
-      "official_name": "Gabonese Republic"
+        "name": "Gabon",
+        "official_name": "Gabonese Republic",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GB",
     "fields": {
-      "name": "United Kingdom",
-      "official_name": "United Kingdom of Great Britain and Northern Ireland"
+        "name": "United Kingdom",
+        "official_name": "United Kingdom of Great Britain and Northern Ireland",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GD",
     "fields": {
-      "name": "Grenada",
-      "official_name": "Grenada"
+        "name": "Grenada",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GE",
     "fields": {
-      "name": "Georgia",
-      "official_name": "Georgia"
+        "name": "Georgia",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GH",
     "fields": {
-      "name": "Ghana",
-      "official_name": "Republic of Ghana"
+        "name": "Ghana",
+        "official_name": "Republic of Ghana",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GM",
     "fields": {
-      "name": "Gambia",
-      "official_name": "Republic of the Gambia"
+        "name": "Gambia",
+        "official_name": "Republic of the Gambia",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GN",
     "fields": {
-      "name": "Guinea",
-      "official_name": "Republic of Guinea"
+        "name": "Guinea",
+        "official_name": "Republic of Guinea",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GQ",
     "fields": {
-      "name": "Equatorial Guinea",
-      "official_name": "Republic of Equatorial Guinea"
+        "name": "Equatorial Guinea",
+        "official_name": "Republic of Equatorial Guinea",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GR",
     "fields": {
-      "name": "Greece",
-      "official_name": "Hellenic Republic"
+        "name": "Greece",
+        "official_name": "Hellenic Republic",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GT",
     "fields": {
-      "name": "Guatemala",
-      "official_name": "Republic of Guatemala"
+        "name": "Guatemala",
+        "official_name": "Republic of Guatemala",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GW",
     "fields": {
-      "name": "Guinea-Bissau",
-      "official_name": "Republic of Guinea-Bissau"
+        "name": "Guinea-Bissau",
+        "official_name": "Republic of Guinea-Bissau",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "GY",
     "fields": {
-      "name": "Guyana",
-      "official_name": "Republic of Guyana"
+        "name": "Guyana",
+        "official_name": "Republic of Guyana",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "HN",
     "fields": {
-      "name": "Honduras",
-      "official_name": "Republic of Honduras"
+        "name": "Honduras",
+        "official_name": "Republic of Honduras",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "HR",
     "fields": {
-      "name": "Croatia",
-      "official_name": "Republic of Croatia"
+        "name": "Croatia",
+        "official_name": "Republic of Croatia",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "HT",
     "fields": {
-      "name": "Haiti",
-      "official_name": "Republic of Haiti"
+        "name": "Haiti",
+        "official_name": "Republic of Haiti",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "HU",
     "fields": {
-      "name": "Hungary",
-      "official_name": "Hungary"
+        "name": "Hungary",
+        "official_name": "Hungary",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ID",
     "fields": {
-      "name": "Indonesia",
-      "official_name": "Republic of Indonesia"
+        "name": "Indonesia",
+        "official_name": "Republic of Indonesia",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IE",
     "fields": {
-      "name": "Ireland",
-      "official_name": "Ireland"
+        "name": "Ireland",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IL",
     "fields": {
-      "name": "Israel",
-      "official_name": "State of Israel"
+        "name": "Israel",
+        "official_name": "State of Israel",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IN",
     "fields": {
-      "name": "India",
-      "official_name": "Republic of India"
+        "name": "India",
+        "official_name": "Republic of India",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IQ",
     "fields": {
-      "name": "Iraq",
-      "official_name": "Republic of Iraq"
+        "name": "Iraq",
+        "official_name": "Republic of Iraq",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IR",
     "fields": {
-      "name": "Iran, Islamic Republic of",
-      "official_name": "Islamic Republic of Iran"
+        "name": "Iran, Islamic Republic of",
+        "official_name": "Islamic Republic of Iran",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IS",
     "fields": {
-      "name": "Iceland",
-      "official_name": "Republic of Iceland"
+        "name": "Iceland",
+        "official_name": "Republic of Iceland",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "IT",
     "fields": {
-      "name": "Italy",
-      "official_name": "Italian Republic"
+        "name": "Italy",
+        "official_name": "Italian Republic",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "JM",
     "fields": {
-      "name": "Jamaica",
-      "official_name": "Jamaica"
+        "name": "Jamaica",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "JO",
     "fields": {
-      "name": "Jordan",
-      "official_name": "Hashemite Kingdom of Jordan"
+        "name": "Jordan",
+        "official_name": "Hashemite Kingdom of Jordan",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "JP",
     "fields": {
-      "name": "Japan",
-      "official_name": "Japan"
+        "name": "Japan",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "392"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KE",
     "fields": {
-      "name": "Kenya",
-      "official_name": "Republic of Kenya"
+        "name": "Kenya",
+        "official_name": "Republic of Kenya",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KG",
     "fields": {
-      "name": "Kyrgyzstan",
-      "official_name": "Kyrgyz Republic"
+        "name": "Kyrgyzstan",
+        "official_name": "Kyrgyz Republic",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KH",
     "fields": {
-      "name": "Cambodia",
-      "official_name": "Kingdom of Cambodia"
+        "name": "Cambodia",
+        "official_name": "Kingdom of Cambodia",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KI",
     "fields": {
-      "name": "Kiribati",
-      "official_name": "Republic of Kiribati"
+        "name": "Kiribati",
+        "official_name": "Republic of Kiribati",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KM",
     "fields": {
-      "name": "Comoros",
-      "official_name": "Union of the Comoros"
+        "name": "Comoros",
+        "official_name": "Union of the Comoros",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KN",
     "fields": {
-      "name": "Saint Kitts and Nevis",
-      "official_name": "Saint Kitts and Nevis"
+        "name": "Saint Kitts and Nevis",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KP",
     "fields": {
-      "name": "Korea, Democratic People's Republic of",
-      "official_name": "Democratic People's Republic of Korea"
+        "name": "Korea, Democratic People's Republic of",
+        "official_name": "Democratic People's Republic of Korea",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KR",
     "fields": {
-      "name": "Korea, Republic of",
-      "official_name": "Korea, Republic of"
+        "name": "Korea, Republic of",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KW",
     "fields": {
-      "name": "Kuwait",
-      "official_name": "State of Kuwait"
+        "name": "Kuwait",
+        "official_name": "State of Kuwait",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "KZ",
     "fields": {
-      "name": "Kazakhstan",
-      "official_name": "Republic of Kazakhstan"
+        "name": "Kazakhstan",
+        "official_name": "Republic of Kazakhstan",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LA",
     "fields": {
-      "name": "Lao People's Democratic Republic",
-      "official_name": "Lao People's Democratic Republic"
+        "name": "Lao People's Democratic Republic",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LB",
     "fields": {
-      "name": "Lebanon",
-      "official_name": "Lebanese Republic"
+        "name": "Lebanon",
+        "official_name": "Lebanese Republic",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LC",
     "fields": {
-      "name": "Saint Lucia",
-      "official_name": "Saint Lucia"
+        "name": "Saint Lucia",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LI",
     "fields": {
-      "name": "Liechtenstein",
-      "official_name": "Principality of Liechtenstein"
+        "name": "Liechtenstein",
+        "official_name": "Principality of Liechtenstein",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LK",
     "fields": {
-      "name": "Sri Lanka",
-      "official_name": "Democratic Socialist Republic of Sri Lanka"
+        "name": "Sri Lanka",
+        "official_name": "Democratic Socialist Republic of Sri Lanka",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LR",
     "fields": {
-      "name": "Liberia",
-      "official_name": "Republic of Liberia"
+        "name": "Liberia",
+        "official_name": "Republic of Liberia",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LS",
     "fields": {
-      "name": "Lesotho",
-      "official_name": "Kingdom of Lesotho"
+        "name": "Lesotho",
+        "official_name": "Kingdom of Lesotho",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LT",
     "fields": {
-      "name": "Lithuania",
-      "official_name": "Republic of Lithuania"
+        "name": "Lithuania",
+        "official_name": "Republic of Lithuania",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LU",
     "fields": {
-      "name": "Luxembourg",
-      "official_name": "Grand Duchy of Luxembourg"
+        "name": "Luxembourg",
+        "official_name": "Grand Duchy of Luxembourg",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LV",
     "fields": {
-      "name": "Latvia",
-      "official_name": "Republic of Latvia"
+        "name": "Latvia",
+        "official_name": "Republic of Latvia",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "LY",
     "fields": {
-      "name": "Libya",
-      "official_name": "Libya"
+        "name": "Libya",
+        "official_name": "Libya",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MA",
     "fields": {
-      "name": "Morocco",
-      "official_name": "Kingdom of Morocco"
+        "name": "Morocco",
+        "official_name": "Kingdom of Morocco",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MC",
     "fields": {
-      "name": "Monaco",
-      "official_name": "Principality of Monaco"
+        "name": "Monaco",
+        "official_name": "Principality of Monaco",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MD",
     "fields": {
-      "name": "Moldova, Republic of",
-      "official_name": "Republic of Moldova"
+        "name": "Moldova, Republic of",
+        "official_name": "Republic of Moldova",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ME",
     "fields": {
-      "name": "Montenegro",
-      "official_name": "Montenegro"
+        "name": "Montenegro",
+        "official_name": "Montenegro",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MG",
     "fields": {
-      "name": "Madagascar",
-      "official_name": "Republic of Madagascar"
+        "name": "Madagascar",
+        "official_name": "Republic of Madagascar",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MH",
     "fields": {
-      "name": "Marshall Islands",
-      "official_name": "Republic of the Marshall Islands"
+        "name": "Marshall Islands",
+        "official_name": "Republic of the Marshall Islands",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MK",
     "fields": {
-      "name": "North Macedonia",
-      "official_name": "Republic of North Macedonia"
+        "name": "North Macedonia",
+        "official_name": "Republic of North Macedonia",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ML",
     "fields": {
-      "name": "Mali",
-      "official_name": "Republic of Mali"
+        "name": "Mali",
+        "official_name": "Republic of Mali",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MM",
     "fields": {
-      "name": "Myanmar",
-      "official_name": "Republic of Myanmar"
+        "name": "Myanmar",
+        "official_name": "Republic of Myanmar",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MN",
     "fields": {
-      "name": "Mongolia",
-      "official_name": "Mongolia"
+        "name": "Mongolia",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MR",
     "fields": {
-      "name": "Mauritania",
-      "official_name": "Islamic Republic of Mauritania"
+        "name": "Mauritania",
+        "official_name": "Islamic Republic of Mauritania",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MT",
     "fields": {
-      "name": "Malta",
-      "official_name": "Republic of Malta"
+        "name": "Malta",
+        "official_name": "Republic of Malta",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MU",
     "fields": {
-      "name": "Mauritius",
-      "official_name": "Republic of Mauritius"
+        "name": "Mauritius",
+        "official_name": "Republic of Mauritius",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MV",
     "fields": {
-      "name": "Maldives",
-      "official_name": "Republic of Maldives"
+        "name": "Maldives",
+        "official_name": "Republic of Maldives",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MW",
     "fields": {
-      "name": "Malawi",
-      "official_name": "Republic of Malawi"
+        "name": "Malawi",
+        "official_name": "Republic of Malawi",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MX",
     "fields": {
-      "name": "Mexico",
-      "official_name": "United Mexican States"
+        "name": "Mexico",
+        "official_name": "United Mexican States",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MY",
     "fields": {
-      "name": "Malaysia",
-      "official_name": "Malaysia"
+        "name": "Malaysia",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "MZ",
     "fields": {
-      "name": "Mozambique",
-      "official_name": "Republic of Mozambique"
+        "name": "Mozambique",
+        "official_name": "Republic of Mozambique",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NA",
     "fields": {
-      "name": "Namibia",
-      "official_name": "Republic of Namibia"
+        "name": "Namibia",
+        "official_name": "Republic of Namibia",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NE",
     "fields": {
-      "name": "Niger",
-      "official_name": "Republic of the Niger"
+        "name": "Niger",
+        "official_name": "Republic of the Niger",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NG",
     "fields": {
-      "name": "Nigeria",
-      "official_name": "Federal Republic of Nigeria"
+        "name": "Nigeria",
+        "official_name": "Federal Republic of Nigeria",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NI",
     "fields": {
-      "name": "Nicaragua",
-      "official_name": "Republic of Nicaragua"
+        "name": "Nicaragua",
+        "official_name": "Republic of Nicaragua",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NL",
     "fields": {
-      "name": "Netherlands",
-      "official_name": "Kingdom of the Netherlands"
+        "name": "Netherlands",
+        "official_name": "Kingdom of the Netherlands",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NO",
     "fields": {
-      "name": "Norway",
-      "official_name": "Kingdom of Norway"
+        "name": "Norway",
+        "official_name": "Kingdom of Norway",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NP",
     "fields": {
-      "name": "Nepal",
-      "official_name": "Federal Democratic Republic of Nepal"
+        "name": "Nepal",
+        "official_name": "Federal Democratic Republic of Nepal",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NR",
     "fields": {
-      "name": "Nauru",
-      "official_name": "Republic of Nauru"
+        "name": "Nauru",
+        "official_name": "Republic of Nauru",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NU",
     "fields": {
-      "name": "Niue",
-      "official_name": "Niue"
+        "name": "Niue",
+        "official_name": "Niue",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "NZ",
     "fields": {
-      "name": "New Zealand",
-      "official_name": "New Zealand"
+        "name": "New Zealand",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "554"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "OM",
     "fields": {
-      "name": "Oman",
-      "official_name": "Sultanate of Oman"
+        "name": "Oman",
+        "official_name": "Sultanate of Oman",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PA",
     "fields": {
-      "name": "Panama",
-      "official_name": "Republic of Panama"
+        "name": "Panama",
+        "official_name": "Republic of Panama",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PE",
     "fields": {
-      "name": "Peru",
-      "official_name": "Republic of Peru"
+        "name": "Peru",
+        "official_name": "Republic of Peru",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PG",
     "fields": {
-      "name": "Papua New Guinea",
-      "official_name": "Independent State of Papua New Guinea"
+        "name": "Papua New Guinea",
+        "official_name": "Independent State of Papua New Guinea",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PH",
     "fields": {
-      "name": "Philippines",
-      "official_name": "Republic of the Philippines"
+        "name": "Philippines",
+        "official_name": "Republic of the Philippines",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PK",
     "fields": {
-      "name": "Pakistan",
-      "official_name": "Islamic Republic of Pakistan"
+        "name": "Pakistan",
+        "official_name": "Islamic Republic of Pakistan",
+        "region": "A5",
+        "subregion": "034"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PL",
     "fields": {
-      "name": "Poland",
-      "official_name": "Republic of Poland"
+        "name": "Poland",
+        "official_name": "Republic of Poland",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PS",
     "fields": {
-      "name": "Palestine, State of",
-      "official_name": "the State of Palestine"
+        "name": "Palestine, State of",
+        "official_name": "the State of Palestine",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PT",
     "fields": {
-      "name": "Portugal",
-      "official_name": "Portuguese Republic"
+        "name": "Portugal",
+        "official_name": "Portuguese Republic",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PW",
     "fields": {
-      "name": "Palau",
-      "official_name": "Republic of Palau"
+        "name": "Palau",
+        "official_name": "Republic of Palau",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "PY",
     "fields": {
-      "name": "Paraguay",
-      "official_name": "Republic of Paraguay"
+        "name": "Paraguay",
+        "official_name": "Republic of Paraguay",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "QA",
     "fields": {
-      "name": "Qatar",
-      "official_name": "State of Qatar"
+        "name": "Qatar",
+        "official_name": "State of Qatar",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "RO",
     "fields": {
-      "name": "Romania",
-      "official_name": "Romania"
+        "name": "Romania",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "RS",
     "fields": {
-      "name": "Serbia",
-      "official_name": "Republic of Serbia"
+        "name": "Serbia",
+        "official_name": "Republic of Serbia",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "RU",
     "fields": {
-      "name": "Russian Federation",
-      "official_name": "Russian Federation"
+        "name": "Russian Federation",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "RW",
     "fields": {
-      "name": "Rwanda",
-      "official_name": "Rwandese Republic"
+        "name": "Rwanda",
+        "official_name": "Rwandese Republic",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SA",
     "fields": {
-      "name": "Saudi Arabia",
-      "official_name": "Kingdom of Saudi Arabia"
+        "name": "Saudi Arabia",
+        "official_name": "Kingdom of Saudi Arabia",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SB",
     "fields": {
-      "name": "Solomon Islands",
-      "official_name": "Solomon Islands"
+        "name": "Solomon Islands",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SC",
     "fields": {
-      "name": "Seychelles",
-      "official_name": "Republic of Seychelles"
+        "name": "Seychelles",
+        "official_name": "Republic of Seychelles",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SD",
     "fields": {
-      "name": "Sudan",
-      "official_name": "Republic of the Sudan"
+        "name": "Sudan",
+        "official_name": "Republic of the Sudan",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SE",
     "fields": {
-      "name": "Sweden",
-      "official_name": "Kingdom of Sweden"
+        "name": "Sweden",
+        "official_name": "Kingdom of Sweden",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SG",
     "fields": {
-      "name": "Singapore",
-      "official_name": "Republic of Singapore"
+        "name": "Singapore",
+        "official_name": "Republic of Singapore",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SI",
     "fields": {
-      "name": "Slovenia",
-      "official_name": "Republic of Slovenia"
+        "name": "Slovenia",
+        "official_name": "Republic of Slovenia",
+        "region": null,
+        "subregion": null
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SK",
     "fields": {
-      "name": "Slovakia",
-      "official_name": "Slovak Republic"
+        "name": "Slovakia",
+        "official_name": "Slovak Republic",
+        "region": "A2",
+        "subregion": "EU"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SL",
     "fields": {
-      "name": "Sierra Leone",
-      "official_name": "Republic of Sierra Leone"
+        "name": "Sierra Leone",
+        "official_name": "Republic of Sierra Leone",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SM",
     "fields": {
-      "name": "San Marino",
-      "official_name": "Republic of San Marino"
+        "name": "San Marino",
+        "official_name": "Republic of San Marino",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SN",
     "fields": {
-      "name": "Senegal",
-      "official_name": "Republic of Senegal"
+        "name": "Senegal",
+        "official_name": "Republic of Senegal",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SO",
     "fields": {
-      "name": "Somalia",
-      "official_name": "Federal Republic of Somalia"
+        "name": "Somalia",
+        "official_name": "Federal Republic of Somalia",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SR",
     "fields": {
-      "name": "Suriname",
-      "official_name": "Republic of Suriname"
+        "name": "Suriname",
+        "official_name": "Republic of Suriname",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SS",
     "fields": {
-      "name": "South Sudan",
-      "official_name": "Republic of South Sudan"
+        "name": "South Sudan",
+        "official_name": "Republic of South Sudan",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ST",
     "fields": {
-      "name": "Sao Tome and Principe",
-      "official_name": "Democratic Republic of Sao Tome and Principe"
+        "name": "Sao Tome and Principe",
+        "official_name": "Democratic Republic of Sao Tome and Principe",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SV",
     "fields": {
-      "name": "El Salvador",
-      "official_name": "Republic of El Salvador"
+        "name": "El Salvador",
+        "official_name": "Republic of El Salvador",
+        "region": "A5",
+        "subregion": "013"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SY",
     "fields": {
-      "name": "Syrian Arab Republic",
-      "official_name": "Syrian Arab Republic"
+        "name": "Syrian Arab Republic",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "SZ",
     "fields": {
-      "name": "Eswatini",
-      "official_name": "Kingdom of Eswatini"
+        "name": "Eswatini",
+        "official_name": "Kingdom of Eswatini",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TD",
     "fields": {
-      "name": "Chad",
-      "official_name": "Republic of Chad"
+        "name": "Chad",
+        "official_name": "Republic of Chad",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TG",
     "fields": {
-      "name": "Togo",
-      "official_name": "Togolese Republic"
+        "name": "Togo",
+        "official_name": "Togolese Republic",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TH",
     "fields": {
-      "name": "Thailand",
-      "official_name": "Kingdom of Thailand"
+        "name": "Thailand",
+        "official_name": "Kingdom of Thailand",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TJ",
     "fields": {
-      "name": "Tajikistan",
-      "official_name": "Republic of Tajikistan"
+        "name": "Tajikistan",
+        "official_name": "Republic of Tajikistan",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TL",
     "fields": {
-      "name": "Timor-Leste",
-      "official_name": "Democratic Republic of Timor-Leste"
+        "name": "Timor-Leste",
+        "official_name": "Democratic Republic of Timor-Leste",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TM",
     "fields": {
-      "name": "Turkmenistan",
-      "official_name": "Turkmenistan"
+        "name": "Turkmenistan",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TN",
     "fields": {
-      "name": "Tunisia",
-      "official_name": "Republic of Tunisia"
+        "name": "Tunisia",
+        "official_name": "Republic of Tunisia",
+        "region": "A5",
+        "subregion": "FA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TO",
     "fields": {
-      "name": "Tonga",
-      "official_name": "Kingdom of Tonga"
+        "name": "Tonga",
+        "official_name": "Kingdom of Tonga",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TR",
     "fields": {
-      "name": "Türkiye",
-      "official_name": "Republic of Türkiye"
+        "name": "Türkiye",
+        "official_name": "Republic of Türkiye",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TT",
     "fields": {
-      "name": "Trinidad and Tobago",
-      "official_name": "Republic of Trinidad and Tobago"
+        "name": "Trinidad and Tobago",
+        "official_name": "Republic of Trinidad and Tobago",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TV",
     "fields": {
-      "name": "Tuvalu",
-      "official_name": "Tuvalu"
+        "name": "Tuvalu",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "TZ",
     "fields": {
-      "name": "Tanzania, United Republic of",
-      "official_name": "United Republic of Tanzania"
+        "name": "Tanzania, United Republic of",
+        "official_name": "United Republic of Tanzania",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "UA",
     "fields": {
-      "name": "Ukraine",
-      "official_name": "Ukraine"
+        "name": "Ukraine",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "UG",
     "fields": {
-      "name": "Uganda",
-      "official_name": "Republic of Uganda"
+        "name": "Uganda",
+        "official_name": "Republic of Uganda",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "US",
     "fields": {
-      "name": "United States",
-      "official_name": "United States of America"
+        "name": "United States",
+        "official_name": "United States of America",
+        "region": "A2",
+        "subregion": "021"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "UY",
     "fields": {
-      "name": "Uruguay",
-      "official_name": "Eastern Republic of Uruguay"
+        "name": "Uruguay",
+        "official_name": "Eastern Republic of Uruguay",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "UZ",
     "fields": {
-      "name": "Uzbekistan",
-      "official_name": "Republic of Uzbekistan"
+        "name": "Uzbekistan",
+        "official_name": "Republic of Uzbekistan",
+        "region": "A5",
+        "subregion": "143"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "VA",
     "fields": {
-      "name": "Holy See (Vatican City State)",
-      "official_name": "Holy See (Vatican City State)"
+        "name": "Holy See (Vatican City State)",
+        "official_name": "",
+        "region": "A2",
+        "subregion": "OTH"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "VC",
     "fields": {
-      "name": "Saint Vincent and the Grenadines",
-      "official_name": "Saint Vincent and the Grenadines"
+        "name": "Saint Vincent and the Grenadines",
+        "official_name": "",
+        "region": "A5",
+        "subregion": "029"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "VE",
     "fields": {
-      "name": "Venezuela, Bolivarian Republic of",
-      "official_name": "Bolivarian Republic of Venezuela"
+        "name": "Venezuela, Bolivarian Republic of",
+        "official_name": "Bolivarian Republic of Venezuela",
+        "region": "A5",
+        "subregion": "005"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "VN",
     "fields": {
-      "name": "Viet Nam",
-      "official_name": "Socialist Republic of Viet Nam"
+        "name": "Viet Nam",
+        "official_name": "Socialist Republic of Viet Nam",
+        "region": "A5",
+        "subregion": "035"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "VU",
     "fields": {
-      "name": "Vanuatu",
-      "official_name": "Republic of Vanuatu"
+        "name": "Vanuatu",
+        "official_name": "Republic of Vanuatu",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "WS",
     "fields": {
-      "name": "Samoa",
-      "official_name": "Independent State of Samoa"
+        "name": "Samoa",
+        "official_name": "Independent State of Samoa",
+        "region": "A5",
+        "subregion": "PI"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "YE",
     "fields": {
-      "name": "Yemen",
-      "official_name": "Republic of Yemen"
+        "name": "Yemen",
+        "official_name": "Republic of Yemen",
+        "region": "A5",
+        "subregion": "145"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ZA",
     "fields": {
-      "name": "South Africa",
-      "official_name": "Republic of South Africa"
+        "name": "South Africa",
+        "official_name": "Republic of South Africa",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ZM",
     "fields": {
-      "name": "Zambia",
-      "official_name": "Republic of Zambia"
+        "name": "Zambia",
+        "official_name": "Republic of Zambia",
+        "region": "A5",
+        "subregion": "AA"
     }
-  },
-  {
+},
+{
     "model": "core.country",
     "pk": "ZW",
     "fields": {
-      "name": "Zimbabwe",
-      "official_name": "Republic of Zimbabwe"
+        "name": "Zimbabwe",
+        "official_name": "Republic of Zimbabwe",
+        "region": "A5",
+        "subregion": "AA"
     }
-  }
+}
 ]

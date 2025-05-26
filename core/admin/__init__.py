@@ -7,3 +7,4 @@ from .organization import *  # noqa: F403
 from .organization_type import *  # noqa: F403
 from .possible_duplicate import *  # noqa: F403
 from .resolve_conflict import *  # noqa: F403
+from .region import *  # noqa: F403

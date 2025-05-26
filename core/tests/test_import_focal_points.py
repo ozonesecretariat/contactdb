@@ -10,6 +10,8 @@ class TestImportFocalPoints(TestCase):
     fixtures = [
         "initial/contactgroup",
         "initial/country",
+        "initial/region",
+        "initial/subregion",
     ]
 
     def setUp(self):

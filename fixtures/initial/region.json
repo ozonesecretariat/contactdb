@@ -1,0 +1,16 @@
+[
+{
+    "model": "core.region",
+    "pk": "A2",
+    "fields": {
+        "name": "A2"
+    }
+},
+{
+    "model": "core.region",
+    "pk": "A5",
+    "fields": {
+        "name": "A5"
+    }
+}
+]
