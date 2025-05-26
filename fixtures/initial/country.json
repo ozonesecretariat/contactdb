@@ -16,7 +16,7 @@
       "name": "United Arab Emirates",
       "official_name": "",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -26,7 +26,7 @@
       "name": "Afghanistan",
       "official_name": "Islamic Republic of Afghanistan",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -36,7 +36,7 @@
       "name": "Antigua and Barbuda",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -46,7 +46,7 @@
       "name": "Albania",
       "official_name": "Republic of Albania",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -56,7 +56,7 @@
       "name": "Armenia",
       "official_name": "Republic of Armenia",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -66,7 +66,7 @@
       "name": "Angola",
       "official_name": "Republic of Angola",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -76,7 +76,7 @@
       "name": "Argentina",
       "official_name": "Argentine Republic",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -86,7 +86,7 @@
       "name": "Austria",
       "official_name": "Republic of Austria",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -96,7 +96,7 @@
       "name": "Australia",
       "official_name": "",
       "region": "A2",
-      "subregion": "036"
+      "subregion": "AUS"
     }
   },
   {
@@ -106,7 +106,7 @@
       "name": "Azerbaijan",
       "official_name": "Republic of Azerbaijan",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -116,7 +116,7 @@
       "name": "Bosnia and Herzegovina",
       "official_name": "Republic of Bosnia and Herzegovina",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -126,7 +126,7 @@
       "name": "Barbados",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -136,7 +136,7 @@
       "name": "Bangladesh",
       "official_name": "People's Republic of Bangladesh",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -146,7 +146,7 @@
       "name": "Belgium",
       "official_name": "Kingdom of Belgium",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -156,7 +156,7 @@
       "name": "Burkina Faso",
       "official_name": "",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -166,7 +166,7 @@
       "name": "Bulgaria",
       "official_name": "Republic of Bulgaria",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -176,7 +176,7 @@
       "name": "Bahrain",
       "official_name": "Kingdom of Bahrain",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -186,7 +186,7 @@
       "name": "Burundi",
       "official_name": "Republic of Burundi",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -196,7 +196,7 @@
       "name": "Benin",
       "official_name": "Republic of Benin",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -206,7 +206,7 @@
       "name": "Brunei Darussalam",
       "official_name": "",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -216,7 +216,7 @@
       "name": "Bolivia, Plurinational State of",
       "official_name": "Plurinational State of Bolivia",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -226,7 +226,7 @@
       "name": "Brazil",
       "official_name": "Federative Republic of Brazil",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -236,7 +236,7 @@
       "name": "Bahamas",
       "official_name": "Commonwealth of the Bahamas",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -246,7 +246,7 @@
       "name": "Bhutan",
       "official_name": "Kingdom of Bhutan",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -256,7 +256,7 @@
       "name": "Botswana",
       "official_name": "Republic of Botswana",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -266,7 +266,7 @@
       "name": "Belarus",
       "official_name": "Republic of Belarus",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -276,7 +276,7 @@
       "name": "Belize",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -286,7 +286,7 @@
       "name": "Canada",
       "official_name": "",
       "region": "A2",
-      "subregion": "021"
+      "subregion": "NOA"
     }
   },
   {
@@ -296,7 +296,7 @@
       "name": "Congo, The Democratic Republic of the",
       "official_name": "",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -306,7 +306,7 @@
       "name": "Central African Republic",
       "official_name": "",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -316,7 +316,7 @@
       "name": "Congo",
       "official_name": "Republic of the Congo",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -336,7 +336,7 @@
       "name": "Côte d'Ivoire",
       "official_name": "Republic of Côte d'Ivoire",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -346,7 +346,7 @@
       "name": "Cook Islands",
       "official_name": "",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -356,7 +356,7 @@
       "name": "Chile",
       "official_name": "Republic of Chile",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -366,7 +366,7 @@
       "name": "Cameroon",
       "official_name": "Republic of Cameroon",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -376,7 +376,7 @@
       "name": "China",
       "official_name": "People's Republic of China",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -386,7 +386,7 @@
       "name": "Colombia",
       "official_name": "Republic of Colombia",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -396,7 +396,7 @@
       "name": "Costa Rica",
       "official_name": "Republic of Costa Rica",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -406,7 +406,7 @@
       "name": "Cuba",
       "official_name": "Republic of Cuba",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -416,7 +416,7 @@
       "name": "Cabo Verde",
       "official_name": "Republic of Cabo Verde",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -426,7 +426,7 @@
       "name": "Cyprus",
       "official_name": "Republic of Cyprus",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -436,7 +436,7 @@
       "name": "Czechia",
       "official_name": "Czech Republic",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -446,7 +446,7 @@
       "name": "Germany",
       "official_name": "Federal Republic of Germany",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -456,7 +456,7 @@
       "name": "Djibouti",
       "official_name": "Republic of Djibouti",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -466,7 +466,7 @@
       "name": "Denmark",
       "official_name": "Kingdom of Denmark",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -476,7 +476,7 @@
       "name": "Dominica",
       "official_name": "Commonwealth of Dominica",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -486,7 +486,7 @@
       "name": "Dominican Republic",
       "official_name": "",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -496,7 +496,7 @@
       "name": "Algeria",
       "official_name": "People's Democratic Republic of Algeria",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -506,7 +506,7 @@
       "name": "Ecuador",
       "official_name": "Republic of Ecuador",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -516,7 +516,7 @@
       "name": "Estonia",
       "official_name": "Republic of Estonia",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -526,7 +526,7 @@
       "name": "Egypt",
       "official_name": "Arab Republic of Egypt",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -536,7 +536,7 @@
       "name": "Eritrea",
       "official_name": "the State of Eritrea",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -546,7 +546,7 @@
       "name": "Spain",
       "official_name": "Kingdom of Spain",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -556,7 +556,7 @@
       "name": "Ethiopia",
       "official_name": "Federal Democratic Republic of Ethiopia",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -566,7 +566,7 @@
       "name": "European Union",
       "official_name": "",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -576,7 +576,7 @@
       "name": "Finland",
       "official_name": "Republic of Finland",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -586,7 +586,7 @@
       "name": "Fiji",
       "official_name": "Republic of Fiji",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -596,7 +596,7 @@
       "name": "Micronesia, Federated States of",
       "official_name": "Federated States of Micronesia",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -606,7 +606,7 @@
       "name": "France",
       "official_name": "French Republic",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -616,7 +616,7 @@
       "name": "Gabon",
       "official_name": "Gabonese Republic",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -636,7 +636,7 @@
       "name": "Grenada",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -645,8 +645,8 @@
     "fields": {
       "name": "Georgia",
       "official_name": "",
-      "region": "A2",
-      "subregion": "OTH"
+      "region": "A5",
+      "subregion": "CCA"
     }
   },
   {
@@ -656,7 +656,7 @@
       "name": "Ghana",
       "official_name": "Republic of Ghana",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -666,7 +666,7 @@
       "name": "Gambia",
       "official_name": "Republic of the Gambia",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -676,7 +676,7 @@
       "name": "Guinea",
       "official_name": "Republic of Guinea",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -686,7 +686,7 @@
       "name": "Equatorial Guinea",
       "official_name": "Republic of Equatorial Guinea",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -696,7 +696,7 @@
       "name": "Greece",
       "official_name": "Hellenic Republic",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -706,7 +706,7 @@
       "name": "Guatemala",
       "official_name": "Republic of Guatemala",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -716,7 +716,7 @@
       "name": "Guinea-Bissau",
       "official_name": "Republic of Guinea-Bissau",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -726,7 +726,7 @@
       "name": "Guyana",
       "official_name": "Republic of Guyana",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -736,7 +736,7 @@
       "name": "Honduras",
       "official_name": "Republic of Honduras",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -746,7 +746,7 @@
       "name": "Croatia",
       "official_name": "Republic of Croatia",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -756,7 +756,7 @@
       "name": "Haiti",
       "official_name": "Republic of Haiti",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -766,7 +766,7 @@
       "name": "Hungary",
       "official_name": "Hungary",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -776,7 +776,7 @@
       "name": "Indonesia",
       "official_name": "Republic of Indonesia",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -786,7 +786,7 @@
       "name": "Ireland",
       "official_name": "",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -806,7 +806,7 @@
       "name": "India",
       "official_name": "Republic of India",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -816,7 +816,7 @@
       "name": "Iraq",
       "official_name": "Republic of Iraq",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -826,7 +826,7 @@
       "name": "Iran, Islamic Republic of",
       "official_name": "Islamic Republic of Iran",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -846,7 +846,7 @@
       "name": "Italy",
       "official_name": "Italian Republic",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -856,7 +856,7 @@
       "name": "Jamaica",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -866,7 +866,7 @@
       "name": "Jordan",
       "official_name": "Hashemite Kingdom of Jordan",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -876,7 +876,7 @@
       "name": "Japan",
       "official_name": "",
       "region": "A2",
-      "subregion": "392"
+      "subregion": "JPN"
     }
   },
   {
@@ -886,7 +886,7 @@
       "name": "Kenya",
       "official_name": "Republic of Kenya",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -896,7 +896,7 @@
       "name": "Kyrgyzstan",
       "official_name": "Kyrgyz Republic",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -906,7 +906,7 @@
       "name": "Cambodia",
       "official_name": "Kingdom of Cambodia",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -916,7 +916,7 @@
       "name": "Kiribati",
       "official_name": "Republic of Kiribati",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -926,7 +926,7 @@
       "name": "Comoros",
       "official_name": "Union of the Comoros",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -936,7 +936,7 @@
       "name": "Saint Kitts and Nevis",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -946,7 +946,7 @@
       "name": "Korea, Democratic People's Republic of",
       "official_name": "Democratic People's Republic of Korea",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -956,7 +956,7 @@
       "name": "Korea, Republic of",
       "official_name": "",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -966,7 +966,7 @@
       "name": "Kuwait",
       "official_name": "State of Kuwait",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -976,7 +976,7 @@
       "name": "Kazakhstan",
       "official_name": "Republic of Kazakhstan",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -986,7 +986,7 @@
       "name": "Lao People's Democratic Republic",
       "official_name": "",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -996,7 +996,7 @@
       "name": "Lebanon",
       "official_name": "Lebanese Republic",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1006,7 +1006,7 @@
       "name": "Saint Lucia",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -1026,7 +1026,7 @@
       "name": "Sri Lanka",
       "official_name": "Democratic Socialist Republic of Sri Lanka",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -1036,7 +1036,7 @@
       "name": "Liberia",
       "official_name": "Republic of Liberia",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1046,7 +1046,7 @@
       "name": "Lesotho",
       "official_name": "Kingdom of Lesotho",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1056,7 +1056,7 @@
       "name": "Lithuania",
       "official_name": "Republic of Lithuania",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1066,7 +1066,7 @@
       "name": "Luxembourg",
       "official_name": "Grand Duchy of Luxembourg",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1076,7 +1076,7 @@
       "name": "Latvia",
       "official_name": "Republic of Latvia",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1086,7 +1086,7 @@
       "name": "Libya",
       "official_name": "Libya",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1096,7 +1096,7 @@
       "name": "Morocco",
       "official_name": "Kingdom of Morocco",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1116,7 +1116,7 @@
       "name": "Moldova, Republic of",
       "official_name": "Republic of Moldova",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1126,7 +1126,7 @@
       "name": "Montenegro",
       "official_name": "Montenegro",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1136,7 +1136,7 @@
       "name": "Madagascar",
       "official_name": "Republic of Madagascar",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1146,7 +1146,7 @@
       "name": "Marshall Islands",
       "official_name": "Republic of the Marshall Islands",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1156,7 +1156,7 @@
       "name": "North Macedonia",
       "official_name": "Republic of North Macedonia",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1166,7 +1166,7 @@
       "name": "Mali",
       "official_name": "Republic of Mali",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1176,7 +1176,7 @@
       "name": "Myanmar",
       "official_name": "Republic of Myanmar",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1186,7 +1186,7 @@
       "name": "Mongolia",
       "official_name": "",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -1196,7 +1196,7 @@
       "name": "Mauritania",
       "official_name": "Islamic Republic of Mauritania",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1206,7 +1206,7 @@
       "name": "Malta",
       "official_name": "Republic of Malta",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1216,7 +1216,7 @@
       "name": "Mauritius",
       "official_name": "Republic of Mauritius",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1226,7 +1226,7 @@
       "name": "Maldives",
       "official_name": "Republic of Maldives",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -1236,7 +1236,7 @@
       "name": "Malawi",
       "official_name": "Republic of Malawi",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1246,7 +1246,7 @@
       "name": "Mexico",
       "official_name": "United Mexican States",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -1256,7 +1256,7 @@
       "name": "Malaysia",
       "official_name": "",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1266,7 +1266,7 @@
       "name": "Mozambique",
       "official_name": "Republic of Mozambique",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1276,7 +1276,7 @@
       "name": "Namibia",
       "official_name": "Republic of Namibia",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1286,7 +1286,7 @@
       "name": "Niger",
       "official_name": "Republic of the Niger",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1296,7 +1296,7 @@
       "name": "Nigeria",
       "official_name": "Federal Republic of Nigeria",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1306,7 +1306,7 @@
       "name": "Nicaragua",
       "official_name": "Republic of Nicaragua",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -1316,7 +1316,7 @@
       "name": "Netherlands",
       "official_name": "Kingdom of the Netherlands",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1336,7 +1336,7 @@
       "name": "Nepal",
       "official_name": "Federal Democratic Republic of Nepal",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -1346,7 +1346,7 @@
       "name": "Nauru",
       "official_name": "Republic of Nauru",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1356,7 +1356,7 @@
       "name": "Niue",
       "official_name": "Niue",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1366,7 +1366,7 @@
       "name": "New Zealand",
       "official_name": "",
       "region": "A2",
-      "subregion": "554"
+      "subregion": "NWZ"
     }
   },
   {
@@ -1376,7 +1376,7 @@
       "name": "Oman",
       "official_name": "Sultanate of Oman",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1386,7 +1386,7 @@
       "name": "Panama",
       "official_name": "Republic of Panama",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -1396,7 +1396,7 @@
       "name": "Peru",
       "official_name": "Republic of Peru",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -1406,7 +1406,7 @@
       "name": "Papua New Guinea",
       "official_name": "Independent State of Papua New Guinea",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1416,7 +1416,7 @@
       "name": "Philippines",
       "official_name": "Republic of the Philippines",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1426,7 +1426,7 @@
       "name": "Pakistan",
       "official_name": "Islamic Republic of Pakistan",
       "region": "A5",
-      "subregion": "034"
+      "subregion": "SHA"
     }
   },
   {
@@ -1436,7 +1436,7 @@
       "name": "Poland",
       "official_name": "Republic of Poland",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1446,7 +1446,7 @@
       "name": "Palestine, State of",
       "official_name": "the State of Palestine",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1456,7 +1456,7 @@
       "name": "Portugal",
       "official_name": "Portuguese Republic",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1466,7 +1466,7 @@
       "name": "Palau",
       "official_name": "Republic of Palau",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1476,7 +1476,7 @@
       "name": "Paraguay",
       "official_name": "Republic of Paraguay",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -1486,7 +1486,7 @@
       "name": "Qatar",
       "official_name": "State of Qatar",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1496,7 +1496,7 @@
       "name": "Romania",
       "official_name": "",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1506,7 +1506,7 @@
       "name": "Serbia",
       "official_name": "Republic of Serbia",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1516,7 +1516,7 @@
       "name": "Russian Federation",
       "official_name": "",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1526,7 +1526,7 @@
       "name": "Rwanda",
       "official_name": "Rwandese Republic",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1536,7 +1536,7 @@
       "name": "Saudi Arabia",
       "official_name": "Kingdom of Saudi Arabia",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1546,7 +1546,7 @@
       "name": "Solomon Islands",
       "official_name": "",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1556,7 +1556,7 @@
       "name": "Seychelles",
       "official_name": "Republic of Seychelles",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1566,7 +1566,7 @@
       "name": "Sudan",
       "official_name": "Republic of the Sudan",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1576,7 +1576,7 @@
       "name": "Sweden",
       "official_name": "Kingdom of Sweden",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1586,7 +1586,7 @@
       "name": "Singapore",
       "official_name": "Republic of Singapore",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1595,8 +1595,8 @@
     "fields": {
       "name": "Slovenia",
       "official_name": "Republic of Slovenia",
-      "region": null,
-      "subregion": null
+      "region": "A2",
+      "subregion": "EUN"
     }
   },
   {
@@ -1606,7 +1606,7 @@
       "name": "Slovakia",
       "official_name": "Slovak Republic",
       "region": "A2",
-      "subregion": "EU"
+      "subregion": "EUN"
     }
   },
   {
@@ -1616,7 +1616,7 @@
       "name": "Sierra Leone",
       "official_name": "Republic of Sierra Leone",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1636,7 +1636,7 @@
       "name": "Senegal",
       "official_name": "Republic of Senegal",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1646,7 +1646,7 @@
       "name": "Somalia",
       "official_name": "Federal Republic of Somalia",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1656,7 +1656,7 @@
       "name": "Suriname",
       "official_name": "Republic of Suriname",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -1666,7 +1666,7 @@
       "name": "South Sudan",
       "official_name": "Republic of South Sudan",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1676,7 +1676,7 @@
       "name": "Sao Tome and Principe",
       "official_name": "Democratic Republic of Sao Tome and Principe",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1686,7 +1686,7 @@
       "name": "El Salvador",
       "official_name": "Republic of El Salvador",
       "region": "A5",
-      "subregion": "013"
+      "subregion": "CTA"
     }
   },
   {
@@ -1696,7 +1696,7 @@
       "name": "Syrian Arab Republic",
       "official_name": "",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1706,7 +1706,7 @@
       "name": "Eswatini",
       "official_name": "Kingdom of Eswatini",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1716,7 +1716,7 @@
       "name": "Chad",
       "official_name": "Republic of Chad",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1726,7 +1726,7 @@
       "name": "Togo",
       "official_name": "Togolese Republic",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1736,7 +1736,7 @@
       "name": "Thailand",
       "official_name": "Kingdom of Thailand",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1746,7 +1746,7 @@
       "name": "Tajikistan",
       "official_name": "Republic of Tajikistan",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1756,7 +1756,7 @@
       "name": "Timor-Leste",
       "official_name": "Democratic Republic of Timor-Leste",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1766,7 +1766,7 @@
       "name": "Turkmenistan",
       "official_name": "",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1776,7 +1776,7 @@
       "name": "Tunisia",
       "official_name": "Republic of Tunisia",
       "region": "A5",
-      "subregion": "FA"
+      "subregion": "AFF"
     }
   },
   {
@@ -1786,7 +1786,7 @@
       "name": "Tonga",
       "official_name": "Kingdom of Tonga",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1796,7 +1796,7 @@
       "name": "Türkiye",
       "official_name": "Republic of Türkiye",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1806,7 +1806,7 @@
       "name": "Trinidad and Tobago",
       "official_name": "Republic of Trinidad and Tobago",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -1816,7 +1816,7 @@
       "name": "Tuvalu",
       "official_name": "",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1826,7 +1826,7 @@
       "name": "Tanzania, United Republic of",
       "official_name": "United Republic of Tanzania",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1836,7 +1836,7 @@
       "name": "Ukraine",
       "official_name": "",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1846,7 +1846,7 @@
       "name": "Uganda",
       "official_name": "Republic of Uganda",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1856,7 +1856,7 @@
       "name": "United States",
       "official_name": "United States of America",
       "region": "A2",
-      "subregion": "021"
+      "subregion": "NOA"
     }
   },
   {
@@ -1866,7 +1866,7 @@
       "name": "Uruguay",
       "official_name": "Eastern Republic of Uruguay",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -1876,7 +1876,7 @@
       "name": "Uzbekistan",
       "official_name": "Republic of Uzbekistan",
       "region": "A5",
-      "subregion": "143"
+      "subregion": "CCA"
     }
   },
   {
@@ -1896,7 +1896,7 @@
       "name": "Saint Vincent and the Grenadines",
       "official_name": "",
       "region": "A5",
-      "subregion": "029"
+      "subregion": "CAR"
     }
   },
   {
@@ -1906,7 +1906,7 @@
       "name": "Venezuela, Bolivarian Republic of",
       "official_name": "Bolivarian Republic of Venezuela",
       "region": "A5",
-      "subregion": "005"
+      "subregion": "SOA"
     }
   },
   {
@@ -1916,7 +1916,7 @@
       "name": "Viet Nam",
       "official_name": "Socialist Republic of Viet Nam",
       "region": "A5",
-      "subregion": "035"
+      "subregion": "SEA"
     }
   },
   {
@@ -1926,7 +1926,7 @@
       "name": "Vanuatu",
       "official_name": "Republic of Vanuatu",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1936,7 +1936,7 @@
       "name": "Samoa",
       "official_name": "Independent State of Samoa",
       "region": "A5",
-      "subregion": "PI"
+      "subregion": "PCF"
     }
   },
   {
@@ -1946,7 +1946,7 @@
       "name": "Yemen",
       "official_name": "Republic of Yemen",
       "region": "A5",
-      "subregion": "145"
+      "subregion": "WSA"
     }
   },
   {
@@ -1956,7 +1956,7 @@
       "name": "South Africa",
       "official_name": "Republic of South Africa",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1966,7 +1966,7 @@
       "name": "Zambia",
       "official_name": "Republic of Zambia",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   },
   {
@@ -1976,7 +1976,7 @@
       "name": "Zimbabwe",
       "official_name": "Republic of Zimbabwe",
       "region": "A5",
-      "subregion": "AA"
+      "subregion": "AFE"
     }
   }
 ]
