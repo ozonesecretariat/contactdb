@@ -234,6 +234,7 @@ class Contact(BaseContact):
         null=True,
         blank=True,
         related_name="contacts",
+        verbose_name="Contact groups",
     )
     # Is this contact simply a placeholder for an organization email address?
     is_organization = models.BooleanField(default=False)
