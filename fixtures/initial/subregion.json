@@ -1,114 +1,114 @@
 [
-{
+  {
     "model": "core.subregion",
     "pk": "005",
     "fields": {
-        "name": "South America"
+      "name": "South America"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "013",
     "fields": {
-        "name": "Central America"
+      "name": "Central America"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "021",
     "fields": {
-        "name": "North America"
+      "name": "North America"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "029",
     "fields": {
-        "name": "Caribbean"
+      "name": "Caribbean"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "034",
     "fields": {
-        "name": "South Asia"
+      "name": "South Asia"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "035",
     "fields": {
-        "name": "South East Asia"
+      "name": "South East Asia"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "036",
     "fields": {
-        "name": "Australia"
+      "name": "Australia"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "143",
     "fields": {
-        "name": "CEITs and Central Asia"
+      "name": "CEITs and Central Asia"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "145",
     "fields": {
-        "name": "West Asia"
+      "name": "West Asia"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "392",
     "fields": {
-        "name": "Japan"
+      "name": "Japan"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "554",
     "fields": {
-        "name": "New Zealand"
+      "name": "New Zealand"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "AA",
     "fields": {
-        "name": "Anglophone Africa"
+      "name": "Anglophone Africa"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "EU",
     "fields": {
-        "name": "European Union"
+      "name": "European Union"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "FA",
     "fields": {
-        "name": "Francophone Africa"
+      "name": "Francophone Africa"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "OTH",
     "fields": {
-        "name": "Other A2"
+      "name": "Other A2"
     }
-},
-{
+  },
+  {
     "model": "core.subregion",
     "pk": "PI",
     "fields": {
-        "name": "Pacific Islands"
+      "name": "Pacific Islands"
     }
-}
+  }
 ]
