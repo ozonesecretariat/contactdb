@@ -77,8 +77,8 @@ class ContactMembershipInline(admin.StackedInline):
     extra = 0
     model = Contact.groups.through
     autocomplete_fields = ("contactgroup",)
-    verbose_name = "Group Contact"
-    verbose_name_ = "Group Contacts"
+    verbose_name = "Contact group"
+    verbose_name_ = "Contact groups"
 
     def has_change_permission(self, request, obj=None):
         return False

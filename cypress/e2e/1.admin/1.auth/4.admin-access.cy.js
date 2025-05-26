@@ -22,7 +22,9 @@ describe("Check user permissions", () => {
         organizationtype: true,
         possibleduplicatecontact: { view: true },
         possibleduplicateorganization: { view: true },
+        region: true,
         resolveconflict: { view: true },
+        subregion: true,
       },
       emails: {
         email: { add: true, view: true },

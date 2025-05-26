@@ -12,7 +12,9 @@ from core.models import (
     ImportLegacyContactsTask,
     Organization,
     OrganizationType,
+    Region,
     ResolveConflict,
+    Subregion,
 )
 from emails.models import Email, EmailTemplate, SendEmailTask
 from events.models import (
@@ -39,6 +41,8 @@ class Command(BaseCommand):
             # Accounts
             Role,
             # core
+            Region,
+            Subregion,
             Country,
             ContactGroup,
             OrganizationType,
