@@ -381,12 +381,16 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # CKEditor
 CKEDITOR_PLACEHOLDERS = (
+    # Placeholders for contacts
     "full_name",
     "first_name",
     "last_name",
     "title",
     "honorific",
     "respectful",
+    # Placeholders for organizations
+    # Placeholders for event invitations
+    "invitation_link",
 )
 
 CKEDITOR_CONFIGS = {
