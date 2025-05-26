@@ -533,7 +533,7 @@ class ImportLegacyContactsTask(TaskRQ):
 
 
 class Region(models.Model):
-    code = CICharField(max_length=2, primary_key=True)
+    code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
 
     class Meta:
@@ -545,7 +545,7 @@ class Region(models.Model):
 
 
 class Subregion(models.Model):
-    code = CICharField(max_length=2, primary_key=True)
+    code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
 
     class Meta:
