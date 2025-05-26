@@ -5,9 +5,9 @@ class TestEventsAPI(BaseAPITestCase):
     url = "/api/events/"
     fixtures = [
         *BaseAPITestCase.fixtures,
-        "initial/country",
         "initial/region",
         "initial/subregion",
+        "initial/country",
         "test/event",
     ]
 

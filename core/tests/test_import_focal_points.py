@@ -9,9 +9,9 @@ from core.models import Contact, ContactGroup, Country, Organization
 class TestImportFocalPoints(TestCase):
     fixtures = [
         "initial/contactgroup",
-        "initial/country",
         "initial/region",
         "initial/subregion",
+        "initial/country",
     ]
 
     def setUp(self):

@@ -8,9 +8,9 @@ from events.models import Event, LoadEventsFromKronosTask
 
 class TestImportEvents(TestCase):
     fixtures = [
-        "initial/country",
         "initial/region",
         "initial/subregion",
+        "initial/country",
         # "initial/organizationtype",
         # "initial/registrationrole",
         # "initial/registrationstatus",
