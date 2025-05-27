@@ -494,13 +494,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     form = InvitationEmailForm
 
-    fields = [
-        "organization_types",
-        "events",
-        "subject",
-        "content",
-    ]
-
     fieldsets = (
         (
             "Recipients",
@@ -565,8 +558,8 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     invitation=invitation,
                     created_by=request.user,
                 )
-                task.contacts_to.set(data["to"])
-                task.contacts_cc.set(data["cc"])
+                task.to_contacts.set(data["to"])
+                task.cc_contacts.set(data["cc"])
                 task.run(is_async=True)
                 tasks.append(task)
 

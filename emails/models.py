@@ -272,6 +272,10 @@ class SendEmailTask(TaskRQ):
         blank=True,
         related_name="email_tasks",
     )
+    to_contacts = models.ManyToManyField(
+        Contact,
+        related_name="email_logs_to",
+    )
     cc_contacts = models.ManyToManyField(
         Contact,
         related_name="email_logs_cc",
@@ -355,10 +359,10 @@ class SendEmailTask(TaskRQ):
 
         # Handle organization case
         email_to = [
-            contact.email for contact in self.contacts_to.all() if contact.email
+            contact.email for contact in self.to_contacts.all() if contact.email
         ]
         email_cc = [
-            contact.email for contact in self.contacts_cc.all() if contact.email
+            contact.email for contact in self.cc_contacts.all() if contact.email
         ]
 
         return self.email.build_email(to=email_to, cc=email_cc)
