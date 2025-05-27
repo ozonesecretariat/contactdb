@@ -10,7 +10,7 @@ def get_event_registered_recipients(events):
     return recipients
 
 
-def get_organization_recipients(org_types, event=None):
+def get_organization_recipients(org_types):
     """
     Get recipients per organization for invitation emails, using the organization's
     primary and secondary contacts.

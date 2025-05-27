@@ -15,7 +15,7 @@ from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
 from core.models import Contact, ContactGroup, OrganizationType
-from events.models import Event
+from events.models import Event, EventGroup
 
 
 def get_relative_image_urls(email_body):
@@ -120,6 +120,14 @@ class Email(models.Model):
         help_text="Send the email to all participants of these selected events.",
         limit_choices_to=~Q(registrations=None),
         related_name="sent_emails",
+    )
+    event_group = models.ForeignKey(
+        EventGroup,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="sent_emails",
+        help_text="Send the email to all participants of the events in this event group.",
     )
     organization_types = models.ManyToManyField(
         OrganizationType,

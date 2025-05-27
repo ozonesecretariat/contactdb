@@ -461,9 +461,26 @@ class InvitationEmailForm(forms.ModelForm):
         fields = [
             "organization_types",
             "events",
+            "event_group",
             "subject",
             "content",
         ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        events = cleaned_data.get("events")
+        event_group = cleaned_data.get("event_group")
+
+        if events and event_group:
+            raise forms.ValidationError("Cannot select both events and event groups")
+
+        if not events and not event_group:
+            raise forms.ValidationError("Must select either an event or an event group")
+
+        if events and events.count() > 1:
+            raise forms.ValidationError("Only one event can be selected")
+
+        return cleaned_data
 
     def clean_organization_types(self):
         organization_types = self.cleaned_data.get("organization_types")
@@ -475,10 +492,6 @@ class InvitationEmailForm(forms.ModelForm):
 
     def clean_events(self):
         events = self.cleaned_data.get("events")
-        if not events or not events.exists():
-            raise forms.ValidationError(
-                "One event must be selected for invitation emails"
-            )
         if events and events.count() > 1:
             raise forms.ValidationError(
                 "Only one event can be selected for invitation emails"
@@ -509,7 +522,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             "Events",
             {
                 "description": ("Send invitation emails for this specific event."),
-                "fields": ("events",),
+                "fields": (
+                    "events",
+                    "event_group",
+                ),
             },
         ),
         (
@@ -543,14 +559,13 @@ class InvitationEmailAdmin(BaseEmailAdmin):
     def response_post_save_add(self, request, obj):
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
-        org_recipients = get_organization_recipients(
-            obj.organization_types.all(), event
-        )
+        event_group = obj.event_group
+        org_recipients = get_organization_recipients(obj.organization_types.all())
 
         for org, data in org_recipients.items():
             if data["to"] or data["cc"]:
                 invitation, _ = EventInvitation.objects.get_or_create(
-                    organization=org, event=event
+                    organization=org, event=event, event_group=event_group
                 )
                 task = SendEmailTask.objects.create(
                     email=obj,
