@@ -1,7 +1,8 @@
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import BooleanField, Case, Count, Value, When
 from import_export.admin import ExportMixin
+from more_admin_filters import BooleanAnnotationFilter
 
 from common.model_admin import ModelAdmin
 from core.models import Organization
@@ -24,6 +25,8 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("country", "country"),
         AutocompleteFilterFactory("government", "government"),
         "include_in_invitation",
+        BooleanAnnotationFilter.init("has_primary_contacts"),
+        BooleanAnnotationFilter.init("has_secondary_contacts"),
     )
     list_display = (
         "name",
@@ -32,6 +35,8 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "country",
         "government",
         "contacts_count",
+        "has_primary_contacts",
+        "has_secondary_contacts",
         "include_in_invitation",
     )
     readonly_fields = ("organization_id",)
@@ -39,6 +44,16 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
     prefetch_related = ("country", "government", "organization_type")
     annotate_query = {
         "contacts_count": Count("contacts"),
+        "has_primary_contacts": Case(
+            When(primary_contacts__gt=0, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        ),
+        "has_secondary_contacts": Case(
+            When(secondary_contacts__gt=0, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        ),
     }
     fieldsets = (
         (
@@ -115,3 +130,15 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
             "organization",
             f"{obj.contacts_count} contacts",
         )
+
+    @admin.display(
+        description="Primary contacts", ordering="primary_contacts", boolean=True
+    )
+    def has_primary_contacts(self, obj):
+        return obj.primary_contacts.exists()
+
+    @admin.display(
+        description="Secondary contacts", ordering="secondary_contacts", boolean=True
+    )
+    def has_secondary_contacts(self, obj):
+        return obj.secondary_contacts.exists()
