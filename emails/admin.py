@@ -602,7 +602,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "email_bcc",
     )
     list_display = (
-        "email",
+        "email_with_link",
         "contact_link",
         "email_to_preview",
         "email_cc_preview",
@@ -611,7 +611,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "duration_display",
         "status_display",
     )
-    list_display_links = ("email", "contact")
+    list_display_links = ("email_with_link", "contact")
     list_filter = (
         AutocompleteFilterFactory("email", "email"),
         ContactAutocompleteFilter,
@@ -626,6 +626,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "email",
         "contact",
         "contact__organization",
+        "to_contacts__organization",
         "cc_contacts__organization",
         "bcc_contacts__organization",
     )
@@ -634,8 +635,9 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
             None,
             {
                 "fields": (
-                    "email",
+                    "email_with_link",
                     "contact",
+                    "to_contacts_links",
                     "cc_contacts_links",
                     "bcc_contacts_links",
                     "email_to",
@@ -705,9 +707,24 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     def has_add_permission(self, request):
         return False
 
+    def get_email_link(self, email):
+        """Generates correct admin URL based on email type."""
+        if email.email_type == Email.EmailTypeChoices.EVENT_INVITE:
+            return reverse("admin:emails_invitationemail_change", args=[email.pk])
+        return reverse("admin:emails_email_change", args=[email.pk])
+
+    @admin.display(description="Email", ordering="email")
+    def email_with_link(self, obj):
+        url = self.get_email_link(obj.email)
+        return format_html('<a href="{}">{}</a>', url, obj.email)
+
     @admin.display(description="Contact", ordering="contact")
     def contact_link(self, obj):
         return self.get_object_display_link(obj.contact)
+
+    @admin.display(description="To contacts")
+    def to_contacts_links(self, obj):
+        return self.get_m2m_links(obj.to_contacts.all())
 
     @admin.display(description="Cc contacts")
     def cc_contacts_links(self, obj):
