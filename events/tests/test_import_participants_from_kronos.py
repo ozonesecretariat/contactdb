@@ -10,6 +10,8 @@ from events.models import Event, LoadParticipantsFromKronosTask
 
 class TestImportEvents(TestCase):
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",

@@ -13,7 +13,7 @@ from core.models import Contact, Country
 class LoadEventsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2
     TASK_QUEUE = "default"
-    TASK_TIMEOUT = 60
+    TASK_TIMEOUT = 300
     LOG_TO_FIELD = True
     LOG_TO_FILE = False
 
@@ -255,7 +255,7 @@ class Registration(models.Model):
 class LoadParticipantsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2
     TASK_QUEUE = "default"
-    TASK_TIMEOUT = 60
+    TASK_TIMEOUT = 300
     LOG_TO_FIELD = True
     LOG_TO_FILE = False
 

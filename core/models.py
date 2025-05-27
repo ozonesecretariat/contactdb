@@ -18,6 +18,20 @@ class Country(models.Model):
     code = CICharField(max_length=2, primary_key=True)
     name = CICharField(max_length=255, blank=True)
     official_name = CICharField(max_length=255, blank=True)
+    region = models.ForeignKey(
+        "Region",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="countries",
+    )
+    subregion = models.ForeignKey(
+        "Subregion",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="countries",
+    )
 
     class Meta:
         ordering = ("name",)
@@ -221,6 +235,7 @@ class Contact(BaseContact):
         null=True,
         blank=True,
         related_name="contacts",
+        verbose_name="Contact groups",
     )
     # Is this contact simply a placeholder for an organization email address?
     is_organization = models.BooleanField(default=False)
@@ -517,3 +532,27 @@ class ImportLegacyContactsTask(TaskRQ):
         from .jobs import ImportLegacyContacts
 
         return ImportLegacyContacts
+
+
+class Region(models.Model):
+    code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
+    name = CICharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name_plural = "regions"
+
+    def __str__(self):
+        return self.name
+
+
+class Subregion(models.Model):
+    code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
+    name = CICharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name_plural = "subregions"
+
+    def __str__(self):
+        return self.name
