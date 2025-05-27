@@ -1,15 +1,3 @@
-def get_event_registered_recipients(events):
-    """
-    Gets all contacts registered for given events queryset.
-
-    This is useful for sending emails to users registered to an event.
-    """
-    recipients = set()
-    for event in events.prefetch_related("registrations", "registrations__contact"):
-        recipients.update(reg.contact for reg in event.registrations.all())
-    return recipients
-
-
 def get_organization_recipients(org_types):
     """
     Get recipients per organization for invitation emails, using the organization's

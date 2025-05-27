@@ -462,6 +462,8 @@ class InvitationEmailForm(forms.ModelForm):
             "organization_types",
             "events",
             "event_group",
+            "cc_recipients",
+            "bcc_recipients",
             "subject",
             "content",
         ]
@@ -507,6 +509,21 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     form = InvitationEmailForm
 
+    autocomplete_fields = (
+        "organization_types",
+        "events",
+        "event_group",
+        "cc_recipients",
+        "bcc_recipients",
+    )
+    search_fields = BaseEmailAdmin.search_fields + (
+        "cc_recipients__first_name__unaccent",
+        "cc_recipients__last_name__unaccent",
+        "bcc_recipients__first_name__unaccent",
+        "bcc_recipients__last_name__unaccent",
+        "event_group__name__unaccent",
+        "events__title__unaccent",
+    )
     fieldsets = (
         (
             "Recipients",
@@ -516,6 +533,18 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     "will be set as To recipients, secondary contacts as CC."
                 ),
                 "fields": ("organization_types",),
+            },
+        ),
+        (
+            "Additional Recipients",
+            {
+                "description": (
+                    "These contacts will be added to all invitation emails that are sent."
+                ),
+                "fields": (
+                    "cc_recipients",
+                    "bcc_recipients",
+                ),
             },
         ),
         (
@@ -543,7 +572,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             },
         ),
     )
-    autocomplete_fields = ("organization_types", "events")
 
     def get_queryset(self, request):
         return (
@@ -573,8 +601,12 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     invitation=invitation,
                     created_by=request.user,
                 )
+
+                # Set recipients - accounting for additional besides the contact(groups)
                 task.to_contacts.set(data["to"])
-                task.cc_contacts.set(data["cc"])
+                task.cc_contacts.set(list(data["cc"]) + list(obj.cc_recipients.all()))
+                task.bcc_contacts.set(obj.bcc_recipients.all())
+
                 task.run(is_async=True)
                 tasks.append(task)
 
