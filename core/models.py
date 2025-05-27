@@ -65,6 +65,7 @@ class Organization(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+        related_name="organizations",
     )
     government = models.ForeignKey(
         Country,

@@ -24,6 +24,8 @@ from emails.models import (
     InvitationEmail,
     SendEmailTask,
 )
+from emails.services import get_organization_recipients
+from events.models import EventInvitation
 
 
 class ViewEmailMixIn:
@@ -453,20 +455,50 @@ class EmailAdmin(BaseEmailAdmin):
         return self.get_m2m_links(obj.bcc_groups.all())
 
 
+class InvitationEmailForm(forms.ModelForm):
+    class Meta:
+        model = InvitationEmail
+        fields = [
+            "organization_types",
+            "events",
+            "subject",
+            "content",
+        ]
+
+    def clean_organization_types(self):
+        organization_types = self.cleaned_data.get("organization_types")
+        if not organization_types or not organization_types.exists():
+            raise forms.ValidationError(
+                "At least one organization type must be selected"
+            )
+        return organization_types
+
+    def clean_events(self):
+        events = self.cleaned_data.get("events")
+        if not events or not events.exists():
+            raise forms.ValidationError(
+                "One event must be selected for invitation emails"
+            )
+        if events and events.count() > 1:
+            raise forms.ValidationError(
+                "Only one event can be selected for invitation emails"
+            )
+        return events
+
+
 @admin.register(InvitationEmail)
 class InvitationEmailAdmin(BaseEmailAdmin):
     """
     Admin class for viewing and sending invitations emails.
     """
 
-    exclude = [
-        "recipients",
-        "cc_recipients",
-        "bcc_recipients",
-        "groups",
-        "cc_groups",
-        "bcc_groups",
-        "email_type",
+    form = InvitationEmailForm
+
+    fields = [
+        "organization_types",
+        "events",
+        "subject",
+        "content",
     ]
 
     fieldsets = (
@@ -516,8 +548,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         super().save_model(request, obj, form, change)
 
     def response_post_save_add(self, request, obj):
-        from .services import get_organization_recipients
-
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         org_recipients = get_organization_recipients(
@@ -526,10 +556,13 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
         for org, data in org_recipients.items():
             if data["to"] or data["cc"]:
+                invitation, _ = EventInvitation.objects.get_or_create(
+                    organization=org, event=event
+                )
                 task = SendEmailTask.objects.create(
                     email=obj,
                     organization=org,
-                    invitation=data["invitation"],
+                    invitation=invitation,
                     created_by=request.user,
                 )
                 task.contacts_to.set(data["to"])

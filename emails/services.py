@@ -1,6 +1,3 @@
-from events.models import EventInvitation
-
-
 def get_event_registered_recipients(events):
     """
     Gets all contacts registered for given events queryset.
@@ -30,10 +27,5 @@ def get_organization_recipients(org_types, event=None):
                 org_recipients[org] = {
                     "to": primary,
                     "cc": secondary,
-                    "invitation": EventInvitation.objects.create(
-                        organization=org, event=event
-                    )
-                    if event
-                    else None,
                 }
     return org_recipients
