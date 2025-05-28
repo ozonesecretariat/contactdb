@@ -8,8 +8,21 @@ from emails.models import SendEmailTask
 class SendEmailJob(Job):
     @staticmethod
     def execute(job, task: SendEmailTask):
-        task.log(logging.INFO, "Building email %r for: %s", task.email, task.contact)
-        msg = task.email.build_email(task.contact)
+        task.log(logging.INFO, "Building email %r", task.email)
+
+        to_emails = None
+        if not task.contact and task.to_contacts.exists():
+            to_emails = []
+            for contact in task.to_contacts.all():
+                if contact.emails:
+                    to_emails.extend(contact.emails)
+            task.log(logging.INFO, "Setting recipients from to_contacts: %s", to_emails)
+
+        msg = task.email.build_email(
+            contact=task.contact,
+            to_list=to_emails,
+            invitation=task.invitation,
+        )
         if not (recipients := msg.recipients()):
             raise RuntimeError(
                 "Contact has no email addresses, nowhere to send the email."

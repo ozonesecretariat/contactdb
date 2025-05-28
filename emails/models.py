@@ -168,7 +168,9 @@ class Email(models.Model):
             result.update(group.contacts.all())
         return result
 
-    def build_email(self, contact=None):
+    def build_email(
+        self, contact=None, to_list=None, cc_list=None, bcc_list=None, invitation=None
+    ):
         msg = EmailMultiAlternatives(
             subject=self.subject, from_email=settings.DEFAULT_FROM_EMAIL
         )
@@ -176,7 +178,18 @@ class Email(models.Model):
         if contact:
             msg.to.extend(contact.emails or [])
             msg.cc.extend(contact.email_ccs or [])
+        if contact:
+            msg.to.extend(contact.emails or [])
+            msg.cc.extend(contact.email_ccs or [])
+        if to_list:
+            msg.to.extend(to_list)
+        if cc_list:
+            msg.cc.extend(cc_list)
+        if bcc_list:
+            msg.bcc.extend(bcc_list)
 
+        # Add "global" CCs and BCCs (will be included in *all* actual emails generated
+        # for this Email instance).
         for cc_contact in self.all_cc_contacts:
             msg.cc.extend(cc_contact.emails or [])
         for bcc_contact in self.all_bcc_contacts:
@@ -191,8 +204,8 @@ class Email(models.Model):
                     placeholder_values[placeholder] = "" if value is None else value
 
         # Handle invitation link if present
-        if hasattr(self, "invitation") and self.invitation:
-            placeholder_values["invitation_link"] = self.invitation.invitation_link
+        if invitation:
+            placeholder_values["invitation_link"] = invitation.invitation_link
 
         # Replace placeholders with values
         for placeholder, value in placeholder_values.items():
