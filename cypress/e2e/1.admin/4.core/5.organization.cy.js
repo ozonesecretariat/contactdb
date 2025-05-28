@@ -27,7 +27,7 @@ describe("Check", () => {
     cy.performSearch({
       filters: {
         government: "Chile",
-        organization_type: "Exhibitors",
+        organization_type__in: ["Exhibitors"],
       },
       modelName: "Organizations",
     });
