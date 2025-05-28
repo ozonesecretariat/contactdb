@@ -187,7 +187,8 @@ class Email(models.Model):
         if contact:
             for placeholder in settings.CKEDITOR_PLACEHOLDERS:
                 if placeholder != "invitation_link":
-                    placeholder_values[placeholder] = getattr(contact, placeholder, "")
+                    value = getattr(contact, placeholder, "")
+                    placeholder_values[placeholder] = "" if value is None else value
 
         # Handle invitation link if present
         if hasattr(self, "invitation") and self.invitation:
