@@ -19,6 +19,8 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "organization_type__description",
         "government__name__unaccent",
         "country__name__unaccent",
+        "emails",
+        "email_ccs",
     ]
     filter_horizontal = ("primary_contacts", "secondary_contacts")
     list_filter = (
@@ -31,14 +33,14 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
     )
     list_display = (
         "name",
-        "acronym",
         "organization_type",
         "country",
         "government",
-        "contacts_count",
+        "emails",
         "has_primary_contacts",
         "has_secondary_contacts",
         "include_in_invitation",
+        "contacts_count",
     )
     readonly_fields = ("organization_id",)
     autocomplete_fields = ("country", "government", "organization_type")
