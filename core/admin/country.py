@@ -1,3 +1,4 @@
+from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin
 from import_export.admin import ExportMixin
 
@@ -14,3 +15,7 @@ class CountryAdmin(ExportMixin, ModelAdmin):
         "official_name__unaccent",
     )
     list_display_links = ("code", "name", "official_name")
+    list_filter = (
+        AutocompleteFilterFactory("region", "region"),
+        AutocompleteFilterFactory("subregion", "subregion"),
+    )
