@@ -173,20 +173,21 @@ class Email(models.Model):
             subject=self.subject, from_email=settings.DEFAULT_FROM_EMAIL
         )
 
-        html_content = self.content.strip()
         if contact:
             msg.to.extend(contact.emails or [])
             msg.cc.extend(contact.email_ccs or [])
 
-            for placeholder in settings.CKEDITOR_PLACEHOLDERS:
-                if (
-                    placeholder == "invitation_link"
-                    and hasattr(self, "invitation")
-                    and self.invitation
-                ):
-                    html_content = html_content.replace(
-                        f"[[{placeholder}]]", getattr(self.invitation, placeholder)
-                    )
+        html_content = self.content.strip()
+        for placeholder in settings.CKEDITOR_PLACEHOLDERS:
+            if (
+                placeholder == "invitation_link"
+                and hasattr(self, "invitation")
+                and self.invitation
+            ):
+                html_content = html_content.replace(
+                    f"[[{placeholder}]]", getattr(self.invitation, placeholder)
+                )
+            if contact:
                 html_content = html_content.replace(
                     f"[[{placeholder}]]", getattr(contact, placeholder)
                 )
@@ -353,24 +354,3 @@ class SendEmailTask(TaskRQ):
             if part.get_content_type() == "text/html":
                 return part.get_payload(decode=True).decode()
         return ""
-
-    def build_email(self):
-        context = self.get_context()
-        html_content = self.email.content
-
-        # Replace placeholders
-        for placeholder, value in context.items():
-            html_content = html_content.replace(f"[[{placeholder}]]", str(value))
-        if self.contact:
-            # Handle single contact case
-            return super().build_email()
-
-        # Handle organization case
-        email_to = [
-            contact.email for contact in self.to_contacts.all() if contact.email
-        ]
-        email_cc = [
-            contact.email for contact in self.cc_contacts.all() if contact.email
-        ]
-
-        return self.email.build_email(to=email_to, cc=email_cc)
