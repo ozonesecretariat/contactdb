@@ -4,6 +4,7 @@ from django.db.models import BooleanField, Case, Count, Value, When
 from import_export.admin import ExportMixin
 from more_admin_filters import BooleanAnnotationFilter
 
+from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.model_admin import ModelAdmin
 from core.models import Organization
 
@@ -21,7 +22,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
     ]
     filter_horizontal = ("primary_contacts", "secondary_contacts")
     list_filter = (
-        AutocompleteFilterFactory("organization_type", "organization_type"),
+        AutocompleteFilterMultipleFactory("organization type", "organization_type"),
         AutocompleteFilterFactory("country", "country"),
         AutocompleteFilterFactory("government", "government"),
         "include_in_invitation",
