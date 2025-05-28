@@ -649,7 +649,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "email_bcc",
     )
     list_display = (
-        "email_with_link",
+        "email",
         "contact_link",
         "email_to_preview",
         "email_cc_preview",
@@ -658,7 +658,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "duration_display",
         "status_display",
     )
-    list_display_links = ("email_with_link", "contact")
+    list_display_links = ("email", "contact")
     list_filter = (
         AutocompleteFilterFactory("email", "email"),
         ContactAutocompleteFilter,
