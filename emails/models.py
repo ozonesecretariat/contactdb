@@ -177,25 +177,25 @@ class Email(models.Model):
             msg.to.extend(contact.emails or [])
             msg.cc.extend(contact.email_ccs or [])
 
-        html_content = self.content.strip()
-        for placeholder in settings.CKEDITOR_PLACEHOLDERS:
-            if (
-                placeholder == "invitation_link"
-                and hasattr(self, "invitation")
-                and self.invitation
-            ):
-                html_content = html_content.replace(
-                    f"[[{placeholder}]]", getattr(self.invitation, placeholder)
-                )
-            if contact:
-                html_content = html_content.replace(
-                    f"[[{placeholder}]]", getattr(contact, placeholder)
-                )
-
         for cc_contact in self.all_cc_contacts:
             msg.cc.extend(cc_contact.emails or [])
         for bcc_contact in self.all_bcc_contacts:
             msg.bcc.extend(bcc_contact.emails or [])
+
+        html_content = self.content.strip()
+        placeholder_values = {}
+        if contact:
+            for placeholder in settings.CKEDITOR_PLACEHOLDERS:
+                if placeholder != "invitation_link":
+                    placeholder_values[placeholder] = getattr(contact, placeholder, "")
+
+        # Handle invitation link if present
+        if hasattr(self, "invitation") and self.invitation:
+            placeholder_values["invitation_link"] = self.invitation.invitation_link
+
+        # Replace placeholders with values
+        for placeholder, value in placeholder_values.items():
+            html_content = html_content.replace(f"[[{placeholder}]]", str(value))
 
         # Remove all HTML Tags, leaving only the plaintext
         text_content = strip_tags(html_content)
@@ -216,6 +216,7 @@ class Email(models.Model):
                     attachment.name or attachment.file.name,
                     fp.read(),
                 )
+
         return msg
 
 
