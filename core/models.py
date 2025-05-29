@@ -129,6 +129,19 @@ class Organization(models.Model):
             models.Q(emails__overlap=emails) | models.Q(email_ccs__overlap=emails)
         )
 
+    def get_related_invite_organizations(self):
+        """
+        Only applies to GOV organizations.
+
+        Retrieves list of organizations that need to be invited from this specific
+        country.
+        """
+        if self.organization_type.acronym != "GOV":
+            return []
+        return self.__class__.objects.filter(
+            county=self.country, include_in_invitation=True
+        )
+
 
 class BaseContact(models.Model):
     organization = None

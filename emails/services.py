@@ -13,6 +13,11 @@ def get_organization_recipients(org_types):
         ).prefetch_related("primary_contacts", "secondary_contacts"):
             primary = set(org.primary_contacts.all())
             secondary = set(org.secondary_contacts.all())
+            if org_type.acronym == "GOV":
+                # If it's a GOV, include all invite-able orgs from that country
+                for related_organization in org.get_related_invite_organizations():
+                    primary |= set(related_organization.primary_contacts.all())
+                    secondary |= set(related_organization.secondary_contacts.all())
             if primary or secondary:
                 org_recipients[org] = {
                     "to": primary,
