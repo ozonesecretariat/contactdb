@@ -139,7 +139,7 @@ class Organization(models.Model):
         if self.organization_type.acronym != "GOV":
             return []
         return self.__class__.objects.filter(
-            county=self.country, include_in_invitation=True
+            government=self.government, include_in_invitation=True
         )
 
 
