@@ -1,22 +1,11 @@
 <template>
   <q-page>
     <div class="q-pa-lg">
-      <q-table
-        :rows="nominations"
-        :columns="columns"
-        row-key="id"
-        :loading="isLoading"
-        :filter="filter"
-      >
-        <template v-slot:top>
+      <q-table :rows="nominations" :columns="columns" row-key="id" :loading="isLoading" :filter="filter">
+        <template #top>
           <q-space />
-          <q-input
-            v-model="filter"
-            placeholder="Search"
-            dense
-            debounce="300"
-          >
-            <template v-slot:append>
+          <q-input v-model="filter" placeholder="Search" dense debounce="300">
+            <template #append>
               <q-icon name="search" />
             </template>
           </q-input>
@@ -27,77 +16,79 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import type { QTableColumn } from "quasar";
+import type { EventNomination } from "src/types/registration";
+
 import { useAsyncState } from "@vueuse/core";
 import { api } from "boot/axios";
-import { QTableColumn } from 'quasar';
-import type { EventNomination } from 'src/types/registration';
+import { computed, defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: 'EventNominationsPage',
+  name: "EventNominationsPage",
   props: {
     invitationToken: {
+      required: true,
       type: String,
-      required: true
-    }
+    },
   },
 
   setup(props) {
-    const filter = ref('');
+    const filter = ref("");
 
     const columns: QTableColumn[] = [
       {
-        name: 'contact',
-        required: true,
-        label: 'Contact',
-        align: 'left',
+        align: "left",
         field: (row: EventNomination) => `${row.contact.firstName} ${row.contact.lastName}`,
-        sortable: true
+        label: "Contact",
+        name: "contact",
+        required: true,
+        sortable: true,
       },
       {
-        name: 'organization',
-        align: 'left',
-        label: 'Organization',
-        field: 'organization',
-        sortable: true
+        align: "left",
+        field: "organization",
+        label: "Organization",
+        name: "organization",
+        sortable: true,
       },
       {
-        name: 'created_on',
-        align: 'left',
-        label: 'Registered On',
-        field: 'created_on',
-        sortable: true
+        align: "left",
+        field: "created_on",
+        label: "Registered On",
+        name: "created_on",
+        sortable: true,
       },
       {
-        name: 'status',
-        align: 'left',
-        label: 'Status',
-        field: 'status',
-        sortable: true
-      }
+        align: "left",
+        field: "status",
+        label: "Status",
+        name: "status",
+        sortable: true,
+      },
     ];
 
     const { isLoading, state } = useAsyncState(
       async () => (await api.get<EventNomination[]>(`/events/nominations/${props.invitationToken}/`)).data,
-      []
+      [],
     );
 
     const nominations = computed(() => {
       const text = filter.value.toLowerCase();
-      return state.value.filter((nomination: EventNomination) =>
-        nomination.contact.firstName.toLowerCase().includes(text) ||
-        nomination.contact.lastName.toLowerCase().includes(text) ||
-        nomination.organization.name.toLowerCase().includes(text) ||
-        nomination.status.toLowerCase().includes(text)
+      return state.value.filter(
+        (nomination: EventNomination) =>
+          nomination.contact.firstName.toLowerCase().includes(text) ||
+          nomination.contact.lastName.toLowerCase().includes(text) ||
+          nomination.organization.name.toLowerCase().includes(text) ||
+          nomination.status.toLowerCase().includes(text),
       );
     });
 
     return {
-      nominations,
       columns,
+      filter,
       isLoading,
-      filter
+      nominations,
     };
-  }
+  },
 });
 </script>
