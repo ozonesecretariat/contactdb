@@ -158,6 +158,7 @@
       "permissions": [
         ["view_email", "emails", "email"],
         ["view_emailattachment", "emails", "emailattachment"],
+        ["view_invitationemail", "emails", "invitationemail"],
         ["view_emailtemplate", "emails", "emailtemplate"],
         ["view_sendemailtask", "emails", "sendemailtask"]
       ]
@@ -190,6 +191,10 @@
         ["change_emailattachment", "emails", "emailattachment"],
         ["delete_emailattachment", "emails", "emailattachment"],
         ["view_emailattachment", "emails", "emailattachment"],
+        ["add_invitationemail", "emails", "invitationemail"],
+        ["change_invitationemail", "emails", "invitationemail"],
+        ["delete_invitationemail", "emails", "invitationemail"],
+        ["view_invitationemail", "emails", "invitationemail"],
         ["add_sendemailtask", "emails", "sendemailtask"],
         ["change_sendemailtask", "emails", "sendemailtask"],
         ["delete_sendemailtask", "emails", "sendemailtask"],

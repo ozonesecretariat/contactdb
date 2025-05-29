@@ -79,6 +79,7 @@ class Organization(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+        related_name="organizations",
     )
     government = models.ForeignKey(
         Country,
@@ -128,6 +129,19 @@ class Organization(models.Model):
             models.Q(emails__overlap=emails) | models.Q(email_ccs__overlap=emails)
         )
 
+    def get_related_invite_organizations(self):
+        """
+        Only applies to GOV organizations.
+
+        Retrieves list of organizations that need to be invited from this specific
+        country.
+        """
+        if self.organization_type.acronym != "GOV":
+            return []
+        return self.__class__.objects.filter(
+            government=self.government, include_in_invitation=True
+        )
+
 
 class BaseContact(models.Model):
     organization = None
@@ -139,22 +153,43 @@ class BaseContact(models.Model):
     designation = models.TextField(default="", blank=True)
     department = models.TextField(default="", blank=True)
     affiliation = models.TextField(default="", blank=True)
+
+    class UNLanguage(models.TextChoices):
+        ENGLISH = "E", "English"
+        FRENCH = "F", "French"
+        SPANISH = "S", "Spanish"
+        ARABIC = "A", "Arabic"
+        CHINESE = "C", "Chinese"
+        RUSSIAN = "R", "Russian"
+
     primary_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="primary language"
+        choices=UNLanguage.choices,
+        max_length=2,
+        blank=True,
+        default="",
+        verbose_name="primary language",
     )
     second_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="second language"
+        choices=UNLanguage.choices,
+        max_length=2,
+        blank=True,
+        default="",
+        verbose_name="second language",
     )
     third_lang = models.CharField(
-        max_length=100, default="", blank=True, verbose_name="third language"
+        choices=UNLanguage.choices,
+        max_length=2,
+        blank=True,
+        default="",
+        verbose_name="third language",
     )
+
     phones = ArrayField(null=True, base_field=models.TextField(), blank=True)
     mobiles = ArrayField(null=True, base_field=models.TextField(), blank=True)
     faxes = ArrayField(null=True, base_field=models.TextField(), blank=True)
     emails = ArrayField(null=True, base_field=CIEmailField(), blank=True)
     email_ccs = ArrayField(null=True, base_field=CIEmailField(), blank=True)
     notes = models.TextField(default="", blank=True)
-    is_in_mailing_list = models.BooleanField(default=False, blank=True)
     is_use_organization_address = models.BooleanField(default=False, blank=True)
     address = models.TextField(default="", blank=True)
     city = models.CharField(max_length=250, default="", blank=True)
@@ -236,8 +271,6 @@ class Contact(BaseContact):
         related_name="contacts",
         verbose_name="Organization",
     )
-    # Is this contact simply a placeholder for an organization email address?
-    is_organization = models.BooleanField(default=False)
 
     groups = models.ManyToManyField(
         "ContactGroup",

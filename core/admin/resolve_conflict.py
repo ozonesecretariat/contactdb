@@ -33,7 +33,6 @@ class ResolveConflictAdmin(ContactAdminBase):
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
         "org_head",
-        "is_in_mailing_list",
         "is_use_organization_address",
     )
     list_display = (
