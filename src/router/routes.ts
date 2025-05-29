@@ -78,6 +78,16 @@ const routes: RouteRecordRaw[] = [
         path: "events",
       },
       {
+        component: () => import("pages/EventNominationsPage.vue"),
+        meta: {
+          header: "Event Nominations",
+          requirePermissions: ["events.view_nomination"],
+        },
+        name: "event-nominations",
+        path: "events/:eventId/nominations",
+        props: true,
+      },
+      {
         component: () => import("pages/HomePage.vue"),
         meta: {
           header: "",

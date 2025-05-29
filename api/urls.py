@@ -7,7 +7,7 @@ from drf_spectacular.views import (
 from rest_framework import routers
 
 import api.views.user
-from api.views.event import EventViewSet
+from api.views.event import EventNominationViewSet, EventViewSet
 from api.views.misc import AppSettingsView
 
 router = routers.SimpleRouter()
@@ -55,5 +55,11 @@ urlpatterns = [
         "app-settings/",
         AppSettingsView.as_view(),
         name="app-settings",
+    ),
+    # Event Nomination with token "auth"; Accreditation will have a different endpoint
+    path(
+        "events/nomination/<str:token>/",
+        EventNominationViewSet.as_view({"get": "list", "post": "nominate_contacts"}),
+        name="event-registration",
     ),
 ] + router.urls
