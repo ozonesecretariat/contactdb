@@ -29,6 +29,7 @@ describe("Check user permissions", () => {
       emails: {
         email: { add: true, view: true },
         emailtemplate: true,
+        invitationemail: { add: true, view: true },
         sendemailtask: { view: true },
       },
       events: {

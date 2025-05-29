@@ -79,6 +79,7 @@ class Organization(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+        related_name="organizations",
     )
     government = models.ForeignKey(
         Country,
@@ -126,6 +127,19 @@ class Organization(models.Model):
     def filter_contacts_by_emails(self, emails: list[str]):
         return self.contacts.filter(
             models.Q(emails__overlap=emails) | models.Q(email_ccs__overlap=emails)
+        )
+
+    def get_related_invite_organizations(self):
+        """
+        Only applies to GOV organizations.
+
+        Retrieves list of organizations that need to be invited from this specific
+        country.
+        """
+        if self.organization_type.acronym != "GOV":
+            return []
+        return self.__class__.objects.filter(
+            government=self.government, include_in_invitation=True
         )
 
 

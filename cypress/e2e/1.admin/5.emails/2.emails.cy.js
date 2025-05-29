@@ -123,7 +123,7 @@ describe("Check", () => {
       suffix: "-email-subject",
     });
 
-    // Wait for the task to finish
+    // Wait for the task to finish and go to the SendEmailTask detail admin
     cy.get(".field-status_display").contains("SUCCESS");
     cy.get(".field-email a").click();
     cy.get(".field-email_to").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
@@ -141,8 +141,8 @@ describe("Check", () => {
     cy.get(".field-email_source").contains("Dear Mr. 𝓙𝓸𝓱𝓷 🂡⚛︎ ᴛʜᴇ Łøᶑϻïŉ Ğàẕⱷņτ🎵 Ɗřăçóŋ <🐉>");
     cy.get(".field-email_source").contains("Hëļłø! Høŵ àŗȇ ÿøû dôïńğ töđàÿ? <🎉>");
 
-    // Check the email object itself
-    cy.get(".field-email a").click();
+    // Check the email object itself by following the email link
+    cy.get(".field-email_with_link a").click();
     cy.contains("View email");
     // Check HTML
     cy.getIframeBody(".field-email_preview iframe").contains("Dear [[full_name]]");
