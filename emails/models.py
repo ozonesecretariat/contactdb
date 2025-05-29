@@ -14,6 +14,7 @@ from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
+from common.model import get_protected_storage
 from core.models import Contact, ContactGroup, OrganizationType
 from events.models import Event, EventGroup
 
@@ -235,7 +236,7 @@ class Email(models.Model):
 
 
 class EmailAttachment(models.Model):
-    file = models.FileField(upload_to="email_files/", storage=storages["protected"])
+    file = models.FileField(upload_to="email_files/", storage=get_protected_storage)
     name = models.CharField(
         max_length=255,
         blank=True,

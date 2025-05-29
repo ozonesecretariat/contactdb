@@ -3,7 +3,6 @@ import textwrap
 
 import pycountry
 from django.core.exceptions import ValidationError
-from django.core.files.storage import storages
 from django.db import models
 from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
@@ -11,7 +10,7 @@ from psycopg import sql
 
 from common.array_field import ArrayField
 from common.citext import CICharField, CIEmailField
-from common.model import KronosId
+from common.model import get_protected_storage, KronosId
 
 
 class Country(models.Model):
@@ -537,7 +536,7 @@ class ImportLegacyContactsTask(TaskRQ):
         ),
     )
     json_file = models.FileField(
-        upload_to="import_legacy_contact_files/", storage=storages["protected"]
+        upload_to="import_legacy_contact_files/", storage=get_protected_storage
     )
 
     @staticmethod
