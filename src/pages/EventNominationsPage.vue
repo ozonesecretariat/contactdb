@@ -72,6 +72,11 @@ export default defineComponent({
       [],
     );
 
+    const { isLoading: loadingContacts, state: availableContacts } = useAsyncState(
+      async () => (await api.get(`/events/nominations/${props.invitationToken}/available_contacts/`)).data,
+      [],
+    );
+
     const nominations = computed(() => {
       const text = filter.value.toLowerCase();
       return state.value.filter(
@@ -84,9 +89,11 @@ export default defineComponent({
     });
 
     return {
+      availableContacts,
       columns,
       filter,
       isLoading,
+      loadingContacts,
       nominations,
     };
   },
