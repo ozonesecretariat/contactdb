@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -11,7 +12,7 @@ from events.models import Event, EventInvitation, Registration, RegistrationStat
 
 @lru_cache(maxsize=1)
 def get_nomination_status_id():
-    return RegistrationStatus.objects.get(name='nominated').id
+    return RegistrationStatus.objects.get(name="Nominated").id
 
 
 class EventViewSet(ReadOnlyModelViewSet):
