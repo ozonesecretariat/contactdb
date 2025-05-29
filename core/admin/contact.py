@@ -153,7 +153,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     "first_name",
                     "last_name",
                     "country",
-                    "is_in_mailing_list",
                 ),
             },
         ),
@@ -179,7 +178,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     "affiliation",
                     "org_head",
                     "is_use_organization_address",
-                    "is_organization",
                 )
             },
         ),

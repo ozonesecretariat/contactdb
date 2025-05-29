@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import UTC, datetime
 from functools import cached_property
 
@@ -135,7 +136,6 @@ class KronosParticipantsParser(KronosParser):
         "emails": "emails",
         "emailCcs": "email_ccs",
         "notes": "notes",
-        "isInMailingList": "is_in_mailing_list",
         "isUseOrganizationAddress": "is_use_organization_address",
         "address": "address",
         "city": "city",
@@ -290,10 +290,12 @@ class KronosParticipantsParser(KronosParser):
         contact_dict["emails"] = parse_list(contact_dict.get("emails"))
         contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
 
+        langs = self.get_languages(contact_dict.get("notes", ""))
+
         contact_defaults = {
             model_attr: contact_dict.get(kronos_attr)
             for kronos_attr, model_attr in self.field_mapping.items()
-        }
+        } | langs
 
         contact = (
             Contact.objects.filter(contact_ids__contains=[contact_id])
@@ -347,3 +349,22 @@ class KronosParticipantsParser(KronosParser):
         self.task.contacts_nr += 1
         self.task.log(logging.INFO, "Created contact %s: %s", contact, contact_id)
         return contact
+
+    def get_languages(self, note_field: str | None) -> dict:
+        """
+        Extracts language codes from the notes field of a contact.
+
+        Eg: Contact with note "Picture #92520\r\n##E\r\n##R" represents:
+            - Primary language: English (##E)
+            - Secondary language: Russian (##R)
+
+        Other codes:
+        ##F (French), ##A (Arabic), ##S (Spanish),##C (Chinese)
+        """
+
+        langs = re.findall(r"##([EFSACR])", note_field) if note_field else []
+        return {
+            "primary_lang": langs[0] if len(langs) > 0 else "",
+            "second_lang": langs[1] if len(langs) > 1 else "",
+            "third_lang": langs[2] if len(langs) > 2 else "",
+        }

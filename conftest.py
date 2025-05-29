@@ -88,7 +88,6 @@ def contact(db, first_organization):
         faxes=[],
         emails=["contact@test.com"],
         email_ccs=[],
-        is_in_mailing_list=False,
         is_use_organization_address=False,
     )
 
@@ -107,7 +106,6 @@ def other_contact(db, first_organization):
         faxes=[],
         emails=["other@test.com"],
         email_ccs=[],
-        is_in_mailing_list=True,
         is_use_organization_address=True,
     )
 
@@ -126,7 +124,6 @@ def third_contact(db, snd_organization):
         faxes=[],
         emails=["third@test.com"],
         email_ccs=[],
-        is_in_mailing_list=True,
         is_use_organization_address=True,
     )
 
@@ -170,7 +167,6 @@ def temporary_contact(first_organization, other_contact):
         faxes=[],
         emails=other_contact.emails,
         email_ccs=["email@test.com"],
-        is_in_mailing_list=True,
         is_use_organization_address=True,
     )
 
@@ -190,7 +186,6 @@ def snd_temporary_contact(db, snd_organization, third_contact):
         faxes=[],
         emails=third_contact.emails,
         email_ccs=["email2@test.com"],
-        is_in_mailing_list=True,
         is_use_organization_address=True,
     )
 
