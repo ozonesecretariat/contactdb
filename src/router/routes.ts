@@ -81,10 +81,13 @@ const routes: RouteRecordRaw[] = [
         component: () => import("pages/EventNominationsPage.vue"),
         meta: {
           header: "Event Nominations",
-          requirePermissions: ["events.view_nomination"],
+          // Theoretically, this should be accessible for anyone with the link.
+          // Overriding the default requireAuthentication setting for this.
+          requireAuthentication: false,
+          requirePermissions: [],
         },
         name: "event-nominations",
-        path: "events/:eventId/nominations",
+        path: "events/:invitationToken/nominations",
         props: true,
       },
       {
