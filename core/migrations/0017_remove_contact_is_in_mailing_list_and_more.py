@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0015_alter_contact_organization"),
+        ("core", "0016_alter_organization_organization_type"),
     ]
 
     operations = [
