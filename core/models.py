@@ -10,7 +10,7 @@ from psycopg import sql
 
 from common.array_field import ArrayField
 from common.citext import CICharField, CIEmailField
-from common.model import get_protected_storage, KronosId
+from common.model import KronosId, get_protected_storage
 
 
 class Country(models.Model):

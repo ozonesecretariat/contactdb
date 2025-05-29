@@ -10,7 +10,6 @@ def get_protected_storage():
     return storages["protected"]
 
 
-
 class KronosId(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("max_length", 24)

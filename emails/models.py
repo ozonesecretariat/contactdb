@@ -6,7 +6,6 @@ from functools import cached_property
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.files.storage import storages
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import Q
