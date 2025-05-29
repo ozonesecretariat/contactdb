@@ -202,7 +202,7 @@ Cypress.Commands.addAll({
   deleteOrganizationType(orgType) {
     cy.triggerAction({
       action: "Delete selected organizations",
-      filters: { organization_type: orgType.title },
+      filters: { organization_type__in: [orgType.title] },
       modelName: "Organizations",
     });
     cy.get("[type=submit]").contains("Yes, I’m sure").click();

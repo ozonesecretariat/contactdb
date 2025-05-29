@@ -235,7 +235,7 @@ class Contact(BaseContact):
         null=True,
         blank=True,
         related_name="contacts",
-        verbose_name="Contact groups",
+        verbose_name="Organization",
     )
     # Is this contact simply a placeholder for an organization email address?
     is_organization = models.BooleanField(default=False)
@@ -273,7 +273,7 @@ class PossibleDuplicateContact(DBView):
             },
         )
         query_template = """
-            SELECT '%(field_name)s'                         AS duplicate_type, 
+            SELECT '%(field_name)s'                         AS duplicate_type,
                    concat('%(field_name)s: ', %(field)s)    AS duplicate_value,
                    array_agg(id ORDER BY id)::int[]         AS contact_ids
             FROM core_contact
@@ -285,16 +285,16 @@ class PossibleDuplicateContact(DBView):
         return (
             sql.SQL(
                 """
-            SELECT 
+            SELECT
                 array_to_string(
                     array_agg(duplicate_value ORDER BY duplicate_value), ','
-                ) AS id,  
+                ) AS id,
                 array_agg(
                     duplicate_value ORDER BY duplicate_value
-                ) AS duplicate_values,  
+                ) AS duplicate_values,
                 array_agg(
                     duplicate_type ORDER BY duplicate_type
-                ) AS duplicate_fields,  
+                ) AS duplicate_fields,
                 contact_ids,
                 EXISTS(
                     SELECT 1 FROM core_dismissedduplicatecontact as dd
@@ -324,9 +324,9 @@ class PossibleDuplicateContactRelationship(DBView):
         return (
             sql.SQL(
                 """
-            SELECT 
+            SELECT
                 row_number() over ()    AS id,
-                unnest(contact_ids)     AS contact_id,  
+                unnest(contact_ids)     AS contact_id,
                 subq.id                 AS duplicate_values_id
             FROM ({}) AS subq
         """
@@ -365,14 +365,14 @@ class PossibleDuplicateOrganization(DBView):
             },
         )
         query_template = """
-            SELECT '%(field_name)s'                         AS duplicate_type, 
+            SELECT '%(field_name)s'                         AS duplicate_type,
                    concat('%(field_name)s: ', %(field)s)    AS duplicate_value,
                    array_agg(id ORDER BY id)::int[]         AS organization_ids
-            FROM core_organization organization 
-            LEFT JOIN public.core_country government 
+            FROM core_organization organization
+            LEFT JOIN public.core_country government
                 ON organization.government_id = government.code
-            LEFT JOIN public.core_country country 
-                ON organization.country_id = country.code    
+            LEFT JOIN public.core_country country
+                ON organization.country_id = country.code
             GROUP BY duplicate_value
             HAVING count(1) > 1
         """
@@ -381,16 +381,16 @@ class PossibleDuplicateOrganization(DBView):
         return (
             sql.SQL(
                 """
-            SELECT 
+            SELECT
                 array_to_string(
                     array_agg(duplicate_value ORDER BY duplicate_value), ','
-                ) AS id,  
+                ) AS id,
                 array_agg(
                     duplicate_value ORDER BY duplicate_value
-                ) AS duplicate_values,  
+                ) AS duplicate_values,
                 array_agg(
                     duplicate_type ORDER BY duplicate_type
-                ) AS duplicate_fields,  
+                ) AS duplicate_fields,
                 organization_ids,
                 EXISTS(
                     SELECT 1 FROM core_dismissedduplicateorganization as dd
@@ -420,9 +420,9 @@ class PossibleDuplicateOrganizationRelationship(DBView):
         return (
             sql.SQL(
                 """
-            SELECT 
+            SELECT
                 row_number() over ()        AS id,
-                unnest(organization_ids)    AS organization_id,  
+                unnest(organization_ids)    AS organization_id,
                 subq.id                     AS duplicate_values_id
             FROM ({}) AS subq
         """

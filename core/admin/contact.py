@@ -118,16 +118,14 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         ContactRegistrationsInline,
     )
     list_display = (
-        "title",
         "get_first_name",
         "get_last_name",
         "organization_link",
         "country",
         "emails",
-        "phones",
-        "registrations_link",
         "primary",
         "secondary",
+        "registrations_link",
         "email_logs",
     )
     list_display_links = (
