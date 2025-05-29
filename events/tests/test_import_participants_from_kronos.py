@@ -47,11 +47,10 @@ class TestImportEvents(TestCase):
             "emails": ["zephyr.m@example.com"],
             "faxes": ["+999999999"],
             "firstName": "Nimbus",
-            "isInMailingList": False,
             "isUseOrganizationAddress": True,
             "lastName": "Fizzlepop-Wobblebottom",
             "mobiles": ["+88888888"],
-            "notes": "",
+            "notes": "Picture #11111\r\n##E\r\n##R\r\n##F",
             "organization": {
                 "acronym": "",
                 "country": "ao",
@@ -110,7 +109,6 @@ class TestImportEvents(TestCase):
             "validations": [],
             "isDateOfBirthRequired": False,
             "isHidden": False,
-            "isInMailingList": False,
             "createdOn": "2017-07-03T09:15:31.036Z",
             "createdBy": "",
             "updatedOn": "2025-03-07T08:38:18.875Z",
@@ -150,6 +148,9 @@ class TestImportEvents(TestCase):
         self.assertEqual(contact.phones, ["+777777777"])
         self.assertEqual(contact.registrations.count(), 1)
         self.assertEqual(contact.registrations.first().event, self.event)
+        self.assertEqual(contact.primary_lang, "E")
+        self.assertEqual(contact.second_lang, "R")
+        self.assertEqual(contact.third_lang, "F")
 
         self.assertEqual(
             organization.name,

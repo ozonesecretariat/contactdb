@@ -55,7 +55,6 @@ class Command(BaseCommand):
                     emails=record["emails"],
                     email_ccs=record["emailCcs"],
                     notes=record["notes"],
-                    is_in_mailing_list=record["isInMailingList"],
                     is_use_organization_address=record["isUseOrganizationAddress"],
                     address=check_field(record, "address"),
                     city=check_field(record, "city"),
