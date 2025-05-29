@@ -1,4 +1,13 @@
+from django.core.files.storage import storages
 from django.db import models
+
+
+def get_protected_storage():
+    """
+    Utility callable for protected storage that prevents migrations being generated
+    each time for FileFields because `storages['protected']` being evaluated at runtime.
+    """
+    return storages["protected"]
 
 
 class KronosId(models.CharField):
