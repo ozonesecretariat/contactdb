@@ -6,7 +6,7 @@ from core.models import Organization
 def flatten_emails(emails: list[list[str]]) -> list[str]:
     """Reduce a list of email lists to a list of emails."""
     return [
-        email
+        email.lower()
         for lst in emails
         if lst is not None
         for email in lst
@@ -47,8 +47,8 @@ class Command(BaseCommand):
                 )
             )
 
-            org_emails = set(org.emails or [])
-            org_email_ccs = set(org.email_ccs or [])
+            org_emails = set(map(str.lower, org.emails or []))
+            org_email_ccs = set(map(str.lower, org.email_ccs or []))
 
             org.emails = list(org_emails - contact_emails)
             org.email_ccs = list(org_email_ccs - contact_emails)
