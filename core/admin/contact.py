@@ -88,6 +88,7 @@ class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
     model = Registration
     autocomplete_fields = ("event", "status", "role", "tags")
+    classes = ["collapse"]
 
 
 @admin.register(Contact)
