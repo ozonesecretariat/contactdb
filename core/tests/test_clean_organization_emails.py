@@ -32,7 +32,7 @@ class TestCleanOrganizationEmails(TestCase):
             "essaysinlove@book.net",
         ]
 
-        contact1 = Contact.objects.create(
+        primary_contact = Contact.objects.create(
             first_name="Jane",
             last_name="Roe",
             organization=self.organization,
@@ -41,7 +41,7 @@ class TestCleanOrganizationEmails(TestCase):
             country=Country.objects.first(),
         )
 
-        contact2 = Contact.objects.create(
+        secondary_contact = Contact.objects.create(
             first_name="Dune",
             last_name="Atreides",
             organization=self.organization,
@@ -50,8 +50,8 @@ class TestCleanOrganizationEmails(TestCase):
             country=Country.objects.first(),
         )
 
-        self.organization.primary_contacts.add(contact1)
-        self.organization.secondary_contacts.add(contact2)
+        self.organization.primary_contacts.add(primary_contact)
+        self.organization.secondary_contacts.add(secondary_contact)
         self.organization.save()
 
     def test_clean_organization_emails(self):
