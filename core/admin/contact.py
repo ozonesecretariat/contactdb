@@ -128,6 +128,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "secondary",
         "registrations_link",
         "email_logs",
+        "id",
     )
     list_display_links = (
         "get_first_name",
