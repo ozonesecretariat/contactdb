@@ -14,7 +14,7 @@ def update_contact_language(apps, schema_editor):
 
         for field, value in langs.items():
             setattr(contact, field, value)
-            contact.save()
+        contact.save()
 
 
 class Migration(migrations.Migration):
