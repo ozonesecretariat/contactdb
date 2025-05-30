@@ -3,6 +3,8 @@ import re
 from datetime import UTC, datetime
 from functools import cached_property
 
+from django.db.models import Q
+
 from common.parsing import parse_list
 from core.models import (
     Contact,
@@ -372,3 +374,91 @@ class KronosParticipantsParser(KronosParser):
             "second_lang": langs[1] if len(langs) > 1 else "",
             "third_lang": langs[2] if len(langs) > 2 else "",
         }
+
+
+class KronosOrganizationsParser(KronosParser):
+    """
+    Parser to be used in separate import of Organizations.
+    """
+
+    def __init__(self, task):
+        super().__init__(task=task)
+
+    def parse_organizations_list(self):
+        existing_ids = Organization.objects.values_list("organization_id", flat=True)
+        for org_dict in self.client.get_all_organizations():
+            if org_dict.get("organizationId") in existing_ids:
+                continue
+
+            org_type = self.get_org_type(org_dict)
+            # TODO: is this actually OK?
+            include_in_invitation = "#invite" in org_dict.get("notes", "")
+
+            organization, created = Organization.objects.get_or_create(
+                organization_id=org_dict["organizationId"],
+                defaults={
+                    "name": org_dict.get("name", "").strip(),
+                    "acronym": org_dict.get("acronym", "").strip(),
+                    "organization_type": org_type,
+                    "government": self.get_country(org_dict.get("government")),
+                    "country": self.get_country(org_dict.get("country")),
+                    "state": org_dict.get("state", "").strip(),
+                    "city": org_dict.get("city", "").strip(),
+                    "postal_code": org_dict.get("postalCode", "").strip(),
+                    "address": org_dict.get("address", "").strip(),
+                    "phones": org_dict.get("phones", []),
+                    "faxes": org_dict.get("faxes", []),
+                    "websites": org_dict.get("webs", []),
+                    "emails": parse_list(org_dict.get("emails", [])),
+                    "email_ccs": parse_list(org_dict.get("emailCcs", [])),
+                    "include_in_invitation": include_in_invitation,
+                },
+            )
+            if created:
+                self.task.log(logging.INFO, "Created Organization: %r", organization)
+                self.task.organizations_nr += 1
+
+                # Find and associate primary & secondary contacts by email
+                matching_primaries = Contact.objects.filter(
+                    Q(emails__overlap=organization.emails)
+                    | Q(email_ccs__overlap=organization.emails)
+                )
+                matching_secondaries = Contact.objects.filter(
+                    Q(emails__overlap=organization.email_ccs)
+                    | Q(email_ccs__overlap=organization.email_ccs)
+                )
+                matching_contacts = [
+                    (True, contact) for contact in matching_primaries
+                ] + [
+                    (False, contact)
+                    for contact in matching_secondaries
+                    # Avoiding duplicates between secondaries & primaries
+                    if contact not in matching_primaries
+                ]
+                for is_primary, contact in matching_contacts:
+                    if contact.organization and contact.organization != organization:
+                        self.task.log(
+                            logging.WARNING,
+                            "Contact %r already belongs to %r, skipping association with %r",
+                            contact,
+                            contact.organization,
+                            organization,
+                        )
+                        self.task.skipped_contacts_nr += 1
+                        continue
+
+                    if not contact.organization:
+                        contact.organization = organization
+                        contact.save()
+                        self.task.log(
+                            logging.INFO,
+                            "Associated contact %r with organization %r %s",
+                            contact,
+                            organization,
+                            "as primary" if is_primary else "as secondary",
+                        )
+                    if is_primary:
+                        organization.primary_contacts.add(contact)
+                    else:
+                        organization.secondary_contacts.add(contact)
+                    self.task.contacts_nr += 1

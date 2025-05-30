@@ -15,6 +15,7 @@ describe("Check user permissions", () => {
       events: {
         event: true,
         loadeventsfromkronostask: { add: true, view: true },
+        loadorganizationsfromkronostask: { view: true },
         loadparticipantsfromkronostask: { view: true },
         registration: true,
         registrationrole: true,

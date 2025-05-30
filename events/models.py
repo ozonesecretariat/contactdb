@@ -294,3 +294,38 @@ class LoadParticipantsFromKronosTask(TaskRQ):
         from .jobs import LoadParticipantsFromKronos
 
         return LoadParticipantsFromKronos
+
+
+class LoadOrganizationsFromKronosTask(TaskRQ):
+    """
+    Task for loading Organizations not imported when Events were parsed.
+    """
+
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 300
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    organizations_nr = models.PositiveIntegerField(
+        default=0, editable=False, help_text="Number of new organizations created."
+    )
+    contacts_nr = models.PositiveIntegerField(
+        default=0,
+        editable=False,
+        help_text="Number of contacts added to new organizations.",
+    )
+    skipped_contacts_nr = models.PositiveIntegerField(
+        default=0,
+        editable=False,
+        help_text="Number of contacts skipped as they mathced new organization but belonged to another.",
+    )
+
+    class Meta:
+        get_latest_by = "created_on"
+
+    @staticmethod
+    def get_jobclass():
+        from .jobs import LoadOrganizationsFromKronos
+
+        return LoadOrganizationsFromKronos
