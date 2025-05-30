@@ -448,9 +448,10 @@ class KronosOrganizationsParser(KronosParser):
                         contact.save()
                         self.task.log(
                             logging.INFO,
-                            "Associated contact %r with organization %r",
+                            "Associated contact %r with organization %r %s",
                             contact,
                             organization,
+                            "as primary" if is_primary else "as secondary",
                         )
                     if is_primary:
                         organization.primary_contacts.add(contact)
