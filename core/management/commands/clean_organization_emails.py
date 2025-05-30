@@ -5,17 +5,13 @@ from core.models import Organization
 
 def flatten_emails(emails: list[list[str]]) -> list[str]:
     """Reduce a list of email lists to a list of emails."""
-    if not emails:
-        return []
-
-    result = []
-    for lst in emails:
-        if not lst:
-            continue
-        for email in lst:
-            if email and email not in ["", "None", "null"]:
-                result.append(email)
-    return result
+    return [
+        email
+        for lst in emails
+        if lst is not None
+        for email in lst
+        if email and email not in ["", None]
+    ]
 
 
 class Command(BaseCommand):
