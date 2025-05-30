@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -26,24 +24,20 @@ class TestCleanOrganizationEmails(TestCase):
         self.organization.emails = [
             "janeyre@book.com",
             "dune@book.com",
-            "vegetarian@book.com",
             "essaysinlove@book.com",
-            "winners@book.com",
         ]
         self.organization.email_ccs = [
-            "janeyre@book.com",
-            "dune@book.com",
-            "vegetarian@book.com",
-            "essaysinlove@book.com",
-            "winners@book.com",
+            "janeyre@book.net",
+            "dune@book.net",
+            "essaysinlove@book.net",
         ]
 
         contact1 = Contact.objects.create(
             first_name="Jane",
             last_name="Roe",
             organization=self.organization,
-            emails=["janeerure@book.com"],
-            email_ccs=["vegetarian@book.com"],
+            emails=["janeyre@book.com"],
+            email_ccs=["janeyre@book.net"],
             country=Country.objects.first(),
         )
 
@@ -51,8 +45,8 @@ class TestCleanOrganizationEmails(TestCase):
             first_name="Dune",
             last_name="Atreides",
             organization=self.organization,
-            emails=["essaysinlove@book.com"],
-            email_ccs=["winners@book.com"],
+            emails=["dune@book.com"],
+            email_ccs=["dune@book.net"],
             country=Country.objects.first(),
         )
 
@@ -62,6 +56,11 @@ class TestCleanOrganizationEmails(TestCase):
 
     def test_clean_organization_emails(self):
         call_command("clean_organization_emails")
+        self.organization.refresh_from_db()
 
-        self.assertEqual(self.organization.email, ["dune@book.com"])
-        self.assertEqual(self.organization.email_ccs, ["dune@book.com"])
+        self.assertEqual(
+            self.organization.emails,
+            ["essaysinlove@book.com"],
+        )
+
+        self.assertEqual(self.organization.email_ccs, ["essaysinlove@book.net"])
