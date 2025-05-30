@@ -350,7 +350,8 @@ class KronosParticipantsParser(KronosParser):
         self.task.log(logging.INFO, "Created contact %s: %s", contact, contact_id)
         return contact
 
-    def get_languages(self, note_field: str | None) -> dict:
+    @classmethod
+    def get_languages(cls, note_field: str | None) -> dict:
         """
         Extracts language codes from the notes field of a contact.
 
@@ -363,6 +364,9 @@ class KronosParticipantsParser(KronosParser):
         """
 
         langs = re.findall(r"##([EFSACR])", note_field) if note_field else []
+        if not langs:
+            return {}
+
         return {
             "primary_lang": langs[0] if len(langs) > 0 else "",
             "second_lang": langs[1] if len(langs) > 1 else "",
