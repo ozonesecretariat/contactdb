@@ -56,6 +56,7 @@ class Command(BaseCommand):
             del_emails = org_emails - set(org.emails)
             del_email_ccs = org_email_ccs - set(org.email_ccs)
 
-            self.stdout.write(
-                f"Deleted emails from organization {org.name}: {del_emails | del_email_ccs}"
-            )
+            if del_emails or del_email_ccs:
+                self.stdout.write(
+                    f"Deleted emails from organization {org.name}: {del_emails | del_email_ccs}"
+                )
