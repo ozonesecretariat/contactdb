@@ -8,8 +8,9 @@ def flatten_emails(emails: list[list[str]]) -> list[str]:
     return [
         email
         for lst in emails
+        if lst is not None
         for email in lst
-        if email and email not in ["", "None", "null"]
+        if email and email not in ["", None]
     ]
 
 

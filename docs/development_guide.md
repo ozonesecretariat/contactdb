@@ -14,10 +14,13 @@
   ```
 - The Python code uses [ruff](https://docs.astral.sh/ruff/) for automatic linting and
   formating. Can be integrated into your IDE or manually run with:
+
   ```bash
   ruff format
   ruff check --fix
   ```
+
+- Run `pre-commit install` to set up the git hook scripts
 
 A workflow is integrated into GitHub action to check that any code push has been first processed with the project
 settings. See [code style workflow](../.github/workflows/lint.yml)
