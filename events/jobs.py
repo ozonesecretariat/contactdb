@@ -2,7 +2,11 @@ import logging
 
 from django_task.job import Job
 
-from events.parsers import KronosEventsParser, KronosParticipantsParser
+from events.parsers import (
+    KronosEventsParser,
+    KronosOrganizationsParser,
+    KronosParticipantsParser,
+)
 
 
 class LoadEventsFromKronos(Job):
@@ -34,3 +38,16 @@ class LoadParticipantsFromKronos(Job):
     @staticmethod
     def on_complete(job, task):
         task.log(logging.INFO, "Participants loaded")
+
+
+class LoadOrganizationsFromKronos(Job):
+    @staticmethod
+    def execute(job, task):
+        task.log(logging.INFO, "Loading organizations from Kronos")
+        parser = KronosOrganizationsParser(task=task)
+        parser.parse_organizations_list()
+        task.save()
+
+    @staticmethod
+    def on_complete(job, task):
+        task.log(logging.INFO, "Organizations loaded")

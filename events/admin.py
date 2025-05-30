@@ -13,6 +13,7 @@ from events.models import (
     EventGroup,
     EventInvitation,
     LoadEventsFromKronosTask,
+    LoadOrganizationsFromKronosTask,
     LoadParticipantsFromKronosTask,
     Registration,
     RegistrationRole,
@@ -318,3 +319,27 @@ class EventInvitationAdmin(admin.ModelAdmin):
         if not change:  # New invitation
             obj.link_accessed = False
         super().save_model(request, obj, form, change)
+
+
+@admin.register(LoadOrganizationsFromKronosTask)
+class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
+    """Import organizations from Kronos that were not imported together
+    with events.
+    """
+
+    list_display = [
+        "created_on",
+        "duration_display",
+        "status_display",
+        "organizations_nr",
+        "contacts_nr",
+        "skipped_contacts_nr",
+    ]
+    list_filter = (
+        "created_on",
+        "status",
+    )
+    ordering = ("-created_on",)
+
+    def has_add_permission(self, request):
+        return False
