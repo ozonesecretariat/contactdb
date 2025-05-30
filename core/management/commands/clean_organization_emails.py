@@ -4,7 +4,7 @@ from core.models import Organization
 
 
 def flatten_emails(emails: list[list[str]]) -> list[str]:
-    """Reduce a list of email lists to a unique list of emails."""
+    """Reduce a list of email lists to a list of emails."""
     return [
         email
         for lst in emails
