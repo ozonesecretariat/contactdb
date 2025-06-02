@@ -3,14 +3,16 @@ from functools import lru_cache
 from django.utils import timezone
 from rest_framework import filters
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 
+from api.permissions import ContactNominationPermission
 from api.serializers.contact import ContactSerializer
 from api.serializers.event import (
     EventSerializer,
+    NominateContactsSerializer,
     RegistrationSerializer,
 )
 from core.models import Contact
@@ -38,52 +40,101 @@ class EventViewSet(ReadOnlyModelViewSet):
     ordering = ["code"]
 
 
-class EventNominationViewSet(ModelViewSet):
-    permission_classes = (AllowAny,)
+class EventNominationViewSet(ViewSet):
+    permission_classes = [AllowAny, ContactNominationPermission]
+    lookup_field = "token"
 
-    def get_invitation(self):
-        token = self.kwargs.get("token")
-        return EventInvitation.objects.get(token=token)
+    def get_invitation(self, token):
+        return get_object_or_404(EventInvitation, token=token)
+
+    def get_organization_context(self):
+        """
+        Used to provide organization context for permission checking
+        (ContactNominationPermission needs it ).
+        """
+        try:
+            token = self.kwargs[self.lookup_field]
+            invitation = self.get_invitation(token)
+            return invitation.organization
+        except (KeyError, EventInvitation.DoesNotExist):
+            return None
 
     def get_queryset(self):
         # Get the invitation using the token from the URL
-        invitation = self.get_invitation()
+        token = self.kwargs[self.lookup_field]
+        invitation = self.get_invitation(token)
+        registrations_qs = Registration.objects.select_related(
+            "contact", "status", "event"
+        )
         # TODO: this assumes mutual exclusion between event and event_group
         if invitation.event:
-            return [invitation.event]
-        return invitation.event_group.events.all()
+            return registrations_qs.filter(event=invitation.event)
+        return registrations_qs.filter(event__in=invitation.event_group.events.all())
 
-    @action(detail=False, methods=["get"])
-    def available_contacts(self, request):
+    def get_serializer_class(self):
+        """
+        Return appropriate serializer based on action
+        """
+        serializer_map = {
+            "retrieve": RegistrationSerializer,
+            "available_contacts": ContactSerializer,
+            "nominate_contacts": RegistrationSerializer,
+            "events": EventSerializer,
+        }
+        return serializer_map.get(self.action, RegistrationSerializer)
+
+    def retrieve(self, request, token):
+        registrations = self.get_queryset()
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(registrations, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"], url_path="available-contacts")
+    def available_contacts(self, request, token):
         """List contacts that can be nominated from this organization."""
-        invitation = self.get_invitation()
+        invitation = self.get_invitation(token)
         contacts = Contact.objects.filter(organization=invitation.organization)
         return Response(ContactSerializer(contacts, many=True).data)
 
-    @action(detail=True, methods=["post"])
-    def nominate_contacts(self, request):
+    @action(detail=True, methods=["post"], url_path="nominate-contacts")
+    def nominate_contacts(self, request, token):
         # Get the invitation using the token from the URL
-        invitation = self.get_invitation()
-        contacts_data = request.data.get("contacts", [])
+        invitation = self.get_invitation(token)
 
-        # Validate all contacts belong to organization
-        for contact_id in contacts_data:
-            if not Contact.objects.filter(
-                id=contact_id, organization=invitation.organization
-            ).exists():
-                raise PermissionDenied(
-                    f"Contact {contact_id} does not belong to {invitation.organization}"
-                )
+        data_serializer = NominateContactsSerializer(
+            data=request.data, context={"invitation": invitation}
+        )
+        data_serializer.is_valid(raise_exception=True)
+
+        events = Event.objects.filter(code__in=data_serializer.validated_data["events"])
+        nominations = data_serializer.validated_data["nominations"]
 
         registrations = []
-        for contact_data in contacts_data:
-            registration = Registration.objects.create(
-                event=self.get_object(),
-                organization=invitation.organization,
-                contact=contact_data,
-                status_id=get_nomination_status_id(),
-                date=timezone.now().date(),
-            )
+        for event in events:
+            for nomination in nominations:
+                registration = Registration.objects.create(
+                    event=event,
+                    contact=nomination["contact"],
+                    status_id=get_nomination_status_id(),
+                    role=nomination["role"],
+                    is_funded=nomination["is_funded"],
+                    priority_pass_code=nomination.get("priority_pass_code", ""),
+                    date=timezone.now().date(),
+                )
             registrations.append(registration)
 
-        return Response(RegistrationSerializer(registrations, many=True).data)
+        serializer_class = self.get_serializer_class()
+        return Response(serializer_class(registrations, many=True).data)
+
+    @action(detail=True, methods=["get"])
+    def events(self, request, token):
+        # Get the invitation using the token from the URL
+        invitation = self.get_invitation(token)
+
+        # TODO: this assumes mutual exclusion between event and event_group
+        if invitation.event:
+            events = [invitation.event]
+        else:
+            events = invitation.event_group.events.all()
+        serializer_class = self.get_serializer_class()
+        return Response(serializer_class(events, many=True).data)

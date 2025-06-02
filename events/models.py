@@ -237,6 +237,9 @@ class Registration(models.Model):
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField()
 
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
     class Meta:
         unique_together = (
             "contact",

@@ -12,7 +12,9 @@ from api.views.misc import AppSettingsView
 
 router = routers.SimpleRouter()
 router.register("events", EventViewSet)
-
+router.register(
+    "events-nominations", EventNominationViewSet, basename="events-nominations"
+)
 
 urlpatterns = [
     # API DOCS
@@ -55,11 +57,5 @@ urlpatterns = [
         "app-settings/",
         AppSettingsView.as_view(),
         name="app-settings",
-    ),
-    # Event Nomination with token "auth"; Accreditation will have a different endpoint
-    path(
-        "events/nominations/<str:token>/",
-        EventNominationViewSet.as_view({"get": "list", "post": "nominate_contacts"}),
-        name="events-nominations",
     ),
 ] + router.urls
