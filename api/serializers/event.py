@@ -42,7 +42,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = ("id", "event", "contact", "created_at", "status")
-        read_only_fields = ("created_on", "status")
+        read_only_fields = ("created_at", "status")
 
 
 class NominationSerializer(serializers.Serializer):

@@ -16,9 +16,7 @@ from api.tests.factories import (
 )
 from api.views.event import get_nomination_status_id
 from core.models import Organization
-from events.models import (
-    Registration,
-)
+from events.models import Registration
 
 
 class TestEventsAPI(BaseAPITestCase):
