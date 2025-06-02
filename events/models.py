@@ -79,6 +79,9 @@ class Event(models.Model):
         return None
 
     def clean(self):
+        if not self.start_date or not self.end_date:
+            return
+
         if self.start_date > self.end_date:
             msg = "Start date must be before the end date"
             raise ValidationError(
