@@ -185,11 +185,6 @@ class EventInvitation(models.Model):
         if self.country and self.organization:
             raise ValidationError("Cannot specify both country and organization")
 
-    @property
-    def invitation_link(self):
-        # TODO: use reverse() when actual view is created
-        return f"/events/invitation/{self.token}/"
-
 
 class RegistrationTag(models.Model):
     name = CICharField(max_length=250, primary_key=True)

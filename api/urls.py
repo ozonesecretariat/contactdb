@@ -58,8 +58,8 @@ urlpatterns = [
     ),
     # Event Nomination with token "auth"; Accreditation will have a different endpoint
     path(
-        "events/nomination/<str:token>/",
+        "events/nominations/<str:token>/",
         EventNominationViewSet.as_view({"get": "list", "post": "nominate_contacts"}),
-        name="event-registration",
+        name="events-nominations",
     ),
 ] + router.urls

@@ -334,7 +334,7 @@ class EventInvitationAdmin(admin.ModelAdmin):
     def invitation_link(self, obj):
         return format_html(
             '<a href="{}" target="_blank">{}</a>',
-            obj.invitation_link,
+            reverse("events-nominations", kwargs={"token": obj.token}),
             "View Invitation Link",
         )
 
