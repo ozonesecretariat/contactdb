@@ -88,6 +88,7 @@ class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
     model = Registration
     autocomplete_fields = ("event", "status", "role", "tags")
+    classes = ["collapse"]
 
 
 @admin.register(Contact)
@@ -127,6 +128,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "secondary",
         "registrations_link",
         "email_logs",
+        "id",
     )
     list_display_links = (
         "get_first_name",

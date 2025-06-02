@@ -13,6 +13,7 @@ from events.models import (
     EventGroup,
     EventInvitation,
     LoadEventsFromKronosTask,
+    LoadOrganizationsFromKronosTask,
     LoadParticipantsFromKronosTask,
     Registration,
     RegistrationRole,
@@ -65,6 +66,30 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
     )
     autocomplete_fields = ("event",)
     prefetch_related = ("event",)
+    ordering = ("-created_on",)
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(LoadOrganizationsFromKronosTask)
+class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
+    """Import organizations from Kronos that were not imported together
+    with events.
+    """
+
+    list_display = [
+        "created_on",
+        "duration_display",
+        "status_display",
+        "organizations_nr",
+        "contacts_nr",
+        "skipped_contacts_nr",
+    ]
+    list_filter = (
+        "created_on",
+        "status",
+    )
     ordering = ("-created_on",)
 
     def has_add_permission(self, request):

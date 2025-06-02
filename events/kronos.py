@@ -88,3 +88,28 @@ class KronosClient:
             post_data["skip"] += limit
 
         return results
+
+    def get_all_organizations(self):
+        limit = 1000
+        total_count: int | None = None
+        results = []
+
+        org_types = [
+            org_type["organizationTypeId"] for org_type in self.get_org_types()
+        ]
+        post_data = {
+            "organizationTypeIds": org_types,
+            "limit": limit,
+            "skip": 0,
+        }
+
+        while total_count is None or len(results) < total_count:
+            page_result = self.send_kronos(
+                "/api/v2018/organizations/query",
+                json_data=post_data,
+                method="POST",
+            )
+            total_count = page_result["totalRecordCount"]
+            results.extend(page_result["records"])
+            post_data["skip"] += limit
+        return results

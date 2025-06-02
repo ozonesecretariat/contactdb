@@ -41,6 +41,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "has_secondary_contacts",
         "include_in_invitation",
         "contacts_count",
+        "id",
     )
     readonly_fields = ("organization_id",)
     autocomplete_fields = ("country", "government", "organization_type")
