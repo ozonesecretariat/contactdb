@@ -30,6 +30,7 @@ urlpatterns = [
     # XXX Cannot set this under a different prefix as the URL is hardcoded in the
     # XXX django task js scripts.
     path("django_task/", include("django_task.urls", namespace="django_task")),
+    path(r"health_check/", include("health_check.urls")),
     path("admin/", include(admin_urlpatterns)),
     path("api/", include("api.urls")),
     path("", RedirectView.as_view(pattern_name="admin:index")),
