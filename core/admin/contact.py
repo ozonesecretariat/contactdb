@@ -138,6 +138,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         AutocompleteFilterMultipleFactory("country", "country"),
         AutocompleteFilterMultipleFactory("groups", "groups"),
         AutocompleteFilterMultipleFactory("organization", "organization"),
+        AutocompleteFilterMultipleFactory("government", "organization__government"),
         AutocompleteFilterMultipleFactory(
             "organization type", "organization__organization_type"
         ),
