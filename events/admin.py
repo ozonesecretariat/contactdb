@@ -280,6 +280,7 @@ class EventInvitationAdmin(admin.ModelAdmin):
         "country",
         "invitation_link",
         "link_accessed",
+        "email_tasks_display",
         "created_at",
     )
     list_display_links = ("__str__",)
@@ -326,6 +327,9 @@ class EventInvitationAdmin(admin.ModelAdmin):
         ),
     )
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("email_tasks")
+
     @admin.display(description="Target")
     def event_or_group(self, obj):
         return obj.event_group or obj.event
@@ -338,8 +342,20 @@ class EventInvitationAdmin(admin.ModelAdmin):
             "View Invitation Link",
         )
 
+    @admin.display(description="Email Tasks")
+    def email_tasks_display(self, obj):
+        tasks = obj.email_tasks.all()
+        if not tasks:
+            return "-"
+        return format_html(
+            '<a href="{}?invitation__id__exact={}">{} tasks</a>',
+            reverse("admin:emails_sendemailtask_changelist"),
+            obj.id,
+            tasks.count(),
+        )
+
     def save_model(self, request, obj, form, change):
         # Reset link_accessed when creating new invitation
-        if not change:  # New invitation
+        if not change:
             obj.link_accessed = False
         super().save_model(request, obj, form, change)
