@@ -43,7 +43,10 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "contacts_count",
         "id",
     )
-    readonly_fields = ("organization_id",)
+    readonly_fields = (
+        "organization_id",
+        "email_links",
+    )
     autocomplete_fields = ("country", "government", "organization_type")
     prefetch_related = ("country", "government", "organization_type")
     annotate_query = {
@@ -109,6 +112,13 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
                 "fields": ("organization_id",),
             },
         ),
+        (
+            "Emails",
+            {
+                "classes": ["collapse"],
+                "fields": ("email_links",),
+            },
+        ),
     )
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
@@ -146,3 +156,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
     )
     def has_secondary_contacts(self, obj):
         return obj.secondary_contacts.exists()
+
+    @admin.display(description="Emails", ordering="-email_tasks")
+    def email_links(self, obj):
+        return self.get_m2m_links(obj.email_tasks.all())

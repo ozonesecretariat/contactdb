@@ -226,10 +226,18 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                 ),
             },
         ),
+        (
+            "Emails",
+            {
+                "classes": ["collapse"],
+                "fields": ("email_links",),
+            },
+        ),
     )
     readonly_fields = ContactAdminBase.readonly_fields + (
         "contact_ids",
         "focal_point_ids",
+        "email_links",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -266,6 +274,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     @admin.display(ordering="secondary", boolean=True)
     def secondary(self, obj):
         return obj.secondary
+
+    @admin.display(description="Emails", ordering="-email_tasks")
+    def email_links(self, obj):
+        return self.get_m2m_links(obj.email_logs.all())
 
     @admin.action(description="Merge selected contacts", permissions=["change"])
     def merge_contacts(self, request, queryset):

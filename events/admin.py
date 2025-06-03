@@ -300,6 +300,7 @@ class EventInvitationAdmin(admin.ModelAdmin):
         "event__title",
         "event_group__name",
         "country__name",
+        "token",
     )
 
     autocomplete_fields = ("event", "event_group", "organization", "country")
