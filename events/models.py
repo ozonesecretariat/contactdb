@@ -185,6 +185,11 @@ class EventInvitation(models.Model):
         if self.country and self.organization:
             raise ValidationError("Cannot specify both country and organization")
 
+    @property
+    def invitation_link(self):
+        # TODO: find better way to ensure frontend(!) view path is used here
+        return f"/events/invitation/{self.token}/"
+
 
 class RegistrationTag(models.Model):
     name = CICharField(max_length=250, primary_key=True)
