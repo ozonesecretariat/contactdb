@@ -3,6 +3,7 @@ import re
 from datetime import UTC, datetime
 from functools import cached_property
 
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 
 from common.parsing import parse_list
@@ -52,14 +53,29 @@ class KronosParser:
         if not code:
             return None
 
-        obj, created = Country.objects.get_or_create(code=code.upper())
-        obj.clean()
-        obj.save()
+        code = code.upper()
+        try:
+            return Country.objects.get(code=code)
+        except Country.DoesNotExist:
+            pass
 
-        if created:
-            self.task.log(logging.INFO, "Created Country: %r", obj)
+        self.task.log(logging.INFO, "Creating Country: %s", code)
+        return self._create_country(code)
 
-        return obj
+    def _create_country(self, code):
+        with transaction.atomic():
+            try:
+                obj = Country(code=code)
+                obj.clean()
+                obj.save()
+                self.task.log(logging.INFO, "Created Country: %r", obj)
+                return obj
+            except IntegrityError:
+                # Race condition - another worker created it while we were working
+                self.task.log(
+                    logging.INFO, "Country %s created by another worker", code
+                )
+                return Country.objects.get(code=code)
 
     def get_org_type(self, org_dict):
         org_type_id = org_dict["organizationTypeId"]
