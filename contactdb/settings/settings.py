@@ -391,7 +391,8 @@ CKEDITOR_CONTACT_PLACEHOLDERS = {
     "title": {"attr": "title"},
     "honorific": {"attr": "honorific"},
     "respectful": {"attr": "respectful"},
-    "party_name": {"attr": "organization__government"},
+    "party": {"attr": "organization__government__name"},
+    "organization": {"attr": "organization__name"},
 }
 
 # Placeholders for event invitations
