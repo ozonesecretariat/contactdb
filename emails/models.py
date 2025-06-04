@@ -131,7 +131,7 @@ class Email(models.Model):
         help_text="Send the email to primary contacts of these organization types.",
         related_name="sent_emails",
     )
-    subject = models.CharField(max_length=900)
+    subject = models.CharField(max_length=900, validators=[validate_placeholders])
     content = RichTextUploadingField(validators=[validate_placeholders])
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
