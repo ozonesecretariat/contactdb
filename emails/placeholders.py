@@ -1,5 +1,6 @@
 import re
 from functools import singledispatch
+from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -43,18 +44,22 @@ def deep_getattr(obj, attr, default=None):
         return default
 
 
-def replace_placeholders(objs: list, text: str) -> str:
+def replace_placeholders(objs: list[Any], text: str) -> str:
     """
-    Replace all placeholders in the email content with the actual
-    objects values.
+    For each object in `objs`, replaces [[placeholder]] tags in `text`
+    with the corresponding value, as defined by `get_placeholders`.
+
+    If `objs` is empty, returns the original text unchanged.
     """
-    if not objs:
+    if not objs or not text:
         return text
 
     objs = filter(None, objs)
 
     for obj in objs:
+        # Get placeholders for the object type
         placeholders = get_placeholders(obj)
+
         placeholder_values = {}
         for placeholder, handles in placeholders.items():
             attr = handles["attr"]
