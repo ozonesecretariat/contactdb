@@ -46,7 +46,7 @@ def deep_getattr(obj, attr, default=None):
 
 def replace_placeholders(objs: list[Any], text: str) -> str:
     """
-    For each object in `objs`, replaces [[placeholder]] tags in `text`
+    For each object in `objs`, replace [[placeholder]] tags in `text`
     with the corresponding value, as defined by `get_placeholders`.
 
     If `objs` is empty, returns the original text unchanged.
