@@ -178,9 +178,6 @@ class Email(models.Model):
         if contact:
             msg.to.extend(contact.emails or [])
             msg.cc.extend(contact.email_ccs or [])
-        if contact:
-            msg.to.extend(contact.emails or [])
-            msg.cc.extend(contact.email_ccs or [])
         if to_list:
             msg.to.extend(to_list)
         if cc_list:
