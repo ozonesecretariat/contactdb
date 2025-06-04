@@ -588,10 +588,19 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         event_group = obj.event_group
-        org_recipients = get_organization_recipients(obj.organization_types.all())
+        org_recipients = get_organization_recipients(
+            obj.organization_types.all(),
+            additional_ccs=obj.cc_recipients.all(),
+            additional_bccs=obj.bcc_recipients.all(),
+        )
 
         for org, data in org_recipients.items():
-            if data["to"] or data["cc"]:
+            if (
+                data["to_contacts"]
+                or data["cc_contacts"]
+                or data["to_emails"]
+                or data["cc_emails"]
+            ):
                 invitation, _ = EventInvitation.objects.get_or_create(
                     organization=org, event=event, event_group=event_group
                 )
@@ -600,12 +609,15 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     organization=org,
                     invitation=invitation,
                     created_by=request.user,
+                    email_to=list(data["to_emails"]),
+                    email_cc=list(data["cc_emails"]),
+                    email_bcc=list(data["bcc_emails"]),
                 )
 
-                # Set recipients - accounting for additional besides the contact(groups)
-                task.to_contacts.set(data["to"])
-                task.cc_contacts.set(list(data["cc"]) + list(obj.cc_recipients.all()))
-                task.bcc_contacts.set(obj.bcc_recipients.all())
+                # Set recipient contacts (M2M) as returned by get_organization_recipients
+                task.to_contacts.set(data["to_contacts"])
+                task.cc_contacts.set(data["cc_contacts"])
+                task.bcc_contacts.set(data["bcc_contacts"])
 
                 task.run(is_async=True)
                 tasks.append(task)
