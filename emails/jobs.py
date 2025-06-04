@@ -10,17 +10,24 @@ class SendEmailJob(Job):
     def execute(job, task: SendEmailTask):
         task.log(logging.INFO, "Building email %r", task.email)
 
-        to_emails = None
-        if not task.contact and task.to_contacts.exists():
-            to_emails = []
+        to_emails = []
+        cc_emails = []
+        bcc_emails = []
+        if not task.contact:
             for contact in task.to_contacts.all():
                 if contact.emails:
                     to_emails.extend(contact.emails)
+            for contact in task.cc_contacts.all():
+                if contact.emails:
+                    cc_emails.extend(contact.emails)
+
             task.log(logging.INFO, "Setting recipients from to_contacts: %s", to_emails)
 
         msg = task.email.build_email(
             contact=task.contact,
             to_list=to_emails,
+            cc_list=cc_emails,
+            bcc_list=bcc_emails,
             invitation=task.invitation,
         )
         if not (recipients := msg.recipients()):
