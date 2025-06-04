@@ -7,12 +7,14 @@ from drf_spectacular.views import (
 from rest_framework import routers
 
 import api.views.user
-from api.views.event import EventViewSet
+from api.views.event import EventNominationViewSet, EventViewSet
 from api.views.misc import AppSettingsView
 
 router = routers.SimpleRouter()
 router.register("events", EventViewSet)
-
+router.register(
+    "events-nominations", EventNominationViewSet, basename="events-nominations"
+)
 
 urlpatterns = [
     # API DOCS

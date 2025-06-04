@@ -337,10 +337,11 @@ class SendEmailTask(TaskRQ):
 
     def __str__(self):
         result = []
+        result.append(self.email.subject)
+        result.append(f"Date: {self.created_on.strftime('%d %B %Y')}")
         if self.email_to:
             result.append("To:")
             result.append(", ".join(self.email_to))
-        result.append(self.email.subject)
         return " ".join(result)
 
     @staticmethod

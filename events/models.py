@@ -190,7 +190,7 @@ class EventInvitation(models.Model):
 
     @property
     def invitation_link(self):
-        # TODO: use reverse() when actual view is created
+        # TODO: find better way to ensure frontend(!) view path is used here
         return f"/events/invitation/{self.token}/"
 
 
@@ -244,6 +244,9 @@ class Registration(models.Model):
     date = models.DateTimeField()
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField()
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         unique_together = (
