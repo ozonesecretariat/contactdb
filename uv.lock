@@ -121,6 +121,7 @@ dependencies = [
     { name = "django-extensions" },
     { name = "django-filter" },
     { name = "django-group-model" },
+    { name = "django-health-check" },
     { name = "django-import-export", extra = ["xlsx"] },
     { name = "django-more-admin-filters" },
     { name = "django-object-actions" },
@@ -171,6 +172,7 @@ requires-dist = [
     { name = "django-extensions", specifier = ">=4.1" },
     { name = "django-filter", specifier = ">=25.1" },
     { name = "django-group-model", specifier = ">=1.0.1" },
+    { name = "django-health-check", specifier = ">=3.19.0" },
     { name = "django-import-export", extras = ["xlsx"], specifier = ">=4.3.7" },
     { name = "django-more-admin-filters", specifier = ">=1.12" },
     { name = "django-object-actions", specifier = ">=5.0.0" },
@@ -450,6 +452,18 @@ dependencies = [
     { name = "django" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/4e/e9/4019511334c11d15edecc3df6d980843419f273c436cd5362e124ff75f0e/django-group-model-1.0.1.tar.gz", hash = "sha256:e89a71cfc463b002c6842f5f4a097cdc076d2d4da3809133f47f721d27dcfd3d", size = 6513, upload-time = "2024-04-14T10:48:03.269Z" }
+
+[[package]]
+name = "django-health-check"
+version = "3.19.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c0/96/60db7257c05418b60ceb9d2c0a568e923394582111e809f1bb3749a7ee60/django_health_check-3.19.0.tar.gz", hash = "sha256:1a995ed4fa08a776beedff65f8f1ec0c22fb6764493f33fb1307fe4c6f23b8c3", size = 20088, upload-time = "2025-06-03T10:57:16.295Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/35/c08be7e0012a7927c5f01185c0df39e0fa249cfc17234cce798c2afaf6bb/django_health_check-3.19.0-py3-none-any.whl", hash = "sha256:30b58d761f40fef47971b8dc145df15bdb71339108034860bbf1d505387aa1ec", size = 31969, upload-time = "2025-06-03T10:57:14.429Z" },
+]
 
 [[package]]
 name = "django-import-export"

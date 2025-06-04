@@ -109,6 +109,9 @@ INSTALLED_APPS = [
     "drf_spectacular_sidecar",
     "corsheaders",
     "more_admin_filters",
+    "health_check",
+    "health_check.db",
+    "health_check.contrib.redis",
     # This app
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
