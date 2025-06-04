@@ -590,8 +590,8 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         event_group = obj.event_group
         org_recipients = get_organization_recipients(
             obj.organization_types.all(),
-            additional_ccs=obj.cc_recipients.all(),
-            additional_bccs=obj.bcc_recipients.all(),
+            additional_cc_contacts=obj.cc_recipients.all(),
+            additional_bcc_contacts=obj.bcc_recipients.all(),
         )
 
         for org, data in org_recipients.items():

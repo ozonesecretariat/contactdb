@@ -9,9 +9,7 @@ class InvitationEmailFactory(DjangoModelFactory):
         model = InvitationEmail
 
     subject = factory.Sequence(lambda n: f"Test Invitation {n}")
-    body = factory.LazyAttribute(lambda obj: f"Body for {obj.subject}")
-    sender = "test@example.com"
-    reply_to = "reply@example.com"
+    content = factory.LazyAttribute(lambda obj: f"Body for {obj.subject}")
 
     @factory.post_generation
     def events(self, create, extracted, **kwargs):

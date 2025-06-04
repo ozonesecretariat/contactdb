@@ -24,8 +24,6 @@ def get_organization_recipients(
             queryset=Organization.objects.filter(
                 include_in_invitation=True
             ).prefetch_related(
-                "emails",
-                "email_ccs",
                 "primary_contacts",
                 "secondary_contacts",
                 "government",
@@ -33,8 +31,8 @@ def get_organization_recipients(
         )
     )
 
-    additional_cc_contacts = additional_cc_contacts or set()
-    additional_bcc_contacts = additional_bcc_contacts or set()
+    additional_cc_contacts = set(additional_cc_contacts or [])
+    additional_bcc_contacts = set(additional_bcc_contacts or [])
 
     org_recipients = {}
     for org_type in org_types:
@@ -70,14 +68,14 @@ def get_organization_recipients(
                 cc_emails.update(
                     email
                     for contact in secondary
-                    for email in (contact.emails or [] + contact.email_ccs or [])
+                    for email in ((contact.emails or []) + (contact.email_ccs or []))
                 )
 
             if additional_cc_contacts:
                 cc_emails.update(
                     email
                     for contact in additional_cc_contacts
-                    for email in (contact.emails or [] + contact.email_ccs or [])
+                    for email in ((contact.emails or []) + (contact.email_ccs or []))
                 )
 
             org_recipients[org] = {
@@ -89,7 +87,7 @@ def get_organization_recipients(
                 "bcc_emails": {
                     email
                     for contact in additional_bcc_contacts
-                    for email in (contact.emails or [] + contact.email_ccs or [])
+                    for email in ((contact.emails or []) + (contact.email_ccs or []))
                 },
             }
 
