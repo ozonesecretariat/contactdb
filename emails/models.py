@@ -5,7 +5,6 @@ from functools import cached_property
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import Q
@@ -16,8 +15,8 @@ from common.array_field import ArrayField
 from common.model import get_protected_storage
 from core.models import Contact, ContactGroup, OrganizationType
 from emails.placeholders import (
-    validate_placeholders,
     replace_placeholders,
+    validate_placeholders,
 )
 from events.models import Event, EventGroup
 
@@ -168,8 +167,10 @@ class Email(models.Model):
     def build_email(
         self, contact=None, to_list=None, cc_list=None, bcc_list=None, invitation=None
     ):
+        subject = replace_placeholders([contact, invitation], self.subject)
         msg = EmailMultiAlternatives(
-            subject=self.subject, from_email=settings.DEFAULT_FROM_EMAIL
+            subject=subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
         )
 
         if contact:

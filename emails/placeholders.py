@@ -1,5 +1,5 @@
 import re
-from functools import reduce, singledispatch
+from functools import singledispatch
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -33,8 +33,14 @@ def validate_placeholders(value):
         raise ValidationError(f"Invalid placeholders: {msg}")
 
 
-def deep_getattr(obj, attr):
-    return reduce(getattr, attr.split("."), obj)
+def deep_getattr(obj, attr, default=None):
+    """Get nested attribute"""
+    try:
+        for name in attr.split("__"):
+            obj = getattr(obj, name)
+        return obj
+    except AttributeError:
+        return default
 
 
 def replace_placeholders(objs: list, text: str) -> str:
