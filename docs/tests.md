@@ -55,4 +55,6 @@ Headless running options:
 - Run a single spec headless
   ```shell
   npm run test -- -s cypress/e2e/1.admin/1.login/1.login.cy.js
+  # or
+  npx cypress run -b chromium -s cypress/e2e/1.admin/5.emails/2.emails.cy.js
   ```

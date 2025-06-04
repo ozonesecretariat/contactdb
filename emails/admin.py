@@ -651,14 +651,13 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     list_display = (
         "email",
         "contact_link",
+        "organization_link",
         "email_to_preview",
         "email_cc_preview",
-        "email_bcc_preview",
         "created_on",
-        "duration_display",
         "status_display",
     )
-    list_display_links = ("email", "contact")
+    list_display_links = ("email",)
     list_filter = (
         AutocompleteFilterFactory("email", "email"),
         ContactAutocompleteFilter,
@@ -672,6 +671,8 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     prefetch_related = (
         "email",
         "contact",
+        "organization",
+        "invitation",
         "contact__organization",
         "to_contacts__organization",
         "cc_contacts__organization",
@@ -684,6 +685,8 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
                 "fields": (
                     "email_with_link",
                     "contact",
+                    "organization",
+                    "invitation",
                     "to_contacts_links",
                     "cc_contacts_links",
                     "bcc_contacts_links",
@@ -768,6 +771,10 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     @admin.display(description="Contact", ordering="contact")
     def contact_link(self, obj):
         return self.get_object_display_link(obj.contact)
+
+    @admin.display(description="Organization", ordering="organization")
+    def organization_link(self, obj):
+        return self.get_object_display_link(obj.organization)
 
     @admin.display(description="To contacts")
     def to_contacts_links(self, obj):

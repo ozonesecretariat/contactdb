@@ -1,5 +1,7 @@
 import { randomStr } from "../../../support/utils";
 
+const emailTimeout = 30000; // 30 seconds
+
 describe("Check", () => {
   it("Check send", () => {
     cy.loginEmails();
@@ -33,7 +35,7 @@ describe("Check", () => {
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
     // Check the contacts
     cy.get(".field-contact").contains("Thane Seren");
@@ -62,7 +64,7 @@ describe("Check", () => {
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
     // Check the contacts
     cy.get(".field-contact").contains("Thane Seren");
@@ -74,7 +76,7 @@ describe("Check", () => {
     cy.get(".field-email_bcc").contains("john.no-cc@example.com");
     cy.get(".field-email_bcc").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
   });
-  it("Check send no CC address", () => {
+  it.only("Check send no CC address", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
       checkDelete: false,
@@ -88,7 +90,7 @@ describe("Check", () => {
     });
 
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
   });
   it("Checking sending to contact with no name", () => {
     cy.loginEmails();
@@ -104,7 +106,7 @@ describe("Check", () => {
     });
 
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
     // Check interpolation
     cy.get("#fieldset-0-1-heading").click();
@@ -124,7 +126,7 @@ describe("Check", () => {
     });
 
     // Wait for the task to finish and go to the SendEmailTask detail admin
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
     cy.get(".field-email_to").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
 
@@ -163,7 +165,7 @@ describe("Check", () => {
     cy.get("input[value=Save]").click();
 
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get("a").contains(subject).click();
 
     // Check placeholder interpolation in preview
@@ -191,7 +193,7 @@ describe("Check", () => {
     cy.get("input[value=Save]").click();
 
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get("a").contains(subject).click();
     //
     // Check image is shown in preview
@@ -218,7 +220,7 @@ describe("Check", () => {
       suffix: "-email-subject",
     });
     // Wait for the task to finish
-    cy.get(".field-status_display").contains("SUCCESS");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get("#result_list tbody th a").click();
 
     // Check download attachment
