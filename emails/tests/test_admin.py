@@ -7,8 +7,8 @@ from django.test import RequestFactory, TestCase
 from api.tests.factories import ContactFactory
 from core.models import Contact, Country, Organization, OrganizationType
 from emails.admin import InvitationEmailAdmin
-from emails.factories import InvitationEmailFactory
 from emails.models import InvitationEmail, SendEmailTask
+from emails.tests.factories import InvitationEmailFactory
 from events.models import Event
 
 
