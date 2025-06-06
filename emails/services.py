@@ -18,77 +18,83 @@ def get_organization_recipients(
     additional_cc_contacts: Optional set of additional contacts to CC
     additional_bcc_contacts: Optional set of additional contacts to BCC
     """
-    org_types = org_types.prefetch_related(
-        models.Prefetch(
-            "organizations",
-            queryset=Organization.objects.filter(
-                include_in_invitation=True
-            ).prefetch_related(
-                "primary_contacts",
-                "secondary_contacts",
-                "government",
-            ),
-        )
+    # First identify governments (called them countries, but there's a subtle difference)
+    # for which GOV organizations exist.
+    gov_orgs = Organization.objects.filter(
+        organization_type__acronym="GOV", include_in_invitation=True
+    )
+    gov_countries = {org.government for org in gov_orgs if org.government}
+
+    orgs_queryset = Organization.objects.filter(
+        organization_type__in=org_types, include_in_invitation=True
+    ).prefetch_related(
+        "primary_contacts",
+        "secondary_contacts",
+        "government",
+    )
+    # Filter out non-GOV organizations that belong to GOV countries
+    orgs_queryset = orgs_queryset.exclude(
+        ~models.Q(organization_type__acronym="GOV"),
+        government__in=gov_countries,
     )
 
     additional_cc_contacts = set(additional_cc_contacts or [])
     additional_bcc_contacts = set(additional_bcc_contacts or [])
 
     org_recipients = {}
-    for org_type in org_types:
-        for org in org_type.organizations.filter(include_in_invitation=True).all():
-            primary = set(org.primary_contacts.all())
-            secondary = set(org.secondary_contacts.all())
+    for org in orgs_queryset:
+        primary = set(org.primary_contacts.all())
+        secondary = set(org.secondary_contacts.all())
 
-            to_emails = set(org.emails or [])
-            cc_emails = set(org.email_ccs or [])
+        to_emails = set(org.emails or [])
+        cc_emails = set(org.email_ccs or [])
 
-            # If it's a GOV, include all invite-able orgs from that country
-            if org_type.acronym == "GOV":
-                related_orgs = Organization.objects.filter(
-                    government=org.government, include_in_invitation=True
-                ).prefetch_related("primary_contacts", "secondary_contacts")
+        # If it's a GOV, include all invite-able orgs from that country
+        if org.organization_type.acronym == "GOV":
+            related_orgs = Organization.objects.filter(
+                government=org.government, include_in_invitation=True
+            ).prefetch_related("primary_contacts", "secondary_contacts")
 
-                for related_organization in related_orgs:
-                    primary |= set(related_organization.primary_contacts.all())
-                    secondary |= set(related_organization.secondary_contacts.all())
+            for related_organization in related_orgs:
+                primary |= set(related_organization.primary_contacts.all())
+                secondary |= set(related_organization.secondary_contacts.all())
 
-                    to_emails |= set(related_organization.emails or [])
-                    cc_emails |= set(related_organization.email_ccs or [])
+                to_emails |= set(related_organization.emails or [])
+                cc_emails |= set(related_organization.email_ccs or [])
 
-            if primary:
-                to_emails.update(
-                    email for contact in primary for email in (contact.emails or [])
-                )
-                cc_emails.update(
-                    email for contact in primary for email in (contact.email_ccs or [])
-                )
+        if primary:
+            to_emails.update(
+                email for contact in primary for email in (contact.emails or [])
+            )
+            cc_emails.update(
+                email for contact in primary for email in (contact.email_ccs or [])
+            )
 
-            if secondary:
-                cc_emails.update(
-                    email
-                    for contact in secondary
-                    for email in ((contact.emails or []) + (contact.email_ccs or []))
-                )
+        if secondary:
+            cc_emails.update(
+                email
+                for contact in secondary
+                for email in ((contact.emails or []) + (contact.email_ccs or []))
+            )
 
-            if additional_cc_contacts:
-                cc_emails.update(
-                    email
-                    for contact in additional_cc_contacts
-                    for email in ((contact.emails or []) + (contact.email_ccs or []))
-                )
+        if additional_cc_contacts:
+            cc_emails.update(
+                email
+                for contact in additional_cc_contacts
+                for email in ((contact.emails or []) + (contact.email_ccs or []))
+            )
 
-            org_recipients[org] = {
-                "to_contacts": primary,
-                "cc_contacts": secondary | additional_cc_contacts,
-                "bcc_contacts": additional_bcc_contacts,
-                "to_emails": to_emails,
-                "cc_emails": cc_emails,
-                "bcc_emails": {
-                    email
-                    for contact in additional_bcc_contacts
-                    for email in ((contact.emails or []) + (contact.email_ccs or []))
-                },
-            }
+        org_recipients[org] = {
+            "to_contacts": primary,
+            "cc_contacts": secondary | additional_cc_contacts,
+            "bcc_contacts": additional_bcc_contacts,
+            "to_emails": to_emails,
+            "cc_emails": cc_emails,
+            "bcc_emails": {
+                email
+                for contact in additional_bcc_contacts
+                for email in ((contact.emails or []) + (contact.email_ccs or []))
+            },
+        }
 
     return org_recipients
