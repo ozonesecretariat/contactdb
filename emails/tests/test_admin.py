@@ -331,10 +331,106 @@ class TestInvitationEmailAdmin(TestCase):
         # Test HTML alternative
         html_content = email_message.alternatives[0][0]
         self.assertIn("text/html", email_message.alternatives[0][1])
-        # TODO - what's best way to test that the URL is being replaced?
         self.assertNotIn("[[invitation_link]]", html_content)
-        # self.assertIn(settings.MAIN_BACKEND_HOST, html_content)
-        # TODO - add test for [[party]]
+
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+    def test_invitation_email_placeholders(self):
+        """Test placeholder expansion in invitation emails."""
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        # Create organization with contacts
+        org = OrganizationFactory(
+            name="Test Org",
+            organization_type=gov_type,
+            government=government,
+            emails=["org@example.com"],
+        )
+        contact = ContactFactory(
+            organization=org,
+            first_name="John",
+            last_name="Doe",
+            title="Dr.",
+            emails=["john@example.com"],
+        )
+        org.primary_contacts.add(contact)
+
+        # Create invitation email with various placeholders:
+        # [[party]] and [[invitation_link]] should expand, others should not.
+        invitation_email = InvitationEmailFactory(
+            subject="Invitation for [[party]]",
+            content="""
+                Dear [[first_name]] [[last_name]],
+
+                Please add nominations at: [[invitation_link]]
+                For: [[party]]
+
+                Title: [[title]]
+                Organization: [[organization]]
+            """,
+            events=[self.event],
+            organization_types=[gov_type],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = "session"
+        request._messages = FallbackStorage(request)
+
+        mail.outbox = []
+        self.admin.response_post_save_add(request, invitation_email)
+        task = SendEmailTask.objects.first()
+        # Need to explicitly execute the job non-async
+        SendEmailJob.execute(None, task)
+
+        # Check email was sent
+        self.assertEqual(len(mail.outbox), 1)
+        email_message = mail.outbox[0]
+
+        # Get the invitation that was created
+        invitation = task.invitation
+
+        # Check subject (party placeholder)
+        self.assertEqual(email_message.subject, f"Invitation for {government.name}")
+
+        # Contact-related placeholders should remain unchanged
+        self.assertIn("Dear [[first_name]] [[last_name]]", email_message.body)
+        self.assertIn("Title: [[title]]", email_message.body)
+        self.assertIn("Organization: [[organization]]", email_message.body)
+
+        # Invitation-related placeholders should be replaced
+        self.assertIn(f"For: {government.name}", email_message.body)
+        self.assertNotIn("[[invitation_link]]", email_message.body)
+        self.assertIn(str(invitation.token), email_message.body)
+
+        # Test cases with missing data
+        org_no_gov = OrganizationFactory(
+            organization_type=self.org_type,
+            government=None,
+            emails=["nogov@example.com"],
+        )
+        invitation_email_empty = InvitationEmailFactory(
+            subject="Invitation for [[party]]",
+            content="For: [[party]], Link: [[invitation_link]]",
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+
+        mail.outbox = []
+        self.admin.response_post_save_add(request, invitation_email_empty)
+        empty_fields_task = SendEmailTask.objects.get(organization=org_no_gov)
+        SendEmailJob.execute(None, empty_fields_task)
+
+        self.assertEqual(len(mail.outbox), 1)
+        empty_fields_email = mail.outbox[0]
+        empty_fields_invitation = empty_fields_task.invitation
+
+        # Missing country should result in empty placeholder
+        self.assertEqual(empty_fields_email.subject, "Invitation for ")
+        self.assertIn("For: ,", empty_fields_email.body)
+
+        # Link should still work even with missing country
+        self.assertIn(str(empty_fields_invitation.token), empty_fields_email.body)
 
 
 class TestInvitationEmailAdminGovBehaviour(TestCase):
@@ -369,9 +465,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         Test that inviting GOV organizations results in proper handling of
         all related organizations.
         """
-        # Create a government (country)
         government = Country.objects.first()
-
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create a GOV organization

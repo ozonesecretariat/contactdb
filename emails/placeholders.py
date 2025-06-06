@@ -41,6 +41,9 @@ def deep_getattr(obj, attr, default=None):
             obj = getattr(obj, name)
         return obj
     except AttributeError:
+        if isinstance(default, str) and default:
+            # Try fallback path if provided
+            return deep_getattr(obj, default, None)
         return default
 
 
@@ -63,7 +66,8 @@ def replace_placeholders(objs: list[Any], text: str) -> str:
         placeholder_values = {}
         for placeholder, handles in placeholders.items():
             attr = handles["attr"]
-            value = deep_getattr(obj, attr)
+            fallback = handles.get("fallback")
+            value = deep_getattr(obj, attr, fallback)
             placeholder_values[placeholder] = "" if value is None else value
 
         # Replace placeholders with values
