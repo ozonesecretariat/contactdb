@@ -118,7 +118,6 @@ class Email(models.Model):
         Event,
         blank=True,
         help_text="Send the email to all participants of these selected events.",
-        limit_choices_to=~Q(registrations=None),
         related_name="sent_emails",
     )
     event_group = models.ForeignKey(

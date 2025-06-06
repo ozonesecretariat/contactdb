@@ -1,6 +1,6 @@
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import redirect
 from django.utils.html import format_html
 from import_export.admin import ExportMixin
@@ -269,6 +269,20 @@ class EventAdmin(ExportMixin, ModelAdmin):
     def send_email(self, request, queryset):
         ids = ",".join(map(str, queryset.values_list("id", flat=True)))
         return redirect(reverse("admin:emails_email_add") + "?events=" + ids)
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term
+        )
+
+        referrer = request.META.get("HTTP_REFERER", "")
+
+        # Filter queryset for EmailAdmin model to include only events
+        # that have at least one registration
+        if "/admin/emails/email/" in referrer:
+            queryset = queryset.filter(~Q(registrations=None))
+
+        return queryset, may_have_duplicates
 
 
 @admin.register(EventInvitation)
