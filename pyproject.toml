@@ -101,3 +101,11 @@ ignore = [
   # Allow unittest style assertRaises
   "PT027",
 ]
+"**/tests.py" = [
+  # Allow hardcoded passwords in tests
+  "S106",
+  # Allow unittest style asserts
+  "PT009",
+  # Allow unittest style assertRaises
+  "PT027",
+]

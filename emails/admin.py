@@ -585,27 +585,60 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         super().save_model(request, obj, form, change)
 
     def response_post_save_add(self, request, obj):
+        # TODO: maybe refactor the bulk of this method in services.py ???
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         event_group = obj.event_group
-        org_recipients = get_organization_recipients(obj.organization_types.all())
+        org_recipients = get_organization_recipients(
+            obj.organization_types.all(),
+            additional_cc_contacts=obj.cc_recipients.all(),
+            additional_bcc_contacts=obj.bcc_recipients.all(),
+        )
+
+        # Track invitations for GOV organizations
+        gov_invitations = {}
 
         for org, data in org_recipients.items():
-            if data["to"] or data["cc"]:
-                invitation, _ = EventInvitation.objects.get_or_create(
-                    organization=org, event=event, event_group=event_group
-                )
+            if (
+                data["to_contacts"]
+                or data["cc_contacts"]
+                or data["to_emails"]
+                or data["cc_emails"]
+            ):
+                if org.organization_type.acronym == "GOV":
+                    # Create or get country-level invitation
+                    invitation = gov_invitations.get(org.government)
+                    if not invitation:
+                        invitation = EventInvitation.objects.create(
+                            country=org.government,
+                            event=event,
+                            event_group=event_group,
+                            # This (together with setting the country) signifies we're
+                            # inviting all GOV-related organizations from that country.
+                            organization=None,
+                        )
+                        gov_invitations[org.government] = invitation
+                else:
+                    # Regular organization-level invitation
+                    invitation, _ = EventInvitation.objects.get_or_create(
+                        organization=org,
+                        event=event,
+                        event_group=event_group,
+                    )
                 task = SendEmailTask.objects.create(
                     email=obj,
                     organization=org,
                     invitation=invitation,
                     created_by=request.user,
+                    email_to=list(data["to_emails"]),
+                    email_cc=list(data["cc_emails"]),
+                    email_bcc=list(data["bcc_emails"]),
                 )
 
-                # Set recipients - accounting for additional besides the contact(groups)
-                task.to_contacts.set(data["to"])
-                task.cc_contacts.set(list(data["cc"]) + list(obj.cc_recipients.all()))
-                task.bcc_contacts.set(obj.bcc_recipients.all())
+                # Set recipient contacts (M2M) as returned by get_organization_recipients
+                task.to_contacts.set(data["to_contacts"])
+                task.cc_contacts.set(data["cc_contacts"])
+                task.bcc_contacts.set(data["bcc_contacts"])
 
                 task.run(is_async=True)
                 tasks.append(task)

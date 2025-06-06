@@ -383,18 +383,33 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 
 # CKEditor
-CKEDITOR_PLACEHOLDERS = (
-    # Placeholders for contacts
-    "full_name",
-    "first_name",
-    "last_name",
-    "title",
-    "honorific",
-    "respectful",
-    # Placeholders for organizations
-    # Placeholders for event invitations
-    "invitation_link",
-)
+# Placeholders for contacts
+CKEDITOR_CONTACT_PLACEHOLDERS = {
+    "full_name": {"attr": "full_name"},
+    "first_name": {"attr": "first_name"},
+    "last_name": {"attr": "last_name"},
+    "title": {"attr": "title"},
+    "honorific": {"attr": "honorific"},
+    "respectful": {"attr": "respectful"},
+    "party": {"attr": "organization__government__name"},
+    "organization": {"attr": "organization__name"},
+}
+
+# Placeholders for event invitations
+CKEDITOR_INVITATION_PLACEHOLDERS = {
+    "invitation_link": {"attr": "invitation_link"},
+    # The party attribute can come from different fields depending on situation
+    "party": {
+        "attr": "country__name",
+        "fallback": "organization__country__name",
+    },
+}
+
+CKEDITOR_PLACEHOLDERS = [
+    *CKEDITOR_CONTACT_PLACEHOLDERS.keys(),
+    *CKEDITOR_INVITATION_PLACEHOLDERS.keys(),
+]
+
 
 CKEDITOR_CONFIGS = {
     "default": {
