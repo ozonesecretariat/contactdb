@@ -5,7 +5,6 @@ from functools import cached_property
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import Q
@@ -15,6 +14,10 @@ from django_task.models import TaskRQ
 from common.array_field import ArrayField
 from common.model import get_protected_storage
 from core.models import Contact, ContactGroup, OrganizationType
+from emails.placeholders import (
+    replace_placeholders,
+    validate_placeholders,
+)
 from events.models import Event, EventGroup
 
 
@@ -32,13 +35,6 @@ def replace_relative_image_urls(email_body):
         email_body = email_body.replace(url, absolute_url)
 
     return email_body
-
-
-def validate_placeholders(value):
-    placeholders = set(re.findall(r"\[\[(.*?)\]\]", value or ""))
-    if invalid := placeholders.difference(settings.CKEDITOR_PLACEHOLDERS):
-        msg = ", ".join([f"[[{item}]]" for item in invalid])
-        raise ValidationError(f"Invalid placeholders: {msg}")
 
 
 class EmailTemplate(models.Model):
@@ -134,7 +130,7 @@ class Email(models.Model):
         help_text="Send the email to primary contacts of these organization types.",
         related_name="sent_emails",
     )
-    subject = models.CharField(max_length=900)
+    subject = models.CharField(max_length=900, validators=[validate_placeholders])
     content = RichTextUploadingField(validators=[validate_placeholders])
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
@@ -170,13 +166,12 @@ class Email(models.Model):
     def build_email(
         self, contact=None, to_list=None, cc_list=None, bcc_list=None, invitation=None
     ):
+        subject = replace_placeholders([contact, invitation], self.subject)
         msg = EmailMultiAlternatives(
-            subject=self.subject, from_email=settings.DEFAULT_FROM_EMAIL
+            subject=subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
         )
 
-        if contact:
-            msg.to.extend(contact.emails or [])
-            msg.cc.extend(contact.email_ccs or [])
         if contact:
             msg.to.extend(contact.emails or [])
             msg.cc.extend(contact.email_ccs or [])
@@ -195,20 +190,8 @@ class Email(models.Model):
             msg.bcc.extend(bcc_contact.emails or [])
 
         html_content = self.content.strip()
-        placeholder_values = {}
-        if contact:
-            for placeholder in settings.CKEDITOR_PLACEHOLDERS:
-                if placeholder != "invitation_link":
-                    value = getattr(contact, placeholder, "")
-                    placeholder_values[placeholder] = "" if value is None else value
 
-        # Handle invitation link if present
-        if invitation:
-            placeholder_values["invitation_link"] = invitation.invitation_link
-
-        # Replace placeholders with values
-        for placeholder, value in placeholder_values.items():
-            html_content = html_content.replace(f"[[{placeholder}]]", str(value))
+        html_content = replace_placeholders([contact, invitation], html_content)
 
         # Remove all HTML Tags, leaving only the plaintext
         text_content = strip_tags(html_content)
