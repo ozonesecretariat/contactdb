@@ -35,12 +35,12 @@ def validate_placeholders(value):
 
 
 def deep_getattr(obj, attr, default=None):
-    """Get nested attribute"""
+    """Get (potentially) nested attribute"""
     try:
         for name in attr.split("__"):
             obj = getattr(obj, name)
         return obj
-    except AttributeError:
+    except (AttributeError, TypeError):
         if isinstance(default, str) and default:
             # Try fallback path if provided
             return deep_getattr(obj, default, None)
