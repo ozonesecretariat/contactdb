@@ -7,7 +7,7 @@ from django_task.models import TaskRQ
 
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
-from core.models import Contact, Country
+from core.models import Contact, Country, Organization
 
 
 class LoadEventsFromKronosTask(TaskRQ):
@@ -244,6 +244,19 @@ class Registration(models.Model):
     date = models.DateTimeField()
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField()
+
+    # Keep a copy of the contact fields (organization, designation and
+    # department) as it was at the time of registration
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="registrations",
+        verbose_name="Organization",
+    )
+    designation = models.TextField(default="", blank=True)
+    department = models.TextField(default="", blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)

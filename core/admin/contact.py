@@ -90,6 +90,28 @@ class ContactRegistrationsInline(admin.StackedInline):
     autocomplete_fields = ("event", "status", "role", "tags")
     classes = ["collapse"]
 
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("event", "status", "role", "tags"),
+                    "date",
+                )
+            },
+        ),
+        (
+            "More informaton",
+            {
+                "fields": (
+                    ("organization", "designation", "department"),
+                    ("priority_pass_code", "is_funded"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
 
 @admin.register(Contact)
 class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
