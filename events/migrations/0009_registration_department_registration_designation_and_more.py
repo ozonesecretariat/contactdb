@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0019_update_contact_language"),
         ("events", "0008_registration_created_at_registration_updated_at"),
