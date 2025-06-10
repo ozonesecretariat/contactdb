@@ -194,7 +194,7 @@ def _(registration2, contact1, contact2):
         registration2.contact = contact1
         registration2.save()
     else:
-        # Keep registration on contact1.
+        # Keep registration from contact1.
         pass
 
 
