@@ -27,8 +27,12 @@ def _(obj):
     return settings.CKEDITOR_INVITATION_PLACEHOLDERS
 
 
+def find_placeholders(value):
+    return set(re.findall(r"\[\[(.*?)\]\]", value or ""))
+
+
 def validate_placeholders(value):
-    placeholders = set(re.findall(r"\[\[(.*?)\]\]", value or ""))
+    placeholders = find_placeholders(value)
     if invalid := placeholders.difference(settings.CKEDITOR_PLACEHOLDERS):
         msg = ", ".join([f"[[{item}]]" for item in invalid])
         raise ValidationError(f"Invalid placeholders: {msg}")

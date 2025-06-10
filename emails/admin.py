@@ -6,6 +6,7 @@ from email import message_from_string
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
 from ckeditor.widgets import CKEditorWidget
 from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import Q
 from django.http import FileResponse, HttpResponseForbidden
@@ -25,6 +26,7 @@ from emails.models import (
     InvitationEmail,
     SendEmailTask,
 )
+from emails.placeholders import find_placeholders
 from emails.services import get_organization_recipients
 from events.models import EventInvitation
 
@@ -189,6 +191,26 @@ class EmailAdminForm(forms.ModelForm):
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
         self.fields["content"].widget = CKEditorWidget(config_name="email_editor")
+
+    def clean_content(self):
+        """Validate that only specific placeholders are used in "normal" emails."""
+        content = self.cleaned_data.get("content")
+        if not content:
+            return content
+
+        # Check if any invalid placeholders are used
+        used_placeholders = find_placeholders(content)
+        valid_placeholders = set(settings.CKEDITOR_CONTACT_PLACEHOLDERS.keys())
+        invalid_placeholders = used_placeholders - valid_placeholders
+
+        if invalid_placeholders:
+            raise forms.ValidationError(
+                f"The following placeholders cannot be used in emails: "
+                f"{', '.join(invalid_placeholders)}. "
+                f"Valid placeholders are: {', '.join(valid_placeholders)}."
+            )
+
+        return content
 
     def full_clean(self):
         super().full_clean()
@@ -514,6 +536,26 @@ class InvitationEmailForm(forms.ModelForm):
                 "Only one event can be selected for invitation emails"
             )
         return events
+
+    def clean_content(self):
+        """Validate that only invitation placeholders are used in invitation emails."""
+        content = self.cleaned_data.get("content")
+        if not content:
+            return content
+
+        # Check if any invalid placeholders are used
+        used_placeholders = find_placeholders(content)
+        valid_placeholders = set(settings.CKEDITOR_INVITATION_PLACEHOLDERS.keys())
+        invalid_placeholders = used_placeholders - valid_placeholders
+
+        if invalid_placeholders:
+            raise forms.ValidationError(
+                f"The following placeholders cannot be used in invitation emails: "
+                f"{', '.join(invalid_placeholders)}. "
+                f"Valid placeholders are: {', '.join(valid_placeholders)}."
+            )
+
+        return content
 
 
 @admin.register(InvitationEmail)
