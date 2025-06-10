@@ -4,6 +4,7 @@ import textwrap
 from email import message_from_string
 
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
+from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.contrib import admin, messages
 from django.db.models import Q
@@ -182,6 +183,13 @@ class EmailTemplateAdmin(CKEditorTemplatesBase):
 
 
 class EmailAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Overriding the CKEditor widget for the `content` field; this allows us
+        # to use custom placeholders for different email types.
+        self.fields["content"].widget = CKEditorWidget(config_name="email_editor")
+
     def full_clean(self):
         super().full_clean()
         if not self.is_bound:
@@ -468,6 +476,13 @@ class InvitationEmailForm(forms.ModelForm):
             "content",
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Overriding the CKEditor widget for the `content` field; this allows us
+        # to use custom placeholders for different email types.
+        self.fields["content"].widget = CKEditorWidget(config_name="invitation_editor")
+
     def clean(self):
         cleaned_data = super().clean()
         events = cleaned_data.get("events")
@@ -561,9 +576,11 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             "Email content",
             {
                 "description": (
-                    "For event invitations, use the [[invitation_link]] placeholder; "
-                    "this will automatically insert the correct link for each "
-                    "organization and event."
+                    "For event invitations, the [[invitation_link]] placeholder "
+                    "will automatically insert the correct link for each "
+                    "organization and event. "
+                    "The [[party]] placeholder will automatically be replaced with "
+                    "the party name."
                 ),
                 "fields": (
                     "subject",

@@ -506,6 +506,23 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
+# Using separate configs for regular and invitation emails
+# Configuration for regular emails
+CKEDITOR_CONFIGS["email_editor"] = {
+    **CKEDITOR_CONFIGS["default"],
+    # Only overriding the placeholders
+    "placeholder_select": {
+        "placeholders": list(CKEDITOR_CONTACT_PLACEHOLDERS.keys()),
+    },
+}
+# Configuration for invitation emails
+CKEDITOR_CONFIGS["invitation_editor"] = {
+    **CKEDITOR_CONFIGS["default"],
+    # Only overriding the placeholders
+    "placeholder_select": {
+        "placeholders": list(CKEDITOR_INVITATION_PLACEHOLDERS.keys()),
+    },
+}
 
 ### Django Rest Framework
 REST_FRAMEWORK = {
