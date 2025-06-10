@@ -44,6 +44,8 @@ REDIS_HOST = env.str("REDIS_HOST")
 REDIS_PORT = env.int("REDIS_PORT", default=6379)
 REDIS_CACHE_DB = 0
 REDIS_TASK_DB = 1
+# https://django-health-check.readthedocs.io/en/latest/readme.html#installation
+REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DEBUG
 DEBUG = env.bool("DEBUG", default=False)
