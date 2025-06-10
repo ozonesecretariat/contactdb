@@ -65,6 +65,7 @@ def get_organization_recipients(
 
         to_emails = set(org.emails or [])
         cc_emails = set(org.email_ccs or [])
+        bcc_emails = set()
 
         # If it's a GOV, include all invite-able orgs from that country
         if org.organization_type.acronym == "GOV":
@@ -101,17 +102,22 @@ def get_organization_recipients(
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
             )
 
-        org_recipients[org] = {
-            "to_contacts": primary,
-            "cc_contacts": secondary | additional_cc_contacts,
-            "bcc_contacts": additional_bcc_contacts,
-            "to_emails": to_emails,
-            "cc_emails": cc_emails,
-            "bcc_emails": {
+        if additional_bcc_contacts:
+            bcc_emails.update(
                 email
                 for contact in additional_bcc_contacts
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
-            },
+            )
+
+        org_recipients[org] = {
+            "to_contacts": primary,
+            "cc_contacts": secondary | additional_cc_contacts,
+            "bcc_contacts": additional_bcc_contacts
+            - primary
+            - (secondary | additional_cc_contacts),
+            "to_emails": to_emails,
+            "cc_emails": cc_emails - to_emails,
+            "bcc_emails": bcc_emails - to_emails - cc_emails,
         }
 
     return org_recipients
