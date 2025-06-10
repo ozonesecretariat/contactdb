@@ -585,7 +585,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         super().save_model(request, obj, form, change)
 
     def response_post_save_add(self, request, obj):
-        # TODO: maybe refactor the bulk of this method in services.py ???
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         event_group = obj.event_group
