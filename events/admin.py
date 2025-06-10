@@ -159,6 +159,29 @@ class RegistrationAdmin(ModelAdmin):
     def tags_display(self, obj: Registration):
         return ", ".join(map(str, obj.tags.all()))
 
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("contact", "role"),
+                    ("event", "status", "tags"),
+                    "date",
+                    ("priority_pass_code", "is_funded"),
+                )
+            },
+        ),
+        (
+            "Registrant's Organization Info (at the time of registration)",
+            {
+                "fields": (
+                    "organization",
+                    ("designation", "department"),
+                )
+            },
+        ),
+    )
+
 
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):

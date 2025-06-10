@@ -87,8 +87,30 @@ class ContactMembershipInline(admin.StackedInline):
 class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
     model = Registration
-    autocomplete_fields = ("event", "status", "role", "tags")
+    autocomplete_fields = ("event", "status", "role", "tags", "organization")
     classes = ["collapse"]
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("event", "status", "role", "tags"),
+                    "date",
+                )
+            },
+        ),
+        (
+            "More informaton",
+            {
+                "fields": (
+                    ("organization", "designation", "department"),
+                    ("priority_pass_code", "is_funded"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
 
 
 @admin.register(Contact)

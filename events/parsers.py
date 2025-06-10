@@ -246,6 +246,9 @@ class KronosParticipantsParser(KronosParser):
                     "date": registration.get("date"),
                     "is_funded": registration.get("isFunded"),
                     "priority_pass_code": registration.get("priorityPassCode", ""),
+                    "organization": contact.organization,
+                    "designation": contact.designation,
+                    "department": contact.department,
                 },
             )
             self.task.registrations_nr += created

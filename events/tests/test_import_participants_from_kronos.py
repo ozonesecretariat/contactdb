@@ -147,6 +147,13 @@ class TestImportEvents(TestCase):
         self.assertEqual(contact.emails, ["zephyr.m@example.com"])
         self.assertEqual(contact.phones, ["+777777777"])
         self.assertEqual(contact.registrations.count(), 1)
+
+        registration = contact.registrations.first()
+        self.assertEqual(registration.event, self.event)
+        self.assertEqual(registration.organization, contact.organization)
+        self.assertEqual(registration.designation, contact.designation)
+        self.assertEqual(registration.department, contact.department)
+
         self.assertEqual(contact.registrations.first().event, self.event)
         self.assertEqual(contact.primary_lang, "E")
         self.assertEqual(contact.second_lang, "R")
