@@ -77,7 +77,10 @@ function checkForDifferences() {
         .filter((val) => Boolean(val));
       different = !arrayEquals(currentArray, newValue.value);
     } else if ((currentInput = el.querySelector("select"))) {
-      different = currentInput.value !== newValue.pk;
+      // For select inputs that are not foreign keys, there is no
+      // primary key (pk), so compare their values directly.
+      const compareTo = newValue.pk || newValue.value;
+      different = currentInput.value !== compareTo;
     } else if ((currentInput = el.querySelector("input[type=checkbox]"))) {
       different = (currentInput.checked ? "True" : "False") !== newValue.value;
     } else if ((currentInput = el.querySelector("input, textarea"))) {
