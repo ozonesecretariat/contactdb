@@ -316,6 +316,7 @@ class EventInvitationAdmin(admin.ModelAdmin):
         "event_or_group",
         "country",
         "invitation_link",
+        "is_future_event_display",
         "link_accessed",
         "email_tasks_display",
         "created_at",
@@ -366,7 +367,13 @@ class EventInvitationAdmin(admin.ModelAdmin):
     )
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("email_tasks")
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related(
+                "event", "event_group", "organization", "country", "email_tasks"
+            )
+        )
 
     @admin.display(description="Target")
     def event_or_group(self, obj):
@@ -379,6 +386,11 @@ class EventInvitationAdmin(admin.ModelAdmin):
             obj.invitation_link,
             "View Invitation Link",
         )
+
+    @admin.display(description="Future Event", boolean=True)
+    def is_future_event_display(self, obj):
+        """Display the future event property as an icon in the admin."""
+        return obj.is_future_event
 
     @admin.display(description="Email Tasks")
     def email_tasks_display(self, obj):

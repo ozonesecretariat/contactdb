@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django_task.models import TaskRQ
 
 from common.citext import CICharField
@@ -197,6 +198,22 @@ class EventInvitation(models.Model):
         domain = settings.PROTOCOL + settings.MAIN_FRONTEND_HOST
 
         return urljoin(domain, url_path)
+
+    @property
+    def is_for_future_event(self):
+        today = timezone.now().date()
+
+        if self.event and self.event.start_date and self.event.start_date >= today:
+            return True
+
+        if self.event_group:
+            future_events = self.event_group.events.filter(
+                start_date__gte=today
+            ).exists()
+            if future_events:
+                return True
+
+        return False
 
 
 class RegistrationTag(models.Model):
