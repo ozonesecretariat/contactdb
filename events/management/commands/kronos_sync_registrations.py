@@ -5,7 +5,7 @@ and department) using participant data from Kronos.
 
 from django.core.management.base import BaseCommand
 
-from core.models import Contact, Organization
+from core.models import Organization
 from events.kronos import KronosClient
 from events.models import Event, Registration
 
@@ -19,9 +19,9 @@ class Command(BaseCommand):
 
         self.stdout.write("Updating registrations from Kronos...")
 
-        updated_count = 0
         for event in events:
-            self.stdout.write(f"Processing event: {event}")
+            updated_count = 0
+            batch = []
             for contact_dict in client.get_participants(event.event_id):
                 contact_id = contact_dict["contactId"]
 
@@ -52,9 +52,14 @@ class Command(BaseCommand):
                 registration.organization = organization
                 registration.designation = designation
                 registration.department = department
-                registration.save()
+                batch.append(registration)
 
                 updated_count += 1
-                self.stdout.write(f"Updated registration for {registration}.")
 
-        self.stdout.write(f"Updated {updated_count} registrations from Kronos.")
+            if batch:
+                Registration.objects.bulk_update(
+                    batch, ["organization", "designation", "department"]
+                )
+                self.stdout.write(
+                    f"Updated {updated_count} registrations from {event}."
+                )
