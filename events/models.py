@@ -201,7 +201,7 @@ class EventInvitation(models.Model):
 
     @property
     def is_for_future_event(self):
-        today = timezone.now().date()
+        today = timezone.now()
 
         if self.event and self.event.start_date and self.event.start_date >= today:
             return True

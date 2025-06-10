@@ -2,6 +2,7 @@ from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.html import format_html
 from import_export.admin import ExportMixin
 
@@ -308,15 +309,62 @@ class EventAdmin(ExportMixin, ModelAdmin):
         return queryset, may_have_duplicates
 
 
+class FutureEventFilter(admin.SimpleListFilter):
+    title = "Event Time"
+    parameter_name = "event_time"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("future", "Future events"),
+            ("past", "Past events"),
+            ("all", "All events"),
+        )
+
+    def choices(self, changelist):
+        for lookup, title in self.lookup_choices:
+            yield {
+                "selected": self.value() == lookup
+                or (self.value() is None and lookup == "all"),
+                "query_string": changelist.get_query_string(
+                    {self.parameter_name: lookup}
+                ),
+                "display": title,
+            }
+
+    def queryset(self, request, queryset):
+        today = timezone.now()
+
+        if self.value() == "future":
+            # Filter to future events using direct DB queries
+            return queryset.filter(
+                Q(event__start_date__gte=today)
+                | Q(
+                    event_group__isnull=False,
+                    event_group__events__start_date__gte=today,
+                )
+            ).distinct()
+
+        if self.value() == "past":
+            # Filter to past events using direct DB queries
+            return queryset.filter(
+                Q(event__start_date__lt=today, event__isnull=False)
+                | Q(
+                    event_group__isnull=False, event_group__events__start_date__lt=today
+                )
+            ).distinct()
+
+        return queryset
+
+
 @admin.register(EventInvitation)
-class EventInvitationAdmin(admin.ModelAdmin):
+class EventInvitationAdmin(ModelAdmin):
     list_display = (
         "__str__",
         "organization",
         "event_or_group",
         "country",
         "invitation_link",
-        "is_future_event_display",
+        "is_for_future_event_display",
         "link_accessed",
         "email_tasks_display",
         "created_at",
@@ -328,6 +376,7 @@ class EventInvitationAdmin(admin.ModelAdmin):
         AutocompleteFilterFactory("event_group", "event_group"),
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
+        FutureEventFilter,
         "link_accessed",
     )
 
@@ -388,9 +437,9 @@ class EventInvitationAdmin(admin.ModelAdmin):
         )
 
     @admin.display(description="Future Event", boolean=True)
-    def is_future_event_display(self, obj):
+    def is_for_future_event_display(self, obj):
         """Display the future event property as an icon in the admin."""
-        return obj.is_future_event
+        return obj.is_for_future_event
 
     @admin.display(description="Email Tasks")
     def email_tasks_display(self, obj):
