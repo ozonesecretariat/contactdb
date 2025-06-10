@@ -4,7 +4,9 @@ import textwrap
 from email import message_from_string
 
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
+from ckeditor.widgets import CKEditorWidget
 from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import Q
 from django.http import FileResponse, HttpResponseForbidden
@@ -24,6 +26,7 @@ from emails.models import (
     InvitationEmail,
     SendEmailTask,
 )
+from emails.placeholders import find_placeholders
 from emails.services import get_organization_recipients
 from events.models import EventInvitation
 
@@ -182,6 +185,33 @@ class EmailTemplateAdmin(CKEditorTemplatesBase):
 
 
 class EmailAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Overriding the CKEditor widget for the `content` field; this allows us
+        # to use custom placeholders for different email types.
+        self.fields["content"].widget = CKEditorWidget(config_name="email_editor")
+
+    def clean_content(self):
+        """Validate that only specific placeholders are used in "normal" emails."""
+        content = self.cleaned_data.get("content")
+        if not content:
+            return content
+
+        # Check if any invalid placeholders are used
+        used_placeholders = find_placeholders(content)
+        valid_placeholders = set(settings.CKEDITOR_CONTACT_PLACEHOLDERS.keys())
+        invalid_placeholders = used_placeholders - valid_placeholders
+
+        if invalid_placeholders:
+            raise forms.ValidationError(
+                f"The following placeholders cannot be used in emails: "
+                f"{', '.join(invalid_placeholders)}. "
+                f"Valid placeholders are: {', '.join(valid_placeholders)}."
+            )
+
+        return content
+
     def full_clean(self):
         super().full_clean()
         if not self.is_bound:
@@ -468,6 +498,13 @@ class InvitationEmailForm(forms.ModelForm):
             "content",
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Overriding the CKEditor widget for the `content` field; this allows us
+        # to use custom placeholders for different email types.
+        self.fields["content"].widget = CKEditorWidget(config_name="invitation_editor")
+
     def clean(self):
         cleaned_data = super().clean()
         events = cleaned_data.get("events")
@@ -499,6 +536,26 @@ class InvitationEmailForm(forms.ModelForm):
                 "Only one event can be selected for invitation emails"
             )
         return events
+
+    def clean_content(self):
+        """Validate that only invitation placeholders are used in invitation emails."""
+        content = self.cleaned_data.get("content")
+        if not content:
+            return content
+
+        # Check if any invalid placeholders are used
+        used_placeholders = find_placeholders(content)
+        valid_placeholders = set(settings.CKEDITOR_INVITATION_PLACEHOLDERS.keys())
+        invalid_placeholders = used_placeholders - valid_placeholders
+
+        if invalid_placeholders:
+            raise forms.ValidationError(
+                f"The following placeholders cannot be used in invitation emails: "
+                f"{', '.join(invalid_placeholders)}. "
+                f"Valid placeholders are: {', '.join(valid_placeholders)}."
+            )
+
+        return content
 
 
 @admin.register(InvitationEmail)
@@ -561,9 +618,11 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             "Email content",
             {
                 "description": (
-                    "For event invitations, use the [[invitation_link]] placeholder; "
-                    "this will automatically insert the correct link for each "
-                    "organization and event."
+                    "For event invitations, the [[invitation_link]] placeholder "
+                    "will automatically insert the correct link for each "
+                    "organization and event. "
+                    "The [[party]] placeholder will automatically be replaced with "
+                    "the party name."
                 ),
                 "fields": (
                     "subject",
@@ -588,24 +647,56 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         event_group = obj.event_group
-        org_recipients = get_organization_recipients(obj.organization_types.all())
+        org_recipients = get_organization_recipients(
+            obj.organization_types.all(),
+            additional_cc_contacts=obj.cc_recipients.all(),
+            additional_bcc_contacts=obj.bcc_recipients.all(),
+        )
+
+        # Track invitations for GOV organizations
+        gov_invitations = {}
 
         for org, data in org_recipients.items():
-            if data["to"] or data["cc"]:
-                invitation, _ = EventInvitation.objects.get_or_create(
-                    organization=org, event=event, event_group=event_group
-                )
+            if (
+                data["to_contacts"]
+                or data["cc_contacts"]
+                or data["to_emails"]
+                or data["cc_emails"]
+            ):
+                if org.organization_type.acronym == "GOV":
+                    # Create or get country-level invitation
+                    invitation = gov_invitations.get(org.government)
+                    if not invitation:
+                        invitation = EventInvitation.objects.create(
+                            country=org.government,
+                            event=event,
+                            event_group=event_group,
+                            # This (together with setting the country) signifies we're
+                            # inviting all GOV-related organizations from that country.
+                            organization=None,
+                        )
+                        gov_invitations[org.government] = invitation
+                else:
+                    # Regular organization-level invitation
+                    invitation, _ = EventInvitation.objects.get_or_create(
+                        organization=org,
+                        event=event,
+                        event_group=event_group,
+                    )
                 task = SendEmailTask.objects.create(
                     email=obj,
                     organization=org,
                     invitation=invitation,
                     created_by=request.user,
+                    email_to=list(data["to_emails"]),
+                    email_cc=list(data["cc_emails"]),
+                    email_bcc=list(data["bcc_emails"]),
                 )
 
-                # Set recipients - accounting for additional besides the contact(groups)
-                task.to_contacts.set(data["to"])
-                task.cc_contacts.set(list(data["cc"]) + list(obj.cc_recipients.all()))
-                task.bcc_contacts.set(obj.bcc_recipients.all())
+                # Set recipient contacts (M2M) as returned by get_organization_recipients
+                task.to_contacts.set(data["to_contacts"])
+                task.cc_contacts.set(data["cc_contacts"])
+                task.bcc_contacts.set(data["bcc_contacts"])
 
                 task.run(is_async=True)
                 tasks.append(task)
