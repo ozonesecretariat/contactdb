@@ -172,15 +172,17 @@ class ContactAdminBase(ModelAdmin):
 
 
 @singledispatch
-def solve_fk_item_conflict(obj, contact1, contact2):
+def resolve_fk_merge_conflict(obj, contact1, contact2):
     """
-    Solve conflict when moving a foreign key item from contact2 to
-    contact1. No implementation keeps the item on contact1.
+    Resolve conflicts when transferring a foreign key item from contact2
+    to contact1 depending on the type. If there is no handler for the
+    type, the item related to contact1 is kept and the item related to
+    contact2 is deleted.
     """
     pass
 
 
-@solve_fk_item_conflict.register(Registration)
+@resolve_fk_merge_conflict.register(Registration)
 def _(registration2, contact1, contact2):
     """
     Keep the registration with the latest date.
@@ -241,7 +243,7 @@ class MergeContacts:
                             setattr(item, rel_name, contact1)
                             item.save()
                     except IntegrityError:
-                        solve_fk_item_conflict(item, contact1, contact2)
+                        resolve_fk_merge_conflict(item, contact1, contact2)
                         continue
             elif isinstance(field, models.BooleanField):
                 if val1 != val2:
