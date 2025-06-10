@@ -28,7 +28,7 @@ def _(obj):
 
 
 def find_placeholders(value):
-    return set(re.findall(r"\[\[(.*?)\]\]", value or ""))
+    return set(re.findall(r"\[\[([\w-]{1,50})\]\]", value or ""))
 
 
 def validate_placeholders(value):
