@@ -1,5 +1,7 @@
 import uuid
+from urllib.parse import urljoin
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -190,8 +192,11 @@ class EventInvitation(models.Model):
 
     @property
     def invitation_link(self):
-        # TODO: find better way to ensure frontend(!) view path is used here
-        return f"/events/invitation/{self.token}/"
+        # This will need to be updated if frontend path changes
+        url_path = f"/events/{self.token}/nominations"
+        domain = settings.PROTOCOL + settings.MAIN_FRONTEND_HOST
+
+        return urljoin(domain, url_path)
 
 
 class RegistrationTag(models.Model):
