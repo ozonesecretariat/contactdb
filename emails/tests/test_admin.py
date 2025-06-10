@@ -752,10 +752,20 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
             emails=["unrelated@example.com"],
         )
 
+        additional_cc = ContactFactory(
+            emails=["additional-main@example.com"],
+            email_ccs=["additional-cc@example.com"],
+        )
+        additional_bcc = ContactFactory(
+            emails=["additional-bcc@example.com"],
+        )
+
         # Create invitation email
         invitation_email = InvitationEmailFactory(
             events=[self.event],
             organization_types=[gov_type, self.org_type],
+            cc_recipients=[additional_cc],
+            bcc_recipients=[additional_bcc],
         )
 
         request = self.factory.post("/fake-url/")
@@ -775,8 +785,14 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         self.assertEqual(gov_tasks.count(), 1)
 
         task = gov_tasks.first()
+
+        # Check that government is set correctly
         self.assertEqual(task.invitation.country, task.organization.government)
         self.assertEqual(gov_org1.government, task.organization.government)
+
+        # Check that (B)CC's are not duplicated and all contacts are included
+        self.assertEqual(len(task.email_cc), len(set(task.email_cc)))
+        self.assertEqual(len(task.email_bcc), len(set(task.email_bcc)))
         self.assertSetEqual(
             set(task.email_to),
             {"gov1@example.com", "gov2@example.com", "related1@example.com"},
