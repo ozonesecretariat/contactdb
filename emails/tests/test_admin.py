@@ -722,3 +722,99 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         unrelated_task = tasks.get(organization=unrelated_org)
         self.assertIsNone(unrelated_task.invitation.country)
         self.assertEqual(unrelated_task.invitation.organization, unrelated_org)
+
+    def test_response_post_save_add_multiple_gov_organizations(self):
+        """Test handling of multiple GOV organizations from same country."""
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        # GOV orgs
+        gov_org1 = OrganizationFactory(
+            organization_type=gov_type,
+            government=government,
+            emails=["gov1@example.com"],
+        )
+        OrganizationFactory(
+            organization_type=gov_type,
+            government=government,
+            emails=["gov2@example.com"],
+            email_ccs=["gov2-cc@example.org"],
+        )
+        # Related org
+        OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            emails=["related1@example.com"],
+        )
+        unrelated_org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=None,
+            emails=["unrelated@example.com"],
+        )
+
+        # Create invitation email
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type, self.org_type],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = "session"
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        tasks = SendEmailTask.objects.all()
+
+        # Should create 2 tasks: 1 for GOV & related orgs and 1 for unrelated org
+        self.assertEqual(tasks.count(), 2)
+
+        # Check GOV tasks have country-based invitations
+        gov_tasks = tasks.filter(organization__organization_type=gov_type)
+        self.assertEqual(gov_tasks.count(), 1)
+
+        task = gov_tasks.first()
+        self.assertEqual(task.invitation.country, task.organization.government)
+        self.assertEqual(gov_org1.government, task.organization.government)
+        self.assertSetEqual(
+            set(task.email_to),
+            {"gov1@example.com", "gov2@example.com", "related1@example.com"},
+        )
+
+        # Check unrelated org has its own invitation
+        unrelated_task = tasks.get(organization=unrelated_org)
+        self.assertIsNone(unrelated_task.invitation.country)
+        self.assertEqual(unrelated_task.invitation.organization, unrelated_org)
+
+    def test_response_post_save_add_no_gov_involved(self):
+        """Test that everything works OK when there is no GOV invitation"""
+        government = Country.objects.first()
+        OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            emails=["related1@example.com"],
+        )
+        OrganizationFactory(
+            organization_type=self.org_type,
+            government=None,
+            emails=["unrelated@example.com"],
+        )
+
+        # Create invitation email
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = "session"
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        tasks = SendEmailTask.objects.all()
+
+        # Should create 2 tasks for each organization
+        self.assertEqual(tasks.count(), 2)

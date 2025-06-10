@@ -20,22 +20,39 @@ def get_organization_recipients(
     """
     # First identify governments (called them countries, but there's a subtle difference)
     # for which GOV organizations exist.
-    gov_orgs = Organization.objects.filter(
-        organization_type__acronym="GOV", include_in_invitation=True
+    gov_orgs = (
+        Organization.objects.filter(
+            organization_type__acronym="GOV",
+            include_in_invitation=True,
+            government__isnull=False,
+        )
+        .order_by("government_id")
+        .distinct("government_id")
     )
+
     gov_countries = {org.government for org in gov_orgs if org.government}
 
-    orgs_queryset = Organization.objects.filter(
-        organization_type__in=org_types, include_in_invitation=True
-    ).prefetch_related(
-        "primary_contacts",
-        "secondary_contacts",
-        "government",
-    )
-    # Filter out non-GOV organizations that belong to GOV countries
-    orgs_queryset = orgs_queryset.exclude(
-        ~models.Q(organization_type__acronym="GOV"),
-        government__in=gov_countries,
+    orgs_queryset = (
+        Organization.objects.filter(
+            organization_type__in=org_types, include_in_invitation=True
+        )
+        .prefetch_related(
+            "primary_contacts",
+            "secondary_contacts",
+            "government",
+        )
+        .filter(
+            # Organization is either:
+            # - one of the selected GOV orgs
+            # - or is not related to any GOV country
+            # This avoids mails being sent both as part of a GOV-wide invitations and as
+            # an individual invitation for the non-GOV organization.
+            models.Q(id__in=gov_orgs.values("id"))
+            | models.Q(
+                models.Q(government__isnull=True)
+                | ~models.Q(government__in=gov_countries)
+            )
+        )
     )
 
     additional_cc_contacts = set(additional_cc_contacts or [])
