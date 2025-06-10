@@ -28,40 +28,33 @@ class Command(BaseCommand):
                 designation = contact_dict.get("designation", "")
                 department = contact_dict.get("department", "")
 
-                org_dict = contact_dict.get("organization", {})
+                org_id = contact_dict.get("organization", {}).get(
+                    "organizationId", None
+                )
                 organization = (
-                    Organization.objects.filter(
-                        organization_id=org_dict.get("organizationId", None)
-                    ).first()
-                    if org_dict
+                    Organization.objects.filter(organization_id=org_id).first()
+                    if org_id
                     else None
                 )
 
-                contact = (
-                    Contact.objects.filter(contact_ids__contains=[contact_id])
-                    .prefetch_related("conflicting_contacts")
+                registration = (
+                    Registration.objects.select_related("contact")
+                    .filter(
+                        contact__contact_ids__contains=[contact_id],
+                        event=event,
+                    )
                     .first()
                 )
 
-                for registration in contact_dict["registrationStatuses"]:
-                    if registration is None:
-                        continue
+                if not registration:
+                    continue
 
-                    event = Event.objects.filter(
-                        event_id=registration["eventId"]
-                    ).first()
-                    registration = Registration.objects.filter(
-                        contact=contact,
-                        event=event,
-                    ).first()
+                registration.organization = organization
+                registration.designation = designation
+                registration.department = department
+                registration.save()
 
-                    if not registration:
-                        continue
+                updated_count += 1
+                self.stdout.write(f"Updated registration for {registration}.")
 
-                    registration.organization = organization
-                    registration.designation = designation
-                    registration.department = department
-                    registration.save()
-                    updated_count += 1
-                    self.stdout.write(f"Updated registration for {registration}.")
         self.stdout.write(f"Updated {updated_count} registrations from Kronos.")

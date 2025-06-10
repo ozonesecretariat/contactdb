@@ -245,11 +245,11 @@ class Registration(models.Model):
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField()
 
-    # Keep a copy of the contact fields (organization, designation and
-    # department) as it was at the time of registration
+    # Save the state of organization, designation, and department as it
+    # was when the contact registered
     organization = models.ForeignKey(
         Organization,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="registrations",
