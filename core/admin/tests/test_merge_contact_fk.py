@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from core.admin.contact_base import MergeContacts
 from core.models import Contact, Country, Organization
-from events.models import Event, RegistrationRole, RegistrationStatus
+from events.models import Event, Registration, RegistrationRole, RegistrationStatus
 
 
 class TestMergeContactFk(TestCase):
@@ -66,8 +66,8 @@ class TestMergeContactFk(TestCase):
 
     def test_merge_registrations(self):
         """
-        When merging contacts, only the most recent registration for
-        each event is kept.
+        Test that merging contacts keeps only the most recent
+        registration for each event.
         """
         self.assertEqual(self.contact1.registrations.count(), 1)
         self.assertEqual(self.contact2.registrations.count(), 2)
@@ -75,11 +75,14 @@ class TestMergeContactFk(TestCase):
 
         self.contact1.refresh_from_db()
         self.assertEqual(self.contact1.registrations.count(), 2)
-
         self.assertTrue(self.contact1.registrations.filter(event=self.event).exists())
         self.assertTrue(
             self.contact1.registrations.filter(event=self.other_event).exists()
         )
+
+        # The conflicting contact should be deleted
+        self.assertFalse(Contact.objects.filter(pk=self.contact2.pk).exists())
+        self.assertEqual(Registration.objects.count(), 2)
 
         event_registration = self.contact1.registrations.filter(
             event=self.event
