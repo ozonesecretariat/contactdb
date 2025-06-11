@@ -70,9 +70,9 @@ class EventFactory(factory.django.DjangoModelFactory):
 
     code = factory.Sequence(lambda n: f"EVT{n:03}")
     title = factory.Sequence(lambda n: f"Test Event {n}")
-    start_date = factory.LazyFunction(lambda: timezone.now().date())
+    start_date = factory.LazyFunction(lambda: timezone.now())
     end_date = factory.LazyFunction(
-        lambda: (timezone.now() + timezone.timedelta(days=3)).date()
+        lambda: (timezone.now() + timezone.timedelta(days=3))
     )
     venue_city = "Test City"
     venue_country = factory.SubFactory(CountryFactory)
