@@ -121,7 +121,7 @@ class EventNominationViewSet(ViewSet):
                     priority_pass_code=nomination.get("priority_pass_code", ""),
                     date=timezone.now().date(),
                 )
-            registrations.append(registration)
+                registrations.append(registration)
 
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(registrations, many=True).data)
