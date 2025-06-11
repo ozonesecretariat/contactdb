@@ -4,7 +4,10 @@ from core.models import Organization
 
 
 def get_organization_recipients(
-    org_types, additional_cc_contacts=None, additional_bcc_contacts=None
+    org_types,
+    additional_cc_contacts=None,
+    additional_bcc_contacts=None,
+    reminder_invitation=None,
 ):
     """
     Get Contacts per organization for *invitation* emails, using the organization's
@@ -17,6 +20,7 @@ def get_organization_recipients(
     org_types: QuerySet of OrganizationType objects
     additional_cc_contacts: Optional set of additional contacts to CC
     additional_bcc_contacts: Optional set of additional contacts to BCC
+    reminder_invitation: Optional EventInvitation used to filter only unregistered orgs
     """
     # First identify governments (called them countries, but there's a subtle difference)
     # for which GOV organizations exist.
@@ -54,6 +58,12 @@ def get_organization_recipients(
             )
         )
     )
+
+    # If this is a reminder, only keep organizations that haven't registered anyone
+    if reminder_invitation:
+        unregistered_orgs = reminder_invitation.unregistered_organizations
+        unregistered_org_ids = [org.id for org in unregistered_orgs]
+        orgs_queryset = orgs_queryset.filter(id__in=unregistered_org_ids)
 
     additional_cc_contacts = set(additional_cc_contacts or [])
     additional_bcc_contacts = set(additional_bcc_contacts or [])

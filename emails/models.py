@@ -68,6 +68,11 @@ class Email(models.Model):
         default=EmailTypeChoices.EVENT_NOTIFICATION,
     )
 
+    is_reminder = models.BooleanField(
+        default=False,
+        help_text="Is this a reminder email for a previously sent invitation",
+    )
+
     recipients = models.ManyToManyField(
         Contact,
         blank=True,

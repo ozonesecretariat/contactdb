@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
@@ -335,7 +337,6 @@ class FutureEventFilter(admin.SimpleListFilter):
         today = timezone.now()
 
         if self.value() == "future":
-            # Filter to future events using direct DB queries
             return queryset.filter(
                 Q(event__start_date__gte=today)
                 | Q(
@@ -345,13 +346,44 @@ class FutureEventFilter(admin.SimpleListFilter):
             ).distinct()
 
         if self.value() == "past":
-            # Filter to past events using direct DB queries
-            return queryset.filter(
-                Q(event__start_date__lt=today, event__isnull=False)
+            future_ids = queryset.filter(
+                Q(event__start_date__gte=today)
                 | Q(
-                    event_group__isnull=False, event_group__events__start_date__lt=today
+                    event_group__isnull=False,
+                    event_group__events__start_date__gte=today,
                 )
-            ).distinct()
+            ).values_list("id", flat=True)
+            return queryset.exclude(id__in=future_ids)
+
+        return queryset
+
+
+class HasUnregisteredFilter(admin.SimpleListFilter):
+    title = "Registration Status"
+    parameter_name = "has_unregistered"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", "Has unregistered organizations"),
+            ("no", "All organizations registered"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "yes":
+            # Get invitations where at least one organization did not register
+            has_unregistered = []
+            for invitation in queryset:
+                if invitation.unregistered_organizations.exists():
+                    has_unregistered.append(invitation.id)
+            return queryset.filter(id__in=has_unregistered)
+
+        if self.value() == "no":
+            # Get invitations where all orgs have registered
+            all_registered = []
+            for invitation in queryset:
+                if not invitation.unregistered_organizations.exists():
+                    all_registered.append(invitation.id)
+            return queryset.filter(id__in=all_registered)
 
         return queryset
 
@@ -377,10 +409,17 @@ class EventInvitationAdmin(ModelAdmin):
         AutocompleteFilterFactory("organization", "organization"),
         AutocompleteFilterFactory("country", "country"),
         FutureEventFilter,
+        HasUnregisteredFilter,
         "link_accessed",
     )
 
-    readonly_fields = ("token", "link_accessed", "created_at", "invitation_link")
+    readonly_fields = (
+        "token",
+        "link_accessed",
+        "created_at",
+        "invitation_link",
+        "unregistered_organizations_display",
+    )
 
     search_fields = (
         "organization__name",
@@ -391,6 +430,49 @@ class EventInvitationAdmin(ModelAdmin):
     )
 
     autocomplete_fields = ("event", "event_group", "organization", "country")
+
+    @admin.display(description="Unregistered Organizations")
+    def unregistered_organizations_display(self, obj):
+        """Display organizations that haven't registered any contacts."""
+        if not obj.pk:
+            return "-"
+
+        unregistered = obj.unregistered_organizations
+        count = unregistered.count()
+
+        if count == 0:
+            return "All organizations have registered at least one contact."
+
+        # Build HTML list of organizations with links to their admin pages
+        org_list_html = ["<div>"]
+        org_list_html.append(
+            f"<strong>{count} organization(s) without registrations:</strong>"
+        )
+        org_list_html.append("<ul>")
+
+        for org in unregistered:
+            org_url = reverse("admin:core_organization_change", args=[org.pk])
+            org_list_html.append(
+                f'<li><a href="{org_url}" target="_blank">{org.name}</a></li>'
+            )
+        org_list_html.append("</ul>")
+
+        # Reminder button for integration with the InvitationEmailAdmin
+        if count > 0:
+            url = reverse("admin:emails_invitationemail_add")
+            params = {
+                "is_reminder": "1",
+                "invitation_id": str(obj.id),
+            }
+            reminder_url = f"{url}?{urlencode(params)}"
+
+            org_list_html.append(
+                f"<a href='{reminder_url}' class='button'>"
+                f"Send Reminder Email to All</a>"
+            )
+
+        org_list_html.append("</div>")
+        return format_html("".join(org_list_html))
 
     fieldsets = (
         (
@@ -413,7 +495,16 @@ class EventInvitationAdmin(ModelAdmin):
                 )
             },
         ),
+        (
+            "Registration Status",
+            {
+                "classes": ("collapse",),
+                "fields": ("unregistered_organizations_display",),
+            },
+        ),
     )
+
+    actions = ["send_reminder_emails"]
 
     def get_queryset(self, request):
         return (
@@ -453,8 +544,51 @@ class EventInvitationAdmin(ModelAdmin):
             tasks.count(),
         )
 
-    def save_model(self, request, obj, form, change):
-        # Reset link_accessed when creating new invitation
-        if not change:
-            obj.link_accessed = False
-        super().save_model(request, obj, form, change)
+    @admin.action(description="Send reminder email for selected invitation")
+    def send_reminder_emails(self, request, queryset):
+        """
+        Send reminder emails to organizations that haven't nominated any contacts
+        for a specific invitation (only exactly one invitation is supported for now).
+        """
+        # TODO: I think there's a solid case for not allowing multiple invitations
+        # to be selected; need to confirm though.
+        if queryset.count() > 1:
+            self.message_user(
+                request,
+                "Please select only one invitation at a time for sending reminders.",
+                level=messages.WARNING,
+            )
+            return None
+        invitation = queryset.first()
+        unregistered_orgs = invitation.unregistered_organizations
+
+        if not unregistered_orgs.exists():
+            self.message_user(
+                request,
+                "No unregistered organizations found for the selected invitations.",
+                level=messages.INFO,
+            )
+            return None
+
+        url = reverse("admin:emails_invitationemail_add")
+        params = {
+            "is_reminder": "1",
+            "invitation_id": str(invitation.id),
+        }
+        reminder_url = f"{url}?{urlencode(params)}"
+
+        event_name = (
+            invitation.event.title
+            if invitation.event
+            else invitation.event_group.name
+            if invitation.event_group
+            else "event"
+        )
+        self.message_user(
+            request,
+            f"Preparing to send reminders for {event_name} to "
+            f"{unregistered_orgs.count()} unregistered organizations.",
+            level=messages.SUCCESS,
+        )
+
+        return redirect(reminder_url)

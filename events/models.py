@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django_task.models import TaskRQ
 
@@ -214,6 +214,46 @@ class EventInvitation(models.Model):
                 return True
 
         return False
+
+    @property
+    def unregistered_organizations(self):
+        """
+        Get organizations that haven't registered any contacts for this invitation.
+        All types of registration (including Nomination) are taken into account.
+        """
+        # Get all events related to this invitation
+        events = []
+        if self.event:
+            events = [self.event]
+        elif self.event_group:
+            events = list(self.event_group.events.all())
+
+        if not events:
+            return Organization.objects.none()
+
+        # Get organizations that should have registered
+        if self.organization:
+            orgs_queryset = Organization.objects.filter(id=self.organization.id)
+        elif self.country:
+            # If invitation is for country, check all GOV orgs in that country
+            # TODO: is this enough to properly take GOV into account?
+            orgs_queryset = Organization.objects.filter(
+                organization_type__acronym="GOV", government=self.country
+            )
+        else:
+            return Organization.objects.none()
+
+        return (
+            orgs_queryset.annotate(
+                has_registrations=Exists(
+                    Registration.objects.filter(
+                        event__in=events, contact__organization=OuterRef("pk")
+                    )
+                )
+            )
+            .filter(has_registrations=False)
+            .order_by("name")
+        )
 
 
 class RegistrationTag(models.Model):

@@ -94,7 +94,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         messages = FallbackStorage(request)
         request._messages = messages
 
@@ -151,7 +151,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         messages = FallbackStorage(request)
         request._messages = messages
 
@@ -187,7 +187,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         messages = FallbackStorage(request)
         request._messages = messages
 
@@ -246,7 +246,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         messages = FallbackStorage(request)
         request._messages = messages
 
@@ -286,7 +286,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         # Clear the outbox
@@ -376,7 +376,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         mail.outbox = []
@@ -524,7 +524,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         self.admin.response_post_save_add(request, invitation_email)
@@ -618,7 +618,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         self.admin.response_post_save_add(request, invitation_email)
@@ -701,7 +701,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         self.admin.response_post_save_add(request, invitation_email)
@@ -772,7 +772,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         self.admin.response_post_save_add(request, invitation_email)
@@ -827,7 +827,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         self.admin.response_post_save_add(request, invitation_email)
