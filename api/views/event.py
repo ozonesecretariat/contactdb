@@ -119,7 +119,7 @@ class EventNominationViewSet(ViewSet):
                     role=nomination["role"],
                     is_funded=nomination["is_funded"],
                     priority_pass_code=nomination.get("priority_pass_code", ""),
-                    date=timezone.now().date(),
+                    date=timezone.now(),
                 )
                 registrations.append(registration)
 

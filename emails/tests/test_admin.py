@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
@@ -44,8 +46,8 @@ class TestInvitationEmailAdmin(TestCase):
         self.event = Event.objects.create(
             code="TEST01",
             title="Test Event",
-            start_date="2025-01-01",
-            end_date="2025-01-02",
+            start_date=datetime(2025, 1, 1, tzinfo=UTC),
+            end_date=datetime(2025, 1, 2, tzinfo=UTC),
             venue_country=Country.objects.first(),
         )
 
@@ -455,8 +457,8 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         self.event = Event.objects.create(
             code="TEST01",
             title="Test Event",
-            start_date="2025-01-01",
-            end_date="2025-01-02",
+            start_date=datetime(2025, 1, 1, tzinfo=UTC),
+            end_date=datetime(2025, 1, 2, tzinfo=UTC),
             venue_country=Country.objects.first(),
         )
 

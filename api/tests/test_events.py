@@ -219,13 +219,13 @@ class TestEventNominationsAPI(BaseAPITestCase):
             event=self.event,
             contact=self.contact1,
             status_id=get_nomination_status_id(),
-            date=timezone.now().date(),
+            date=timezone.now(),
         )
         RegistrationFactory(
             event=self.event,
             contact=self.contact2,
             status_id=get_nomination_status_id(),
-            date=timezone.now().date(),
+            date=timezone.now(),
         )
 
         response = self.client.get(self.url)
