@@ -101,7 +101,7 @@ class ContactRegistrationsInline(admin.StackedInline):
             },
         ),
         (
-            "More informaton",
+            "More information",
             {
                 "fields": (
                     ("organization", "designation", "department"),
