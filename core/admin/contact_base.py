@@ -1,6 +1,8 @@
+from functools import singledispatch
+
 from django.contrib import admin, messages
 from django.contrib.admin.utils import flatten_fieldsets
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 from django.db.models import ManyToManyField, ManyToManyRel, ManyToOneRel, Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -10,6 +12,7 @@ from common.array_field import ArrayField
 from common.model_admin import ModelAdmin
 from common.urls import reverse
 from core.models import Contact, ResolveConflict
+from events.models import Registration
 
 MERGE_FROM_PARAM = "merge_from_temp"
 
@@ -168,6 +171,35 @@ class ContactAdminBase(ModelAdmin):
         return self.get_related_link(obj, "email_logs", "any_contact")
 
 
+@singledispatch
+def resolve_fk_merge_conflict(obj, contact1, contact2):
+    """
+    Resolve conflicts when transferring a foreign key item from contact2
+    to contact1 depending on the type. If there is no handler for the
+    type, the item related to contact1 is kept and the item related to
+    contact2 is deleted.
+    """
+    pass
+
+
+@resolve_fk_merge_conflict.register(Registration)
+def _(registration2, contact1, contact2):
+    """
+    Keep the registration with the latest date.
+    """
+    event = registration2.event
+
+    registration1 = Registration.objects.filter(contact=contact1, event=event).first()
+
+    if registration2.date > registration1.date:
+        registration1.delete()
+        registration2.contact = contact1
+        registration2.save()
+    else:
+        # Keep registration from contact1.
+        pass
+
+
 class MergeContacts:
     @staticmethod
     def merge_two_contacts(contact1, contact2):
@@ -203,12 +235,15 @@ class MergeContacts:
                 for item in val2.all():
                     val1.add(item)
             elif isinstance(field, ManyToOneRel):
+                # Move foreign key items from contact2 to contact1.
                 rel_name = field.field.name
                 for item in val2.all():
                     try:
-                        setattr(item, rel_name, contact1)
-                        item.save()
+                        with transaction.atomic():
+                            setattr(item, rel_name, contact1)
+                            item.save()
                     except IntegrityError:
+                        resolve_fk_merge_conflict(item, contact1, contact2)
                         continue
             elif isinstance(field, models.BooleanField):
                 if val1 != val2:
