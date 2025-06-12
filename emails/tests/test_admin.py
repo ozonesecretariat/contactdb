@@ -760,6 +760,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         )
         additional_bcc = ContactFactory(
             emails=["additional-bcc@example.com"],
+            email_ccs=["additional-bcc@example.com"],
         )
 
         # Create invitation email
@@ -836,3 +837,138 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         # Should create 2 tasks for each organization
         self.assertEqual(tasks.count(), 2)
+
+    def test_email_duplication(self):
+        """Test that emails are not duplicated across to, cc and bcc."""
+        # Create organization with overlapping emails
+        org = OrganizationFactory(
+            name="My duplication clone",
+            organization_type=self.org_type,
+            emails=["main@example.com", "overlap@example.com"],
+            email_ccs=["cc@example.com", "overlap@example.com"],
+        )
+
+        # Primary contact with emails that overlap with org & additional cc
+        primary_contact = ContactFactory(
+            organization=org,
+            # Duplicate with org added below
+            emails=["primary@example.com", "overlap@example.com"],
+            email_ccs=[
+                "primary-cc@example.com",
+                # Duplicate with org CC added below
+                "cc@example.com",
+            ],
+        )
+        org.primary_contacts.add(primary_contact)
+
+        # Secondary contact with emails overlapping all categories
+        secondary_contact = ContactFactory(
+            organization=org,
+            # Duplicate with primary added below
+            emails=["secondary@example.com", "primary@example.com"],
+            # Duplicate with one of org's "to" emails added below
+            email_ccs=["secondary-cc@example.com", "main@example.com"],
+        )
+        org.secondary_contacts.add(secondary_contact)
+
+        # Additional CC recipient with overlapping emails
+        additional_cc = ContactFactory(
+            # Duplicate with one of org's primary contact's to emails added below
+            emails=["additional@example.com", "overlap@example.com"],
+            # Duplicate with one of org's primary cc emails added below
+            email_ccs=["additional-cc@example.com", "primary-cc@example.com"],
+        )
+
+        # Additional BCC recipient with emails overlapping all other categories
+        additional_bcc = ContactFactory(
+            # Duplicate with org main added below
+            emails=["bcc@example.com", "main@example.com"],
+            email_ccs=[
+                "bcc-cc@example.com",
+                # Duplicate with primary main added below
+                "primary@example.com",
+            ],
+        )
+
+        # Create and send email
+        invitation_email = InvitationEmailFactory(
+            subject="Am I a clone or am I a duplicate?",
+            content="Testing email duplication scenarios",
+            events=[self.event],
+            organization_types=[self.org_type],
+            cc_recipients=[additional_cc],
+            bcc_recipients=[additional_bcc],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = "session"
+        request._messages = FallbackStorage(request)
+
+        mail.outbox = []
+        self.admin.response_post_save_add(request, invitation_email)
+        self.assertEqual(SendEmailTask.objects.count(), 1)
+        task = SendEmailTask.objects.first()
+
+        # Composing sets from the task to use below
+        task_to_emails = set(task.email_to)
+        task_cc_emails = set(task.email_cc)
+        task_bcc_emails = set(task.email_bcc)
+
+        # Checking no contact duploicates inside each "category" (to, cc, bcc)
+        self.assertEqual(len(task.email_to), len(task_to_emails))
+        self.assertEqual(len(task.email_cc), len(task_cc_emails))
+        self.assertEqual(len(task.email_bcc), len(task_bcc_emails))
+
+        # Checking there's no contact overlap between categories in the task
+        self.assertEqual(len(task_to_emails.intersection(task_cc_emails)), 0)
+        self.assertEqual(len(task_to_emails.intersection(task_bcc_emails)), 0)
+        self.assertEqual(len(task_cc_emails.intersection(task_bcc_emails)), 0)
+
+        # Execute the job and check the actual email
+        SendEmailJob.execute(None, task)
+        self.assertEqual(len(mail.outbox), 1)
+        email_message = mail.outbox[0]
+
+        # Composing the email sets ahead of time to use in comparisons below
+        to_emails = set(email_message.to)
+        cc_emails = set(email_message.cc)
+        bcc_emails = set(email_message.bcc)
+
+        # Check there's no email duplicates within each category
+        self.assertEqual(len(email_message.to), len(to_emails))
+        self.assertEqual(len(email_message.cc), len(cc_emails))
+        self.assertEqual(len(email_message.bcc), len(bcc_emails))
+
+        # Check there's no email overlap between categories
+        self.assertEqual(len(to_emails.intersection(cc_emails)), 0)
+        self.assertEqual(len(to_emails.intersection(bcc_emails)), 0)
+        self.assertEqual(len(cc_emails.intersection(bcc_emails)), 0)
+
+        expected_to = {"main@example.com", "overlap@example.com", "primary@example.com"}
+        self.assertSetEqual(expected_to, to_emails)
+
+        self.assertSetEqual(expected_to.intersection(cc_emails), set())
+        self.assertSetEqual(expected_to.intersection(bcc_emails), set())
+
+        expected_cc = {
+            "cc@example.com",
+            "primary-cc@example.com",
+            "secondary@example.com",
+            "secondary-cc@example.com",
+            "additional@example.com",
+            "additional-cc@example.com",
+        }
+        self.assertSetEqual(expected_cc, cc_emails)
+
+        self.assertSetEqual(expected_cc.intersection(bcc_emails), set())
+        expected_bcc = {"bcc@example.com", "bcc-cc@example.com"}
+        self.assertSetEqual(expected_bcc, bcc_emails)
+
+        # No unexpected emails should appear in neither "category"
+        all_expected = expected_to | expected_cc | expected_bcc
+        all_actual = to_emails | cc_emails | bcc_emails
+        self.assertSetEqual(
+            all_actual - all_expected,
+            set(),
+        )

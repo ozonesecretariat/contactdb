@@ -32,16 +32,18 @@ class SendEmailJob(Job):
         )
         # Save a copy of the message before sending
         task.sent_email = msg.message().as_string()
-        # Save a copy of the addresses we are sending this message to.
-        # In case the contact addresses change in the future, we still have these
-        # fields for easy searches, tracing and auditing.
-        task.email_to = msg.to
-        task.email_cc = msg.cc
-        task.email_bcc = msg.bcc
-        # Link to contacts as well for tracking; useful since group memberships can
-        # change after this email is sent.
-        task.cc_contacts.add(*task.email.all_cc_contacts)
-        task.bcc_contacts.add(*task.email.all_bcc_contacts)
+        # Task addresses & contacts already saved for invitation emails
+        if task.contact:
+            # Save a copy of the addresses we are sending this message to.
+            # In case the contact addresses change in the future, we still have these
+            # fields for easy searches, tracing and auditing.
+            task.email_to = msg.to
+            task.email_cc = msg.cc
+            task.email_bcc = msg.bcc
+            # Link to contacts as well for tracking; useful since group memberships can
+            # change after this email is sent.
+            task.cc_contacts.add(*task.email.all_cc_contacts)
+            task.bcc_contacts.add(*task.email.all_bcc_contacts)
         task.save()
 
         msg.send()
