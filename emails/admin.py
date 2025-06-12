@@ -497,10 +497,20 @@ class InvitationEmailForm(forms.ModelForm):
             "bcc_recipients",
             "subject",
             "content",
+            "is_reminder",
         ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Making is_reminder read-only for now - it can only be set via invitation admin
+        if "is_reminder" in self.fields:
+            self.fields["is_reminder"].disabled = True
+            self.fields["is_reminder"].help_text = (
+                "This field can only be set when sending reminders from the "
+                "Event Invitations admin. It indicates that this email is a "
+                "follow-up reminder for organizations that haven't registered."
+            )
 
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
@@ -570,6 +580,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     form = InvitationEmailForm
 
+    list_display = BaseEmailAdmin.list_display + ("is_reminder",)
+
+    list_filter = ("is_reminder",)
+
     autocomplete_fields = (
         "organization_types",
         "events",
@@ -629,6 +643,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     "the party name."
                 ),
                 "fields": (
+                    "is_reminder",
                     "subject",
                     "content",
                 ),
@@ -647,14 +662,81 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         obj.email_type = Email.EmailTypeChoices.EVENT_INVITE
         super().save_model(request, obj, form, change)
 
+    def add_view(self, request, form_url="", extra_context=None):
+        extra_context = extra_context or {}
+
+        # Check if this is a reminder email
+        if "is_reminder" in request.GET and "invitation_id" in request.GET:
+            invitation_id = request.GET.get("invitation_id")
+
+            try:
+                invitation = EventInvitation.objects.get(id=invitation_id)
+                unregistered_orgs = invitation.unregistered_organizations
+
+                if unregistered_orgs:
+                    events = []
+                    event_group = None
+
+                    if invitation.event:
+                        events = [invitation.event]
+                    elif invitation.event_group:
+                        event_group = invitation.event_group
+
+                    # Get unique organization types
+                    org_types = list(
+                        {org.organization_type for org in unregistered_orgs}
+                    )
+
+                    # Populating sane initial data for the form
+                    extra_context["initial"] = {
+                        "events": events,
+                        "event_group": event_group,
+                        "organization_types": org_types,
+                        "is_reminder": True,
+                    }
+
+                    org_count = len(unregistered_orgs)
+                    event_info = (
+                        events[0].title
+                        if events
+                        else event_group.name
+                        if event_group
+                        else "event"
+                    )
+                    extra_context["title"] = (
+                        f"Send Reminder Email for {event_info} ({org_count} organizations)"
+                    )
+
+                    # Store the invitation ID for use in response_post_save_add()
+                    request.session["reminder_invitation_id"] = invitation_id
+
+            except (EventInvitation.DoesNotExist, ValueError):
+                pass
+
+        return super().add_view(request, form_url, extra_context)
+
     def response_post_save_add(self, request, obj):
+        # First check if this is a reminder
+        invitation_id = request.session.pop("reminder_invitation_id", None)
+        reminder_invitation = None
+        if invitation_id:
+            try:
+                reminder_invitation = EventInvitation.objects.get(id=invitation_id)
+                if not obj.is_reminder:
+                    obj.is_reminder = True
+                    obj.save(update_fields=["is_reminder"])
+            except EventInvitation.DoesNotExist:
+                pass
+
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         event_group = obj.event_group
+
         org_recipients = get_organization_recipients(
             obj.organization_types.all(),
             additional_cc_contacts=obj.cc_recipients.all(),
             additional_bcc_contacts=obj.bcc_recipients.all(),
+            reminder_invitation=reminder_invitation,
         )
 
         # Track invitations for GOV organizations
@@ -667,7 +749,18 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 or data["to_emails"]
                 or data["cc_emails"]
             ):
-                if org.organization_type.acronym == "GOV":
+                # Use the original invitation if this is a reminder
+                if (
+                    reminder_invitation
+                    and reminder_invitation.organization == org
+                    or (
+                        reminder_invitation
+                        and reminder_invitation.country
+                        and org.government == reminder_invitation.country
+                    )
+                ):
+                    invitation = reminder_invitation
+                elif org.organization_type.acronym == "GOV":
                     # Create or get country-level invitation
                     invitation = gov_invitations.get(org.government)
                     if not invitation:
@@ -687,6 +780,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         event=event,
                         event_group=event_group,
                     )
+
                 task = SendEmailTask.objects.create(
                     email=obj,
                     organization=org,
@@ -705,11 +799,18 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 task.run(is_async=True)
                 tasks.append(task)
 
-        self.message_user(
-            request,
-            f"{len(tasks)} invitation emails scheduled for sending",
-            messages.SUCCESS,
-        )
+        if reminder_invitation:
+            self.message_user(
+                request,
+                f"{len(tasks)} reminder emails scheduled for sending",
+                messages.SUCCESS,
+            )
+        else:
+            self.message_user(
+                request,
+                f"{len(tasks)} invitation emails scheduled for sending",
+                messages.SUCCESS,
+            )
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
 
 
