@@ -497,10 +497,20 @@ class InvitationEmailForm(forms.ModelForm):
             "bcc_recipients",
             "subject",
             "content",
+            "is_reminder",
         ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Making is_reminder read-only for now - it can only be set via invitation admin
+        if "is_reminder" in self.fields:
+            self.fields["is_reminder"].disabled = True
+            self.fields["is_reminder"].help_text = (
+                "This field can only be set when sending reminders from the "
+                "Event Invitations admin. It indicates that this email is a "
+                "follow-up reminder for organizations that haven't registered."
+            )
 
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
@@ -570,6 +580,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     form = InvitationEmailForm
 
+    list_display = BaseEmailAdmin.list_display + ("is_reminder",)
+
+    list_filter = ("is_reminder",)
+
     autocomplete_fields = (
         "organization_types",
         "events",
@@ -629,6 +643,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     "the party name."
                 ),
                 "fields": (
+                    "is_reminder",
                     "subject",
                     "content",
                 ),
@@ -677,6 +692,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         "events": events,
                         "event_group": event_group,
                         "organization_types": org_types,
+                        "is_reminder": True,
                     }
 
                     org_count = len(unregistered_orgs)
@@ -705,8 +721,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         reminder_invitation = None
         if invitation_id:
             try:
-                obj.is_reminder = True
                 reminder_invitation = EventInvitation.objects.get(id=invitation_id)
+                if not obj.is_reminder:
+                    obj.is_reminder = True
+                    obj.save(update_fields=["is_reminder"])
             except EventInvitation.DoesNotExist:
                 pass
 

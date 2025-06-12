@@ -8,7 +8,11 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
 from django.test import RequestFactory, TestCase, override_settings
 
-from api.tests.factories import ContactFactory, OrganizationFactory
+from api.tests.factories import (
+    ContactFactory,
+    EventInvitationFactory,
+    OrganizationFactory,
+)
 from core.models import Contact, Country, OrganizationType
 from emails.admin import InvitationEmailAdmin
 from emails.jobs import SendEmailJob
@@ -263,6 +267,93 @@ class TestInvitationEmailAdmin(TestCase):
 
             self.assertIn("additional-bcc-main@example.com", task.email_bcc)
             self.assertIn("additional-bcc@example.com", task.email_bcc)
+
+    def test_is_reminder_flag(self):
+        """Test that the is_reminder flag is properly taken into account at save."""
+        invitation = EventInvitationFactory(
+            event=self.event,
+            organization=self.organization,
+        )
+        reminder_email = InvitationEmailFactory(
+            events=[self.event], organization_types=[self.org_type], is_reminder=True
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_invitation_id": invitation.id}
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # Checking the correct message was displayed
+        message_list = list(get_messages(request))
+        self.assertEqual(len(message_list), 1)
+        self.assertIn("reminder emails scheduled for sending", str(message_list[0]))
+
+        # Checking the created tasks
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 1)
+        task = tasks.first()
+        self.assertEqual(task.email, reminder_email)
+        self.assertEqual(task.organization, self.organization)
+
+        # Testing with pre-existing invitation created above
+        reminder_email2 = InvitationEmailFactory(
+            events=[self.event], organization_types=[self.org_type], is_reminder=True
+        )
+
+        reminder_invitation = task.invitation
+        request2 = self.factory.post("/fake-url/")
+        request2.user = self.user
+        request2.session = {"reminder_invitation_id": reminder_invitation.id}
+        messages2 = FallbackStorage(request2)
+        request2._messages = messages2
+
+        self.admin.response_post_save_add(request2, reminder_email2)
+
+        # Checking that reminder message is correctly displayed this time too
+        message_list2 = list(get_messages(request2))
+        self.assertEqual(len(message_list2), 1)
+        self.assertIn("reminder emails scheduled for sending", str(message_list2[0]))
+
+        # Verifying reminder flag persists even when reset
+        reminder_email3 = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=False,  # Explicitly set as non-reminder
+        )
+
+        request3 = self.factory.post("/fake-url/")
+        request3.user = self.user
+        request3.session = {"reminder_invitation_id": reminder_invitation.id}
+        messages3 = FallbackStorage(request3)
+        request3._messages = messages3
+
+        self.admin.response_post_save_add(request3, reminder_email3)
+
+        # Checking that is_reminder is correct set to True despite initially being False
+        # This simulates what happens when using the reminder action
+        self.assertTrue(InvitationEmail.objects.get(id=reminder_email3.id).is_reminder)
+
+        # Testing regular invitations (non-reminder) behaviour
+        invitation_email = InvitationEmailFactory(
+            events=[self.event], organization_types=[self.org_type], is_reminder=False
+        )
+
+        request4 = self.factory.post("/fake-url/")
+        request4.user = self.user
+        request4.session = {}  # No reminder session data
+        messages4 = FallbackStorage(request4)
+        request4._messages = messages4
+
+        self.admin.response_post_save_add(request4, invitation_email)
+
+        # Check that "normal" invitation (non-reminder) message is displayed
+        message_list4 = list(get_messages(request4))
+        self.assertEqual(len(message_list4), 1)
+        self.assertIn("invitation emails scheduled for sending", str(message_list4[0]))
+        self.assertNotIn("reminder emails scheduled for sending", str(message_list4[0]))
 
     @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
     def test_email_message_content(self):

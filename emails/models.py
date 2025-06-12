@@ -70,7 +70,11 @@ class Email(models.Model):
 
     is_reminder = models.BooleanField(
         default=False,
-        help_text="Is this a reminder email for a previously sent invitation",
+        help_text=(
+            "Is this a reminder email for a previously sent invitation, "
+            "for organizations that have not registered any contacts yet. "
+            "This changes email behaviour: only sends mails to 'unregistered' orgs."
+        ),
     )
 
     recipients = models.ManyToManyField(
