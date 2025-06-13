@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
@@ -456,21 +454,6 @@ class EventInvitationAdmin(ModelAdmin):
                 f'<li><a href="{org_url}" target="_blank">{org.name}</a></li>'
             )
         org_list_html.append("</ul>")
-
-        # Reminder button for integration with the InvitationEmailAdmin
-        if count > 0:
-            url = reverse("admin:emails_invitationemail_add")
-            params = {
-                "is_reminder": "1",
-                "invitation_id": str(obj.id),
-            }
-            reminder_url = f"{url}?{urlencode(params)}"
-
-            org_list_html.append(
-                f"<a href='{reminder_url}' class='button'>"
-                f"Send Reminder Email to All</a>"
-            )
-
         org_list_html.append("</div>")
         return format_html("".join(org_list_html))
 
@@ -503,8 +486,6 @@ class EventInvitationAdmin(ModelAdmin):
             },
         ),
     )
-
-    actions = ["send_reminder_emails"]
 
     def get_queryset(self, request):
         return (
@@ -543,52 +524,3 @@ class EventInvitationAdmin(ModelAdmin):
             obj.id,
             tasks.count(),
         )
-
-    @admin.action(description="Send reminder email for selected invitation")
-    def send_reminder_emails(self, request, queryset):
-        """
-        Send reminder emails to organizations that haven't nominated any contacts
-        for a specific invitation (only exactly one invitation is supported for now).
-        """
-        # TODO: I think there's a solid case for not allowing multiple invitations
-        # to be selected; need to confirm though.
-        if queryset.count() > 1:
-            self.message_user(
-                request,
-                "Please select only one invitation at a time for sending reminders.",
-                level=messages.WARNING,
-            )
-            return None
-        invitation = queryset.first()
-        unregistered_orgs = invitation.unregistered_organizations
-
-        if not unregistered_orgs.exists():
-            self.message_user(
-                request,
-                "No unregistered organizations found for the selected invitations.",
-                level=messages.INFO,
-            )
-            return None
-
-        url = reverse("admin:emails_invitationemail_add")
-        params = {
-            "is_reminder": "1",
-            "invitation_id": str(invitation.id),
-        }
-        reminder_url = f"{url}?{urlencode(params)}"
-
-        event_name = (
-            invitation.event.title
-            if invitation.event
-            else invitation.event_group.name
-            if invitation.event_group
-            else "event"
-        )
-        self.message_user(
-            request,
-            f"Preparing to send reminders for {event_name} to "
-            f"{unregistered_orgs.count()} unregistered organizations.",
-            level=messages.SUCCESS,
-        )
-
-        return redirect(reminder_url)
