@@ -1,14 +1,26 @@
 <template>
-  <q-table :rows="filteredNominations" :columns="columns" row-key="id" :loading="isLoadingNominations" :filter="filter">
-    <template #top>
-      <q-space />
-      <q-input v-model="filter" placeholder="Search" dense debounce="300">
-        <template #append>
+  <div class="flex column q-gutter-y-md">
+    <div class="text-subtitle2">Ozone Secretariat</div>
+    <div class="flex q-gutter-x-md">
+      <q-input
+        v-model="filter"
+        placeholder="Search"
+        debounce="200"
+        autofocus
+        role="search"
+        standout
+        dense
+        class="col-grow"
+      >
+        <template #prepend>
           <q-icon name="search" />
         </template>
       </q-input>
-    </template>
-  </q-table>
+      <q-btn icon="add" color="accent">Add Nomination</q-btn>
+    </div>
+    <div class="text-subtitle2 q-mt-xl">Current nominations</div>
+    <q-table :rows="filteredNominations" :columns="columns" row-key="id" :loading="isLoadingNominations" />
+  </div>
 </template>
 
 <script setup lang="ts">

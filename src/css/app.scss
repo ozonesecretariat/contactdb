@@ -6,3 +6,8 @@ body {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
 }
+
+.q-table__top,
+thead tr:first-child th {
+  background-color: #f0f0f0;
+}

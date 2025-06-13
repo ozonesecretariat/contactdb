@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf" class="bg-grey-2">
     <q-page-container class="token-container">
       <q-page class="q-pa-lg">
-        <h1 class="text-primary text-weight-bold">
+        <h1 class="text-secondary">
           {{ route.meta.header }}
         </h1>
         <p class="text-subtitle1">
