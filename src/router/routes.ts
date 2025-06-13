@@ -41,6 +41,9 @@ const routes: RouteRecordRaw[] = [
         component: () => import("pages/EventNominationsPage.vue"),
         meta: {
           header: "Meeting of Ozone Treaties",
+          metaHeaders: {
+            title: "ContactDB - Nominations",
+          },
           subtitle:
             "The Meetings of Ozone Treaties are the cornerstone of the international effort to phase out ozone-depleting substances.",
         },

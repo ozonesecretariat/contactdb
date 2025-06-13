@@ -185,7 +185,7 @@ export default defineConfig((/* ctx */) => ({
     // directives: [],
 
     // Quasar plugins
-    plugins: ["Loading", "LoadingBar", "Notify", "Dialog", "Dark"],
+    plugins: ["Loading", "LoadingBar", "Notify", "Dialog", "Dark", "Meta"],
   },
 
   // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
