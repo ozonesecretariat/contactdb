@@ -198,6 +198,13 @@ class Email(models.Model):
         if contact:
             msg.to.extend(contact.emails or [])
             msg.cc.extend(contact.email_ccs or [])
+            # Add "global" CCs and BCCs (will be included in *all* actual emails generated
+            # for this Email instance).
+            for cc_contact in self.all_cc_contacts:
+                msg.cc.extend(cc_contact.emails or [])
+            for bcc_contact in self.all_bcc_contacts:
+                msg.bcc.extend(bcc_contact.emails or [])
+
         if to_list:
             msg.to.extend(to_list)
         if cc_list:
@@ -205,15 +212,7 @@ class Email(models.Model):
         if bcc_list:
             msg.bcc.extend(bcc_list)
 
-        # Add "global" CCs and BCCs (will be included in *all* actual emails generated
-        # for this Email instance).
-        for cc_contact in self.all_cc_contacts:
-            msg.cc.extend(cc_contact.emails or [])
-        for bcc_contact in self.all_bcc_contacts:
-            msg.bcc.extend(bcc_contact.emails or [])
-
         html_content = self.content.strip()
-
         html_content = replace_placeholders([contact, invitation], html_content)
 
         # Remove all HTML Tags, leaving only the plaintext

@@ -79,7 +79,6 @@ class ContactMembershipInline(admin.StackedInline):
     autocomplete_fields = ("contactgroup",)
     verbose_name = "Contact group"
     verbose_name_ = "Contact groups"
-    classes = ["collapse"]
 
     def has_change_permission(self, request, obj=None):
         return False
