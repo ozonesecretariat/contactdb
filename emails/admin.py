@@ -4,7 +4,7 @@ import textwrap
 from email import message_from_string
 
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
-from ckeditor.widgets import CKEditorWidget
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
@@ -192,7 +192,9 @@ class EmailAdminForm(forms.ModelForm):
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
         if "content" in self.fields:
-            self.fields["content"].widget = CKEditorWidget(config_name="email_editor")
+            self.fields["content"].widget = CKEditorUploadingWidget(
+                config_name="email_editor"
+            )
 
     def clean_content(self):
         """Validate that only specific placeholders are used in "normal" emails."""
@@ -506,7 +508,7 @@ class InvitationEmailForm(forms.ModelForm):
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
         if "content" in self.fields:
-            self.fields["content"].widget = CKEditorWidget(
+            self.fields["content"].widget = CKEditorUploadingWidget(
                 config_name="invitation_editor"
             )
 

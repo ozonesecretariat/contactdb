@@ -1,1 +1,22 @@
 // app global css in SCSS form
+
+@import "font-face";
+
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+}
+
+.body--light {
+  .q-table__top,
+  thead tr:first-child th {
+    background-color: #f0f0f0;
+  }
+}
+
+.body--dark {
+  .q-table__top,
+  thead tr:first-child th {
+    background-color: #303030;
+  }
+}

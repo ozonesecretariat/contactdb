@@ -38,6 +38,30 @@ const routes: RouteRecordRaw[] = [
   {
     children: [
       {
+        component: () => import("pages/EventNominationsPage.vue"),
+        meta: {
+          header: "Meeting of Ozone Treaties",
+          metaHeaders: {
+            title: "ContactDB - Nominations",
+          },
+          subtitle:
+            "The Meetings of Ozone Treaties are the cornerstone of the international effort to phase out ozone-depleting substances.",
+        },
+        name: "event-nominations",
+        path: "nominations",
+        props: true,
+      },
+    ],
+    component: () => import("layouts/TokenAuthLayout.vue"),
+    meta: {
+      // Don't require either permission or anon access as this should be
+      // accessible to anyone with the link.
+    },
+    path: "/token/:invitationToken",
+  },
+  {
+    children: [
+      {
         children: [
           {
             component: () => import("pages/account/AccountSettingsPage.vue"),
@@ -76,19 +100,6 @@ const routes: RouteRecordRaw[] = [
         },
         name: "events",
         path: "events",
-      },
-      {
-        component: () => import("pages/EventNominationsPage.vue"),
-        meta: {
-          header: "Event Nominations",
-          // Theoretically, this should be accessible for anyone with the link.
-          // Overriding the default requireAuthentication setting for this.
-          requireAuthentication: false,
-          requirePermissions: [],
-        },
-        name: "event-nominations",
-        path: "events/:invitationToken/nominations",
-        props: true,
       },
       {
         component: () => import("pages/HomePage.vue"),

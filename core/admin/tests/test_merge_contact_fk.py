@@ -7,6 +7,7 @@ from events.models import Event, Registration, RegistrationRole, RegistrationSta
 
 class TestMergeContactFk(TestCase):
     fixtures = [
+        "test/eventgroup",
         "test/event",
         "initial/country",
         "initial/organizationtype",

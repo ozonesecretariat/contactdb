@@ -166,8 +166,7 @@ export default defineConfig((/* ctx */) => ({
     // 'themify',
     // 'line-awesome',
     // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-
-    "roboto-font", // optional, you are not bound to it
+    // "roboto-font", // optional, you are not bound to it
     "material-icons", // optional, you are not bound to it
   ],
 
@@ -186,7 +185,7 @@ export default defineConfig((/* ctx */) => ({
     // directives: [],
 
     // Quasar plugins
-    plugins: ["Loading", "LoadingBar", "Notify", "Dialog", "Dark"],
+    plugins: ["Loading", "LoadingBar", "Notify", "Dialog", "Dark", "Meta"],
   },
 
   // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa

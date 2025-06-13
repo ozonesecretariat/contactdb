@@ -44,7 +44,7 @@ class EventNominationViewSet(ViewSet):
     permission_classes = [AllowAny, ContactNominationPermission]
     lookup_field = "token"
 
-    def get_invitation(self, token):
+    def get_invitation(self, token) -> EventInvitation:
         return get_object_or_404(EventInvitation, token=token)
 
     def get_organization_context(self):
@@ -66,6 +66,16 @@ class EventNominationViewSet(ViewSet):
         registrations_qs = Registration.objects.select_related(
             "contact", "status", "event"
         )
+        if invitation.organization:
+            registrations_qs = registrations_qs.filter(
+                contact__organization=invitation.organization
+            )
+        if invitation.country:
+            registrations_qs = registrations_qs.filter(
+                contact__organization__government=invitation.country,
+                contact__organization__organization_type__acronym="GOV",
+            )
+
         # TODO: this assumes mutual exclusion between event and event_group
         if invitation.event:
             return registrations_qs.filter(event=invitation.event)

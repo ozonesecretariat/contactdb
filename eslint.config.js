@@ -4,6 +4,7 @@ import prettierSkipFormatting from "@vue/eslint-config-prettier/skip-formatting"
 import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import pluginPrettier from "eslint-config-prettier";
 import pluginCypress from "eslint-plugin-cypress/flat";
+import mocha from "eslint-plugin-mocha";
 import perfectionist from "eslint-plugin-perfectionist";
 import pluginVue from "eslint-plugin-vue";
 import globals from "globals";
@@ -29,6 +30,15 @@ export default defineConfigWithVueTs([
   },
   // https://github.com/vuejs/eslint-config-typescript
   vueTsConfigs.recommendedTypeChecked,
+  {
+    files: ["cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}", "cypress/support/**/*.{js,ts,jsx,tsx}"],
+    plugins: {
+      mocha,
+    },
+    rules: {
+      "mocha/no-exclusive-tests": "error", // disallow `.only`
+    },
+  },
   {
     ...pluginCypress.configs.recommended,
     files: ["cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}", "cypress/support/**/*.{js,ts,jsx,tsx}"],

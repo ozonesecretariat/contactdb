@@ -10,7 +10,8 @@
       "end_date": "2020-07-19T00:00:00Z",
       "venue_country": "MM",
       "venue_city": "Tashkent",
-      "dates": ""
+      "dates": "15-22 April",
+      "groups": [2]
     }
   },
   {
@@ -24,7 +25,8 @@
       "end_date": "2023-06-07T00:00:00Z",
       "venue_country": "AF",
       "venue_city": "Oslo",
-      "dates": ""
+      "dates": "15-22 April",
+      "groups": [2]
     }
   },
   {
@@ -38,7 +40,8 @@
       "end_date": "2024-09-10T00:00:00Z",
       "venue_country": "IN",
       "venue_city": "Prague",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -52,7 +55,8 @@
       "end_date": "2023-12-29T00:00:00Z",
       "venue_country": "HN",
       "venue_city": "Hanoi",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -66,7 +70,8 @@
       "end_date": "2023-02-24T00:00:00Z",
       "venue_country": "SL",
       "venue_city": "Dodoma",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -80,7 +85,8 @@
       "end_date": "2022-01-28T00:00:00Z",
       "venue_country": "ME",
       "venue_city": "Bandar Seri Begawan",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -94,7 +100,8 @@
       "end_date": "2024-03-10T00:00:00Z",
       "venue_country": "MX",
       "venue_city": "Prague",
-      "dates": ""
+      "dates": "15-22 April",
+      "groups": [2]
     }
   },
   {
@@ -108,7 +115,8 @@
       "end_date": "2023-04-26T00:00:00Z",
       "venue_country": "HU",
       "venue_city": "Riyadh",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -122,7 +130,8 @@
       "end_date": "2024-09-28T00:00:00Z",
       "venue_country": "GR",
       "venue_city": "Mata-Utu",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -136,7 +145,8 @@
       "end_date": "2025-10-26T00:00:00Z",
       "venue_country": "AD",
       "venue_city": "Apia",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -150,7 +160,8 @@
       "end_date": "2025-11-22T00:00:00Z",
       "venue_country": "MG",
       "venue_city": "Budapest",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -164,7 +175,8 @@
       "end_date": "2025-01-30T00:00:00Z",
       "venue_country": "PL",
       "venue_city": "Porto-Novo",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -178,7 +190,8 @@
       "end_date": "2021-12-21T00:00:00Z",
       "venue_country": "TD",
       "venue_city": "Damascus",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -192,7 +205,8 @@
       "end_date": "2021-02-26T00:00:00Z",
       "venue_country": "BZ",
       "venue_city": "Suva",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -206,7 +220,8 @@
       "end_date": "2024-10-19T00:00:00Z",
       "venue_country": "KW",
       "venue_city": "Online",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -220,7 +235,8 @@
       "end_date": "2020-12-02T00:00:00Z",
       "venue_country": "MD",
       "venue_city": "Kuwait City",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -234,7 +250,8 @@
       "end_date": "2020-10-31T00:00:00Z",
       "venue_country": "BH",
       "venue_city": "Online",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -248,7 +265,8 @@
       "end_date": "2024-01-06T00:00:00Z",
       "venue_country": "GY",
       "venue_city": "Ottawa",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -262,7 +280,8 @@
       "end_date": "2025-08-04T00:00:00Z",
       "venue_country": "BD",
       "venue_city": "Nouakchott",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   },
   {
@@ -276,7 +295,8 @@
       "end_date": "2021-09-03T00:00:00Z",
       "venue_country": "AF",
       "venue_city": "Yaoundé",
-      "dates": ""
+      "dates": "",
+      "groups": []
     }
   }
 ]

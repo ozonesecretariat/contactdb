@@ -1,101 +1,145 @@
 <template>
-  <q-page>
-    <div class="q-pa-lg">
-      <q-table :rows="nominations" :columns="columns" row-key="id" :loading="isLoading" :filter="filter">
-        <template #top>
-          <q-space />
-          <q-input v-model="filter" placeholder="Search" dense debounce="300">
-            <template #append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
+  <div class="flex column q-gutter-y-md">
+    <div class="text-subtitle2">Ozone Secretariat</div>
+    <div class="flex q-gutter-x-md">
+      <q-input v-model="search" placeholder="Search" autofocus role="search" filled dense class="col-grow">
+        <template #prepend>
+          <q-icon name="search" />
         </template>
-      </q-table>
+      </q-input>
+      <q-btn icon="add" color="accent">Add Nomination</q-btn>
     </div>
-  </q-page>
+    <div class="text-subtitle2 q-mt-xl">Current nominations</div>
+    <q-table
+      :rows="filteredNominations"
+      :columns="columns"
+      row-key="id"
+      :loading="isLoadingNominations || isLoadingEvents"
+      :pagination="{
+        rowsPerPage: 15,
+        sortBy: 'contact',
+        descending: false,
+      }"
+      :dense="$q.screen.lt.lg"
+      :grid="$q.screen.lt.md"
+    >
+      <template #header="props">
+        <q-tr :props="props">
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.label }}
+            <q-tooltip v-if="col.tooltip">
+              {{ col.tooltip }}
+            </q-tooltip>
+          </q-th>
+        </q-tr>
+      </template>
+
+      <template #body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn icon="edit" flat size="sm" round />
+        </q-td>
+      </template>
+    </q-table>
+  </div>
 </template>
 
-<script lang="ts">
-import type { QTableColumn } from "quasar";
-import type { EventNomination } from "src/types/registration";
+<script setup lang="ts">
+import type { MeetingEvent } from "src/types/event";
+import type { QTableColumnWithTooltip } from "src/types/quasar";
+import type { Contact, EventNomination } from "src/types/registration";
 
 import { useAsyncState } from "@vueuse/core";
+import { useRouteQuery } from "@vueuse/router";
 import { api } from "boot/axios";
-import { computed, defineComponent, ref } from "vue";
+import { useQuasar } from "quasar";
+import { unaccentSearch } from "src/utils/search";
+import { computed } from "vue";
 
-export default defineComponent({
-  name: "EventNominationsPage",
-  props: {
-    invitationToken: {
-      required: true,
-      type: String,
-    },
-  },
+interface GroupedEventNomination {
+  contact: Contact;
+  nominations: {
+    [key: string]: EventNomination;
+  };
+}
 
-  setup(props) {
-    const filter = ref("");
-
-    const columns: QTableColumn[] = [
-      {
-        align: "left",
-        field: (row: EventNomination) => `${row.contact.firstName} ${row.contact.lastName}`,
-        label: "Contact",
-        name: "contact",
-        required: true,
-        sortable: true,
-      },
-      {
-        align: "left",
-        field: "organization",
-        label: "Organization",
-        name: "organization",
-        sortable: true,
-      },
-      {
-        align: "left",
-        field: "created_on",
-        label: "Registered On",
-        name: "created_on",
-        sortable: true,
-      },
-      {
-        align: "left",
-        field: "status",
-        label: "Status",
-        name: "status",
-        sortable: true,
-      },
-    ];
-
-    const { isLoading, state } = useAsyncState(
-      async () => (await api.get<EventNomination[]>(`/events/nominations/${props.invitationToken}/`)).data,
-      [],
-    );
-
-    const { isLoading: loadingContacts, state: availableContacts } = useAsyncState(
-      async () => (await api.get(`/events/nominations/${props.invitationToken}/available_contacts/`)).data,
-      [],
-    );
-
-    const nominations = computed(() => {
-      const text = filter.value.toLowerCase();
-      return state.value.filter(
-        (nomination: EventNomination) =>
-          nomination.contact.firstName.toLowerCase().includes(text) ||
-          nomination.contact.lastName.toLowerCase().includes(text) ||
-          nomination.organization.name.toLowerCase().includes(text) ||
-          nomination.status.toLowerCase().includes(text),
-      );
-    });
-
-    return {
-      availableContacts,
-      columns,
-      filter,
-      isLoading,
-      loadingContacts,
-      nominations,
-    };
+const { invitationToken } = defineProps({
+  invitationToken: {
+    required: true,
+    type: String,
   },
 });
+
+const $q = useQuasar();
+const search = useRouteQuery("search", "");
+
+const { isLoading: isLoadingNominations, state: nominations } = useAsyncState(
+  async () => (await api.get<EventNomination[]>(`/events-nominations/${invitationToken}/`)).data,
+  [],
+);
+const { isLoading: isLoadingEvents, state: events } = useAsyncState<MeetingEvent[]>(
+  async () => (await api.get(`/events-nominations/${invitationToken}/events/`)).data,
+  [],
+);
+
+const groupedNominations = computed(() => {
+  const result: Record<number, GroupedEventNomination> = {};
+  for (const nomination of nominations.value) {
+    let obj = result[nomination.contact.id];
+    if (!obj) {
+      obj = {
+        contact: nomination.contact,
+        nominations: {},
+      };
+      result[nomination.contact.id] = obj;
+    }
+    obj.nominations[nomination.event.code] = nomination;
+  }
+  return Object.values(result);
+});
+
+const columns = computed(() => {
+  const result: QTableColumnWithTooltip<GroupedEventNomination>[] = [
+    {
+      align: "left",
+      field: (row) => row.contact.fullName,
+      label: "Full name",
+      name: "fullName",
+      sortable: true,
+    },
+    {
+      align: "left",
+      field: (row) => row.contact.organization?.name ?? "",
+      label: "Organization",
+      name: "organization",
+      sortable: true,
+    },
+  ];
+  for (const event of events.value) {
+    result.push({
+      align: "left",
+      field: (row) => row.nominations[event.code]?.status ?? "-",
+      label: event.code,
+      name: `eventCode-${event.code}`,
+      sortable: true,
+      tooltip: event.title,
+    });
+  }
+  result.push({
+    align: "right",
+    field: () => "",
+    label: "",
+    name: "actions",
+    sortable: false,
+  });
+  return result;
+});
+
+const filteredNominations = computed(() =>
+  unaccentSearch(search.value, groupedNominations.value, (item) => [
+    item.contact.firstName,
+    item.contact.lastName,
+    item.contact.fullName,
+    item.contact.organization?.name,
+  ]),
+);
 </script>
