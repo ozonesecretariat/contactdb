@@ -1,1 +1,8 @@
 // app global css in SCSS form
+
+@import "font-face";
+
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+}
