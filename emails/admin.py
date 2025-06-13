@@ -191,7 +191,9 @@ class EmailAdminForm(forms.ModelForm):
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
         if "content" in self.fields:
-            self.fields["content"].widget = CKEditorUploadingWidget(config_name="email_editor")
+            self.fields["content"].widget = CKEditorUploadingWidget(
+                config_name="email_editor"
+            )
 
     def clean_content(self):
         """Validate that only specific placeholders are used in "normal" emails."""
