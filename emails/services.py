@@ -7,7 +7,7 @@ def get_organization_recipients(
     org_types,
     additional_cc_contacts=None,
     additional_bcc_contacts=None,
-    reminder_invitation=None,
+    invitation_email=None,
 ):
     """
     Get Contacts per organization for *invitation* emails, using the organization's
@@ -60,8 +60,8 @@ def get_organization_recipients(
     )
 
     # If this is a reminder, only keep organizations that haven't registered anyone
-    if reminder_invitation:
-        unregistered_orgs = reminder_invitation.unregistered_organizations
+    if invitation_email:
+        unregistered_orgs = invitation_email.unregistered_organizations
         unregistered_org_ids = [org.id for org in unregistered_orgs]
         orgs_queryset = orgs_queryset.filter(id__in=unregistered_org_ids)
 

@@ -13,7 +13,13 @@ from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
 from common.model import get_protected_storage
-from core.models import Contact, ContactGroup, OrganizationType
+from core.models import (
+    Contact,
+    ContactGroup,
+    EventInvitation,
+    Organization,
+    OrganizationType,
+)
 from emails.placeholders import (
     replace_placeholders,
     validate_placeholders,
@@ -263,6 +269,34 @@ class InvitationEmail(Email):
         proxy = True
         verbose_name = "Invitation Email"
         verbose_name_plural = "Invitation Emails"
+
+    @property
+    def unregistered_organizations(self):
+        """
+        Get all organizations that were invited by this email but haven't registered yet.
+        Returns a queryset of organizations.
+        """
+        # TODO: this has the potential to be horribly slow!
+        event = self.events.first() if self.events.exists() else None
+        event_group = self.event_group
+
+        if not (event or event_group):
+            return Organization.objects.none()
+
+        # Get all invitations for this event/group
+        if event:
+            invitations = EventInvitation.objects.filter(event=event)
+        else:
+            invitations = EventInvitation.objects.filter(event_group=event_group)
+
+        # Collect all unregistered organizations from all invitations
+        unregistered_org_ids = set()
+        for invitation in invitations:
+            unregistered_org_ids.update(
+                invitation.unregistered_organizations.values_list("id", flat=True)
+            )
+
+        return Organization.objects.filter(id__in=unregistered_org_ids)
 
 
 class SendEmailTask(TaskRQ):
