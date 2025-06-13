@@ -79,6 +79,7 @@ class ContactMembershipInline(admin.StackedInline):
     autocomplete_fields = ("contactgroup",)
     verbose_name = "Contact group"
     verbose_name_ = "Contact groups"
+    classes = ["collapse"]
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -93,19 +94,16 @@ class ContactRegistrationsInline(admin.StackedInline):
     fieldsets = (
         (
             None,
-            {
-                "fields": (
-                    ("event", "status", "role", "tags"),
-                    "date",
-                )
-            },
+            {"fields": (("event", "status"),)},
         ),
         (
-            "More informaton",
+            "More information",
             {
                 "fields": (
+                    "date",
+                    "role",
+                    ("priority_pass_code", "is_funded", "tags"),
                     ("organization", "designation", "department"),
-                    ("priority_pass_code", "is_funded"),
                 ),
                 "classes": ("collapse",),
             },

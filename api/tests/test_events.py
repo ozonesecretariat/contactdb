@@ -135,6 +135,10 @@ class TestEventNominationsAPI(BaseAPITestCase):
         self.assertEqual(registrations.count(), 2)
         self.assertEqual(registrations.filter(contact=self.contact1).exists(), True)
 
+        # Check returned data
+        response_data = response.json()
+        self.assertEqual(len(response_data), 2)
+
     def test_nominate_invalid_contact(self):
         """Test nominating a contact from another organization."""
         other_org = Organization.objects.create(name="Other Org")
@@ -215,13 +219,13 @@ class TestEventNominationsAPI(BaseAPITestCase):
             event=self.event,
             contact=self.contact1,
             status_id=get_nomination_status_id(),
-            date=timezone.now().date(),
+            date=timezone.now(),
         )
         RegistrationFactory(
             event=self.event,
             contact=self.contact2,
             status_id=get_nomination_status_id(),
-            date=timezone.now().date(),
+            date=timezone.now(),
         )
 
         response = self.client.get(self.url)
