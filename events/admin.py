@@ -140,6 +140,7 @@ class RegistrationAdmin(ModelAdmin):
     )
     list_filter = [
         AutocompleteFilterFactory("event", "event"),
+        AutocompleteFilterFactory("organization", "contact__organization"),
         AutocompleteFilterFactory("contact", "contact"),
         AutocompleteFilterFactory("status", "status"),
         AutocompleteFilterFactory("role", "role"),
