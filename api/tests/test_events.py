@@ -26,6 +26,7 @@ class TestEventsAPI(BaseAPITestCase):
         "initial/region",
         "initial/subregion",
         "initial/country",
+        "test/eventgroup",
         "test/event",
     ]
 
@@ -56,6 +57,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         "initial/subregion",
         "initial/country",
         "initial/organizationtype",
+        "test/eventgroup",
         "test/event",
         "test/organization",
     ]
