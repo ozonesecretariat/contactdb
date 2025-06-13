@@ -693,7 +693,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         email_bcc=list(data["bcc_emails"]),
                     )
 
-                    # Set recipient contacts (M2M) as returned by 
+                    # Set recipient contacts (M2M) as returned by
                     # get_organization_recipients
                     task.to_contacts.set(data["to_contacts"])
                     task.cc_contacts.set(data["cc_contacts"])
