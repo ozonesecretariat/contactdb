@@ -8,5 +8,6 @@ declare module "vue-router" {
     requirePermissions?: string[];
     requireStaff?: boolean;
     requireSuperuser?: boolean;
+    subtitle?: string;
   }
 }
