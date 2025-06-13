@@ -8,6 +8,7 @@ from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
+from django.db import transaction
 from django.db.models import Q
 from django.http import FileResponse, HttpResponseForbidden
 from django.shortcuts import redirect
@@ -657,9 +658,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             additional_bcc_contacts=obj.bcc_recipients.all(),
         )
 
-        # Track invitations for GOV organizations
-        gov_invitations = {}
-
         for org, data in org_recipients.items():
             if (
                 data["to_contacts"]
@@ -667,11 +665,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 or data["to_emails"]
                 or data["cc_emails"]
             ):
-                if org.organization_type.acronym == "GOV":
-                    # Create or get country-level invitation
-                    invitation = gov_invitations.get(org.government)
-                    if not invitation:
-                        invitation = EventInvitation.objects.create(
+                with transaction.atomic():
+                    if org.organization_type.acronym == "GOV":
+                        # Create or get country-level invitation
+                        invitation, _ = EventInvitation.objects.get_or_create(
                             country=org.government,
                             event=event,
                             event_group=event_group,
@@ -679,31 +676,31 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                             # inviting all GOV-related organizations from that country.
                             organization=None,
                         )
-                        gov_invitations[org.government] = invitation
-                else:
-                    # Regular organization-level invitation
-                    invitation, _ = EventInvitation.objects.get_or_create(
+                    else:
+                        # Regular organization-level invitation
+                        invitation, _ = EventInvitation.objects.get_or_create(
+                            organization=org,
+                            event=event,
+                            event_group=event_group,
+                        )
+                    task = SendEmailTask.objects.create(
+                        email=obj,
                         organization=org,
-                        event=event,
-                        event_group=event_group,
+                        invitation=invitation,
+                        created_by=request.user,
+                        email_to=list(data["to_emails"]),
+                        email_cc=list(data["cc_emails"]),
+                        email_bcc=list(data["bcc_emails"]),
                     )
-                task = SendEmailTask.objects.create(
-                    email=obj,
-                    organization=org,
-                    invitation=invitation,
-                    created_by=request.user,
-                    email_to=list(data["to_emails"]),
-                    email_cc=list(data["cc_emails"]),
-                    email_bcc=list(data["bcc_emails"]),
-                )
 
-                # Set recipient contacts (M2M) as returned by get_organization_recipients
-                task.to_contacts.set(data["to_contacts"])
-                task.cc_contacts.set(data["cc_contacts"])
-                task.bcc_contacts.set(data["bcc_contacts"])
+                    # Set recipient contacts (M2M) as returned by
+                    # get_organization_recipients
+                    task.to_contacts.set(data["to_contacts"])
+                    task.cc_contacts.set(data["cc_contacts"])
+                    task.bcc_contacts.set(data["bcc_contacts"])
 
-                task.run(is_async=True)
-                tasks.append(task)
+                    task.run(is_async=True)
+                    tasks.append(task)
 
         self.message_user(
             request,
