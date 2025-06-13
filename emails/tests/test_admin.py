@@ -10,9 +10,11 @@ from django.test import RequestFactory, TestCase, override_settings
 
 from api.tests.factories import (
     ContactFactory,
+    EventFactory,
     EventInvitationFactory,
     OrganizationFactory,
 )
+from common.urls import reverse
 from core.models import Contact, Country, OrganizationType
 from emails.admin import InvitationEmailAdmin
 from emails.jobs import SendEmailJob
@@ -270,17 +272,27 @@ class TestInvitationEmailAdmin(TestCase):
 
     def test_is_reminder_flag(self):
         """Test that the is_reminder flag is properly taken into account at save."""
-        invitation = EventInvitationFactory(
+        EventInvitationFactory(
             event=self.event,
             organization=self.organization,
         )
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=False,
+            subject="Original invitation to the intergalactic lawnmower convention",
+        )
         reminder_email = InvitationEmailFactory(
-            events=[self.event], organization_types=[self.org_type], is_reminder=True
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+            subject="Urgent reminder for the intergalactic lawnmower convention",
         )
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = {"reminder_invitation_id": invitation.id}
+
+        request.session = {"reminder_original_email_id": original_email.id}
         messages = FallbackStorage(request)
         request._messages = messages
 
@@ -298,15 +310,14 @@ class TestInvitationEmailAdmin(TestCase):
         self.assertEqual(task.email, reminder_email)
         self.assertEqual(task.organization, self.organization)
 
-        # Testing with pre-existing invitation created above
+        # Testing another reminder with the pre-existing invitation email created above
         reminder_email2 = InvitationEmailFactory(
             events=[self.event], organization_types=[self.org_type], is_reminder=True
         )
 
-        reminder_invitation = task.invitation
         request2 = self.factory.post("/fake-url/")
         request2.user = self.user
-        request2.session = {"reminder_invitation_id": reminder_invitation.id}
+        request2.session = {"reminder_original_email_id": original_email.id}
         messages2 = FallbackStorage(request2)
         request2._messages = messages2
 
@@ -317,24 +328,30 @@ class TestInvitationEmailAdmin(TestCase):
         self.assertEqual(len(message_list2), 1)
         self.assertIn("reminder emails scheduled for sending", str(message_list2[0]))
 
-        # Verifying reminder flag persists even when reset
+        # Aaand that reminder-related fields are properly set
+        reminder_email2.refresh_from_db()
+        self.assertEqual(reminder_email2.original_email, original_email)
+        self.assertTrue(reminder_email2.is_reminder)
+
+        # Verifying reminder flag persists even when reset (is_reminder=False)
         reminder_email3 = InvitationEmailFactory(
             events=[self.event],
             organization_types=[self.org_type],
-            is_reminder=False,  # Explicitly set as non-reminder
+            is_reminder=False,
         )
 
         request3 = self.factory.post("/fake-url/")
         request3.user = self.user
-        request3.session = {"reminder_invitation_id": reminder_invitation.id}
+        request3.session = {"reminder_original_email_id": original_email.id}
         messages3 = FallbackStorage(request3)
         request3._messages = messages3
 
         self.admin.response_post_save_add(request3, reminder_email3)
 
-        # Checking that is_reminder is correct set to True despite initially being False
-        # This simulates what happens when using the reminder action
+        # Checking is_reminder is correctly set to True despite initially being False
+        reminder_email3.refresh_from_db()
         self.assertTrue(InvitationEmail.objects.get(id=reminder_email3.id).is_reminder)
+        self.assertEqual(reminder_email3.original_email, original_email)
 
         # Testing regular invitations (non-reminder) behaviour
         invitation_email = InvitationEmailFactory(
@@ -343,7 +360,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         request4 = self.factory.post("/fake-url/")
         request4.user = self.user
-        request4.session = {}  # No reminder session data
+        request4.session = {}
         messages4 = FallbackStorage(request4)
         request4._messages = messages4
 
@@ -354,6 +371,11 @@ class TestInvitationEmailAdmin(TestCase):
         self.assertEqual(len(message_list4), 1)
         self.assertIn("invitation emails scheduled for sending", str(message_list4[0]))
         self.assertNotIn("reminder emails scheduled for sending", str(message_list4[0]))
+
+        # Aaand that reminder-related fields are not set
+        invitation_email.refresh_from_db()
+        self.assertFalse(invitation_email.is_reminder)
+        self.assertIsNone(invitation_email.original_email)
 
     @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
     def test_email_message_content(self):
@@ -993,7 +1015,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
         request = self.factory.post("/fake-url/")
         request.user = self.user
-        request.session = "session"
+        request.session = {}
         request._messages = FallbackStorage(request)
 
         mail.outbox = []
@@ -1063,3 +1085,164 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
             all_actual - all_expected,
             set(),
         )
+
+
+class TestInvitationEmailAdminReminders(TestCase):
+    """Test reminder functionality in InvitationEmailAdmin."""
+
+    fixtures = [
+        "initial/country",
+        "initial/organizationtype",
+        "initial/registrationstatus",
+        "initial/registrationrole",
+    ]
+
+    def setUp(self):
+        self.site = AdminSite()
+        self.admin = InvitationEmailAdmin(InvitationEmail, self.site)
+        self.factory = RequestFactory()
+        self.user = get_user_model().objects.create_superuser(
+            email="admin@example.com", password="password"
+        )
+
+        self.org_type = OrganizationType.objects.first()
+        self.organization = OrganizationFactory(organization_type=self.org_type)
+        self.event = EventFactory()
+
+    def test_send_reminder_view_single_email(self):
+        """Test sending reminder starting from a single invitation email."""
+        # Create original invitation email
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=False,
+        )
+
+        request = self.factory.get(f"/fake-url/{original_email.id}/send-reminder/")
+        request.user = self.user
+        request.session = {}
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        response = self.admin.send_reminder_view(request, original_email.id)
+
+        # Should redirect to add page with proper parameters
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/emails/invitationemail/add/", response.url)
+        self.assertIn("is_reminder=1", response.url)
+        self.assertIn(f"original_email_id={original_email.id}", response.url)
+
+    def test_send_reminder_view_already_reminder(self):
+        """Test that reminders cannot be created from reminder emails."""
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+        )
+
+        request = self.factory.get(f"/fake-url/{reminder_email.id}/send-reminder/")
+        request.user = self.user
+        request.session = {}
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        response = self.admin.send_reminder_view(request, reminder_email.id)
+
+        # Should redirect back with error message
+        self.assertEqual(response.status_code, 302)
+        messages_list = list(get_messages(request))
+        self.assertEqual(len(messages_list), 1)
+        self.assertIn("Cannot send reminder", str(messages_list[0]))
+
+    def test_add_view_with_reminder_parameters(self):
+        """Test the pre-population of fields when creating reminders."""
+        # Create original email and invitation
+        original_email = InvitationEmailFactory(
+            subject="Original Subject",
+            content="Original content",
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+
+        # Create invitation so we can test unregistered orgs
+        EventInvitationFactory(
+            event=self.event,
+            organization=self.organization,
+        )
+
+        request = self.factory.get(
+            f"/fake-url/add/?is_reminder=1&original_email_id={original_email.id}"
+        )
+        request.user = self.user
+        request.session = {}
+
+        response = self.admin.add_view(request)
+        self.assertEqual(response.status_code, 200)
+
+        context = response.context_data
+        self.assertIn("initial", context)
+        initial = context["initial"]
+
+        self.assertEqual(initial["events"], [self.event])
+        self.assertEqual(initial["original_email"], original_email)
+        self.assertEqual(initial["subject"], "Reminder: Original Subject")
+        self.assertTrue(initial["is_reminder"])
+
+        # Check session data is set
+        self.assertEqual(
+            request.session["reminder_original_email_id"], str(original_email.id)
+        )
+
+    def test_original_email_link_display(self):
+        """Test the original_email_link display method."""
+        original_email = InvitationEmailFactory(subject="Original")
+        reminder_email = InvitationEmailFactory(
+            is_reminder=True, original_email=original_email
+        )
+
+        html = self.admin.original_email_link(reminder_email)
+        self.assertIn(original_email.subject, html)
+        self.assertIn(
+            reverse("admin:emails_invitationemail_change", args=[original_email.id]),
+            html,
+        )
+
+    def test_reminder_count_display(self):
+        """Test that the reminder count is properly displayed."""
+        original_email = InvitationEmailFactory()
+
+        # No reminders initially
+        self.assertEqual(self.admin.reminder_count(original_email), "0")
+
+        # Add reminders
+        InvitationEmailFactory(is_reminder=True, original_email=original_email)
+        InvitationEmailFactory(is_reminder=True, original_email=original_email)
+
+        html = self.admin.reminder_count(original_email)
+        self.assertIn("2 reminders", html)
+        self.assertIn(f"original_email__id__exact={original_email.pk}", html)
+
+    def test_change_view_reminder_button(self):
+        """Test that reminder button appears in detail view for invitations."""
+        original_email = InvitationEmailFactory(is_reminder=False)
+
+        request = self.factory.get(f"/fake-url/{original_email.id}/change/")
+        request.user = self.user
+
+        response = self.admin.change_view(request, str(original_email.id))
+
+        # Should show reminder button
+        self.assertTrue(response.context_data["show_reminder_button"])
+        self.assertIn("send-reminder", response.context_data["reminder_url"])
+
+    def test_change_view_no_reminder_button_for_reminders(self):
+        """Test that reminder button does not appear for reminder emails."""
+        reminder_email = InvitationEmailFactory(is_reminder=True)
+
+        request = self.factory.get(f"/fake-url/{reminder_email.id}/change/")
+        request.user = self.user
+
+        response = self.admin.change_view(request, str(reminder_email.id))
+
+        # Should not show reminder button
+        self.assertNotIn("show_reminder_button", response.context_data)

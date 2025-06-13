@@ -500,7 +500,7 @@ class InvitationEmailForm(forms.ModelForm):
             "subject",
             "content",
             "is_reminder",
-            "orignial_email",
+            "original_email",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -691,20 +691,34 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         ] + urls
 
     def send_reminder_view(self, request, object_id):
-        """Handle the send reminder action from change view."""
+        """
+        Handle the send reminder action from the InvitationEmail change view.
+
+        This basically allows us to have a different behaviour for reminders.
+        """
         obj = self.get_object(request, object_id)
 
         if not obj:
-            self.message_user(request, "Email not found.", messages.ERROR)
-            return HttpResponseRedirect("../")
-
-        if obj.is_reminder:
             self.message_user(
                 request,
-                "Cannot send reminder for an email that is already a reminder.",
+                "Cannot send reminder - invitation email not found.",
                 messages.ERROR,
             )
-            return HttpResponseRedirect("../")
+            return HttpResponseRedirect(
+                reverse("admin:emails_invitationemail_changelist")
+            )
+
+        if obj.is_reminder:
+            # TODO: maybe I should just let this happen and properly set the original_email_id
+            # from the older reminder.
+            self.message_user(
+                request,
+                "Cannot send reminder for a remider email.",
+                messages.ERROR,
+            )
+            return HttpResponseRedirect(
+                reverse("admin:emails_invitationemail_changelist")
+            )
 
         add_url = reverse("admin:emails_invitationemail_add")
         params = {
@@ -718,7 +732,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
     def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}
 
-        # Add reminder button for non-reminder emails
+        # Add reminder button for "normal" invitation emails
         obj = self.get_object(request, object_id)
         if obj and not obj.is_reminder:
             extra_context["show_reminder_button"] = True
@@ -726,7 +740,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 "admin:emails_invitationemail_send_reminder", args=[object_id]
             )
 
-        # Add reminder relationship info
+        # Pre-populate context with reminder-related info
         if obj:
             extra_context["reminder_emails"] = obj.reminder_emails.all()
             extra_context["original_email"] = obj.original_email
@@ -734,9 +748,11 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         return super().change_view(request, object_id, form_url, extra_context)
 
     def add_view(self, request, form_url="", extra_context=None):
+        """
+        Overridden to implement separate behaviour for reminder emails.
+        """
         extra_context = extra_context or {}
 
-        # Check if this is a reminder email (new approach)
         if "is_reminder" in request.GET and "original_email_id" in request.GET:
             original_email_id = request.GET.get("original_email_id")
 
@@ -761,7 +777,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 else:
                     invitations = EventInvitation.objects.none()
 
-                # Collect all unregistered organizations
                 unregistered_orgs = set()
                 for invitation in invitations:
                     unregistered_orgs.update(invitation.unregistered_organizations)
@@ -772,7 +787,9 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         {org.organization_type for org in unregistered_orgs}
                     )
 
-                    # Pre-populate the form
+                    # Pre-populate the form with as much data as possible
+                    # TODO:: perhaps only extracting unregistered org_types might lead
+                    # to confusion.
                     extra_context["initial"] = {
                         "events": [event] if event else [],
                         "event_group": event_group,
@@ -780,7 +797,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         "is_reminder": True,
                         "original_email": original_email,
                         "subject": f"Reminder: {original_email.subject}",
-                        "content": original_email.content,  # Start with same content
+                        "content": original_email.content,
                     }
 
                     org_count = len(unregistered_orgs)
@@ -792,20 +809,25 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         else "event"
                     )
                     extra_context["title"] = (
-                        f"Send Reminder Email for {event_info} ({org_count} unregistered organizations)"
+                        f"Send Reminder Email for {event_info} ({org_count} "
+                        f"unregistered organizations)"
                     )
 
                     # Store the original email ID for use in response_post_save_add()
                     request.session["reminder_original_email_id"] = original_email_id
 
             except InvitationEmail.DoesNotExist:
-                self.message_user(request, "Original email not found.", messages.ERROR)
+                self.message_user(
+                    request, "Original invitation email not found.", messages.ERROR
+                )
+                return redirect("admin:emails_invitationemail_changelist")
 
         return super().add_view(request, form_url, extra_context)
 
     def response_post_save_add(self, request, obj):
         # First check if this is a reminder
         original_email_id = request.session.pop("reminder_original_email_id", None)
+        original_email = None
         if original_email_id:
             try:
                 original_email = InvitationEmail.objects.get(id=original_email_id)
@@ -814,7 +836,15 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 obj.original_email = original_email
                 obj.save(update_fields=["is_reminder", "original_email"])
             except InvitationEmail.DoesNotExist:
-                pass
+                self.message_user(
+                    request,
+                    f"Error: Original email (ID: {original_email_id}) not found, "
+                    f"cannot create reminder email for it.",
+                    messages.ERROR,
+                )
+                # Delete the created object and redirect back to list
+                obj.delete()
+                return redirect("admin:emails_invitationemail_changelist")
 
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
@@ -824,7 +854,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             obj.organization_types.all(),
             additional_cc_contacts=obj.cc_recipients.all(),
             additional_bcc_contacts=obj.bcc_recipients.all(),
-            reminder_invitation=original_email,
+            invitation_email=original_email,
         )
 
         for org, data in org_recipients.items():
@@ -861,22 +891,8 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         email_cc=list(data["cc_emails"]),
                         email_bcc=list(data["bcc_emails"]),
                     )
-<<<<<<< HEAD
 
-                task = SendEmailTask.objects.create(
-                    email=obj,
-                    organization=org,
-                    invitation=invitation,
-                    created_by=request.user,
-                    email_to=list(data["to_emails"]),
-                    email_cc=list(data["cc_emails"]),
-                    email_bcc=list(data["bcc_emails"]),
-                )
-=======
->>>>>>> origin/main
-
-                    # Set recipient contacts (M2M) as returned by
-                    # get_organization_recipients
+                    # Set contacts M2M as returned by get_organization_recipients()
                     task.to_contacts.set(data["to_contacts"])
                     task.cc_contacts.set(data["cc_contacts"])
                     task.bcc_contacts.set(data["bcc_contacts"])

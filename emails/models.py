@@ -16,7 +16,6 @@ from common.model import get_protected_storage
 from core.models import (
     Contact,
     ContactGroup,
-    EventInvitation,
     Organization,
     OrganizationType,
 )
@@ -24,7 +23,7 @@ from emails.placeholders import (
     replace_placeholders,
     validate_placeholders,
 )
-from events.models import Event, EventGroup
+from events.models import Event, EventGroup, EventInvitation
 
 
 def get_relative_image_urls(email_body):
