@@ -76,6 +76,14 @@ class Email(models.Model):
             "This changes email behaviour: only sends mails to 'unregistered' orgs."
         ),
     )
+    original_email = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="reminder_emails",
+        help_text="The original invitation email this is a reminder for.",
+    )
 
     recipients = models.ManyToManyField(
         Contact,
