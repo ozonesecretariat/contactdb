@@ -13,10 +13,17 @@ from events.models import (
 
 class ContactSerializer(serializers.ModelSerializer):
     organization = OrganizationSerializer(read_only=True)
-    
+
     class Meta:
         model = Contact
-        fields = ("id", "first_name", "last_name", "emails", "organization", "full_name")
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "emails",
+            "organization",
+            "full_name",
+        )
 
 
 class EventGroupSerializer(serializers.ModelSerializer):
