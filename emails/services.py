@@ -67,7 +67,7 @@ def get_organization_recipients(
         cc_emails = set(org.email_ccs or [])
         bcc_emails = set()
 
-        # If it's a GOV, include all invite-able orgs from that country
+        # If it's a GOV, include all inviteable orgs from that country (incl. other GOVs)
         if org.organization_type.acronym == "GOV":
             related_orgs = Organization.objects.filter(
                 government=org.government, include_in_invitation=True

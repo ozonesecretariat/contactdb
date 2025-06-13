@@ -657,9 +657,6 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             additional_bcc_contacts=obj.bcc_recipients.all(),
         )
 
-        # Track invitations for GOV organizations
-        gov_invitations = {}
-
         for org, data in org_recipients.items():
             if (
                 data["to_contacts"]
@@ -669,17 +666,14 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             ):
                 if org.organization_type.acronym == "GOV":
                     # Create or get country-level invitation
-                    invitation = gov_invitations.get(org.government)
-                    if not invitation:
-                        invitation = EventInvitation.objects.create(
-                            country=org.government,
-                            event=event,
-                            event_group=event_group,
-                            # This (together with setting the country) signifies we're
-                            # inviting all GOV-related organizations from that country.
-                            organization=None,
-                        )
-                        gov_invitations[org.government] = invitation
+                    invitation, _ = EventInvitation.objects.get_or_create(
+                        country=org.government,
+                        event=event,
+                        event_group=event_group,
+                        # This (together with setting the country) signifies we're
+                        # inviting all GOV-related organizations from that country.
+                        organization=None,
+                    )
                 else:
                     # Regular organization-level invitation
                     invitation, _ = EventInvitation.objects.get_or_create(
