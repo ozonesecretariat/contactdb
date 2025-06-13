@@ -7,7 +7,16 @@ body {
   font-optical-sizing: auto;
 }
 
-.q-table__top,
-thead tr:first-child th {
-  background-color: #f0f0f0;
+.body--light {
+  .q-table__top,
+  thead tr:first-child th {
+    background-color: #f0f0f0;
+  }
+}
+
+.body--dark {
+  .q-table__top,
+  thead tr:first-child th {
+    background-color: #303030;
+  }
 }
