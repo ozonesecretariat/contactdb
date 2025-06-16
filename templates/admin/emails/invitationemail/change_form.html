@@ -2,53 +2,47 @@
 {% load admin_urls %}
 
 {% block submit_buttons_bottom %}
-{{ block.super }}
+  {{ block.super }}
 
-{% if show_reminder_button %}
-<div class="submit-row">
-    <a href="{{ reminder_url }}" class="default" style="margin-left: 10px;">
-        📧 Send Reminder Email
-    </a>
-</div>
-{% endif %}
+  {% if show_reminder_button %}
+    <div class="submit-row">
+      <a href="{{ reminder_url }}" class="default">Send Reminder Email</a>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block after_field_sets %}
-{% if original_email %}
-<fieldset class="module aligned">
-    <h2>Reminder Information</h2>
-    <div class="form-row">
+  {% if original_email %}
+    <fieldset class="module aligned">
+      <h2>Reminder Information</h2>
+      <div class="form-row">
         <div>
-            <label><strong>This is a reminder for:</strong></label>
-            <p style="margin: 5px 0;">
-                <a href="{% url 'admin:emails_invitationemail_change' original_email.pk %}">
-                    {{ original_email.subject }}
-                </a>
-                <small style="color: #666;">(sent {{ original_email.created_at|date:"M d, Y" }})</small>
-            </p>
+          <label><strong>This is a reminder for:</strong></label>
+          <p>
+            <a href="{% url 'admin:emails_invitationemail_change' original_email.pk %}">{{ original_email.subject }}</a>
+            <span class="help">(sent {{ original_email.created_at|date:"M d, Y" }})</span>
+          </p>
         </div>
-    </div>
-</fieldset>
-{% endif %}
+      </div>
+    </fieldset>
+  {% endif %}
 
-{% if reminder_emails %}
-<fieldset class="module aligned">
-    <h2>Reminders Sent</h2>
-    <div class="form-row">
+  {% if reminder_emails %}
+    <fieldset class="module aligned">
+      <h2>Reminders Sent</h2>
+      <div class="form-row">
         <div>
-            <label><strong>{{ reminder_emails|length }} reminder(s) sent for this email:</strong></label>
-            <ul style="margin: 10px 0; padding-left: 20px;">
+          <label><strong>{{ reminder_emails|length }} reminder(s) sent for this email:</strong></label>
+          <ul class="admin-list">
             {% for reminder in reminder_emails %}
-                <li style="margin: 5px 0;">
-                    <a href="{% url 'admin:emails_invitationemail_change' reminder.pk %}">
-                        {{ reminder.subject }}
-                    </a>
-                    <small style="color: #666;">({{ reminder.created_at|date:"M d, Y H:i" }})</small>
-                </li>
+              <li>
+                <a href="{% url 'admin:emails_invitationemail_change' reminder.pk %}">{{ reminder.subject }}</a>
+                <span class="help">({{ reminder.created_at|date:"M d, Y H:i" }})</span>
+              </li>
             {% endfor %}
-            </ul>
+          </ul>
         </div>
-    </div>
-</fieldset>
-{% endif %}
+      </div>
+    </fieldset>
+  {% endif %}
 {% endblock %}
