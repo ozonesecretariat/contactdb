@@ -11,6 +11,7 @@ from django.test import RequestFactory, TestCase, override_settings
 from api.tests.factories import (
     ContactFactory,
     EventFactory,
+    EventGroupFactory,
     EventInvitationFactory,
     OrganizationFactory,
     RegistrationFactory,
@@ -1350,6 +1351,14 @@ class TestInvitationEmailAdminReminders(TestCase):
             government=government,
             include_in_invitation=False,
         )
+        # Aaand one as well with the flag set to True
+        included_org = OrganizationFactory(
+            name="Included Org",
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        ContactFactory(organization=included_org)
 
         # Create country-level invitation
         EventInvitationFactory(
@@ -1367,3 +1376,94 @@ class TestInvitationEmailAdminReminders(TestCase):
         # Test that non-include-in-invitation org is not in unregistered_organizations
         unregistered_orgs = list(original_email.unregistered_organizations)
         self.assertNotIn(excluded_org, unregistered_orgs)
+        self.assertIn(included_org, unregistered_orgs)
+
+    def test_reminder_with_no_unregistered_organizations(self):
+        """Test reminder creation when all organizations have registered."""
+        government = Country.objects.first()
+        org = OrganizationFactory(
+            name="The Crystal Globe global readers",
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        contact = ContactFactory(organization=org)
+
+        # Create invitation & register the organization
+        EventInvitationFactory(event=self.event, country=government)
+        RegistrationFactory(event=self.event, contact=contact)
+
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+
+        unregistered_orgs = list(original_email.unregistered_organizations)
+        self.assertNotIn(org, unregistered_orgs)
+
+        # Test reminder creation does not fail, but sends no emails
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # No tasks should be created, however success message is displayed
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 0)
+        messages_list = list(get_messages(request))
+        self.assertEqual(len(messages_list), 1)
+        self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
+
+    def test_reminder_with_event_group(self):
+        """Test reminder work as well with event groups."""
+        event_group = EventGroupFactory(name="Multi-Day Conference")
+        event1 = EventFactory(title="Day 1")
+        event2 = EventFactory(title="Day 2")
+        event_group.events.add(event1, event2)
+
+        government = Country.objects.first()
+        org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+
+        # Create invitation & email for event group rather than event
+        EventInvitationFactory(
+            event_group=event_group,
+            country=government,
+        )
+
+        original_email = InvitationEmailFactory(
+            event_group=event_group,
+            organization_types=[self.org_type],
+        )
+
+        unregistered_orgs = list(original_email.unregistered_organizations)
+        self.assertIn(org, unregistered_orgs)
+
+        # Test reminder creation
+        reminder_email = InvitationEmailFactory(
+            event_group=event_group,
+            organization_types=[self.org_type],
+            is_reminder=True,
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 1)
+        self.assertEqual(tasks.first().organization, org)
