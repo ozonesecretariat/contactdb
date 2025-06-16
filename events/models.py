@@ -193,7 +193,7 @@ class EventInvitation(models.Model):
     @property
     def invitation_link(self):
         # This will need to be updated if frontend path changes
-        url_path = f"/events/{self.token}/nominations"
+        url_path = f"/token/{self.token}/nominations"
         domain = settings.PROTOCOL + settings.MAIN_FRONTEND_HOST
 
         return urljoin(domain, url_path)

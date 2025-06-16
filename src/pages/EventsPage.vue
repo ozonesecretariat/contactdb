@@ -12,7 +12,7 @@
     >
       <template #top-left>Events</template>
       <template #top-right>
-        <q-input v-model="search" borderless dense debounce="200" placeholder="Search" autofocus role="search">
+        <q-input v-model="search" borderless dense placeholder="Search" autofocus role="search">
           <template #append>
             <q-icon name="search" />
           </template>
@@ -26,9 +26,11 @@
 import type { MeetingEvent } from "src/types/event";
 
 import { useAsyncState } from "@vueuse/core";
+import { useRouteQuery } from "@vueuse/router";
 import { api } from "boot/axios";
-import { formatDate } from "src/intl";
-import { computed, ref } from "vue";
+import { formatDate } from "src/utils/intl";
+import { unaccentSearch } from "src/utils/search";
+import { computed } from "vue";
 
 const columns = [
   { field: "code", label: "Code", name: "code", sortable: true },
@@ -49,19 +51,17 @@ const columns = [
   { field: "venueCity", label: "Venue city", name: "venueCity", sortable: true },
   { field: "dates", label: "Dates", name: "dates", sortable: true },
 ];
-const { isLoading, state } = useAsyncState(async () => (await api.get("/events/")).data, []);
-const search = ref("");
+const { isLoading, state } = useAsyncState(async () => (await api.get<MeetingEvent[]>("/events/")).data, []);
+const search = useRouteQuery("search", "");
 
-const events = computed(() => {
-  const text = search.value.toLowerCase();
-  return state.value.filter(
-    (event: MeetingEvent) =>
-      event.code.toLowerCase().includes(text) ||
-      event.title.toLowerCase().includes(text) ||
-      event.venueCity.toLowerCase().includes(text) ||
-      event.venueCountry?.code.toLowerCase().includes(text) ||
-      event.venueCountry?.name.toLowerCase().includes(text) ||
-      event.venueCountry?.officialName.toLowerCase().includes(text),
-  );
-});
+const events = computed(() =>
+  unaccentSearch(search.value, state.value, (event) => [
+    event.code,
+    event.title,
+    event.venueCity,
+    event.venueCountry?.code,
+    event.venueCountry?.name,
+    event.venueCountry?.officialName,
+  ]),
+);
 </script>

@@ -7,5 +7,14 @@
       "description": "36th Meeeting of the Parties",
       "created_at": "2023-09-03T00:00:00Z"
     }
+  },
+  {
+    "model": "events.eventgroup",
+    "pk": 2,
+    "fields": {
+      "name": "TEST-GROUP",
+      "description": "",
+      "created_at": "2025-06-13T11:06:53.107Z"
+    }
   }
 ]
