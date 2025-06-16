@@ -1,10 +1,7 @@
 from datetime import UTC, datetime, timedelta
-from unittest.mock import patch
 
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
-from django.contrib.messages import get_messages
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
@@ -102,7 +99,6 @@ class TestEventInvitationAdmin(TestCase):
         self.assertIn(
             reverse("admin:core_organization_change", args=[self.organization.id]), html
         )
-        self.assertIn("Send Reminder Email to All", html)
 
         # Add registration to make org "invited"; test that display changes
         RegistrationFactory(
@@ -116,7 +112,6 @@ class TestEventInvitationAdmin(TestCase):
         # Now test GOV invitation with no registrations
         html = self.admin.unregistered_organizations_display(self.gov_invitation)
         self.assertIn(self.gov_org.name, html)
-        self.assertIn("Send Reminder Email to All", html)
 
         # Add registration for GOV org & re-test
         RegistrationFactory(
@@ -125,105 +120,6 @@ class TestEventInvitationAdmin(TestCase):
         )
         html = self.admin.unregistered_organizations_display(self.gov_invitation)
         self.assertIn("All organizations have registered", html)
-
-    def test_send_reminder_emails_single_invitation(self):
-        """Test the send_reminder_emails action with a single invitation."""
-        request = self.factory.post("/fake-url/")
-        request.user = self.user
-        request.session = {}
-        messages = FallbackStorage(request)
-        request._messages = messages
-
-        # Call the action with a queryset containing one invitation
-        queryset = EventInvitation.objects.filter(id=self.invitation.id)
-        response = self.admin.send_reminder_emails(request, queryset)
-
-        # Check for the success message being present in the request
-        messages_list = list(get_messages(request))
-        self.assertEqual(len(messages_list), 1)
-        self.assertIn("Preparing to send reminders", str(messages_list[0]))
-        self.assertIn("1 unregistered", str(messages_list[0]))
-
-        # Check redirect to invitation email with proper parameters
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("/admin/emails/invitationemail/add/", response.url)
-        self.assertIn("is_reminder=1", response.url)
-        self.assertIn(f"invitation_id={self.invitation.id}", response.url)
-
-    def test_send_reminder_emails_multiple_invitations(self):
-        """Test the send_reminder_emails action rejects multiple invitations."""
-        request = self.factory.post("/fake-url/")
-        request.user = self.user
-        request.session = {}
-        messages = FallbackStorage(request)
-        request._messages = messages
-
-        queryset = EventInvitation.objects.all()
-        self.assertGreater(queryset.count(), 1)
-
-        response = self.admin.send_reminder_emails(request, queryset)
-
-        # Check for warning message
-        messages_list = list(get_messages(request))
-        self.assertEqual(len(messages_list), 1)
-        self.assertIn("Please select only one invitation", str(messages_list[0]))
-
-        # Check that no redirect happened
-        self.assertIsNone(response)
-
-        # Check that no session data was set
-        self.assertNotIn("reminder_invitation_id", request.session)
-
-    def test_send_reminder_emails_no_unregistered(self):
-        """Test the action when all organizations have registered."""
-        RegistrationFactory(
-            contact=self.contact,
-            event=self.event,
-        )
-        RegistrationFactory(
-            contact=self.gov_contact,
-            event=self.event,
-        )
-
-        request = self.factory.post("/fake-url/")
-        request.user = self.user
-        request.session = {}
-        messages = FallbackStorage(request)
-        request._messages = messages
-
-        # Call the action with a queryset containing one invitation
-        queryset = EventInvitation.objects.filter(id=self.invitation.id)
-        response = self.admin.send_reminder_emails(request, queryset)
-
-        # Check for info message
-        messages_list = list(get_messages(request))
-        self.assertEqual(len(messages_list), 1)
-        self.assertIn("No unregistered organizations found", str(messages_list[0]))
-
-        # Check that no redirect happened
-        self.assertIsNone(response)
-
-        # Check that no session data was set
-        self.assertNotIn("reminder_invitation_id", request.session)
-
-    @patch("events.admin.redirect")
-    def test_reminder_url_formation(self, mock_redirect):
-        """Test that the reminder URL is formed correctly."""
-        request = self.factory.post("/fake-url/")
-        request.user = self.user
-        request.session = {}
-        request._messages = FallbackStorage(request)
-
-        # Call the admin action
-        queryset = EventInvitation.objects.filter(id=self.invitation.id)
-        self.admin.send_reminder_emails(request, queryset)
-
-        # Check that redirect was called with correct URL
-        mock_redirect.assert_called_once()
-        args = mock_redirect.call_args[0][0]
-        self.assertIn("/admin/emails/invitationemail/add/", args)
-        self.assertIn("is_reminder=1", args)
-        self.assertIn(f"invitation_id={self.invitation.id}", args)
 
     def test_event_or_group_display(self):
         """Test the event_or_group display method."""
