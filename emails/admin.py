@@ -879,6 +879,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     else:
                         # Regular organization-level invitation
                         invitation, _ = EventInvitation.objects.get_or_create(
+                            country=None,
                             organization=org,
                             event=event,
                             event_group=event_group,
