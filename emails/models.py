@@ -274,24 +274,21 @@ class InvitationEmail(Email):
         Get all organizations that were invited by this email but haven't registered yet.
         Returns a queryset of organizations.
         """
-        # TODO: this has the potential to be horribly slow!
-        event = self.events.first() if self.events.exists() else None
+        events = list(self.events.all())
         event_group = self.event_group
 
-        if not (event or event_group):
+        if not (events or event_group):
             return Organization.objects.none()
 
-        # Get all invitations for this event/group
-        if event:
-            invitations = EventInvitation.objects.filter(event=event)
+        # For all unregistered organizations from all invitations for this event/group
+        if events:
+            invitations = EventInvitation.objects.filter(event__in=events)
         else:
             invitations = EventInvitation.objects.filter(event_group=event_group)
-
-        # Collect all unregistered organizations from all invitations
         unregistered_org_ids = set()
         for invitation in invitations:
             unregistered_org_ids.update(
-                invitation.unregistered_organizations.values_list("id", flat=True)
+                org.id for org in invitation.unregistered_organizations.all()
             )
 
         return Organization.objects.filter(id__in=unregistered_org_ids)

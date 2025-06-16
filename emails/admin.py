@@ -690,6 +690,45 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             ),
         ] + urls
 
+    def get_changeform_initial_data(self, request):
+        """Provide initial data for reminders in the changeform."""
+        initial = super().get_changeform_initial_data(request)
+
+        # Check if this is a reminder being created
+        if "is_reminder" in request.GET and "original_email_id" in request.GET:
+            original_email_id = request.GET.get("original_email_id")
+
+            try:
+                original_email = InvitationEmail.objects.get(id=original_email_id)
+                unregistered_orgs = original_email.unregistered_organizations
+
+                if unregistered_orgs.exists():
+                    # Get unique organization types
+                    org_types = list(
+                        {org.organization_type for org in unregistered_orgs}
+                    )
+                    events = list(original_email.events.all())
+                    if events:
+                        initial["events"] = [event.pk for event in events]
+                    if original_email.event_group:
+                        initial["event_group"] = original_email.event_group.pk
+
+                    # Pre-populate the form with as much data as possible
+                    # TODO:: perhaps only extracting unregistered org_types might lead
+                    # to confusion.
+                    initial["organization_types"] = [
+                        org_type.pk for org_type in org_types
+                    ]
+                    initial["is_reminder"] = True
+                    initial["original_email"] = original_email.pk
+                    initial["subject"] = f"Reminder: {original_email.subject}"
+                    initial["content"] = original_email.content
+
+            except InvitationEmail.DoesNotExist:
+                pass
+
+        return initial
+
     def send_reminder_view(self, request, object_id):
         """
         Handle the send reminder action from the InvitationEmail change view.
@@ -758,63 +797,25 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
             try:
                 original_email = InvitationEmail.objects.get(id=original_email_id)
+                unregistered_orgs = original_email.unregistered_organizations
 
-                # Find organizations that haven't registered for this event/group
-                event = (
-                    original_email.events.first()
-                    if original_email.events.exists()
-                    else None
-                )
+                org_count = len(unregistered_orgs)
+                events = list(original_email.events.all())
                 event_group = original_email.event_group
 
-                # Get existing invitations for this event/group to find unregistered orgs
-                if event:
-                    invitations = EventInvitation.objects.filter(event=event)
+                if events:
+                    event_info = ", ".join(event.title for event in events)
                 elif event_group:
-                    invitations = EventInvitation.objects.filter(
-                        event_group=event_group
-                    )
+                    event_info = event_group.name
                 else:
-                    invitations = EventInvitation.objects.none()
+                    event_info = "event"
+                extra_context["title"] = (
+                    f"Send Reminder Email for {event_info} ({org_count} "
+                    f"unregistered organizations)"
+                )
 
-                unregistered_orgs = set()
-                for invitation in invitations:
-                    unregistered_orgs.update(invitation.unregistered_organizations)
-
-                if unregistered_orgs:
-                    # Get unique organization types
-                    org_types = list(
-                        {org.organization_type for org in unregistered_orgs}
-                    )
-
-                    # Pre-populate the form with as much data as possible
-                    # TODO:: perhaps only extracting unregistered org_types might lead
-                    # to confusion.
-                    extra_context["initial"] = {
-                        "events": [event] if event else [],
-                        "event_group": event_group,
-                        "organization_types": org_types,
-                        "is_reminder": True,
-                        "original_email": original_email,
-                        "subject": f"Reminder: {original_email.subject}",
-                        "content": original_email.content,
-                    }
-
-                    org_count = len(unregistered_orgs)
-                    event_info = (
-                        event.title
-                        if event
-                        else event_group.name
-                        if event_group
-                        else "event"
-                    )
-                    extra_context["title"] = (
-                        f"Send Reminder Email for {event_info} ({org_count} "
-                        f"unregistered organizations)"
-                    )
-
-                    # Store the original email ID for use in response_post_save_add()
-                    request.session["reminder_original_email_id"] = original_email_id
+                # Store the original email ID for use in response_post_save_add()
+                request.session["reminder_original_email_id"] = original_email_id
 
             except InvitationEmail.DoesNotExist:
                 self.message_user(

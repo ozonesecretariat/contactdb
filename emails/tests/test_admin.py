@@ -1180,13 +1180,15 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertEqual(response.status_code, 200)
 
         context = response.context_data
-        self.assertIn("initial", context)
-        initial = context["initial"]
+        adminform = context["adminform"]
+        form = adminform.form
 
-        self.assertEqual(initial["events"], [self.event])
-        self.assertEqual(initial["original_email"], original_email)
-        self.assertEqual(initial["subject"], "Reminder: Original Subject")
-        self.assertTrue(initial["is_reminder"])
+        self.assertEqual(form.initial["events"], [self.event.pk])
+        self.assertEqual(form.initial["original_email"], original_email.pk)
+        self.assertEqual(form.initial["subject"], "Reminder: Original Subject")
+        self.assertEqual(form.initial.get("content"), "Original content")
+        self.assertTrue(form.initial["is_reminder"])
+        self.assertIn(self.org_type.pk, form.initial["organization_types"])
 
         # Check session data is set
         self.assertEqual(
