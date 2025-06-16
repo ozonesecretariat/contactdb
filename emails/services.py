@@ -36,34 +36,45 @@ def get_organization_recipients(
 
     gov_countries = {org.government for org in gov_orgs if org.government}
 
-    orgs_queryset = (
-        Organization.objects.filter(
+    # For reminders, start with all organizations and then keep only organizations that
+    # haven't registered anyone.
+    if invitation_email:
+        orgs_queryset = Organization.objects.filter(
             organization_type__in=org_types, include_in_invitation=True
-        )
-        .prefetch_related(
+        ).prefetch_related(
             "primary_contacts",
             "secondary_contacts",
             "government",
         )
-        .filter(
-            # Organization is either:
-            # - one of the selected GOV orgs
-            # - or is not related to any GOV country
-            # This avoids mails being sent both as part of a GOV-wide invitations and as
-            # an individual invitation for the non-GOV organization.
-            models.Q(id__in=gov_orgs.values("id"))
-            | models.Q(
-                models.Q(government__isnull=True)
-                | ~models.Q(government__in=gov_countries)
-            )
-        )
-    )
 
-    # If this is a reminder, only keep organizations that haven't registered anyone
-    if invitation_email:
+        # Filter to only unregistered organizations
         unregistered_orgs = invitation_email.unregistered_organizations
         unregistered_org_ids = [org.id for org in unregistered_orgs]
         orgs_queryset = orgs_queryset.filter(id__in=unregistered_org_ids)
+
+    else:
+        orgs_queryset = (
+            Organization.objects.filter(
+                organization_type__in=org_types, include_in_invitation=True
+            )
+            .prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
+            .filter(
+                # Organization is either:
+                # - one of the selected GOV orgs
+                # - or is not related to any GOV country
+                # This avoids mails being sent both as part of a GOV-wide invitations and as
+                # an individual invitation for the non-GOV organization.
+                models.Q(id__in=gov_orgs.values("id"))
+                | models.Q(
+                    models.Q(government__isnull=True)
+                    | ~models.Q(government__in=gov_countries)
+                )
+            )
+        )
 
     additional_cc_contacts = set(additional_cc_contacts or [])
     additional_bcc_contacts = set(additional_bcc_contacts or [])

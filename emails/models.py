@@ -7,7 +7,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 
@@ -23,7 +23,7 @@ from emails.placeholders import (
     replace_placeholders,
     validate_placeholders,
 )
-from events.models import Event, EventGroup, EventInvitation
+from events.models import Event, EventGroup, EventInvitation, Registration
 
 
 def get_relative_image_urls(email_body):
@@ -285,13 +285,35 @@ class InvitationEmail(Email):
             invitations = EventInvitation.objects.filter(event__in=events)
         else:
             invitations = EventInvitation.objects.filter(event_group=event_group)
-        unregistered_org_ids = set()
-        for invitation in invitations:
-            unregistered_org_ids.update(
-                org.id for org in invitation.unregistered_organizations.all()
-            )
 
-        return Organization.objects.filter(id__in=unregistered_org_ids)
+        return (
+            Organization.objects.filter(
+                # Non-GOV organizations which are directly invited (have EventInvitations)
+                Q(
+                    id__in=invitations.filter(organization__isnull=False).values_list(
+                        "organization_id", flat=True
+                    )
+                )
+                |
+                # Organizations invited via GOV
+                Q(
+                    government__in=invitations.filter(
+                        country__isnull=False
+                    ).values_list("country_id", flat=True),
+                    include_in_invitation=True,
+                )
+            )
+            .annotate(
+                has_registrations=Exists(
+                    Registration.objects.filter(
+                        event__in=events if events else [],
+                        contact__organization=OuterRef("pk"),
+                    )
+                )
+            )
+            .filter(has_registrations=False)
+            .distinct()
+        )
 
 
 class SendEmailTask(TaskRQ):

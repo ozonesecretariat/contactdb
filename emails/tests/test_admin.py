@@ -13,6 +13,7 @@ from api.tests.factories import (
     EventFactory,
     EventInvitationFactory,
     OrganizationFactory,
+    RegistrationFactory,
 )
 from common.urls import reverse
 from core.models import Contact, Country, OrganizationType
@@ -1248,3 +1249,121 @@ class TestInvitationEmailAdminReminders(TestCase):
 
         # Should not show reminder button
         self.assertNotIn("show_reminder_button", response.context_data)
+
+    def test_reminder_includes_all_country_organizations(self):
+        """
+        Test that reminders for country-level invitations include *all* organizations
+        from that country, not just GOV organizations.
+        """
+
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        # Create GOV organization
+        gov_org = OrganizationFactory(
+            name="GOV Org",
+            organization_type=gov_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["gov@example.com"],
+        )
+        gov_contact = ContactFactory(
+            organization=gov_org, emails=["gov-contact@example.com"]
+        )
+        gov_org.primary_contacts.add(gov_contact)
+
+        # Create a non-GOV organization that has the same government
+        non_gov_org = OrganizationFactory(
+            name="Non-GOV Org",
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["nongov@example.com"],
+        )
+        non_gov_contact = ContactFactory(
+            organization=non_gov_org, emails=["nongov-contact@example.com"]
+        )
+        non_gov_org.primary_contacts.add(non_gov_contact)
+
+        EventInvitationFactory(
+            event=self.event,
+            country=government,
+            organization=None,
+        )
+        EventInvitationFactory(
+            event=self.event,
+            organization=non_gov_org,
+            country=None,
+        )
+
+        # Only registering the GOV org
+        RegistrationFactory(
+            event=self.event,
+            contact=gov_contact,
+        )
+
+        # Create initial invitation email for all organizations
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type, self.org_type],
+            subject="Original Invitation",
+        )
+
+        unregistered_orgs = list(original_email.unregistered_organizations)
+
+        # Checking that only registered orgs are included
+        self.assertIn(non_gov_org, unregistered_orgs)
+        self.assertNotIn(gov_org, unregistered_orgs)
+
+        # Test reminder creation
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type, self.org_type],
+            is_reminder=True,
+            subject="Reminder Email",
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # Check reminder is only sent to unregistered organizations
+        tasks = SendEmailTask.objects.all()
+
+        non_gov_task = tasks.filter(organization=non_gov_org).first()
+        self.assertIsNotNone(non_gov_task)
+        gov_task = tasks.filter(organization=gov_org).first()
+        self.assertIsNone(gov_task)
+
+    def test_reminder_respects_include_in_invitation_flag(self):
+        """Test that only organizations with include_in_invitation=True are included."""
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        # Create organization with include_in_invitation=False
+        excluded_org = OrganizationFactory(
+            name="Excluded Org",
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=False,
+        )
+
+        # Create country-level invitation
+        EventInvitationFactory(
+            event=self.event,
+            country=government,
+            organization=None,
+        )
+
+        # Create original invitation email
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type],
+        )
+
+        # Test that non-include-in-invitation org is not in unregistered_organizations
+        unregistered_orgs = list(original_email.unregistered_organizations)
+        self.assertNotIn(excluded_org, unregistered_orgs)
