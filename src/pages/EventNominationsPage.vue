@@ -7,17 +7,17 @@
           <q-icon name="search" />
         </template>
       </q-input>
-      <q-btn icon="add" color="accent">Add Nomination</q-btn>
+      <add-nomination />
     </div>
     <div class="text-subtitle2 q-mt-xl">Current nominations</div>
     <q-table
       :rows="filteredNominations"
       :columns="columns"
       row-key="id"
-      :loading="isLoadingNominations || isLoadingEvents"
+      :loading="!invitation.initialized"
       :pagination="{
         rowsPerPage: 15,
-        sortBy: 'contact',
+        sortBy: 'fullName',
         descending: false,
       }"
       :dense="$q.screen.lt.lg"
@@ -44,15 +44,14 @@
 </template>
 
 <script setup lang="ts">
-import type { MeetingEvent } from "src/types/event";
 import type { QTableColumnWithTooltip } from "src/types/quasar";
 import type { Contact, EventNomination } from "src/types/registration";
 
-import { useAsyncState } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
-import { api } from "boot/axios";
+import AddNomination from "components/nominations/AddNomination.vue";
 import { useQuasar } from "quasar";
 import { unaccentSearch } from "src/utils/search";
+import { useInvitationStore } from "stores/invitationStore";
 import { computed } from "vue";
 
 interface GroupedEventNomination {
@@ -62,28 +61,14 @@ interface GroupedEventNomination {
   };
 }
 
-const { invitationToken } = defineProps({
-  invitationToken: {
-    required: true,
-    type: String,
-  },
-});
-
 const $q = useQuasar();
 const search = useRouteQuery("search", "");
-
-const { isLoading: isLoadingNominations, state: nominations } = useAsyncState(
-  async () => (await api.get<EventNomination[]>(`/events-nominations/${invitationToken}/`)).data,
-  [],
-);
-const { isLoading: isLoadingEvents, state: events } = useAsyncState<MeetingEvent[]>(
-  async () => (await api.get(`/events-nominations/${invitationToken}/events/`)).data,
-  [],
-);
+const invitation = useInvitationStore();
+invitation.load();
 
 const groupedNominations = computed(() => {
   const result: Record<number, GroupedEventNomination> = {};
-  for (const nomination of nominations.value) {
+  for (const nomination of invitation.nominations) {
     let obj = result[nomination.contact.id];
     if (!obj) {
       obj = {
@@ -114,7 +99,7 @@ const columns = computed(() => {
       sortable: true,
     },
   ];
-  for (const event of events.value) {
+  for (const event of invitation.events) {
     result.push({
       align: "left",
       field: (row) => row.nominations[event.code]?.status ?? "-",

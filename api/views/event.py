@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 
 from api.permissions import ContactNominationPermission
-from api.serializers.contact import ContactSerializer
+from api.serializers.contact import ContactDetailSerializer
 from api.serializers.event import (
     EventSerializer,
     NominateContactsSerializer,
@@ -87,7 +87,7 @@ class EventNominationViewSet(ViewSet):
         """
         serializer_map = {
             "retrieve": RegistrationSerializer,
-            "available_contacts": ContactSerializer,
+            "available_contacts": ContactDetailSerializer,
             "nominate_contacts": RegistrationSerializer,
             "events": EventSerializer,
         }
@@ -102,9 +102,19 @@ class EventNominationViewSet(ViewSet):
     @action(detail=True, methods=["get"], url_path="available-contacts")
     def available_contacts(self, request, token):
         """List contacts that can be nominated from this organization."""
+        serializer_class = self.get_serializer_class()
+
         invitation = self.get_invitation(token)
-        contacts = Contact.objects.filter(organization=invitation.organization)
-        return Response(ContactSerializer(contacts, many=True).data)
+        query = Contact.objects.all()
+
+        if invitation.organization:
+            query = query.filter(organization=invitation.organization)
+        if invitation.country:
+            query = query.filter(
+                organization__government=invitation.country,
+                organization__organization_type__acronym="GOV",
+            )
+        return Response(serializer_class(query, many=True).data)
 
     @action(detail=True, methods=["post"], url_path="nominate-contacts")
     def nominate_contacts(self, request, token):

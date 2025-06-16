@@ -38,6 +38,50 @@ const routes: RouteRecordRaw[] = [
   {
     children: [
       {
+        children: [
+          {
+            component: () => import("components/nominations/FindParticipant.vue"),
+            meta: {
+              modalHeader: "Add nomination",
+            },
+            name: "find-participant",
+            path: "find",
+          },
+          {
+            component: () => import("components/nominations/CreateParticipant.vue"),
+            meta: {
+              modalHeader: "Create participant",
+            },
+            name: "create-participant",
+            path: "create",
+          },
+          {
+            component: () => import("components/nominations/VerifyParticipant.vue"),
+            meta: {
+              modalHeader: "Verify essential contact information",
+            },
+            name: "verify-participant",
+            path: "verify/:participantId",
+            props: true,
+          },
+          {
+            component: () => import("components/nominations/NominateParticipant.vue"),
+            meta: {
+              modalHeader: "Nominate participant",
+            },
+            name: "nominate-participant",
+            path: "nominate/:participantId",
+            props: true,
+          },
+          {
+            component: () => import("components/nominations/ConfirmNomination.vue"),
+            meta: {
+              modalHeader: "Nomination confirmed",
+            },
+            name: "confirm-nomination",
+            path: "confirm",
+          },
+        ],
         component: () => import("pages/EventNominationsPage.vue"),
         meta: {
           header: "Meeting of Ozone Treaties",
