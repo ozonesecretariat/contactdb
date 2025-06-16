@@ -4,6 +4,7 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from api.tests.factories import (
     ContactFactory,
@@ -36,8 +37,9 @@ class TestEventInvitationAdmin(TestCase):
             email="admin@example.com", password="password"
         )
 
-        self.future_date = datetime(2026, 1, 1, tzinfo=UTC)
-        self.past_date = datetime(2024, 1, 1, tzinfo=UTC)
+        now = timezone.now()
+        self.future_date = now + timedelta(days=365)
+        self.past_date = now - timedelta(days=365)
 
         self.gov_type = OrganizationType.objects.get(acronym="GOV")
         self.org_type = OrganizationType.objects.exclude(acronym="GOV").first()
