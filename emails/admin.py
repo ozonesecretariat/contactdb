@@ -747,21 +747,11 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 reverse("admin:emails_invitationemail_changelist")
             )
 
-        if obj.is_reminder:
-            # TODO: maybe I should just let this happen and properly set the original_email_id
-            # from the older reminder.
-            self.message_user(
-                request,
-                "Cannot send reminder for a remider email.",
-                messages.ERROR,
-            )
-            return HttpResponseRedirect(
-                reverse("admin:emails_invitationemail_changelist")
-            )
-
         add_url = reverse("admin:emails_invitationemail_add")
         params = {
-            "original_email_id": str(obj.id),
+            "original_email_id": str(
+                obj.original_email.id if obj.is_reminder else obj.id
+            ),
             "is_reminder": "1",
         }
         redirect_url = f"{add_url}?{urlencode(params)}"
@@ -771,18 +761,21 @@ class InvitationEmailAdmin(BaseEmailAdmin):
     def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}
 
-        # Add reminder button for "normal" invitation emails
+        # Add reminder button invitation & reminder emails; pre-populate context
         obj = self.get_object(request, object_id)
-        if obj and not obj.is_reminder:
+        if obj:
             extra_context["show_reminder_button"] = True
             extra_context["reminder_url"] = reverse(
                 "admin:emails_invitationemail_send_reminder", args=[object_id]
             )
-
-        # Pre-populate context with reminder-related info
-        if obj:
-            extra_context["reminder_emails"] = obj.reminder_emails.all()
-            extra_context["original_email"] = obj.original_email
+            if obj.is_reminder:
+                extra_context["original_email"] = obj.original_email
+                extra_context["reminder_emails"] = (
+                    obj.original_email.reminder_emails.all()
+                )
+            else:
+                extra_context["original_email"] = None
+                extra_context["reminder_emails"] = obj.reminder_emails.all()
 
         return super().change_view(request, object_id, form_url, extra_context)
 
