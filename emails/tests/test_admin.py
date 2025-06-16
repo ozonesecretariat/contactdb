@@ -1134,28 +1134,6 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertIn("is_reminder=1", response.url)
         self.assertIn(f"original_email_id={original_email.id}", response.url)
 
-    def test_send_reminder_view_already_reminder(self):
-        """Test that reminders cannot be created from reminder emails."""
-        reminder_email = InvitationEmailFactory(
-            events=[self.event],
-            organization_types=[self.org_type],
-            is_reminder=True,
-        )
-
-        request = self.factory.get(f"/fake-url/{reminder_email.id}/send-reminder/")
-        request.user = self.user
-        request.session = {}
-        messages = FallbackStorage(request)
-        request._messages = messages
-
-        response = self.admin.send_reminder_view(request, reminder_email.id)
-
-        # Should redirect back with error message
-        self.assertEqual(response.status_code, 302)
-        messages_list = list(get_messages(request))
-        self.assertEqual(len(messages_list), 1)
-        self.assertIn("Cannot send reminder", str(messages_list[0]))
-
     def test_add_view_with_reminder_parameters(self):
         """Test the pre-population of fields when creating reminders."""
         # Create original email and invitation
@@ -1239,17 +1217,33 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertTrue(response.context_data["show_reminder_button"])
         self.assertIn("send-reminder", response.context_data["reminder_url"])
 
-    def test_change_view_no_reminder_button_for_reminders(self):
+    def test_change_view_reminder_button_for_reminders(self):
         """Test that reminder button does not appear for reminder emails."""
-        reminder_email = InvitationEmailFactory(is_reminder=True)
+        original_email = InvitationEmailFactory(
+            subject="Original Email",
+            is_reminder=False,
+            original_email=None,
+        )
+        reminder_email = InvitationEmailFactory(
+            subject="Reminder Email",
+            is_reminder=True,
+            original_email=original_email,
+        )
 
         request = self.factory.get(f"/fake-url/{reminder_email.id}/change/")
         request.user = self.user
+        response = self.admin.change_view(request, str(original_email.id))
 
+        self.assertTrue(response.context_data["show_reminder_button"])
+        self.assertIn("send-reminder", response.context_data["reminder_url"])
+
+        request = self.factory.get(f"/fake-url/{reminder_email.id}/change/")
+        request.user = self.user
         response = self.admin.change_view(request, str(reminder_email.id))
 
-        # Should not show reminder button
-        self.assertNotIn("show_reminder_button", response.context_data)
+        self.assertTrue(response.context_data["show_reminder_button"])
+        self.assertIn("send-reminder", response.context_data["reminder_url"])
+        self.assertEqual(response.context_data["original_email"], original_email)
 
     def test_reminder_includes_all_country_organizations(self):
         """

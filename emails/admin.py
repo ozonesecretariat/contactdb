@@ -691,7 +691,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         ] + urls
 
     def get_changeform_initial_data(self, request):
-        """Provide initial data for reminders in the changeform."""
+        """
+        Provides initial data for reminders in the changeform
+        (basically pre-populating all fields that can be pre-populated).
+        """
         initial = super().get_changeform_initial_data(request)
 
         # Check if this is a reminder being created
@@ -703,6 +706,9 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 unregistered_orgs = original_email.unregistered_organizations
 
                 if unregistered_orgs.exists():
+                    # Count reminders already sent for this invitation email
+                    reminder_count = original_email.reminder_emails.count()
+
                     # Get unique organization types
                     org_types = list(
                         {org.organization_type for org in unregistered_orgs}
@@ -713,15 +719,19 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     if original_email.event_group:
                         initial["event_group"] = original_email.event_group.pk
 
-                    # Pre-populate the form with as much data as possible
-                    # TODO:: perhaps only extracting unregistered org_types might lead
-                    # to confusion.
                     initial["organization_types"] = [
                         org_type.pk for org_type in org_types
                     ]
                     initial["is_reminder"] = True
                     initial["original_email"] = original_email.pk
-                    initial["subject"] = f"Reminder: {original_email.subject}"
+
+                    # Show the number of reminders already sent out for this email
+                    reminder_prefix = (
+                        f"Reminder {reminder_count + 1}"
+                        if reminder_count > 0
+                        else "Reminder"
+                    )
+                    initial["subject"] = f"{reminder_prefix}: {original_email.subject}"
                     initial["content"] = original_email.content
 
             except InvitationEmail.DoesNotExist:

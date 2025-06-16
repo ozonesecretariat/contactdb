@@ -6,7 +6,7 @@
 
   {% if show_reminder_button %}
     <div class="submit-row">
-      <a href="{{ reminder_url }}" class="default">Send Reminder Email</a>
+      <a href="{{ reminder_url }}" class="button btn btn-high btn-success">📧 Send Reminder Email</a>
     </div>
   {% endif %}
 {% endblock %}
@@ -38,6 +38,7 @@
               <li>
                 <a href="{% url 'admin:emails_invitationemail_change' reminder.pk %}">{{ reminder.subject }}</a>
                 <span class="help">({{ reminder.created_at|date:"M d, Y H:i" }})</span>
+                {% if reminder.pk == object.pk %}<strong>(current)</strong>{% endif %}
               </li>
             {% endfor %}
           </ul>
