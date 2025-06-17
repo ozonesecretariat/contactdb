@@ -1,15 +1,20 @@
 from functools import lru_cache
 
 from django.utils import timezone
-from rest_framework import filters
+from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 
 from api.permissions import ContactNominationPermission
-from api.serializers.contact import ContactDetailSerializer, OrganizationSerializer
+from api.serializers.contact import (
+    ContactDetailSerializer,
+    ContactSerializer,
+    OrganizationSerializer,
+)
 from api.serializers.event import (
     EventSerializer,
     NominateContactsSerializer,
@@ -88,6 +93,7 @@ class EventNominationViewSet(ViewSet):
         serializer_map = {
             "retrieve": RegistrationSerializer,
             "available_contacts": ContactDetailSerializer,
+            "create_contact": ContactSerializer,
             "nominate_contacts": RegistrationSerializer,
             "events": EventSerializer,
             "organizations": OrganizationSerializer,
@@ -149,6 +155,16 @@ class EventNominationViewSet(ViewSet):
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(registrations, many=True).data)
 
+    @action(detail=True, methods=["post"], url_path="create-contact")
+    def create_contact(self, request, token):
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if serializer.validated_data["organization"] not in self._get_org_qs(token):
+            raise ValidationError({"organization": "Invalid organization"})
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     @action(detail=True, methods=["get"])
     def events(self, request, token):
         # Get the invitation using the token from the URL
@@ -162,10 +178,8 @@ class EventNominationViewSet(ViewSet):
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(events, many=True).data)
 
-    @action(detail=True, methods=["get"])
-    def organizations(self, request, token):
+    def _get_org_qs(self, token):
         invitation = self.get_invitation(token)
-
         if invitation.organization:
             results = [invitation.organization]
         else:
@@ -173,5 +187,9 @@ class EventNominationViewSet(ViewSet):
                 government=invitation.country,
                 organization_type__acronym="GOV",
             ).prefetch_related("country", "government")
+        return results
+
+    @action(detail=True, methods=["get"])
+    def organizations(self, request, token):
         serializer_class = self.get_serializer_class()
-        return Response(serializer_class(results, many=True).data)
+        return Response(serializer_class(self._get_org_qs(token), many=True).data)
