@@ -3,7 +3,7 @@
     <pre>{{ invitation.participant }}</pre>
   </q-card-section>
   <q-card-section class="modal-footer">
-    <q-btn :to="{ name: 'verify-participant' }">Back</q-btn>
+    <q-btn :to="{ name: 'verify-participant', params: { participantId: invitation.participantId } }">Back</q-btn>
     <q-btn color="accent" :loading="loading" @click="confirmNomination">Confirm nomination</q-btn>
   </q-card-section>
 </template>

@@ -9,13 +9,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 
 from api.permissions import ContactNominationPermission
-from api.serializers.contact import ContactDetailSerializer
+from api.serializers.contact import ContactDetailSerializer, OrganizationSerializer
 from api.serializers.event import (
     EventSerializer,
     NominateContactsSerializer,
     RegistrationSerializer,
 )
-from core.models import Contact
+from core.models import Contact, Organization
 from events.models import Event, EventInvitation, Registration, RegistrationStatus
 
 
@@ -90,6 +90,7 @@ class EventNominationViewSet(ViewSet):
             "available_contacts": ContactDetailSerializer,
             "nominate_contacts": RegistrationSerializer,
             "events": EventSerializer,
+            "organizations": OrganizationSerializer,
         }
         return serializer_map.get(self.action, RegistrationSerializer)
 
@@ -105,7 +106,9 @@ class EventNominationViewSet(ViewSet):
         serializer_class = self.get_serializer_class()
 
         invitation = self.get_invitation(token)
-        query = Contact.objects.all()
+        query = Contact.objects.all().prefetch_related(
+            "organization", "organization__country", "organization__government"
+        )
 
         if invitation.organization:
             query = query.filter(organization=invitation.organization)
@@ -158,3 +161,17 @@ class EventNominationViewSet(ViewSet):
             events = invitation.event_group.events.all()
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(events, many=True).data)
+
+    @action(detail=True, methods=["get"])
+    def organizations(self, request, token):
+        invitation = self.get_invitation(token)
+
+        if invitation.organization:
+            results = [invitation.organization]
+        else:
+            results = Organization.objects.filter(
+                government=invitation.country,
+                organization_type__acronym="GOV",
+            ).prefetch_related("country", "government")
+        serializer_class = self.get_serializer_class()
+        return Response(serializer_class(results, many=True).data)

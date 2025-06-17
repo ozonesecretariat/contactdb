@@ -1,4 +1,5 @@
 import type { MeetingEvent } from "src/types/event";
+import type { Organization } from "src/types/organization";
 import type { Contact, EventNomination } from "src/types/registration";
 
 import { api } from "boot/axios";
@@ -12,13 +13,14 @@ export const useInvitationStore = defineStore("invitation", () => {
   const contacts = ref<Contact[]>([]);
   const events = ref<MeetingEvent[]>([]);
   const nominations = ref<EventNomination[]>([]);
+  const organizations = ref<Organization[]>([]);
   const token = computed(() => route.params.invitationToken as string);
   const participantId = computed(() => route.params.participantId as string);
   const participant = computed(() => contacts.value.find((c) => c.id === Number(participantId.value)));
 
   const actions = {
     async load() {
-      await Promise.all([this.loadContacts(), this.loadEvents(), this.loadNominations()]);
+      await Promise.all([this.loadEvents(), this.loadNominations(), this.loadOrganizations(), this.loadContacts()]);
       initialized.value = true;
     },
     async loadContacts() {
@@ -30,6 +32,9 @@ export const useInvitationStore = defineStore("invitation", () => {
     async loadNominations() {
       nominations.value = (await api.get<EventNomination[]>(`/events-nominations/${token.value}/`)).data;
     },
+    async loadOrganizations() {
+      nominations.value = (await api.get<EventNomination[]>(`/events-nominations/${token.value}/organizations/`)).data;
+    },
   };
 
   return {
@@ -37,6 +42,7 @@ export const useInvitationStore = defineStore("invitation", () => {
     events,
     initialized,
     nominations,
+    organizations,
     participant,
     participantId,
     token,
