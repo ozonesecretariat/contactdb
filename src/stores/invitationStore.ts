@@ -33,7 +33,7 @@ export const useInvitationStore = defineStore("invitation", () => {
       nominations.value = (await api.get<EventNomination[]>(`/events-nominations/${token.value}/`)).data;
     },
     async loadOrganizations() {
-      nominations.value = (await api.get<EventNomination[]>(`/events-nominations/${token.value}/organizations/`)).data;
+      organizations.value = (await api.get<Organization[]>(`/events-nominations/${token.value}/organizations/`)).data;
     },
   };
 
