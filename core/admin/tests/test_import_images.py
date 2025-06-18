@@ -194,9 +194,7 @@ class TestContactAdminPhotoImport(TestCase):
         self.assertEqual(len(messages), 1)
 
         task = ImportContactPhotosTask.objects.first()
-        expected_message = (
-            f"Photo import task {task.id} started for 1 contact(s)"
-        )
+        expected_message = f"Photo import task {task.id} started for 1 contact(s)"
         self.assertIn(expected_message, str(messages[0]))
 
     def test_import_photos_all_contacts_message(self):
@@ -252,7 +250,9 @@ class TestContactAdminPhotoImport(TestCase):
             id__in=[self.contact_with_kronos.id, self.contact_without_kronos.id]
         )
 
-        request = self.factory.get("/fake-url/", {"action": "import_photos_from_kronos"})
+        request = self.factory.get(
+            "/fake-url/", {"action": "import_photos_from_kronos"}
+        )
         request.user = self.user
         request.session = {}
         request._messages = FallbackStorage(request)
