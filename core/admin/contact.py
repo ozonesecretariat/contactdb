@@ -371,7 +371,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
 
         if "apply" in request.POST:
             import_all = request.POST.get("import_scope") == "all"
-            overwrite = request.POST.get("overwrite") == "on"
+            overwrite = request.POST.get("overwrite", "on") == "on"
 
             # If import_all is checked, ignore the queryset selection
             contact_ids = (

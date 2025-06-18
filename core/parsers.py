@@ -141,7 +141,7 @@ class ContactPhotosParser:
                 self.task.log(
                     logging.INFO,
                     f"Photo imported for contact {contact.id} using Kronos ID "
-                    "{kronos_id} (date: {contact_with_date['date']})",
+                    f"{kronos_id} (date: {contact_with_date['date']})",
                 )
                 return True
 
