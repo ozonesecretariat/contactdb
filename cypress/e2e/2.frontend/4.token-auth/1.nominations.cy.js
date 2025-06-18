@@ -16,4 +16,14 @@ describe("Check nominations page", () => {
     cy.visit("/token/xxx-xxx-xxx-xxx-xxxx/nominations");
     cy.contains("No data available");
   });
+  it("Check create contact", () => {
+    cy.visit("/token/123e4567-e89b-12d3-a456-426614174000/nominations");
+    cy.contains("Add Nomination").click();
+    cy.contains("Create new").click();
+    cy.get("input[name=emails]").type("test@example.com");
+    cy.get("[aria-label=Organization]").click();
+    cy.get("[role=option]").contains("Galactic Research Institute for Advanced Technologies").click();
+    cy.contains("Save").click();
+    cy.contains("Verify essential contact information");
+  });
 });

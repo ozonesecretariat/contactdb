@@ -135,10 +135,10 @@ async function createParticipant() {
     const newContact = (
       await api.post<Contact>(`/events-nominations/${invitation.token}/create-contact/`, {
         ...data,
-        emailCcs: [data.emailCcs],
-        emails: [data.emails],
-        mobiles: [data.mobiles],
-        phones: [data.phones],
+        emailCcs: toList(data.emailCcs),
+        emails: toList(data.emails),
+        mobiles: toList(data.mobiles),
+        phones: toList(data.phones),
       })
     ).data;
     await invitation.loadContacts();
@@ -148,6 +148,11 @@ async function createParticipant() {
   } finally {
     loading.value = false;
   }
+}
+
+function toList(val: string) {
+  if (!val) return [];
+  return [val];
 }
 </script>
 
