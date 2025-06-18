@@ -1,13 +1,16 @@
+import type { AxiosError } from "axios";
 import type { MeetingEvent } from "src/types/event";
 import type { Organization } from "src/types/organization";
 import type { Contact, EventNomination } from "src/types/registration";
 
 import { api } from "boot/axios";
 import { defineStore } from "pinia";
+import { useQuasar } from "quasar";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 
 export const useInvitationStore = defineStore("invitation", () => {
+  const $q = useQuasar();
   const route = useRoute();
   const initialized = ref(false);
   const contacts = ref<Contact[]>([]);
@@ -20,7 +23,24 @@ export const useInvitationStore = defineStore("invitation", () => {
 
   const actions = {
     async load() {
-      await Promise.all([this.loadEvents(), this.loadNominations(), this.loadOrganizations(), this.loadContacts()]);
+      try {
+        await Promise.all([this.loadEvents(), this.loadNominations(), this.loadOrganizations(), this.loadContacts()]);
+      } catch (e) {
+        switch ((e as AxiosError).status) {
+          case 404:
+            $q.notify({
+              message: "Invalid token!",
+              type: "negative",
+            });
+            break;
+          default:
+            $q.notify({
+              message: "Error while loading invitation data!",
+              type: "negative",
+            });
+            throw e;
+        }
+      }
       initialized.value = true;
     },
     async loadContacts() {
