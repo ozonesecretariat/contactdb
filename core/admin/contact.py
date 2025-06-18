@@ -21,7 +21,13 @@ from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
-from core.models import Contact, ContactGroup, Country, Organization
+from core.models import (
+    Contact,
+    ContactGroup,
+    Country,
+    ImportContactPhotosTask,
+    Organization,
+)
 from events.models import Registration
 
 
@@ -175,6 +181,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     "first_name",
                     "last_name",
                     "country",
+                    "photo",
                 ),
             },
         ),
@@ -276,6 +283,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "send_email",
         "add_contacts_to_group",
         "merge_contacts",
+        "import_photos_from_kronos",
     ]
 
     @admin.display(description="Events", ordering="registration_count")
@@ -353,6 +361,46 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                 "media": widget.media,
                 "widget": field.widget.render("group", None),
                 "title": "Please select group",
+            },
+        )
+
+    @admin.action(description="Import photos from Kronos", permissions=["change"])
+    def import_photos_from_kronos(self, request, queryset):
+        """Import photos for selected contacts from Kronos API."""
+        contact_count = queryset.count()
+
+        if "apply" in request.POST:
+            import_all = request.POST.get("import_scope") == "all"
+            overwrite = request.POST.get("overwrite") == "on"
+
+            # If import_all is checked, ignore the queryset selection
+            contact_ids = (
+                None if import_all else list(queryset.values_list("id", flat=True))
+            )
+            contact_count = Contact.objects.count() if import_all else queryset.count()
+
+            task = ImportContactPhotosTask.objects.create(
+                overwrite_existing=overwrite,
+                contact_ids=contact_ids,
+            )
+
+            task.run(is_async=True)
+
+            self.message_user(
+                request,
+                f"Photo import task {task.id} started for {contact_count} contact(s)",
+                messages.SUCCESS,
+            )
+            return None
+
+        return self.get_intermediate_response(
+            "admin/actions/import_contact_photos.html",
+            request,
+            queryset,
+            {
+                "title": "Import Contact Photos from Kronos",
+                "contact_count": contact_count,
+                "total_contacts": Contact.objects.count(),
             },
         )
 

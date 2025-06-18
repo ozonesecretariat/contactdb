@@ -10,6 +10,7 @@ KRONOS_PASSWORD = settings.KRONOS_PASSWORD
 
 
 class KronosClient:
+    # TODO: at least part of this should be moved to core or common!
     def __init__(self):
         self.auth_token = None
         self.auth_token = self._login()
@@ -113,3 +114,22 @@ class KronosClient:
             results.extend(page_result["records"])
             post_data["skip"] += limit
         return results
+
+    def get_contact_photo(self, contact_kronos_id: str):
+        """Get photo for a single specific contact Kronos id."""
+        try:
+            # TODO: check what response is received when contacts do not have photos.
+            return self.send_kronos(f"/api/v2018/contacts/{contact_kronos_id}/photo")
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                return None
+            raise
+
+    def get_contact_data(self, contact_kronos_id: str):
+        """Get Kronos data for a specific contact."""
+        try:
+            return self.send_kronos(f"/api/v2018/contacts/{contact_kronos_id}")
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                return None
+            raise

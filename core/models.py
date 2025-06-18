@@ -271,6 +271,13 @@ class Contact(BaseContact):
         verbose_name="Organization",
     )
 
+    photo = models.ImageField(
+        upload_to="contact_photos/",
+        null=True,
+        blank=True,
+        help_text="Contact photo; initially imported from Kronos",
+    )
+
     groups = models.ManyToManyField(
         "ContactGroup",
         blank=True,
@@ -563,6 +570,33 @@ class ImportLegacyContactsTask(TaskRQ):
         from .jobs import ImportLegacyContacts
 
         return ImportLegacyContacts
+
+
+class ImportContactPhotosTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 1800
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    contact_ids = ArrayField(
+        base_field=models.IntegerField(),
+        null=True,
+        blank=True,
+        help_text=(
+            "Specific Contact ids (internal, not Kronos ids) to process. "
+            "Null value means all contacts are processed."
+        ),
+    )
+    overwrite_existing = models.BooleanField(
+        default=True, help_text="Overwrite any existing photos."
+    )
+
+    @staticmethod
+    def get_jobclass():
+        from core.jobs.contact_photos import ImportContactPhotos
+
+        return ImportContactPhotos
 
 
 class Region(models.Model):

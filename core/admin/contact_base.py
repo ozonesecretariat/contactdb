@@ -268,6 +268,7 @@ class MergeContacts:
                     models.DecimalField,
                     models.DateField,
                     models.ForeignKey,
+                    models.ImageField,
                 ),
             ):
                 if val1 == val2:
