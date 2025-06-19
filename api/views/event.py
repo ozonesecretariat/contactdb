@@ -1,4 +1,3 @@
-
 from django.db import transaction
 from django.db.models import Subquery
 from rest_framework import filters, status
@@ -162,6 +161,10 @@ class EventNominationViewSet(ViewSet):
                 if event not in available_events:
                     raise ValidationError(
                         {"event": "Contact cannot be nominated in this event"}
+                    )
+                if contact != nomination["contact"]:
+                    raise ValidationError(
+                        {"contact": "Contact cannot be nominated by another contact"}
                     )
 
                 try:

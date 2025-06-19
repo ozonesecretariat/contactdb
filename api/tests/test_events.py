@@ -14,7 +14,6 @@ from api.tests.factories import (
     RegistrationRoleFactory,
     RegistrationStatusFactory,
 )
-from api.views.event import get_nomination_status_id
 from core.models import Country, Organization, OrganizationType
 from events.models import Registration
 
@@ -268,6 +267,31 @@ class TestEventNominationsAPI(BaseAPITestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Registration.objects.count(), 0)
 
+    def test_nominate_invalid_contact_data(self):
+        """Test nominating a contact from another organization."""
+        other_org = Organization.objects.create(name="Other Org")
+        other_contact = ContactFactory(
+            organization=other_org,
+            first_name="Other",
+            last_name="Contact",
+            emails=["other@example.com"],
+        )
+
+        data = [
+            {
+                "contact": other_contact.id,
+                "event": self.event.code,
+                "role": self.role.name,
+            }
+        ]
+        response = self.client.post(
+            f"{self.url}nominate-contact/{self.contact1.id}/",
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Registration.objects.count(), 0)
+
     def test_nominate_invalid_event(self):
         """Test nominating a contact from another organization."""
         other_event = EventFactory()
@@ -336,13 +360,11 @@ class TestEventNominationsAPI(BaseAPITestCase):
         RegistrationFactory(
             event=self.event,
             contact=self.contact1,
-            status_id=get_nomination_status_id(),
             date=timezone.now(),
         )
         RegistrationFactory(
             event=self.event,
             contact=self.contact2,
-            status_id=get_nomination_status_id(),
             date=timezone.now(),
         )
 
