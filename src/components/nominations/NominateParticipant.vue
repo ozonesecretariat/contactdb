@@ -70,11 +70,13 @@
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
 import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const dontShowNominationConfirmation = useStorage("dontShowNominationConfirmation", false);
+const $q = useQuasar();
 const router = useRouter();
 const loading = ref(false);
 const invitation = useInvitationStore();
@@ -125,6 +127,12 @@ async function confirmNomination() {
     } else {
       await router.push({ name: "confirm-nomination" });
     }
+  } catch (e) {
+    $q.notify({
+      message: "Unknown error, please try again later.",
+      type: "negative",
+    });
+    throw e;
   } finally {
     loading.value = false;
   }
