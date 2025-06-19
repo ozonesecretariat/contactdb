@@ -88,24 +88,6 @@ class NominateContactsSerializer(serializers.Serializer):
     )
     nominations = NominationSerializer(many=True)
 
-    def validate_nominations(self, nominations):
-        """
-        This actually validates that the contact ids in the nominations are valid
-        contact ids for the invitation included in the context.
-        """
-        invitation = self.context["invitation"]
-        invalid_contacts = [
-            n["contact"]
-            for n in nominations
-            if n["contact"].organization != invitation.organization
-        ]
-        if invalid_contacts:
-            raise serializers.ValidationError(
-                f"Contacts {[c.id for c in invalid_contacts]} do not belong to "
-                f"{invitation.organization}"
-            )
-        return nominations
-
     def validate_events(self, event_codes):
         invitation = self.context["invitation"]
         valid_events = (

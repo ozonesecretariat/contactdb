@@ -45,7 +45,7 @@ class OrganizationResourcePermission(rest_framework.permissions.BasePermission):
         """Override this to specify which resources to check."""
         return []
 
-    def validate_organization_membership(self, resources, organization):
+    def validate_organization_membership(self, resources, organizations):
         """Override this to implement specific validation logic."""
         return True
 
@@ -61,12 +61,12 @@ class ContactNominationPermission(OrganizationResourcePermission):
             return [n.get("contact") for n in request.data.get("nominations", [])]
         return []
 
-    def validate_organization_membership(self, contact_ids, organization):
+    def validate_organization_membership(self, contact_ids, organizations):
         if not contact_ids:
             return True
 
         valid_contacts = Contact.objects.filter(
-            id__in=contact_ids, organization=organization
+            id__in=contact_ids, organization__in=organizations
         ).count()
 
         if valid_contacts != len(contact_ids):

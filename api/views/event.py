@@ -55,14 +55,18 @@ class EventNominationViewSet(ViewSet):
     def get_organization_context(self):
         """
         Used to provide organization context for permission checking
-        (ContactNominationPermission needs it ).
+        (ContactNominationPermission needs it).
         """
         try:
             token = self.kwargs[self.lookup_field]
             invitation = self.get_invitation(token)
-            return invitation.organization
+            if invitation.organization:
+                return [invitation.organization]
+            if invitation.country:
+                return list(Organization.objects.filter(government=invitation.country))
+            return []
         except (KeyError, EventInvitation.DoesNotExist):
-            return None
+            return []
 
     def get_queryset(self):
         # Get the invitation using the token from the URL
@@ -77,8 +81,7 @@ class EventNominationViewSet(ViewSet):
             )
         if invitation.country:
             registrations_qs = registrations_qs.filter(
-                contact__organization__government=invitation.country,
-                contact__organization__organization_type__acronym="GOV",
+                contact__organization__government=invitation.country
             )
 
         # TODO: this assumes mutual exclusion between event and event_group
@@ -119,10 +122,7 @@ class EventNominationViewSet(ViewSet):
         if invitation.organization:
             query = query.filter(organization=invitation.organization)
         if invitation.country:
-            query = query.filter(
-                organization__government=invitation.country,
-                organization__organization_type__acronym="GOV",
-            )
+            query = query.filter(organization__government=invitation.country)
         return Response(serializer_class(query, many=True).data)
 
     @action(detail=True, methods=["post"], url_path="nominate-contacts")
@@ -184,8 +184,7 @@ class EventNominationViewSet(ViewSet):
             results = [invitation.organization]
         else:
             results = Organization.objects.filter(
-                government=invitation.country,
-                organization_type__acronym="GOV",
+                government=invitation.country
             ).prefetch_related("country", "government")
         return results
 

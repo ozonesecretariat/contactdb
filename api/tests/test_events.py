@@ -112,6 +112,37 @@ class TestEventNominationsAPI(BaseAPITestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["emails"], ["test1@example.com"])
 
+    def test_get_available_contacts_country_invitation(self):
+        """
+        Test that all org contacts in the country are available
+        for country-level invitations.
+        """
+        ro = Country.objects.get(code="RO")
+        gov = OrganizationType.objects.get(acronym="GOV")
+        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+
+        org1 = OrganizationFactory(government=ro, organization_type=gov)
+        org2 = OrganizationFactory(government=ro, organization_type=ass)
+        org3 = OrganizationFactory()
+
+        contact1 = ContactFactory(organization=org1)
+        contact2 = ContactFactory(organization=org2)
+        contact3 = ContactFactory(organization=org3)
+
+        invitation = EventInvitationFactory(
+            event=self.event, country=ro, organization=None
+        )
+        url = api_reverse(
+            "events-nominations-available-contacts",
+            kwargs={"token": invitation.token},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        ids = {c["id"] for c in response.json()}
+        self.assertIn(contact1.id, ids)
+        self.assertIn(contact2.id, ids)
+        self.assertNotIn(contact3.id, ids)
+
     def test_nominate_contacts(self):
         """Test nominating contacts."""
         data = {
@@ -141,6 +172,51 @@ class TestEventNominationsAPI(BaseAPITestCase):
         # Check returned data
         response_data = response.json()
         self.assertEqual(len(response_data), 2)
+
+    def test_nominate_contacts_country_invitation(self):
+        """Test that nomination works for any org contact with government == country."""
+        ro = Country.objects.get(code="RO")
+        gov = OrganizationType.objects.get(acronym="GOV")
+        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+
+        org1 = OrganizationFactory(government=ro, organization_type=gov)
+        org2 = OrganizationFactory(government=ro, organization_type=ass)
+        contact1 = ContactFactory(organization=org1)
+        contact2 = ContactFactory(organization=org2)
+
+        invitation = EventInvitationFactory(
+            event=self.event, country=ro, organization=None
+        )
+        url = api_reverse(
+            "events-nominations-nominate-contacts",
+            kwargs={"token": invitation.token},
+        )
+        data = {
+            "events": [self.event.code],
+            "nominations": [
+                {
+                    "contact": contact1.id,
+                    "is_funded": True,
+                    "role": self.role.id,
+                    "priority_pass_code": "ABC123",
+                },
+                {
+                    "contact": contact2.id,
+                    "is_funded": False,
+                    "role": self.role.id,
+                },
+            ],
+        }
+        response = self.client.post(
+            url, data=json.dumps(data), content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            Registration.objects.filter(contact=contact1, event=self.event).exists()
+        )
+        self.assertTrue(
+            Registration.objects.filter(contact=contact2, event=self.event).exists()
+        )
 
     def test_nominate_invalid_contact(self):
         """Test nominating a contact from another organization."""
@@ -255,7 +331,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         ass = OrganizationType.objects.get(acronym="ASS-PANEL")
 
         org1 = OrganizationFactory(government=ro, organization_type=gov)
-        OrganizationFactory(government=ro, organization_type=ass)
+        org2 = OrganizationFactory(government=ro, organization_type=ass)
         OrganizationFactory(government=fr, organization_type=gov)
 
         new_invitation = EventInvitationFactory(
@@ -272,8 +348,9 @@ class TestEventNominationsAPI(BaseAPITestCase):
         self.assertEqual(response.status_code, 200)
         result = response.json()
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["id"], org1.id)
+        self.assertEqual(len(result), 2)
+        org_ids = {org1.id, org2.id}
+        self.assertTrue(all(org["id"] in org_ids for org in result))
 
     def test_create_contact(self):
         url = api_reverse(
@@ -296,7 +373,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
             ).exists()
         )
 
-    def test_create_contact_wrong_org(self):
+    def test_create_contact_government_related_orgs(self):
         ro = Country.objects.get(code="RO")
         fr = Country.objects.get(code="FR")
         gov = OrganizationType.objects.get(acronym="GOV")
@@ -313,6 +390,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
             event_group=None,
         )
 
+        # RO government-related org, should work
         url = api_reverse(
             "events-nominations-create-contact",
             kwargs={"token": new_invitation.token},
@@ -325,8 +403,9 @@ class TestEventNominationsAPI(BaseAPITestCase):
             },
             format="json",
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)
 
+        # FR government-related org, should not work
         response = self.client.post(
             url,
             {
