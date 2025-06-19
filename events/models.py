@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django_task.models import TaskRQ
 
 from common.citext import CICharField
@@ -232,6 +233,10 @@ class RegistrationRole(models.Model):
         return self.name
 
 
+def get_default_status():
+    return RegistrationStatus.objects.get(name="Nominated")
+
+
 class Registration(models.Model):
     contact = models.ForeignKey(
         Contact,
@@ -243,12 +248,15 @@ class Registration(models.Model):
         on_delete=models.CASCADE,
         related_name="registrations",
     )
-    status = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+
+    status = models.ForeignKey(
+        RegistrationStatus, on_delete=models.CASCADE, default=get_default_status
+    )
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
     priority_pass_code = models.CharField(max_length=150, blank=True)
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
-    is_funded = models.BooleanField()
+    is_funded = models.BooleanField(default=False)
 
     # Save the state of organization, designation, and department as it
     # was when the contact registered

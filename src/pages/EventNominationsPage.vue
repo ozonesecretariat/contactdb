@@ -36,7 +36,13 @@
 
       <template #body-cell-actions="props">
         <q-td :props="props">
-          <q-btn icon="edit" flat size="sm" round />
+          <q-btn
+            icon="edit"
+            flat
+            size="sm"
+            round
+            :to="{ name: 'nominate-participant', params: { participantId: props.row.contact.id } }"
+          />
         </q-td>
       </template>
     </q-table>

@@ -45,7 +45,11 @@
       </template>
       <template #body-cell-actions="props">
         <q-td :props="props">
-          <q-btn size="sm" :to="{ name: 'verify-participant', params: { participantId: props.row.id } }" color="accent">
+          <q-btn
+            size="sm"
+            :to="{ name: 'nominate-participant', params: { participantId: props.row.id } }"
+            color="accent"
+          >
             Select
           </q-btn>
         </q-td>

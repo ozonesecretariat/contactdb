@@ -48,7 +48,7 @@ const routes: RouteRecordRaw[] = [
             path: "find",
           },
           {
-            component: () => import("components/nominations/CreateParticipant.vue"),
+            component: () => import("components/nominations/ParticipantForm.vue"),
             meta: {
               modalHeader: "Create participant",
             },
@@ -56,13 +56,12 @@ const routes: RouteRecordRaw[] = [
             path: "create",
           },
           {
-            component: () => import("components/nominations/VerifyParticipant.vue"),
+            component: () => import("components/nominations/ParticipantForm.vue"),
             meta: {
-              modalHeader: "Verify essential contact information",
+              modalHeader: "Update participant",
             },
-            name: "verify-participant",
-            path: "verify/:participantId",
-            props: true,
+            name: "edit-participant",
+            path: "edit/:participantId",
           },
           {
             component: () => import("components/nominations/NominateParticipant.vue"),
@@ -71,7 +70,6 @@ const routes: RouteRecordRaw[] = [
             },
             name: "nominate-participant",
             path: "nominate/:participantId",
-            props: true,
           },
           {
             component: () => import("components/nominations/ConfirmNomination.vue"),
