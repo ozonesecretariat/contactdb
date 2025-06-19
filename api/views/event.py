@@ -104,7 +104,10 @@ class EventNominationViewSet(ViewSet):
         """List contacts that can be nominated from this organization."""
         invitation = self.get_invitation(token)
         contacts = Contact.objects.filter(organization=invitation.organization)
-        return Response(ContactSerializer(contacts, many=True).data)
+        serializer = ContactSerializer(
+            contacts, many=True, context={"nomination_token": token, "request": request}
+        )
+        return Response(serializer.data)
 
     @action(detail=True, methods=["post"], url_path="nominate-contacts")
     def nominate_contacts(self, request, token):

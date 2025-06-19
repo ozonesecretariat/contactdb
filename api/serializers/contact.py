@@ -1,3 +1,4 @@
+from django.urls import reverse
 from rest_framework import serializers
 
 from core.models import Contact, Country, Organization
@@ -39,9 +40,32 @@ class ContactSerializer(serializers.ModelSerializer):
     events nominations.
     """
 
+    photo_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Contact
-        fields = ("id", "first_name", "last_name", "emails", "organization")
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "emails",
+            "organization",
+            "photo_url",
+        )
+
+    def get_photo_url(self, obj):
+        if not obj.photo or not obj.photo_access_uuid:
+            return None
+        request = self.context.get("request")
+        nomination_token = self.context.get("nomination_token")
+        photo_url = reverse(
+            "secure-photo", kwargs={"photo_token": obj.photo_access_uuid}
+        )
+        if nomination_token:
+            photo_url = f"{photo_url}?nomination_token={nomination_token}"
+        if request:
+            return request.build_absolute_uri(photo_url)
+        return photo_url
 
 
 class ContactDetailSerializer(ContactSerializer):
