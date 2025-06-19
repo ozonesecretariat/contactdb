@@ -49,11 +49,14 @@ class EventSerializer(serializers.ModelSerializer):
             "groups",
         )
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
     contact = ContactSerializer(read_only=True)
     event = EventSerializer(read_only=True)
     status = serializers.SlugRelatedField(slug_field="name", read_only=True)
-    role = serializers.SlugRelatedField(slug_field="name", queryset=RegistrationRole.objects.all())
+    role = serializers.SlugRelatedField(
+        slug_field="name", queryset=RegistrationRole.objects.all()
+    )
 
     class Meta:
         model = Registration
@@ -69,11 +72,15 @@ class NominationSerializer(serializers.ModelSerializer):
     they should be added here.
     """
 
-    event = serializers.SlugRelatedField(slug_field="code", queryset=Event.objects.all())
-    role = serializers.SlugRelatedField(slug_field="name", queryset=RegistrationRole.objects.all())
+    event = serializers.SlugRelatedField(
+        slug_field="code", queryset=Event.objects.all()
+    )
+    role = serializers.SlugRelatedField(
+        slug_field="name", queryset=RegistrationRole.objects.all()
+    )
     contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
 
     class Meta:
         model = Registration
         fields = ("event", "contact", "role")
-        validators = []  #Disables auto-added UniqueTogetherValidator
+        validators = []  # Disables auto-added UniqueTogetherValidator

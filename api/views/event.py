@@ -136,8 +136,7 @@ class EventNominationViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
 
         current_nominations = {
-            n.event: n
-            for n in contact.registrations.filter(event__in=available_events)
+            n.event: n for n in contact.registrations.filter(event__in=available_events)
         }
 
         with transaction.atomic():

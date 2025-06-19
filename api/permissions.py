@@ -8,4 +8,3 @@ class DjangoModelPermissions(rest_framework.permissions.DjangoModelPermissions):
         **rest_framework.permissions.DjangoModelPermissions.perms_map,
         "GET": ["%(app_label)s.view_%(model_name)s"],
     }
-
