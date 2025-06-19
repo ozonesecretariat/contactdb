@@ -6,8 +6,6 @@ describe("Check", () => {
       cy.checkModelAdmin({
         extraFields: {
           contact: contact.last_name,
-          date_0: "2024-04-18",
-          date_1: "00:00:00",
           event: "Yoga Experience",
           role: "Alternate Head",
           status: "Registered",
