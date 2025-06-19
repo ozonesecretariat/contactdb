@@ -124,9 +124,7 @@ class EventNominationViewSet(ViewSet):
                 organization__organization_type__acronym="GOV",
             )
         serializer = serializer_class(
-            query,
-            many=True,
-            context={"nomination_token": token, "request": request}
+            query, many=True, context={"nomination_token": token, "request": request}
         )
         return Response(serializer.data)
 
