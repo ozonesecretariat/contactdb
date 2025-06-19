@@ -42,6 +42,7 @@
             flat
             size="sm"
             round
+            aria-label="Edit"
             :to="{ name: 'nominate-participant', params: { participantId: props.row.contact.id } }"
           />
         </q-td>
@@ -134,6 +135,7 @@ const filteredNominations = computed(() =>
     item.contact.lastName,
     item.contact.fullName,
     item.contact.organization?.name,
+    item.contact.emails,
   ]),
 );
 
