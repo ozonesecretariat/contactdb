@@ -124,7 +124,7 @@ const columns = computed(() => {
 
 function handleRowClick(ev: Event, row: Contact) {
   if ($q.screen.lt.md) {
-    router.push({ name: "verify-participant", params: { participantId: row.id } });
+    router.push({ name: "nominate-participant", params: { participantId: row.id } });
   }
 }
 </script>

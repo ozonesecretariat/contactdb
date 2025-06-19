@@ -1,7 +1,7 @@
 <template>
   <div class="flex column q-gutter-y-md">
     <div class="text-subtitle2">Ozone Secretariat</div>
-    <div class="flex q-gutter-x-md">
+    <div class="flex q-gutter-md">
       <q-input v-model="search" placeholder="Search" autofocus role="search" filled dense class="col-grow">
         <template #prepend>
           <q-icon name="search" />
@@ -22,6 +22,7 @@
       }"
       :dense="$q.screen.lt.lg"
       :grid="$q.screen.lt.md"
+      @row-click="handleRowClick"
     >
       <template #header="props">
         <q-tr :props="props">
@@ -59,6 +60,7 @@ import { useQuasar } from "quasar";
 import { unaccentSearch } from "src/utils/search";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 
 interface GroupedEventNomination {
   contact: Contact;
@@ -68,6 +70,7 @@ interface GroupedEventNomination {
 }
 
 const $q = useQuasar();
+const router = useRouter();
 const search = useRouteQuery("search", "");
 const invitation = useInvitationStore();
 invitation.load();
@@ -133,4 +136,10 @@ const filteredNominations = computed(() =>
     item.contact.organization?.name,
   ]),
 );
+
+function handleRowClick(ev: Event, row: GroupedEventNomination) {
+  if ($q.screen.lt.md) {
+    router.push({ name: "nominate-participant", params: { participantId: row.contact.id } });
+  }
+}
 </script>
