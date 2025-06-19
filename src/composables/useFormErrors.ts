@@ -20,7 +20,11 @@ export default function useFormErrors() {
         result.nonFieldErrors = "Unknown error";
       } else {
         for (const [key, value] of Object.entries(reason)) {
-          result[key] = Array.isArray(value) ? value.join(" ") : String(value);
+          let errorMsg = value;
+          if (typeof value === "object" && !Array.isArray(value)) {
+            errorMsg = Array.from(Object.values(value)).flat();
+          }
+          result[key] = Array.isArray(errorMsg) ? errorMsg.join(" ") : String(errorMsg);
         }
       }
 

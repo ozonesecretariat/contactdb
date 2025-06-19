@@ -8,6 +8,8 @@ body {
 }
 
 .body--light {
+  .modal-header,
+  .modal-footer,
   .q-table__top,
   thead tr:first-child th {
     background-color: #f0f0f0;
@@ -15,8 +17,21 @@ body {
 }
 
 .body--dark {
+  .modal-header,
+  .modal-footer,
   .q-table__top,
   thead tr:first-child th {
     background-color: #303030;
   }
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.no-list {
+  list-style: none;
 }

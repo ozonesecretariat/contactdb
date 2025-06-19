@@ -46,10 +46,15 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = (
             "id",
+            "title",
             "first_name",
             "last_name",
             "emails",
+            "email_ccs",
             "organization",
+            "full_name",
+            "phones",
+            "mobiles",
             "photo_url",
         )
 
