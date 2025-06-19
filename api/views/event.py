@@ -1,6 +1,6 @@
-from functools import lru_cache
 
 from django.db import transaction
+from django.db.models import Subquery
 from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -25,17 +25,11 @@ from events.models import (
     EventInvitation,
     Registration,
     RegistrationRole,
-    RegistrationStatus,
 )
 
 
-@lru_cache(maxsize=1)
-def get_nomination_status_id():
-    return RegistrationStatus.objects.get(name="Nominated").id
-
-
 class EventViewSet(ReadOnlyModelViewSet):
-    queryset = Event.objects.all().prefetch_related("venue_country")
+    queryset = Event.objects.all().select_related("venue_country")
     serializer_class = EventSerializer
     lookup_field = "code"
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -60,24 +54,59 @@ class EventNominationViewSet(ViewSet):
     def get_queryset(self):
         # Get the invitation using the token from the URL
         token = self.kwargs[self.lookup_field]
-        invitation = self.get_invitation(token)
-        registrations_qs = Registration.objects.select_related(
-            "contact", "status", "event"
+        return (
+            Registration.objects.select_related(
+                "role",
+                "status",
+                "event",
+                "event__venue_country",
+                "contact",
+                "contact__organization",
+                "contact__organization__country",
+                "contact__organization__government",
+            )
+            .prefetch_related("event__groups")
+            .filter(
+                contact__organization_id__in=Subquery(
+                    self._get_org_qs(token).values("id")
+                ),
+                event_id__in=Subquery(self._get_event_qs(token).values("id")),
+            )
         )
-        if invitation.organization:
-            registrations_qs = registrations_qs.filter(
-                contact__organization=invitation.organization
-            )
-        if invitation.country:
-            registrations_qs = registrations_qs.filter(
-                contact__organization__government=invitation.country,
-                contact__organization__organization_type__acronym="GOV",
-            )
 
-        # TODO: this assumes mutual exclusion between event and event_group
-        if invitation.event:
-            return registrations_qs.filter(event=invitation.event)
-        return registrations_qs.filter(event__in=invitation.event_group.events.all())
+    def _get_event_qs(self, token):
+        invitation = self.get_invitation(token)
+        qs = (
+            Event.objects.all()
+            .select_related("venue_country")
+            .prefetch_related("groups")
+        )
+        if invitation.event_group_id:
+            qs = qs.filter(groups__id__in=[invitation.event_group_id])
+        else:
+            qs = qs.filter(id=invitation.event_id)
+        return qs
+
+    def _get_org_qs(self, token):
+        invitation = self.get_invitation(token)
+        qs = Organization.objects.all().select_related("country", "government")
+        if invitation.country_id:
+            qs = qs.filter(
+                government_id=invitation.country_id,
+                organization_type__acronym="GOV",
+            )
+        else:
+            qs = qs.filter(id=invitation.organization_id)
+        return qs
+
+    def _get_contacts_qs(self, token):
+        return (
+            Contact.objects.all()
+            .filter(organization_id__in=Subquery(self._get_org_qs(token).values("id")))
+            .select_related(
+                "organization", "organization__country", "organization__government"
+            )
+        )
 
     def get_serializer_class(self):
         """
@@ -100,21 +129,6 @@ class EventNominationViewSet(ViewSet):
         serializer = serializer_class(registrations, many=True)
         return Response(serializer.data)
 
-    def _get_contacts_qs(self, token):
-        invitation = self.get_invitation(token)
-        query = Contact.objects.all().prefetch_related(
-            "organization", "organization__country", "organization__government"
-        )
-
-        if invitation.organization:
-            query = query.filter(organization=invitation.organization)
-        if invitation.country:
-            query = query.filter(
-                organization__government=invitation.country,
-                organization__organization_type__acronym="GOV",
-            )
-        return query
-
     @action(detail=True, methods=["get"], url_path="available-contacts")
     def available_contacts(self, request, token):
         """List contacts that can be nominated from this organization."""
@@ -127,7 +141,10 @@ class EventNominationViewSet(ViewSet):
         url_path="nominate-contact/(?P<contact_id>[^/.]+)",
     )
     def nominate_contact(self, request, token, contact_id):
-        # Get the invitation using the token from the URL
+        """Update nomination status for a contact for all the events of the group.
+
+        Any events not specified will have their nomination removed.
+        """
         contact = get_object_or_404(self._get_contacts_qs(token), id=contact_id)
         available_events = set(self._get_event_qs(token))
 
@@ -155,7 +172,7 @@ class EventNominationViewSet(ViewSet):
                 registration.role = nomination["role"]
                 registration.save()
 
-            # Anything left needs of the current nominations that was not provided
+            # Anything left of the current nominations that was not provided
             # needs to be removed.
             for registration in current_nominations.values():
                 registration.delete()
@@ -185,28 +202,11 @@ class EventNominationViewSet(ViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def _get_event_qs(self, token):
-        invitation = self.get_invitation(token)
-        if invitation.event:
-            return [invitation.event]
-        return invitation.event_group.events.all()
-
     @action(detail=True, methods=["get"])
     def events(self, request, token):
         # Get the invitation using the token from the URL
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(self._get_event_qs(token), many=True).data)
-
-    def _get_org_qs(self, token):
-        invitation = self.get_invitation(token)
-        if invitation.organization:
-            results = [invitation.organization]
-        else:
-            results = Organization.objects.filter(
-                government=invitation.country,
-                organization_type__acronym="GOV",
-            ).prefetch_related("country", "government")
-        return results
 
     @action(detail=True, methods=["get"])
     def organizations(self, request, token):
