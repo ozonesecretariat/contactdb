@@ -284,6 +284,7 @@ class InvitationEmail(Email):
             invitations = EventInvitation.objects.filter(event__in=events)
         else:
             invitations = EventInvitation.objects.filter(event_group=event_group)
+            events = list(event_group.events.all())
 
         # These are ALL uregistered orgs, regardless of being invited directtly/via GOV
         return (

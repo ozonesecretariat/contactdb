@@ -288,6 +288,7 @@ class TestInvitationEmailAdmin(TestCase):
             events=[self.event],
             organization_types=[self.org_type],
             is_reminder=True,
+            original_email=original_email,
             subject="Urgent reminder for the intergalactic lawnmower convention",
         )
 
@@ -1332,6 +1333,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertIsNotNone(non_gov_task)
         gov_task = tasks.filter(organization=gov_org).first()
         self.assertIsNone(gov_task)
+        self.assertEqual(tasks.count(), 1)
 
     def test_reminder_respects_include_in_invitation_flag(self):
         """Test that only organizations with include_in_invitation=True are included."""
@@ -1544,3 +1546,36 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertEqual(
             unregistered_task_orgs, {gov_org_unregistered, non_gov_unregistered}
         )
+
+    def test_reminder_event_group_partial_registration(self):
+        """
+        Test scenario with orgs registered for only one event in group;
+        these orgs should not get reminder.
+        """
+        event_group = EventGroupFactory(name="Multi-Day Conference")
+        event1 = EventFactory(title="Day 1")
+        event2 = EventFactory(title="Day 2")
+        event_group.events.add(event1, event2)
+
+        government = Country.objects.first()
+        org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        contact = ContactFactory(organization=org)
+        # Register org contact only for event1
+        RegistrationFactory(event=event1, contact=contact)
+
+        EventInvitationFactory(
+            event=None, event_group=event_group, country=government, organization=None
+        )
+
+        original_email = InvitationEmailFactory(
+            events=[],
+            event_group=event_group,
+            organization_types=[self.org_type],
+        )
+
+        # Org hould *not* be in unregistered
+        self.assertNotIn(org, list(original_email.unregistered_organizations))
