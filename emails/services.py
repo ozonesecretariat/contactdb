@@ -20,7 +20,7 @@ def get_organization_recipients(
     org_types: QuerySet of OrganizationType objects
     additional_cc_contacts: Optional set of additional contacts to CC
     additional_bcc_contacts: Optional set of additional contacts to BCC
-    reminder_invitation: Optional EventInvitation used to filter only unregistered orgs
+    invitation_email: Optional InvitationEmail used to filter only unregistered orgs
     """
     # First identify governments (called them countries, but there's a subtle difference)
     # for which GOV organizations exist.
@@ -36,17 +36,18 @@ def get_organization_recipients(
 
     gov_countries = {org.government for org in gov_orgs if org.government}
 
-    # For reminders, start with all organizations and then keep only organizations that
-    # haven't registered anyone.
-    if invitation_email:
-        orgs_queryset = Organization.objects.filter(
-            organization_type__in=org_types, include_in_invitation=True
-        ).prefetch_related(
-            "primary_contacts",
-            "secondary_contacts",
-            "government",
-        )
+    # Start off with the same queryset
+    orgs_queryset = Organization.objects.filter(
+        organization_type__in=org_types, include_in_invitation=True
+    ).prefetch_related(
+        "primary_contacts",
+        "secondary_contacts",
+        "government",
+    )
 
+    # For reminders, keep only organizations that haven't registered anyone.
+    is_reminder = invitation_email is not None
+    if is_reminder:
         # Filter to only unregistered organizations
         unregistered_orgs = invitation_email.unregistered_organizations
         unregistered_org_ids = [org.id for org in unregistered_orgs]
@@ -54,14 +55,7 @@ def get_organization_recipients(
 
     else:
         orgs_queryset = (
-            Organization.objects.filter(
-                organization_type__in=org_types, include_in_invitation=True
-            )
-            .prefetch_related(
-                "primary_contacts",
-                "secondary_contacts",
-                "government",
-            )
+            orgs_queryset
             .filter(
                 # Organization is either:
                 # - one of the selected GOV orgs
