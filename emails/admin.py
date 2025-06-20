@@ -506,28 +506,6 @@ class InvitationEmailForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        is_reminder_creation = (
-            not self.instance.pk
-            and self.initial.get("is_reminder")
-            and self.initial.get("original_email")
-        )
-
-        if is_reminder_creation:
-            # Most reminder fields should be pre-populated and read-only
-            for field_name in [
-                "is_reminder",
-                "original_email",
-                "events",
-                "event_group",
-                "organization_types",
-            ]:
-                if field_name in self.fields:
-                    self.fields[field_name].disabled = True
-                    self.fields[field_name].help_text = (
-                        "This field is automatically set based on the original invitation "
-                        "email and cannot be changed for reminders."
-                    )
-
         # Overriding the CKEditor widget for the `content` field; this allows us
         # to use custom placeholders for different email types.
         if "content" in self.fields:
