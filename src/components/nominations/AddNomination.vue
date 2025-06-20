@@ -1,6 +1,6 @@
 <template>
   <q-btn icon="add" color="accent" :to="{ name: 'find-participant' }">Add Nomination</q-btn>
-  <q-dialog :model-value="modalOpen" persistent>
+  <q-dialog v-if="invitation.initialized" :model-value="modalOpen" persistent>
     <q-card class="nomination-modal">
       <q-card-section class="modal-header">
         <div class="text-h6">{{ route.meta.modalHeader }}</div>
@@ -13,11 +13,13 @@
 </template>
 
 <script setup lang="ts">
+import { useInvitationStore } from "stores/invitationStore";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 const modalOpen = computed(() => route.matched.length >= 3);
+const invitation = useInvitationStore();
 </script>
 
 <style scoped lang="scss">

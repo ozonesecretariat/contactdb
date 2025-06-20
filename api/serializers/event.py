@@ -54,14 +54,17 @@ class RegistrationSerializer(serializers.ModelSerializer):
     contact = ContactSerializer(read_only=True)
     event = EventSerializer(read_only=True)
     status = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    role = serializers.SlugRelatedField(
+        slug_field="name", queryset=RegistrationRole.objects.all()
+    )
 
     class Meta:
         model = Registration
-        fields = ("id", "event", "contact", "created_at", "status")
+        fields = ("id", "event", "contact", "created_at", "status", "role")
         read_only_fields = ("created_at", "status")
 
 
-class NominationSerializer(serializers.Serializer):
+class NominationSerializer(serializers.ModelSerializer):
     """
     Contains all required fields for nominating contacts.
 
@@ -69,54 +72,15 @@ class NominationSerializer(serializers.Serializer):
     they should be added here.
     """
 
-    contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
-    is_funded = serializers.BooleanField(required=True)
-    role = serializers.PrimaryKeyRelatedField(queryset=RegistrationRole.objects.all())
-    priority_pass_code = serializers.CharField(required=False, allow_blank=True)
-
-
-class NominateContactsSerializer(serializers.Serializer):
-    """
-    "Write" serializer used to validate and convert data for Nominations.
-
-    Relies on an `EvenInvitation` object being inserted into the context.
-    """
-
-    events = serializers.ListField(
-        child=serializers.CharField(),
-        help_text="List of event codes to nominate contacts for",
+    event = serializers.SlugRelatedField(
+        slug_field="code", queryset=Event.objects.all()
     )
-    nominations = NominationSerializer(many=True)
+    role = serializers.SlugRelatedField(
+        slug_field="name", queryset=RegistrationRole.objects.all()
+    )
+    contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
 
-    def validate_nominations(self, nominations):
-        """
-        This actually validates that the contact ids in the nominations are valid
-        contact ids for the invitation included in the context.
-        """
-        invitation = self.context["invitation"]
-        invalid_contacts = [
-            n["contact"]
-            for n in nominations
-            if n["contact"].organization != invitation.organization
-        ]
-        if invalid_contacts:
-            raise serializers.ValidationError(
-                f"Contacts {[c.id for c in invalid_contacts]} do not belong to "
-                f"{invitation.organization}"
-            )
-        return nominations
-
-    def validate_events(self, event_codes):
-        invitation = self.context["invitation"]
-        valid_events = (
-            [invitation.event]
-            if invitation.event
-            else invitation.event_group.events.all()
-        )
-        valid_codes = {event.code for event in valid_events}
-        invalid_codes = set(event_codes) - valid_codes
-        if invalid_codes:
-            raise serializers.ValidationError(
-                f"Events {invalid_codes} are not valid for this invitation"
-            )
-        return event_codes
+    class Meta:
+        model = Registration
+        fields = ("event", "contact", "role")
+        validators = []  # Disables auto-added UniqueTogetherValidator
