@@ -280,12 +280,12 @@ class InvitationEmail(Email):
         if not (events or event_group):
             return Organization.objects.none()
 
-        # For all unregistered organizations from all invitations for this event/group
         if events:
             invitations = EventInvitation.objects.filter(event__in=events)
         else:
             invitations = EventInvitation.objects.filter(event_group=event_group)
 
+        # These are ALL uregistered orgs, regardless of being invited directtly/via GOV
         return (
             Organization.objects.filter(
                 # Non-GOV organizations which are directly invited (have EventInvitations)

@@ -692,19 +692,18 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     # Count reminders already sent for this invitation email
                     reminder_count = original_email.reminder_emails.count()
 
-                    # Get unique organization types
-                    org_types = list(
-                        {org.organization_type for org in unregistered_orgs}
-                    )
+                    # Preserve initial organization types and events
+                    org_types = original_email.organization_types.all()
+                    initial["organization_types"] = [
+                        org_type.pk for org_type in org_types
+                    ]
+
                     events = list(original_email.events.all())
                     if events:
                         initial["events"] = [event.pk for event in events]
                     if original_email.event_group:
                         initial["event_group"] = original_email.event_group.pk
 
-                    initial["organization_types"] = [
-                        org_type.pk for org_type in org_types
-                    ]
                     initial["is_reminder"] = True
                     initial["original_email"] = original_email.pk
 

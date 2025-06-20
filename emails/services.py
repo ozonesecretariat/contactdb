@@ -52,21 +52,17 @@ def get_organization_recipients(
         unregistered_orgs = invitation_email.unregistered_organizations
         unregistered_org_ids = [org.id for org in unregistered_orgs]
         orgs_queryset = orgs_queryset.filter(id__in=unregistered_org_ids)
-
     else:
-        orgs_queryset = (
-            orgs_queryset
-            .filter(
-                # Organization is either:
-                # - one of the selected GOV orgs
-                # - or is not related to any GOV country
-                # This avoids mails being sent both as part of a GOV-wide invitations and as
-                # an individual invitation for the non-GOV organization.
-                models.Q(id__in=gov_orgs.values("id"))
-                | models.Q(
-                    models.Q(government__isnull=True)
-                    | ~models.Q(government__in=gov_countries)
-                )
+        orgs_queryset = orgs_queryset.filter(
+            # Organization is either:
+            # - one of the selected GOV orgs
+            # - or is not related to any GOV country
+            # This avoids mails being sent both as part of a GOV-wide invitations and as
+            # an individual invitation for the non-GOV organization.
+            models.Q(id__in=gov_orgs.values("id"))
+            | models.Q(
+                models.Q(government__isnull=True)
+                | ~models.Q(government__in=gov_countries)
             )
         )
 
@@ -83,7 +79,8 @@ def get_organization_recipients(
         bcc_emails = set()
 
         # If it's a GOV, include all inviteable orgs from that country (incl. other GOVs)
-        if org.organization_type.acronym == "GOV":
+        # Skip this step for reminders, as they are included already.
+        if org.organization_type.acronym == "GOV" and not is_reminder:
             related_orgs = Organization.objects.filter(
                 government=org.government, include_in_invitation=True
             ).prefetch_related("primary_contacts", "secondary_contacts")
