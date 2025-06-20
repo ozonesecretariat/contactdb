@@ -1564,7 +1564,7 @@ class TestInvitationEmailAdminReminders(TestCase):
             include_in_invitation=True,
         )
         contact = ContactFactory(organization=org)
-        # Register org contact only for event1
+        # Register org's contact only for event1
         RegistrationFactory(event=event1, contact=contact)
 
         EventInvitationFactory(
@@ -1579,3 +1579,208 @@ class TestInvitationEmailAdminReminders(TestCase):
 
         # Org hould *not* be in unregistered
         self.assertNotIn(org, list(original_email.unregistered_organizations))
+
+    def test_reminder_multiple_invitations_same_org(self):
+        """Test that org invited both directly and via GOV will only get one reminder."""
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+        org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        # Invite both directly and via GOV; do not register yet
+        EventInvitationFactory(event=self.event, organization=org)
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type, self.org_type],
+        )
+        unregistered_orgs = list(original_email.unregistered_organizations)
+        self.assertIn(org, unregistered_orgs)
+
+        # Now register and check it's good
+        contact = ContactFactory(organization=org)
+        RegistrationFactory(event=self.event, contact=contact)
+        self.assertNotIn(org, list(original_email.unregistered_organizations))
+
+    def test_reminder_with_additional_cc_bcc(self):
+        """Test that reminders correctly use extra CC/BCC contacts."""
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+        # gov_org, but ruff don't like it
+        OrganizationFactory(
+            organization_type=gov_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        gov_related_org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        invitation_only_cc_contact = ContactFactory(organization=gov_related_org)
+        contact = ContactFactory(organization=gov_related_org)
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            cc_recipients=[invitation_only_cc_contact],
+        )
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+            cc_recipients=[contact],
+            bcc_recipients=[contact],
+            original_email=original_email,
+        )
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+        self.admin.response_post_save_add(request, reminder_email)
+        for task in SendEmailTask.objects.filter(email=reminder_email):
+            self.assertIn(contact, task.cc_contacts.all())
+            # Contact cannot be both in CC and BCC (as per services.py)
+            self.assertNotIn(contact, task.bcc_contacts.all())
+            self.assertNotIn(invitation_only_cc_contact, task.cc_contacts.all())
+            self.assertNotIn(invitation_only_cc_contact, task.bcc_contacts.all())
+
+    def test_reminder_multiple_orgs_same_contact_email(self):
+        """
+        Test scenario where different orgs' contacts have the same email address.
+        Multiple reminder-related emails tasks should be generated for each org.
+        """
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        org1 = OrganizationFactory(
+            organization_type=gov_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["org1@example.com"],
+        )
+        org2 = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["org2@example.com"],
+        )
+
+        shared_email = "strangely-shared-email@example.com"
+        contact1 = ContactFactory(
+            organization=org1,
+            emails=[shared_email],
+        )
+        contact2 = ContactFactory(
+            organization=org2,
+            emails=[shared_email],
+        )
+        org1.primary_contacts.add(contact1)
+        org2.primary_contacts.add(contact2)
+
+        # Create a gov-based invitation so both orgs are included
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type, self.org_type],
+        )
+
+        # Both orgs should be unregistered
+        unregistered_orgs = set(original_email.unregistered_organizations)
+        self.assertIn(org1, unregistered_orgs)
+        self.assertIn(org2, unregistered_orgs)
+
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type, self.org_type],
+            is_reminder=True,
+            original_email=original_email,
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # There should be two tasks, one for each org
+        tasks = SendEmailTask.objects.filter(email=reminder_email)
+        self.assertEqual(tasks.count(), 2)
+        orgs_in_tasks = {task.organization for task in tasks}
+        self.assertSetEqual(orgs_in_tasks, {org1, org2})
+
+        # Test field correctness for each task
+        for task in tasks:
+            self.assertIn(shared_email, task.email_to)
+            self.assertIn(task.organization.emails[0], task.email_to)
+            self.assertNotIn(shared_email, task.email_cc)
+            self.assertNotIn(shared_email, task.email_bcc)
+
+    def test_reminder_org_with_no_contacts(self):
+        """Test that reminders are still created for orgs with no contacts."""
+        government = Country.objects.first()
+        # Creating an org but adding no contacts to it.
+        org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+            original_email=original_email,
+        )
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # Task should still be created for the contactless :) org
+        task = SendEmailTask.objects.filter(organization=org).first()
+        self.assertIsNotNone(task)
+
+    def test_reminder_excludes_orgs_with_include_in_invitation_false(self):
+        """
+        Test that orgs with include_in_invitation=False are not included in reminders.
+        This should happen regardless of the flag setting time.
+        """
+        government = Country.objects.first()
+        org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=False,
+        )
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+        self.assertNotIn(org, list(original_email.unregistered_organizations))
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+            original_email=original_email,
+        )
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # No task should be created for uninvitable org
+        task = SendEmailTask.objects.filter(organization=org).first()
+        self.assertIsNone(task)
