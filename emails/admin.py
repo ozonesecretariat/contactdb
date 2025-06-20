@@ -778,6 +778,9 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         """
         extra_context = extra_context or {}
 
+        # Always pop the reminder_original_email_id session key to avoid stale state
+        request.session.pop("reminder_original_email_id", None)
+
         if "is_reminder" in request.GET and "original_email_id" in request.GET:
             original_email_id = request.GET.get("original_email_id")
 
