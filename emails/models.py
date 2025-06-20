@@ -287,12 +287,18 @@ class InvitationEmail(Email):
 
         # These are ALL uregistered orgs, regardless of being invited directtly/via GOV
         return (
-            Organization.objects.filter(
+            Organization.objects.prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
+            .filter(
                 # Non-GOV organizations which are directly invited (have EventInvitations)
                 Q(
                     id__in=invitations.filter(organization__isnull=False).values_list(
                         "organization_id", flat=True
-                    )
+                    ),
+                    include_in_invitation=True,
                 )
                 |
                 # Organizations invited via GOV

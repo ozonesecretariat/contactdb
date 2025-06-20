@@ -106,7 +106,7 @@ class EventInvitationFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
-        """Handles mutual exclusion (TODO!) between event and event_group."""
+        """Handles mutual exclusion between event and event_group."""
         if "event_group" in kwargs and not kwargs.get("event"):
             kwargs["event"] = None
         return super()._create(model_class, *args, **kwargs)

@@ -854,7 +854,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 or data["cc_emails"]
             ):
                 with transaction.atomic():
-                    if org.organization_type.acronym == "GOV":
+                    if org.organization_type and org.organization_type.acronym == "GOV":
                         # Create or get country-level invitation
                         invitation, _ = EventInvitation.objects.get_or_create(
                             country=org.government,

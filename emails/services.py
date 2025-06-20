@@ -36,33 +36,31 @@ def get_organization_recipients(
 
     gov_countries = {org.government for org in gov_orgs if org.government}
 
-    # Start off with the same queryset
-    orgs_queryset = Organization.objects.filter(
-        organization_type__in=org_types, include_in_invitation=True
-    ).prefetch_related(
-        "primary_contacts",
-        "secondary_contacts",
-        "government",
-    )
-
     # For reminders, keep only organizations that haven't registered anyone.
     is_reminder = invitation_email is not None
     if is_reminder:
-        # Filter to only unregistered organizations
-        unregistered_orgs = invitation_email.unregistered_organizations
-        unregistered_org_ids = [org.id for org in unregistered_orgs]
-        orgs_queryset = orgs_queryset.filter(id__in=unregistered_org_ids)
+        orgs_queryset = invitation_email.unregistered_organizations
     else:
-        orgs_queryset = orgs_queryset.filter(
-            # Organization is either:
-            # - one of the selected GOV orgs
-            # - or is not related to any GOV country
-            # This avoids mails being sent both as part of a GOV-wide invitations and as
-            # an individual invitation for the non-GOV organization.
-            models.Q(id__in=gov_orgs.values("id"))
-            | models.Q(
-                models.Q(government__isnull=True)
-                | ~models.Q(government__in=gov_countries)
+        orgs_queryset = (
+            Organization.objects.filter(
+                organization_type__in=org_types, include_in_invitation=True
+            )
+            .prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
+            .filter(
+                # Organization is either:
+                # - one of the selected GOV orgs
+                # - or is not related to any GOV country
+                # This avoids mails being sent both as part of a GOV-wide invitations and as
+                # an individual invitation for the non-GOV organization.
+                models.Q(id__in=gov_orgs.values("id"))
+                | models.Q(
+                    models.Q(government__isnull=True)
+                    | ~models.Q(government__in=gov_countries)
+                )
             )
         )
 
@@ -80,7 +78,11 @@ def get_organization_recipients(
 
         # If it's a GOV, include all inviteable orgs from that country (incl. other GOVs)
         # Skip this step for reminders, as they are included already.
-        if org.organization_type.acronym == "GOV" and not is_reminder:
+        if (
+            org.organization_type
+            and org.organization_type.acronym == "GOV"
+            and not is_reminder
+        ):
             related_orgs = Organization.objects.filter(
                 government=org.government, include_in_invitation=True
             ).prefetch_related("primary_contacts", "secondary_contacts")

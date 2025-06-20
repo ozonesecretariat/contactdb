@@ -1383,8 +1383,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         )
         contact = ContactFactory(organization=org)
 
-        # Create invitation & register the organization
-        EventInvitationFactory(event=self.event, country=government)
+        # Register the organization
         RegistrationFactory(event=self.event, contact=contact)
 
         original_email = InvitationEmailFactory(
@@ -1432,11 +1431,14 @@ class TestInvitationEmailAdminReminders(TestCase):
 
         # Create invitation & email for event group rather than event
         EventInvitationFactory(
+            event=None,
             event_group=event_group,
+            organization=None,
             country=government,
         )
 
         original_email = InvitationEmailFactory(
+            events=[],
             event_group=event_group,
             organization_types=[self.org_type],
         )
@@ -1446,9 +1448,11 @@ class TestInvitationEmailAdminReminders(TestCase):
 
         # Test reminder creation
         reminder_email = InvitationEmailFactory(
+            events=[],
             event_group=event_group,
             organization_types=[self.org_type],
             is_reminder=True,
+            original_email=original_email,
         )
 
         request = self.factory.post("/fake-url/")
