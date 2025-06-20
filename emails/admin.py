@@ -582,6 +582,10 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     list_filter = ("is_reminder", "original_email", "created_at")
 
+    # is_reminder and original_email should be readonly for both invitation and reminders
+    # This ensures consistent behaviour and separation of concerns.
+    readonly_fields = ("is_reminder", "original_email")
+
     autocomplete_fields = (
         "organization_types",
         "events",
@@ -847,12 +851,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         )
 
         for org, data in org_recipients.items():
-            if (
-                data["to_contacts"]
-                or data["cc_contacts"]
-                or data["to_emails"]
-                or data["cc_emails"]
-            ):
+            if data["to_emails"]:
                 with transaction.atomic():
                     if org.organization_type and org.organization_type.acronym == "GOV":
                         # Create or get country-level invitation

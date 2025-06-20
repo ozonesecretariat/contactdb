@@ -96,10 +96,16 @@ def get_organization_recipients(
 
         if primary:
             to_emails.update(
-                email for contact in primary for email in (contact.emails or [])
+                email
+                for contact in primary
+                for email in (contact.emails or [])
+                if email
             )
             cc_emails.update(
-                email for contact in primary for email in (contact.email_ccs or [])
+                email
+                for contact in primary
+                for email in (contact.email_ccs or [])
+                if email
             )
 
         if secondary:
@@ -107,6 +113,7 @@ def get_organization_recipients(
                 email
                 for contact in secondary
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
+                if email
             )
 
         if additional_cc_contacts:
@@ -114,6 +121,7 @@ def get_organization_recipients(
                 email
                 for contact in additional_cc_contacts
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
+                if email
             )
 
         if additional_bcc_contacts:
@@ -121,7 +129,12 @@ def get_organization_recipients(
                 email
                 for contact in additional_bcc_contacts
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
+                if email
             )
+            # Only add org if there is at least one "to" email address;
+            # otherwise email won't get sent and we'll just pollute the admin.
+            if not to_emails:
+                continue
 
         org_recipients[org] = {
             "to_contacts": primary,

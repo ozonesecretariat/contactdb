@@ -1729,6 +1729,7 @@ class TestInvitationEmailAdminReminders(TestCase):
             organization_type=self.org_type,
             government=government,
             include_in_invitation=True,
+            emails=[],
         )
 
         EventInvitationFactory(event=self.event, country=government, organization=None)
@@ -1748,9 +1749,11 @@ class TestInvitationEmailAdminReminders(TestCase):
         request._messages = FallbackStorage(request)
         self.admin.response_post_save_add(request, reminder_email)
 
-        # Task should still be created for the contactless :) org
+        # Task should not be created for the contactless :) org
         task = SendEmailTask.objects.filter(organization=org).first()
-        self.assertIsNotNone(task)
+        self.assertIsNone(task)
+        messages_list = list(get_messages(request))
+        self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
 
     def test_reminder_excludes_orgs_with_include_in_invitation_false(self):
         """
@@ -1784,3 +1787,47 @@ class TestInvitationEmailAdminReminders(TestCase):
         # No task should be created for uninvitable org
         task = SendEmailTask.objects.filter(organization=org).first()
         self.assertIsNone(task)
+
+    def test_reminder_org_with_only_cc_bcc_contacts(self):
+        """
+        Test scenario where org only has CC/BCC contacts and no 'to' emails.
+        No task should (hopefully) be created in this case.
+        """
+        government = Country.objects.first()
+        org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+            emails=[],
+            email_ccs=["cc@example.com"],
+        )
+        # Add a contact with only CC emails
+        contact = ContactFactory(
+            organization=org,
+            emails=[],
+            email_ccs=["contact-cc@example.com"],
+        )
+        org.primary_contacts.add(contact)
+
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+            is_reminder=True,
+            original_email=original_email,
+        )
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # No task should be created
+        task = SendEmailTask.objects.filter(organization=org).first()
+        self.assertIsNone(task)
+        messages_list = list(get_messages(request))
+        self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
