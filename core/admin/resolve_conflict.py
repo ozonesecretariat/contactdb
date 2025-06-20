@@ -2,12 +2,13 @@ from copy import copy
 
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
+from django.db import IntegrityError
 from django.utils.html import format_html
 
 from common.urls import reverse
 from core.admin import ContactAdminBase
 from core.admin.contact_base import MERGE_FROM_PARAM
-from core.models import ResolveConflict
+from core.models import Contact, ResolveConflict
 
 
 @admin.register(ResolveConflict)
@@ -50,7 +51,7 @@ class ResolveConflictAdmin(ContactAdminBase):
         "existing_contact__organization",
         "existing_contact__organization__country",
     )
-    actions = ("accept_new_data",)
+    actions = ("accept_new_data", "create_contact_from_conflict")
 
     @admin.action(
         description="Accept new data for selected conflicts", permissions=["delete"]
@@ -63,6 +64,36 @@ class ResolveConflictAdmin(ContactAdminBase):
         self.message_user(
             request,
             f"{len(new_contacts)} conflicts resolved",
+            messages.SUCCESS,
+        )
+
+    @admin.action(
+        description="Create new contacts from selected conflicts",
+        permissions=["delete"],
+    )
+    def create_contact_from_conflict(self, request, queryset):
+        conflicts = queryset.values()
+
+        conflicts_to_delete = []
+        for conflict in conflicts:
+            conflict.pop("existing_contact_id", None)
+            cid = conflict.pop("id", None)
+
+            try:
+                Contact.objects.create(**conflict)
+                conflicts_to_delete.append(cid)
+            except IntegrityError:
+                self.message_user(
+                    request,
+                    f"Failed to create contact from conflict (ID: {cid}).",
+                    messages.ERROR,
+                )
+
+        ResolveConflict.objects.filter(pk__in=conflicts_to_delete).delete()
+
+        self.message_user(
+            request,
+            f"Created {len(conflicts_to_delete)} contacts from conflicts.",
             messages.SUCCESS,
         )
 
