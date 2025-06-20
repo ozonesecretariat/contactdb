@@ -21,7 +21,8 @@
   "dependencies": {
     "@quasar/extras": "1.16.17",
     "@sentry/vue": "9.19.0",
-    "@vueuse/core": "13.1.0",
+    "@vueuse/core": "13.3.0",
+    "@vueuse/router": "13.3.0",
     "axios": "1.9.0",
     "pinia": "3.0.2",
     "quasar": "2.18.1",
@@ -46,6 +47,7 @@
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-cypress": "4.3.0",
     "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-mocha": "11.1.0",
     "eslint-plugin-n": "17.18.0",
     "eslint-plugin-perfectionist": "4.13.0",
     "eslint-plugin-promise": "7.2.1",

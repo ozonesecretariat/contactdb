@@ -1,1 +1,37 @@
 // app global css in SCSS form
+
+@import "font-face";
+
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+}
+
+.body--light {
+  .modal-header,
+  .modal-footer,
+  .q-table__top,
+  thead tr:first-child th {
+    background-color: #f0f0f0;
+  }
+}
+
+.body--dark {
+  .modal-header,
+  .modal-footer,
+  .q-table__top,
+  thead tr:first-child th {
+    background-color: #303030;
+  }
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.no-list {
+  list-style: none;
+}

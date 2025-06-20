@@ -14,8 +14,7 @@ from api.tests.factories import (
     RegistrationRoleFactory,
     RegistrationStatusFactory,
 )
-from api.views.event import get_nomination_status_id
-from core.models import Organization
+from core.models import Country, Organization, OrganizationType
 from events.models import Registration
 
 
@@ -26,6 +25,7 @@ class TestEventsAPI(BaseAPITestCase):
         "initial/region",
         "initial/subregion",
         "initial/country",
+        "test/eventgroup",
         "test/event",
     ]
 
@@ -56,6 +56,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         "initial/subregion",
         "initial/country",
         "initial/organizationtype",
+        "test/eventgroup",
         "test/event",
         "test/organization",
     ]
@@ -67,11 +68,13 @@ class TestEventNominationsAPI(BaseAPITestCase):
         # Status needs to be created as it's referenced by all registrations
         cls.nomination_status = RegistrationStatusFactory(name="Nominated")
         cls.role = RegistrationRoleFactory(name="Participant")
+        cls.role_delegate = RegistrationRoleFactory(name="Delegate")
 
     def setUp(self):
         super().setUp()
 
         self.organization = OrganizationFactory()
+        self.organization2 = OrganizationFactory()
 
         self.contact1 = ContactFactory(
             organization=self.organization,
@@ -109,22 +112,59 @@ class TestEventNominationsAPI(BaseAPITestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["emails"], ["test1@example.com"])
 
-    def test_nominate_contacts(self):
-        """Test nominating contacts."""
-        data = {
-            "events": [self.event.code],
-            "nominations": [
-                {
-                    "contact": self.contact1.id,
-                    "is_funded": True,
-                    "role": self.role.id,
-                    "priority_pass_code": "ABC123",
-                },
-                {"contact": self.contact2.id, "is_funded": False, "role": self.role.id},
-            ],
-        }
+    def test_nominate_contact(self):
+        """Test nominating contact."""
+        data = [
+            {
+                "event": self.event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
         response = self.client.post(
-            f"{self.url}nominate-contacts/",
+            f"{self.url}nominate-contact/{self.contact1.id}/",
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Verify registrations were created
+        registrations = Registration.objects.all()
+        self.assertEqual(registrations.count(), 1)
+        self.assertEqual(registrations.filter(contact=self.contact1).exists(), True)
+
+        # Check returned data
+        response_data = response.json()
+        self.assertEqual(len(response_data), 1)
+
+    def test_nominate_contact_event_group(self):
+        """Test nominating contact."""
+        ev1 = EventFactory()
+        ev2 = EventFactory()
+
+        event_group = EventGroupFactory(name="Test Group", events=[ev1, ev2])
+        new_invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
+
+        data = [
+            {
+                "event": ev2.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+            {
+                "event": ev1.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": new_invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
             data=json.dumps(data),
             content_type="application/json",
         )
@@ -133,7 +173,70 @@ class TestEventNominationsAPI(BaseAPITestCase):
         # Verify registrations were created
         registrations = Registration.objects.all()
         self.assertEqual(registrations.count(), 2)
-        self.assertEqual(registrations.filter(contact=self.contact1).exists(), True)
+        self.assertEqual(
+            registrations.filter(contact=self.contact1, event=ev1).exists(), True
+        )
+        self.assertEqual(
+            registrations.filter(contact=self.contact1, event=ev2).exists(), True
+        )
+
+        # Check returned data
+        response_data = response.json()
+        self.assertEqual(len(response_data), 2)
+
+    def test_update_nominations_event_group(self):
+        ev1 = EventFactory()
+        ev2 = EventFactory()
+        ev3 = EventFactory()
+
+        event_group = EventGroupFactory(name="Test Group", events=[ev1, ev2, ev3])
+        new_invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
+        RegistrationFactory(contact=self.contact1, event=ev2, role=self.role)
+        RegistrationFactory(contact=self.contact1, event=ev3, role=self.role)
+
+        data = [
+            {
+                "event": ev2.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+            {
+                "event": ev1.code,
+                "contact": self.contact1.id,
+                "role": self.role_delegate.name,
+            },
+        ]
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": new_invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Verify registrations were created
+        registrations = Registration.objects.all()
+        self.assertEqual(registrations.count(), 2)
+        self.assertEqual(
+            registrations.filter(
+                contact=self.contact1, event=ev1, role=self.role_delegate
+            ).exists(),
+            True,
+        )
+        self.assertEqual(
+            registrations.filter(
+                contact=self.contact1, event=ev2, role=self.role
+            ).exists(),
+            True,
+        )
+        self.assertEqual(
+            registrations.filter(contact=self.contact1, event=ev3).exists(), False
+        )
 
         # Check returned data
         response_data = response.json()
@@ -149,23 +252,62 @@ class TestEventNominationsAPI(BaseAPITestCase):
             emails=["other@example.com"],
         )
 
-        data = {
-            "events": [self.event.code],
-            "nominations": [
-                {
-                    "contact": other_contact.id,
-                    "is_funded": True,
-                    "role": self.role.id,
-                    "priority_pass_code": "ABC123",
-                }
-            ],
-        }
+        data = [
+            {
+                "contact": other_contact.id,
+                "event": self.event.code,
+                "role": self.role.name,
+            }
+        ]
         response = self.client.post(
-            f"{self.url}nominate-contacts/",
+            f"{self.url}nominate-contact/{other_contact.id}/",
             data=json.dumps(data),
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Registration.objects.count(), 0)
+
+    def test_nominate_invalid_contact_data(self):
+        """Test nominating a contact from another organization."""
+        other_org = Organization.objects.create(name="Other Org")
+        other_contact = ContactFactory(
+            organization=other_org,
+            first_name="Other",
+            last_name="Contact",
+            emails=["other@example.com"],
+        )
+
+        data = [
+            {
+                "contact": other_contact.id,
+                "event": self.event.code,
+                "role": self.role.name,
+            }
+        ]
+        response = self.client.post(
+            f"{self.url}nominate-contact/{self.contact1.id}/",
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Registration.objects.count(), 0)
+
+    def test_nominate_invalid_event(self):
+        """Test nominating a contact from another organization."""
+        other_event = EventFactory()
+        data = [
+            {
+                "contact": self.contact1.id,
+                "event": other_event.code,
+                "role": self.role.name,
+            }
+        ]
+        response = self.client.post(
+            f"{self.url}nominate-contact/{self.contact1.id}/",
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(Registration.objects.count(), 0)
 
     def test_invalid_token(self):
@@ -218,13 +360,11 @@ class TestEventNominationsAPI(BaseAPITestCase):
         RegistrationFactory(
             event=self.event,
             contact=self.contact1,
-            status_id=get_nomination_status_id(),
             date=timezone.now(),
         )
         RegistrationFactory(
             event=self.event,
             contact=self.contact2,
-            status_id=get_nomination_status_id(),
             date=timezone.now(),
         )
 
@@ -235,3 +375,101 @@ class TestEventNominationsAPI(BaseAPITestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["contact"]["id"], self.contact1.id)
         self.assertEqual(data[1]["contact"]["id"], self.contact2.id)
+
+    def test_list_organizations(self):
+        url = api_reverse(
+            "events-nominations-organizations",
+            kwargs={"token": self.invitation.token},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_list_organization_gov(self):
+        ro = Country.objects.get(code="RO")
+        fr = Country.objects.get(code="FR")
+        gov = OrganizationType.objects.get(acronym="GOV")
+        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+
+        org1 = OrganizationFactory(government=ro, organization_type=gov)
+        OrganizationFactory(government=ro, organization_type=ass)
+        OrganizationFactory(government=fr, organization_type=gov)
+
+        new_invitation = EventInvitationFactory(
+            event=self.event,
+            country=ro,
+            organization=None,
+            event_group=None,
+        )
+        url = api_reverse(
+            "events-nominations-organizations",
+            kwargs={"token": new_invitation.token},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["id"], org1.id)
+
+    def test_create_contact(self):
+        url = api_reverse(
+            "events-nominations-create-contact",
+            kwargs={"token": self.invitation.token},
+        )
+        response = self.client.post(
+            url,
+            {
+                "emails": ["test-create@example.com"],
+                "organization": self.organization.id,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        self.assertTrue(
+            self.organization.contacts.filter(
+                emails=["test-create@example.com"]
+            ).exists()
+        )
+
+    def test_create_contact_wrong_org(self):
+        ro = Country.objects.get(code="RO")
+        fr = Country.objects.get(code="FR")
+        gov = OrganizationType.objects.get(acronym="GOV")
+        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+
+        OrganizationFactory(government=ro, organization_type=gov)
+        org2 = OrganizationFactory(government=ro, organization_type=ass)
+        org3 = OrganizationFactory(government=fr, organization_type=gov)
+
+        new_invitation = EventInvitationFactory(
+            event=self.event,
+            country=ro,
+            organization=None,
+            event_group=None,
+        )
+
+        url = api_reverse(
+            "events-nominations-create-contact",
+            kwargs={"token": new_invitation.token},
+        )
+        response = self.client.post(
+            url,
+            {
+                "emails": ["test-create@example.com"],
+                "organization": org2.id,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(
+            url,
+            {
+                "emails": ["test-create@example.com"],
+                "organization": org3.id,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)

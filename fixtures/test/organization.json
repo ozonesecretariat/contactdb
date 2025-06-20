@@ -9,7 +9,19 @@
       "acronym": "GRIAT",
       "organization_type": "UN",
       "government": "TG",
-      "country": "UA"
+      "country": "UA",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -22,7 +34,19 @@
       "acronym": "IDC",
       "organization_type": "OBS",
       "government": "ES",
-      "country": "UY"
+      "country": "UY",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -35,7 +59,19 @@
       "acronym": "CES",
       "organization_type": "OTHER",
       "government": "KW",
-      "country": "DE"
+      "country": "DE",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -48,7 +84,19 @@
       "acronym": "QEC",
       "organization_type": "OBS",
       "government": "GQ",
-      "country": "TH"
+      "country": "TH",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -61,7 +109,19 @@
       "acronym": "IAPP",
       "organization_type": "GOV",
       "government": "KM",
-      "country": "IE"
+      "country": "IE",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -74,7 +134,19 @@
       "acronym": "CNIA",
       "organization_type": "OTHER",
       "government": "PY",
-      "country": "SL"
+      "country": "SL",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -87,7 +159,19 @@
       "acronym": "ATS",
       "organization_type": "SECRETARIAT",
       "government": "BH",
-      "country": "NI"
+      "country": "NI",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -100,7 +184,19 @@
       "acronym": "USF",
       "organization_type": "OBS",
       "government": "JO",
-      "country": "LR"
+      "country": "LR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -113,7 +209,19 @@
       "acronym": "ERB",
       "organization_type": "ASS-PANEL",
       "government": "RW",
-      "country": "UY"
+      "country": "UY",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -126,7 +234,19 @@
       "acronym": "SCS",
       "organization_type": "EXHIBITOR",
       "government": "MD",
-      "country": "ME"
+      "country": "ME",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -139,7 +259,19 @@
       "acronym": "WDI",
       "organization_type": "IGO",
       "government": "CU",
-      "country": "GT"
+      "country": "GT",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -150,9 +282,21 @@
       "name": "Astronomical Phenomena Research Council",
       "alt_names": null,
       "acronym": "APRC",
-      "organization_type": "BIZ",
-      "government": "LT",
-      "country": "MZ"
+      "organization_type": "GOV",
+      "government": "GT",
+      "country": "MZ",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": "[]",
+      "faxes": "[]",
+      "websites": "[]",
+      "emails": "[]",
+      "email_ccs": "[]",
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -165,7 +309,19 @@
       "acronym": "TIT",
       "organization_type": "OTHER",
       "government": "CZ",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -178,7 +334,19 @@
       "acronym": "MSC",
       "organization_type": "LOCALSTAFF",
       "government": "AM",
-      "country": "VC"
+      "country": "VC",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -191,7 +359,19 @@
       "acronym": "HGC",
       "organization_type": "IGO",
       "government": "TN",
-      "country": "JP"
+      "country": "JP",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -204,7 +384,19 @@
       "acronym": "OIAS",
       "organization_type": "IGO",
       "government": "AZ",
-      "country": "NG"
+      "country": "NG",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -217,7 +409,19 @@
       "acronym": "NNOC",
       "organization_type": "LOCALSTAFF",
       "government": "UA",
-      "country": "BY"
+      "country": "BY",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -230,7 +434,19 @@
       "acronym": "DSEA",
       "organization_type": "MEDIA",
       "government": "TV",
-      "country": "JM"
+      "country": "JM",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -243,7 +459,19 @@
       "acronym": "QERC",
       "organization_type": "EXHIBITOR",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -254,9 +482,21 @@
       "name": "Exøplănetâry Çolönizàtion Áuțhôrîtÿ",
       "alt_names": null,
       "acronym": "ECA",
-      "organization_type": "OBS",
+      "organization_type": "GOV",
       "government": "GT",
-      "country": "EE"
+      "country": "EE",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": "[]",
+      "faxes": "[]",
+      "websites": "[]",
+      "emails": "[]",
+      "email_ccs": "[]",
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -269,7 +509,19 @@
       "acronym": "PQTA",
       "organization_type": "EXHIBITOR",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -282,7 +534,19 @@
       "acronym": "PQTA",
       "organization_type": "EXHIBITOR",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -295,7 +559,19 @@
       "acronym": "PQTA",
       "organization_type": "EXHIBITOR",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -308,7 +584,19 @@
       "acronym": "AQCI",
       "organization_type": "EXHIBITOR",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -321,7 +609,19 @@
       "acronym": "",
       "organization_type": "GOV",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -334,7 +634,19 @@
       "acronym": "CQST",
       "organization_type": "OTHER",
       "government": "CL",
-      "country": null
+      "country": null,
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   },
   {
@@ -347,7 +659,19 @@
       "acronym": "CQST",
       "organization_type": "EXHIBITOR",
       "government": "CL",
-      "country": "KR"
+      "country": "KR",
+      "state": "",
+      "city": "",
+      "postal_code": "",
+      "address": "",
+      "phones": null,
+      "faxes": null,
+      "websites": null,
+      "emails": null,
+      "email_ccs": null,
+      "include_in_invitation": true,
+      "primary_contacts": [],
+      "secondary_contacts": []
     }
   }
 ]

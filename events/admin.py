@@ -141,6 +141,8 @@ class RegistrationAdmin(ModelAdmin):
     )
     list_filter = [
         AutocompleteFilterFactory("event", "event"),
+        AutocompleteFilterFactory("organization", "contact__organization"),
+        AutocompleteFilterFactory("government", "contact__organization__government"),
         AutocompleteFilterFactory("contact", "contact"),
         AutocompleteFilterFactory("status", "status"),
         AutocompleteFilterFactory("role", "role"),

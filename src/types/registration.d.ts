@@ -2,10 +2,18 @@ import type { MeetingEvent } from "./event";
 import type { Organization } from "./organization";
 
 export interface Contact {
+  department: string;
+  designation: string;
+  emailCcs: string[];
   emails: string[];
   firstName: string;
+  fullName: string;
   id: number;
   lastName: string;
+  mobiles: string[];
+  organization?: Organization;
+  phones: string[];
+  title: string;
 }
 
 export interface EventNomination {
@@ -13,6 +21,6 @@ export interface EventNomination {
   createdOn: string;
   event: MeetingEvent;
   id: number;
-  organization: Organization;
+  role: string;
   status: string;
 }

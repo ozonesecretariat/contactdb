@@ -76,7 +76,7 @@ describe("Check", () => {
     cy.get(".field-email_bcc").contains("john.no-cc@example.com");
     cy.get(".field-email_bcc").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
   });
-  it.only("Check send no CC address", () => {
+  it("Check send no CC address", () => {
     cy.loginEmails();
     cy.checkModelAdmin({
       checkDelete: false,

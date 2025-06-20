@@ -194,7 +194,7 @@ class EventInvitation(models.Model):
     @property
     def invitation_link(self):
         # This will need to be updated if frontend path changes
-        url_path = f"/events/{self.token}/nominations"
+        url_path = f"/token/{self.token}/nominations"
         domain = settings.PROTOCOL + settings.MAIN_FRONTEND_HOST
 
         return urljoin(domain, url_path)
@@ -289,6 +289,10 @@ class RegistrationRole(models.Model):
         return self.name
 
 
+def get_default_status():
+    return RegistrationStatus.objects.get(name="Nominated")
+
+
 class Registration(models.Model):
     contact = models.ForeignKey(
         Contact,
@@ -300,12 +304,15 @@ class Registration(models.Model):
         on_delete=models.CASCADE,
         related_name="registrations",
     )
-    status = models.ForeignKey(RegistrationStatus, on_delete=models.CASCADE)
+
+    status = models.ForeignKey(
+        RegistrationStatus, on_delete=models.CASCADE, default=get_default_status
+    )
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
     priority_pass_code = models.CharField(max_length=150, blank=True)
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
-    is_funded = models.BooleanField()
+    is_funded = models.BooleanField(default=False)
 
     # Save the state of organization, designation, and department as it
     # was when the contact registered

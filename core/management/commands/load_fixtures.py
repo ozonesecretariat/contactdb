@@ -62,8 +62,8 @@ class Command(BaseCommand):
             ImportFocalPointsTask,
             ImportLegacyContactsTask,
             # Events
-            Event,
             EventGroup,
+            Event,
             EventInvitation,
             LoadEventsFromKronosTask,
             LoadParticipantsFromKronosTask,

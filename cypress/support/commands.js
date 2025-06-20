@@ -235,6 +235,10 @@ Cypress.Commands.addAll({
       } else if (el.dataset.type === "ckeditortype") {
         cy.fillCKEditor(name, value);
       } else if (el.classList.contains("inline-group")) {
+        if (el.querySelector("fieldset.collapse details:not([open])")) {
+          // If this inline is collapsible and not opened yet, click it first to open it.
+          cy.wrap(el).click();
+        }
         cy.fillInline(name, value);
       } else if (el.type === "file") {
         cy.get(`[name="${name}"]`).first().selectFile(value);
