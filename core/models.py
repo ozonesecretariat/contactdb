@@ -1,5 +1,6 @@
 import contextlib
 import textwrap
+from uuid import uuid4
 
 import pycountry
 from django.core.exceptions import ValidationError
@@ -271,11 +272,28 @@ class Contact(BaseContact):
         verbose_name="Organization",
     )
 
+    photo = models.ImageField(
+        upload_to="contact_photos/",
+        null=True,
+        blank=True,
+        help_text="Contact photo; initially imported from Kronos",
+    )
+    photo_access_uuid = models.UUIDField(default=uuid4, null=True, editable=False)
+
     groups = models.ManyToManyField(
         "ContactGroup",
         blank=True,
         related_name="contacts",
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["photo_access_uuid"],
+                name="unique_photo_access_uuid_not_null",
+                condition=models.Q(photo_access_uuid__isnull=False),
+            )
+        ]
 
     def add_to_group(self, name):
         return self.groups.add(ContactGroup.objects.get(name=name))
@@ -563,6 +581,33 @@ class ImportLegacyContactsTask(TaskRQ):
         from .jobs import ImportLegacyContacts
 
         return ImportLegacyContacts
+
+
+class ImportContactPhotosTask(TaskRQ):
+    DEFAULT_VERBOSITY = 2
+    TASK_QUEUE = "default"
+    TASK_TIMEOUT = 1800
+    LOG_TO_FIELD = True
+    LOG_TO_FILE = False
+
+    contact_ids = ArrayField(
+        base_field=models.IntegerField(),
+        null=True,
+        blank=True,
+        help_text=(
+            "Specific Contact ids (internal, not Kronos ids) to process. "
+            "Null value means all contacts are processed."
+        ),
+    )
+    overwrite_existing = models.BooleanField(
+        default=True, help_text="Overwrite any existing photos."
+    )
+
+    @staticmethod
+    def get_jobclass():
+        from core.jobs.contact_photos import ImportContactPhotos
+
+        return ImportContactPhotos
 
 
 class Region(models.Model):

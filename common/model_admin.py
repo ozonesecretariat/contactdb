@@ -133,10 +133,25 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     def get_intermediate_response(
         self, template, request, queryset, extra_context=None
     ):
-        action_name = request.POST["action"]
+        action_name = request.POST.get("action") or request.GET.get("action")
+        if not action_name:
+            raise ValueError("Action name is required in request parameters")
+
         description = self._get_action_description(
             getattr(self, action_name), action_name
         )
+
+        if request.method == "POST":
+            selected_action = request.POST.getlist("_selected_action")
+            select_across = request.POST.get("select_across", "0")
+            index = request.POST.get("index", "0")
+        else:
+            # We also need to support GET requests for form display
+            # Using some sane defaults in that case
+            selected_action = [str(obj.pk) for obj in queryset]
+            select_across = "0"
+            index = "0"
+
         return TemplateResponse(
             request,
             template,
@@ -145,11 +160,11 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
                 "opts": self.opts,
                 "description": description,
                 "title": description,
-                # Initial POST
-                "action": request.POST["action"],
-                "selected_action": request.POST.getlist("_selected_action"),
-                "select_across": request.POST["select_across"],
-                "index": request.POST["index"],
+                # Initial POST or GET
+                "action": action_name,
+                "selected_action": selected_action,
+                "select_across": select_across,
+                "index": index,
                 # Anything extra
                 **(extra_context or {}),
             },
