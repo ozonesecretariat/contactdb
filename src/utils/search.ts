@@ -1,4 +1,4 @@
-export function unaccentMatch(valueToFind: string, searchFields: (null | string | undefined)[]) {
+export function unaccentMatch(valueToFind: string, searchFields: (null | string | string[] | undefined)[]) {
   const searchValue = normalizeString(valueToFind);
   for (const field of searchFields) {
     if (!field) {
@@ -15,13 +15,14 @@ export function unaccentMatch(valueToFind: string, searchFields: (null | string 
 export function unaccentSearch<Row>(
   valueToFind: string,
   rows: Row[],
-  extractFunction: (row: Row) => (null | string | undefined)[],
+  extractFunction: (row: Row) => (null | string | string[] | undefined)[],
 ): Row[] {
   return rows.filter((row) => unaccentMatch(valueToFind, extractFunction(row)));
 }
 
-function normalizeString(str: string) {
-  return str
+function normalizeString(str: string | string[]) {
+  const val = Array.isArray(str) ? str.join(" ") : str;
+  return val
     .normalize("NFKD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();

@@ -45,7 +45,11 @@
       </template>
       <template #body-cell-actions="props">
         <q-td :props="props">
-          <q-btn size="sm" :to="{ name: 'verify-participant', params: { participantId: props.row.id } }" color="accent">
+          <q-btn
+            size="sm"
+            :to="{ name: 'nominate-participant', params: { participantId: props.row.id } }"
+            color="accent"
+          >
             Select
           </q-btn>
         </q-td>
@@ -120,7 +124,7 @@ const columns = computed(() => {
 
 function handleRowClick(ev: Event, row: Contact) {
   if ($q.screen.lt.md) {
-    router.push({ name: "verify-participant", params: { participantId: row.id } });
+    router.push({ name: "nominate-participant", params: { participantId: row.id } });
   }
 }
 </script>

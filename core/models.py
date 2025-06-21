@@ -327,7 +327,7 @@ class PossibleDuplicateContact(DBView):
                    array_agg(id ORDER BY id)::int[]         AS contact_ids
             FROM core_contact
             GROUP BY duplicate_value
-            HAVING count(1) > 1
+            HAVING count(DISTINCT id) > 1
         """
         union_query = " UNION ALL ".join([query_template % field for field in fields])
 
