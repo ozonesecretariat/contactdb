@@ -294,20 +294,22 @@ class InvitationEmail(Email):
                 "government",
             )
             .filter(
+                include_in_invitation=True,
+                organization_type__in=self.organization_types.all(),
+            )
+            .filter(
                 # Non-GOV organizations which are directly invited (have EventInvitations)
                 Q(
                     id__in=invitations.filter(organization__isnull=False).values_list(
                         "organization_id", flat=True
-                    ),
-                    include_in_invitation=True,
+                    )
                 )
                 |
                 # Organizations invited via GOV
                 Q(
                     government__in=invitations.filter(
                         country__isnull=False
-                    ).values_list("country_id", flat=True),
-                    include_in_invitation=True,
+                    ).values_list("country_id", flat=True)
                 )
             )
             .annotate(

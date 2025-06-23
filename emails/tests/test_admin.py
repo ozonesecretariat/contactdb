@@ -1350,7 +1350,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         # Aaand one as well with the flag set to True
         included_org = OrganizationFactory(
             name="Included Org",
-            organization_type=self.org_type,
+            organization_type=gov_type,
             government=government,
             include_in_invitation=True,
         )
@@ -1373,6 +1373,78 @@ class TestInvitationEmailAdminReminders(TestCase):
         unregistered_orgs = list(original_email.unregistered_organizations)
         self.assertNotIn(excluded_org, unregistered_orgs)
         self.assertIn(included_org, unregistered_orgs)
+
+    def test_reminder_multiple_invitation_emails(self):
+        """
+        Test that only the orgs with the invitation email org types receive a reminder
+        when there are multiple invitation emails (with mutually-exclusive org types)
+        """
+        government = Country.objects.first()
+        ass_panel_type = OrganizationType.objects.get(acronym="ASS-PANEL")
+
+        # Create organizations for each invitation email to be sent
+        first_email_org_1 = OrganizationFactory(
+            name="Excluded Org",
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        first_email_org_2 = OrganizationFactory(
+            name="Excluded Org",
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+        )
+        second_email_org = OrganizationFactory(
+            name="Included Org",
+            organization_type=ass_panel_type,
+            government=None,
+            include_in_invitation=True,
+        )
+        ContactFactory(organization=first_email_org_1)
+        ContactFactory(organization=first_email_org_2)
+        ContactFactory(organization=second_email_org)
+
+        # Create invitations for all orgs
+        EventInvitationFactory(
+            event=self.event,
+            country=None,
+            organization=first_email_org_1,
+        )
+        # This should actually invite first_email_org_2
+        EventInvitationFactory(
+            event=self.event,
+            country=government,
+            organization=None,
+        )
+        EventInvitationFactory(
+            event=self.event,
+            country=None,
+            organization=second_email_org,
+        )
+
+        # Create invitation email for first_email_org_1/2
+        first_invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[self.org_type],
+        )
+        # And one invitation email for second_email_org
+        second_invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[ass_panel_type],
+        )
+
+        # Test that organizations are present in unregistered_organizations based on
+        # the appropriate original invitation email.
+        unregistered_orgs_1 = list(first_invitation_email.unregistered_organizations)
+        self.assertIn(first_email_org_1, unregistered_orgs_1)
+        self.assertIn(first_email_org_2, unregistered_orgs_1)
+        self.assertNotIn(second_email_org, unregistered_orgs_1)
+
+        unregistered_orgs_2 = list(second_invitation_email.unregistered_organizations)
+        self.assertNotIn(first_email_org_1, unregistered_orgs_2)
+        self.assertNotIn(first_email_org_2, unregistered_orgs_2)
+        self.assertIn(second_email_org, unregistered_orgs_2)
 
     def test_reminder_with_no_unregistered_organizations(self):
         """Test reminder creation when all organizations have registered."""
