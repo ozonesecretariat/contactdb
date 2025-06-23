@@ -586,7 +586,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     # is_reminder and original_email should be readonly for both invitation and reminders
     # This ensures consistent behaviour and separation of concerns.
-    readonly_fields = ("is_reminder", "original_email")
+    readonly_fields = ("is_reminder_display", "original_email_display")
 
     autocomplete_fields = (
         "organization_types",
@@ -647,8 +647,8 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     "the party name."
                 ),
                 "fields": (
-                    "is_reminder",
-                    "original_email",
+                    "is_reminder_display",
+                    "original_email_display",
                     "subject",
                     "content",
                 ),
@@ -678,6 +678,35 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 name="%s_%s_send_reminder" % self.opt_info,
             ),
         ] + urls
+
+    @admin.display(boolean=True, description="Is Reminder")
+    def is_reminder_display(self, obj):
+        if obj is None or obj.pk is None:
+            return (
+                "is_reminder" in self.request.GET
+                and "original_email_id" in self.request.GET
+            )
+        return obj.is_reminder
+
+    @admin.display(description="Original Email")
+    def original_email_display(self, obj):
+        original_email_id = None
+        if obj is None or obj.pk is None:
+            original_email_id = self.request.GET.get("original_email_id")
+        elif obj.original_email:
+            original_email_id = obj.original_email.pk
+        original_email = InvitationEmail.objects.filter(id=original_email_id).first()
+        if original_email:
+            url = reverse(
+                "admin:emails_invitationemail_change", args=[original_email.pk]
+            )
+            return format_html('<a href="{}">{}</a>', url, original_email.subject)
+        return "-"
+
+    def get_form(self, request, obj=None, **kwargs):
+        """Store request for use in display methods"""
+        self.request = request
+        return super().get_form(request, obj, **kwargs)
 
     def get_changeform_initial_data(self, request):
         """
@@ -724,6 +753,11 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
             except InvitationEmail.DoesNotExist:
                 pass
+
+        # Is this an invitation email being created?
+        else:
+            initial["is_reminder"] = False
+            initial["original_email"] = None
 
         return initial
 
