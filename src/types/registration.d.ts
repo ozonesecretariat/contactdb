@@ -8,9 +8,11 @@ export interface Contact {
   emails: string[];
   firstName: string;
   fullName: string;
+  hasCredentials: boolean;
   id: number;
   lastName: string;
   mobiles: string[];
+  needsVisaLetter: boolean;
   organization?: Organization;
   phones: string[];
   title: string;

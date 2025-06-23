@@ -1,5 +1,9 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
+from common.serializers import DateField
 from core.models import Contact, Country, Organization
 
 
@@ -39,6 +43,23 @@ class ContactSerializer(serializers.ModelSerializer):
     events nominations.
     """
 
+    passport = serializers.JSONField(write_only=True, required=False, allow_null=True)
+    credentials = serializers.JSONField(
+        write_only=True, required=False, allow_null=True
+    )
+    nationality = serializers.CharField(
+        write_only=True, required=False, allow_blank=True
+    )
+    passport_number = serializers.CharField(
+        write_only=True, required=False, allow_blank=True
+    )
+    passport_date_of_issue = DateField(
+        write_only=True, required=False, allow_blank=True
+    )
+    passport_date_of_expiry = DateField(
+        write_only=True, required=False, allow_blank=True
+    )
+
     class Meta:
         model = Contact
         fields = (
@@ -52,7 +73,33 @@ class ContactSerializer(serializers.ModelSerializer):
             "full_name",
             "phones",
             "mobiles",
+            "has_credentials",
+            "needs_visa_letter",
+            "passport",
+            "credentials",
+            "nationality",
+            "passport_number",
+            "passport_date_of_issue",
+            "passport_date_of_expiry",
         )
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            instance = super().create(validated_data)
+            try:
+                instance.clean()
+            except DjangoValidationError as e:
+                raise ValidationError(e.message_dict) from e
+            return instance
+
+    def update(self, instance, validated_data):
+        with transaction.atomic():
+            instance = super().update(instance, validated_data)
+            try:
+                instance.clean()
+            except DjangoValidationError as e:
+                raise ValidationError(e.message_dict) from e
+            return instance
 
 
 class ContactDetailSerializer(ContactSerializer):
