@@ -214,6 +214,30 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             },
         ),
         (
+            "Credentials",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    "has_credentials",
+                    "credentials_display",
+                ),
+            },
+        ),
+        (
+            "Passport",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    "needs_visa_letter",
+                    "passport_number",
+                    "nationality",
+                    "passport_date_of_issue",
+                    "passport_date_of_expiry",
+                    "passport_display",
+                ),
+            },
+        ),
+        (
             "Language",
             {
                 "classes": ["collapse"],
@@ -258,6 +282,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "contact_ids",
         "focal_point_ids",
         "email_links",
+        "passport_display",
+        "credentials_display",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -376,3 +402,26 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     @admin.display(description="Organization", ordering="organization")
     def organization_link(self, obj):
         return self.get_object_display_link(obj.organization)
+
+    def _get_file_display(self, obj, field):
+        if not (file := getattr(obj, field)):
+            return "-"
+
+        try:
+            b64data = file["data"]
+            filename = file["filename"]
+        except KeyError:
+            return "-"
+
+        return mark_safe(
+            f'<a href="data:application/octet-stream;base64,{b64data}" '
+            f'download="{filename}">Download</a>'
+        )
+
+    @admin.display(description="Credentials")
+    def credentials_display(self, obj):
+        return self._get_file_display(obj, "credentials")
+
+    @admin.display(description="Passport")
+    def passport_display(self, obj):
+        return self._get_file_display(obj, "passport")
