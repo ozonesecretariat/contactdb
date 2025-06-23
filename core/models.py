@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_db_views.db_view import DBView
 from django_task.models import TaskRQ
+from encrypted_fields import EncryptedCharField, EncryptedDateField, EncryptedJSONField
 from psycopg import sql
 
 from common.array_field import ArrayField
@@ -207,6 +208,15 @@ class BaseContact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    has_credentials = models.BooleanField(default=False)
+    credentials = EncryptedJSONField(blank=True, null=True)
+    needs_visa_letter = models.BooleanField(default=False)
+    passport = EncryptedJSONField(blank=True, null=True)
+    passport_number = EncryptedCharField(max_length=20, blank=True, null=True)
+    nationality = EncryptedCharField(max_length=50, blank=True, null=True)
+    passport_date_of_issue = EncryptedDateField(blank=True, null=True)
+    passport_date_of_expiry = EncryptedDateField(blank=True, null=True)
+
     class Meta:
         abstract = True
 
@@ -253,6 +263,23 @@ class BaseContact(models.Model):
                     "last_name": "At least first name or last name must be provided",
                 }
             )
+
+        if self.has_credentials and not self.credentials:
+            raise ValidationError({"credentials": "This field is required."})
+
+        if self.needs_visa_letter:
+            errors = {}
+            for field in [
+                "nationality",
+                "passport_number",
+                "passport_date_of_issue",
+                "passport_date_of_expiry",
+                "passport",
+            ]:
+                if not getattr(self, field):
+                    errors[field] = "This field is required."
+            if errors:
+                raise ValidationError(errors)
 
 
 class Contact(BaseContact):
