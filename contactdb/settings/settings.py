@@ -53,6 +53,9 @@ DEBUG = env.bool("DEBUG", default=False)
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-SECRET_KEY
 SECRET_KEY = env.str("SECRET_KEY")
 
+# https://github.com/jazzband/django-fernet-encrypted-fields
+SALT_KEY = env.str("SALT_KEY")
+
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-CSRF_COOKIE_SECURE
 CSRF_COOKIE_SECURE = HAS_HTTPS
 
