@@ -679,6 +679,84 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         }
         self.assertEqual(set(task.email_cc), expected_cc_emails)
 
+    def test_response_post_save_add_with_countryless_gov_organization(self):
+        """
+        Test that inviting both "normal" and countryless GOV organizations results in
+        proper handling of all related organizations.
+        """
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        # Create a GOV organization
+        gov_org = OrganizationFactory(
+            name="Government Org",
+            organization_type=gov_type,
+            government=government,
+        )
+
+        # Create related organizations in same country
+        related_org1 = OrganizationFactory(
+            name="Related Org 1",
+            organization_type=self.org_type,
+            government=government,
+        )
+        related_org2 = OrganizationFactory(
+            name="Related Org 2",
+            organization_type=self.org_type,
+            government=government,
+        )
+
+        # Create a GOV organization with no country
+        countryless_gov_org = OrganizationFactory(
+            name="Countryless Government Org",
+            organization_type=gov_type,
+            government=None,
+        )
+
+        # Add contacts to organizations
+        gov_contact = ContactFactory(
+            organization=gov_org,
+        )
+        related_contact1 = ContactFactory(organization=related_org1)
+        related_contact2 = ContactFactory(organization=related_org2)
+
+        gov_org.primary_contacts.add(gov_contact)
+        related_org1.primary_contacts.add(related_contact1)
+        related_org2.primary_contacts.add(related_contact2)
+
+        # Create invitation email
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        # Get created tasks
+        tasks = SendEmailTask.objects.all()
+
+        # Should create 2 tasks - one for countryless GOV, other for all others
+        self.assertEqual(tasks.count(), 2)
+
+        # Check country-linked invitation
+        task = tasks.filter(invitation__country__isnull=False).first()
+        self.assertIsNotNone(task)
+        self.assertEqual(task.organization, gov_org)
+        self.assertEqual(task.invitation.country, government)
+        self.assertIsNone(task.invitation.organization)
+
+        # Check organization-linked invitation
+        task = tasks.filter(invitation__country__isnull=True).first()
+        self.assertIsNotNone(task)
+        self.assertIsNotNone(task.invitation.organization)
+        self.assertEqual(task.organization, countryless_gov_org)
+        self.assertIsNone(task.invitation.country)
+
     def test_response_post_save_add_with_gov_and_regular_orgs(self):
         """
         Test that invitations are correctly created for GOV and regular orgs,
@@ -1914,3 +1992,79 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertIsNone(task)
         messages_list = list(get_messages(request))
         self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
+
+    def test_reminders_with_countryless_gov_organization(self):
+        """
+        Test that reminding both "normal" and countryless GOV organizations results in
+        proper handling of all related organizations.
+        """
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        # Create a GOV organization
+        gov_org = OrganizationFactory(
+            name="Government Org",
+            organization_type=gov_type,
+            government=government,
+        )
+
+        # Create related organization in same country
+        related_org1 = OrganizationFactory(
+            name="Related Org 1",
+            organization_type=self.org_type,
+            government=government,
+        )
+
+        # Create a GOV organization with no country
+        countryless_gov_org = OrganizationFactory(
+            name="Countryless Government Org",
+            organization_type=gov_type,
+            government=None,
+        )
+
+        # Add contacts to organizations
+        gov_contact = ContactFactory(
+            organization=gov_org,
+        )
+        related_contact1 = ContactFactory(organization=related_org1)
+
+        gov_org.primary_contacts.add(gov_contact)
+        related_org1.primary_contacts.add(related_contact1)
+
+        # Create invitation email & related invitations
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organization_types=[gov_type],
+        )
+        EventInvitationFactory(event=self.event, country=government, organization=None)
+        # This one is for the government-less GOV org
+        EventInvitationFactory(
+            event=self.event, country=None, organization=countryless_gov_org
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        # Get created tasks
+        tasks = SendEmailTask.objects.all()
+
+        # Should create 2 reminder tasks - one for countryless GOV, other for all others
+        self.assertEqual(tasks.count(), 2)
+
+        # Check country-linked invitation
+        task = tasks.filter(invitation__country__isnull=False).first()
+        self.assertIsNotNone(task)
+        self.assertEqual(task.organization, gov_org)
+        self.assertEqual(task.invitation.country, government)
+        self.assertIsNone(task.invitation.organization)
+
+        # Check organization-linked invitation
+        task = tasks.filter(invitation__country__isnull=True).first()
+        self.assertIsNotNone(task)
+        self.assertIsNotNone(task.invitation.organization)
+        self.assertEqual(task.organization, countryless_gov_org)
+        self.assertIsNone(task.invitation.country)

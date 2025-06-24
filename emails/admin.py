@@ -885,8 +885,14 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         for org, data in org_recipients.items():
             if data["to_emails"]:
                 with transaction.atomic():
-                    if org.organization_type and org.organization_type.acronym == "GOV":
+                    if (
+                        org.organization_type
+                        and org.organization_type.acronym == "GOV"
+                        and org.government
+                    ):
                         # Create or get country-level invitation
+                        # If organization is missing the government field,
+                        # it will be processed below and invited simply as org
                         invitation, _ = EventInvitation.objects.get_or_create(
                             country=org.government,
                             event=event,
