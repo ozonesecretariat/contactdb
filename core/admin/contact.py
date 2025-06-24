@@ -461,10 +461,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         except KeyError:
             return "-"
 
-        return mark_safe(
-            f'<a href="data:{b64data}" '
-            f'download="{filename}">Download</a>'
-        )
+        return mark_safe(f'<a href="data:{b64data}" download="{filename}">Download</a>')
 
     @admin.display(description="Credentials")
     def credentials_display(self, obj):
