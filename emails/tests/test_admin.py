@@ -1567,33 +1567,46 @@ class TestInvitationEmailAdminReminders(TestCase):
             government=government,
             include_in_invitation=True,
         )
+        non_gov_null_govennment_unregistered = OrganizationFactory(
+            organization_type=self.org_type,
+            government=None,
+            include_in_invitation=True,
+        )
 
         # Add contacts
         gov_contact_reg = ContactFactory(organization=gov_org_registered)
         non_gov_contact_reg = ContactFactory(organization=non_gov_registered)
         ContactFactory(organization=gov_org_unregistered)
         ContactFactory(organization=non_gov_unregistered)
+        ContactFactory(organization=non_gov_null_govennment_unregistered)
 
         # Register only 2 orgs
         RegistrationFactory(event=test_event, contact=gov_contact_reg)
         RegistrationFactory(event=test_event, contact=non_gov_contact_reg)
-
-        # Create country invitation
-        EventInvitationFactory(
-            event=test_event, country=government, event_group=None, organization=None
-        )
 
         # Create original email targeting all types
         original_email = InvitationEmailFactory(
             events=[test_event],
             organization_types=[gov_type, self.org_type],
         )
+        # Create country invitation
+        EventInvitationFactory(
+            event=test_event, country=government, event_group=None, organization=None
+        )
+        # And create non-country invitation to reflect email
+        EventInvitationFactory(
+            event=test_event,
+            country=None,
+            event_group=None,
+            organization=non_gov_null_govennment_unregistered,
+        )
 
         unregistered_orgs = set(original_email.unregistered_organizations)
 
-        # Check unregistered orgs, regardless of type, *are* included
-        self.assertIn(gov_org_unregistered, unregistered_orgs)
-        self.assertIn(non_gov_unregistered, unregistered_orgs)
+        # Check noly null-government unregistered orgs are included
+        self.assertNotIn(gov_org_unregistered, unregistered_orgs)
+        self.assertNotIn(non_gov_unregistered, unregistered_orgs)
+        self.assertIn(non_gov_null_govennment_unregistered, unregistered_orgs)
 
         # Checking registered orgs, regardless of type, *are not* inclued
         self.assertNotIn(gov_org_registered, unregistered_orgs)
@@ -1615,9 +1628,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
         tasks = SendEmailTask.objects.all()
         unregistered_task_orgs = {task.organization for task in tasks}
-        self.assertEqual(
-            unregistered_task_orgs, {gov_org_unregistered, non_gov_unregistered}
-        )
+        self.assertEqual(unregistered_task_orgs, {non_gov_null_govennment_unregistered})
 
     def test_reminder_event_group_partial_registration(self):
         """
