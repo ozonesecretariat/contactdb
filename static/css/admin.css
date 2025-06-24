@@ -157,3 +157,13 @@ ul.m2m-list {
 ul.m2m-list li {
   list-style: initial !important;
 }
+
+.submit-row a.primarylink {
+  display: block;
+  background: var(--default-button-bg);
+  border-radius: 4px;
+  padding: 0.625rem 0.9375rem;
+  height: 0.9375rem;
+  line-height: 0.9375rem;
+  color: var(--button-fg);
+}
