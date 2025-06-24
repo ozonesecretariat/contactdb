@@ -721,35 +721,31 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
             try:
                 original_email = InvitationEmail.objects.get(id=original_email_id)
-                unregistered_orgs = original_email.unregistered_organizations
 
-                if unregistered_orgs.exists():
-                    # Count reminders already sent for this invitation email
-                    reminder_count = original_email.reminder_emails.count()
+                # Count reminders already sent for this invitation email
+                reminder_count = original_email.reminder_emails.count()
 
-                    # Preserve initial organization types and events
-                    org_types = original_email.organization_types.all()
-                    initial["organization_types"] = [
-                        org_type.pk for org_type in org_types
-                    ]
+                # Preserve initial organization types and events
+                org_types = original_email.organization_types.all()
+                initial["organization_types"] = [org_type.pk for org_type in org_types]
 
-                    events = list(original_email.events.all())
-                    if events:
-                        initial["events"] = [event.pk for event in events]
-                    if original_email.event_group:
-                        initial["event_group"] = original_email.event_group.pk
+                events = list(original_email.events.all())
+                if events:
+                    initial["events"] = [event.pk for event in events]
+                if original_email.event_group:
+                    initial["event_group"] = original_email.event_group.pk
 
-                    initial["is_reminder"] = True
-                    initial["original_email"] = original_email.pk
+                initial["is_reminder"] = True
+                initial["original_email"] = original_email.pk
 
-                    # Show the number of reminders already sent out for this email
-                    reminder_prefix = (
-                        f"Reminder {reminder_count + 1}"
-                        if reminder_count > 0
-                        else "Reminder"
-                    )
-                    initial["subject"] = f"{reminder_prefix}: {original_email.subject}"
-                    initial["content"] = original_email.content
+                # Show the number of reminders already sent out for this email
+                reminder_prefix = (
+                    f"Reminder {reminder_count + 1}"
+                    if reminder_count > 0
+                    else "Reminder"
+                )
+                initial["subject"] = f"{reminder_prefix}: {original_email.subject}"
+                initial["content"] = original_email.content
 
             except InvitationEmail.DoesNotExist:
                 pass
