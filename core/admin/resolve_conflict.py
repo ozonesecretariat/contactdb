@@ -7,7 +7,8 @@ from django.utils.html import format_html
 from common.urls import reverse
 from core.admin import ContactAdminBase
 from core.admin.contact_base import MERGE_FROM_PARAM
-from core.models import ResolveConflict
+from core.models import Contact, ResolveConflict
+from events.parsers import KronosParticipantsParser
 
 
 @admin.register(ResolveConflict)
@@ -50,7 +51,7 @@ class ResolveConflictAdmin(ContactAdminBase):
         "existing_contact__organization",
         "existing_contact__organization__country",
     )
-    actions = ("accept_new_data",)
+    actions = ("accept_new_data", "keep_both_contacts")
 
     @admin.action(
         description="Accept new data for selected conflicts", permissions=["delete"]
@@ -65,6 +66,20 @@ class ResolveConflictAdmin(ContactAdminBase):
             f"{len(new_contacts)} conflicts resolved",
             messages.SUCCESS,
         )
+
+    @admin.action(
+        description="Keep both contacts",
+        permissions=["delete"],
+    )
+    def keep_both_contacts(self, request, queryset):
+        contacts = Contact.objects.filter(conflicting_contacts__in=queryset).distinct()
+
+        for contact in contacts:
+            if not contact.contact_ids:
+                continue
+            KronosParticipantsParser().import_contact_with_registrations(
+                contact.contact_ids[0]
+            )
 
     @staticmethod
     def save_incoming_data(incoming_contact):

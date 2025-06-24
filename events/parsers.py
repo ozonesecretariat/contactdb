@@ -22,6 +22,7 @@ from events.models import (
     RegistrationStatus,
     RegistrationTag,
 )
+from events.utils import camel_to_snake
 
 
 def check_is_different(obj, dictionary):
@@ -216,8 +217,8 @@ class KronosParticipantsParser(KronosParser):
 
         return obj
 
-    def create_registrations(self, contact_dict, contact):
-        for registration in contact_dict["registrationStatuses"]:
+    def create_registrations(self, registrations, contact):
+        for registration in registrations:
             if registration is None:
                 continue
 
@@ -327,7 +328,7 @@ class KronosParticipantsParser(KronosParser):
             self._handle_conflict(contact, contact_id, contact_defaults)
         else:
             contact = self._create_contact(contact_id, contact_defaults)
-        self.create_registrations(contact_dict, contact)
+        self.create_registrations(contact_dict["registrationStatuses"], contact)
 
     def _handle_conflict(self, contact, contact_id, contact_defaults):
         if not check_is_different(contact, contact_defaults):
@@ -393,6 +394,42 @@ class KronosParticipantsParser(KronosParser):
             "second_lang": langs[1] if len(langs) > 1 else "",
             "third_lang": langs[2] if len(langs) > 2 else "",
         }
+
+    def import_contact_with_registrations(self, contact_kronos_id):
+        """
+        If contact has multiple contact ids (is a merged contact), all
+        contact_ids will be reimported. Useful when merging by accident.
+        """
+        kronos_ids = [contact_kronos_id]
+        contact = Contact.objects.filter(contact_ids__overlap=kronos_ids)
+        if contact.count() > 1:
+            raise ValueError(
+                f"Cannot import data if there are multiple contacts with the same Kronos ID {contact_kronos_id}."
+            )
+
+        if contact.contact_ids != 1:
+            # Reimport data for each merged contact
+            kronos_ids += contact.contact_ids
+
+        contact.delete()
+
+        for kronos_id in kronos_ids:
+            data_dict = self.client.get_user_data(contact_kronos_id)
+            data_dict["contact_ids"] = [kronos_id]
+            contact = Contact.objects.create(**data_dict)
+
+            reg_dict = self.client.get_contact_registrations_data(kronos_id).get(
+                "records", None
+            )
+            if not reg_dict:
+                continue
+
+            for record in reg_dict:
+                event_dict = record["event"]
+                processed_dict = {camel_to_snake(k): v for k, v in event_dict.items()}
+                self.save_event(processed_dict)
+
+            self.create_registrations(reg_dict, contact)
 
 
 class KronosOrganizationsParser(KronosParser):
