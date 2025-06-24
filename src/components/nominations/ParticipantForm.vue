@@ -100,6 +100,7 @@
       v-model="data.hasCredentials"
       :error="!!errors.hasCredentials"
       :error-message="errors.hasCredentials"
+      name="hasCredentials"
       label="Credentials"
     />
     <div v-if="data.hasCredentials">
@@ -111,6 +112,7 @@
         outlined
         accept=".pdf,.doc,.docx"
         hint="Upload pdf or doc file"
+        name="credentials"
       >
         <template #append>
           <q-icon name="attach_file" />
@@ -121,6 +123,7 @@
       v-model="data.needsVisaLetter"
       :error="!!errors.needsVisaLetter"
       :error-message="errors.needsVisaLetter"
+      name="needsVisaLetter"
       label="Needs visa letter"
     />
     <div v-if="data.needsVisaLetter">
@@ -129,6 +132,7 @@
           v-model="data.passportNumber"
           :error="!!errors.passportNumber"
           :error-message="errors.passportNumber"
+          name="passportNumber"
           label="Passport number"
           outlined
           class="col"
@@ -137,6 +141,7 @@
           v-model="data.nationality"
           :error="!!errors.nationality"
           :error-message="errors.nationality"
+          name="nationality"
           label="Nationality"
           outlined
           class="col q-ml-md"
@@ -147,6 +152,7 @@
           v-model="data.passportDateOfIssue"
           :error="!!errors.passportDateOfIssue"
           :error-message="errors.passportDateOfIssue"
+          name="passportDateOfIssue"
           outlined
           mask="####-##-##"
           :rules="['date']"
@@ -169,6 +175,7 @@
           v-model="data.passportDateOfExpiry"
           :error="!!errors.passportDateOfExpiry"
           :error-message="errors.passportDateOfExpiry"
+          name="passportDateOfExpiry"
           outlined
           mask="####-##-##"
           :rules="['date']"
@@ -192,6 +199,7 @@
         v-model="data.passport"
         :error="!!errors.passport"
         :error-message="errors.passport"
+        name="passport"
         label="Passport"
         outlined
         accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
