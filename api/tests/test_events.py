@@ -508,6 +508,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
         response = self.client.post(
             url,
             {
+                "firstName": "John",
+                "lastName": "Doe",
                 "emails": ["test-create@example.com"],
                 "organization": self.organization.id,
             },
