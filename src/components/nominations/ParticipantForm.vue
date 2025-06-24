@@ -96,6 +96,33 @@
       label="Phone"
       name="phones"
     />
+    <q-file
+      v-model="data.photo"
+      :error="!!errors.photo"
+      :error-message="errors.photo"
+      name="photo"
+      outlined
+      accept=".jpeg,.jpg,.png"
+      :label="data.photoUrl ? 'Change photo' : 'Add photo'"
+    >
+      <template #append>
+        <q-btn v-if="data.photoUrl" label="View current" @click="currentImageDialog = true" />
+      </template>
+    </q-file>
+
+    <q-dialog v-model="currentImageDialog">
+      <q-card class="bg-primary text-white" style="width: 800px; max-width: 90vw">
+        <q-card-section class="row items-center">
+          <div class="text-h6">Current photo</div>
+          <q-space />
+          <q-btn v-close-popup flat round dense icon="close" />
+        </q-card-section>
+        <q-card-section>
+          <q-img :src="apiBase + data.photoUrl" alt="" style="max-height: 80vh" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-checkbox
       v-model="data.hasCredentials"
       :error="!!errors.hasCredentials"
@@ -220,7 +247,7 @@
 <script setup lang="ts">
 import type { Contact } from "src/types/registration";
 
-import { api } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
 import { reactive, ref } from "vue";
@@ -231,6 +258,7 @@ const invitation = useInvitationStore();
 const router = useRouter();
 const { errors, setErrors } = useFormErrors();
 
+const currentImageDialog = ref(false);
 const data = reactive({
   credentials: null,
   department: "",
@@ -249,6 +277,8 @@ const data = reactive({
   passportDateOfIssue: "",
   passportNumber: "",
   phones: "",
+  photo: null,
+  photoUrl: "",
   title: "",
 });
 
@@ -263,7 +293,12 @@ if (invitation.participant) {
   });
 }
 
-function fileToBase64(file: File | null) {
+async function fileToBase64(file: File | null) {
+  const result = await fileToBase64Dict(file);
+  return result ? result.data : null;
+}
+
+function fileToBase64Dict(file: File | null): Promise<null | { data: string; filename: string }> {
   return new Promise((resolve, reject) => {
     if (!file) {
       resolve(null);
@@ -273,10 +308,8 @@ function fileToBase64(file: File | null) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      const base64String = reader.result as string;
-      const base64Data = base64String.split(",")[1];
       resolve({
-        data: base64Data,
+        data: reader.result as string,
         filename: file.name,
       });
     };
@@ -294,12 +327,13 @@ async function saveForm() {
     const newContact = (
       await api.post<Contact>(url, {
         ...data,
-        credentials: data.hasCredentials ? await fileToBase64(data.credentials) : null,
+        credentials: data.hasCredentials ? await fileToBase64Dict(data.credentials) : null,
         emailCcs: toList(data.emailCcs),
         emails: toList(data.emails),
         mobiles: toList(data.mobiles),
-        passport: data.needsVisaLetter ? await fileToBase64(data.passport) : null,
+        passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
+        photo: await fileToBase64(data.photo),
       })
     ).data;
     await invitation.loadContacts();

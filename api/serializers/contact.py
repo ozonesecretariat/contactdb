@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.urls import reverse
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -60,7 +61,7 @@ class ContactSerializer(serializers.ModelSerializer):
     passport_date_of_expiry = DateField(
         write_only=True, required=False, allow_blank=True
     )
-
+    photo = Base64ImageField(write_only=True, required=False, allow_null=True)
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -84,6 +85,7 @@ class ContactSerializer(serializers.ModelSerializer):
             "passport_number",
             "passport_date_of_issue",
             "passport_date_of_expiry",
+            "photo",
             "photo_url",
         )
 

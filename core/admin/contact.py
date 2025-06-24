@@ -462,7 +462,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             return "-"
 
         return mark_safe(
-            f'<a href="data:application/octet-stream;base64,{b64data}" '
+            f'<a href="data:{b64data}" '
             f'download="{filename}">Download</a>'
         )
 
