@@ -270,6 +270,7 @@ class MergeContacts:
                     models.ForeignKey,
                     models.ImageField,
                     models.UUIDField,
+                    models.JSONField,
                 ),
             ):
                 if val1 == val2:
