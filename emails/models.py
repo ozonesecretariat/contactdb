@@ -298,29 +298,33 @@ class InvitationEmail(Email):
                 organization_type__in=self.organization_types.all(),
             )
             .filter(
-                # Non-GOV organizations which are directly invited (have EventInvitations)
                 Q(
+                    # Direct org-based invitations;
+                    # include all orgs that have no registrations
                     id__in=invitations.filter(organization__isnull=False).values_list(
                         "organization_id", flat=True
-                    )
+                    ),
                 )
-                |
-                # Organizations invited via GOV
-                Q(
-                    government__in=invitations.filter(
-                        country__isnull=False
-                    ).values_list("country_id", flat=True)
-                )
-            )
-            .annotate(
-                has_registrations=Exists(
+                & ~Exists(
                     Registration.objects.filter(
                         event__in=events if events else [],
                         contact__organization=OuterRef("pk"),
                     )
                 )
+                | Q(
+                    # Government/county invitations;
+                    # only include orgs when no org from same country has registrations
+                    government__in=invitations.filter(
+                        country__isnull=False
+                    ).values_list("country_id", flat=True),
+                )
+                & ~Exists(
+                    Registration.objects.filter(
+                        event__in=events if events else [],
+                        contact__organization__government=OuterRef("government"),
+                    )
+                )
             )
-            .filter(has_registrations=False)
             .distinct()
         )
 

@@ -77,12 +77,7 @@ def get_organization_recipients(
         bcc_emails = set()
 
         # If it's a GOV, include all inviteable orgs from that country (incl. other GOVs)
-        # Skip this step for reminders, as they are included already.
-        if (
-            org.organization_type
-            and org.organization_type.acronym == "GOV"
-            and not is_reminder
-        ):
+        if org.organization_type and org.organization_type.acronym == "GOV":
             related_orgs = Organization.objects.filter(
                 government=org.government, include_in_invitation=True
             ).prefetch_related("primary_contacts", "secondary_contacts")
