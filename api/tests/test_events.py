@@ -550,6 +550,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
             {
                 "emails": ["test-create@example.com"],
                 "organization": org2.id,
+                "firstName": "John",
+                "lastName": "Doe",
             },
             format="json",
         )
