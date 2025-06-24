@@ -287,30 +287,41 @@ class TestEventNominationsAPI(BaseAPITestCase):
         invitation = EventInvitationFactory(
             event=self.event, country=ro, organization=None
         )
+        nomination_data_1 = [
+            {
+                "event": self.event.code,
+                "contact": contact1.id,
+                "is_funded": True,
+                "role": self.role.name,
+                "priority_pass_code": "ABC123",
+            }
+        ]
+        nomination_data_2 = [
+            {
+                "event": self.event.code,
+                "contact": contact2.id,
+                "is_funded": False,
+                "role": self.role.name,
+            },
+        ]
         url = api_reverse(
-            "events-nominations-nominate-contacts",
-            kwargs={"token": invitation.token},
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": contact1.id},
         )
-        data = {
-            "events": [self.event.code],
-            "nominations": [
-                {
-                    "contact": contact1.id,
-                    "is_funded": True,
-                    "role": self.role.id,
-                    "priority_pass_code": "ABC123",
-                },
-                {
-                    "contact": contact2.id,
-                    "is_funded": False,
-                    "role": self.role.id,
-                },
-            ],
-        }
         response = self.client.post(
-            url, data=json.dumps(data), content_type="application/json"
+            url, data=json.dumps(nomination_data_1), content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
+
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": contact2.id},
+        )
+        response = self.client.post(
+            url, data=json.dumps(nomination_data_2), content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
         self.assertTrue(
             Registration.objects.filter(contact=contact1, event=self.event).exists()
         )
