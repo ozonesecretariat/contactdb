@@ -304,6 +304,7 @@ class Contact(BaseContact):
         null=True,
         blank=True,
         help_text="Contact photo; initially imported from Kronos",
+        storage=get_protected_storage,
     )
     photo_access_uuid = models.UUIDField(default=uuid4, null=True, editable=False)
 
