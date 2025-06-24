@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.urls import reverse
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -60,6 +61,8 @@ class ContactSerializer(serializers.ModelSerializer):
         write_only=True, required=False, allow_blank=True
     )
 
+    photo_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Contact
         fields = (
@@ -81,7 +84,22 @@ class ContactSerializer(serializers.ModelSerializer):
             "passport_number",
             "passport_date_of_issue",
             "passport_date_of_expiry",
+            "photo_url",
         )
+
+    def get_photo_url(self, obj):
+        if not obj.photo or not obj.photo_access_uuid:
+            return None
+        request = self.context.get("request")
+        nomination_token = self.context.get("nomination_token")
+        photo_url = reverse(
+            "secure-photo", kwargs={"photo_token": obj.photo_access_uuid}
+        )
+        if nomination_token:
+            photo_url = f"{photo_url}?nomination_token={nomination_token}"
+        if request:
+            return request.build_absolute_uri(photo_url)
+        return photo_url
 
     def create(self, validated_data):
         with transaction.atomic():

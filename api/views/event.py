@@ -90,10 +90,7 @@ class EventNominationViewSet(ViewSet):
         invitation = self.get_invitation(token)
         qs = Organization.objects.all().select_related("country", "government")
         if invitation.country_id:
-            qs = qs.filter(
-                government_id=invitation.country_id,
-                organization_type__acronym="GOV",
-            )
+            qs = qs.filter(government_id=invitation.country_id)
         else:
             qs = qs.filter(id=invitation.organization_id)
         return qs

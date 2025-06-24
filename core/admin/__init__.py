@@ -1,6 +1,7 @@
 from .contact import *  # noqa: F403
 from .contact_group import *  # noqa: F403
 from .country import *  # noqa: F403
+from .import_contact_photos_task import *  # noqa: F403
 from .import_focal_points_task import *  # noqa: F403
 from .import_legacy_contacts_tasks import *  # noqa: F403
 from .organization import *  # noqa: F403
