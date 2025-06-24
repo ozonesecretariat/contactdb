@@ -66,7 +66,7 @@
   </q-card-section>
   <q-card-section class="modal-footer">
     <q-btn :to="{ name: 'find-participant' }">Back</q-btn>
-    <q-btn color="accent" :loading="loading" :disable="!isValid" @click="confirmNomination">Confirm nomination</q-btn>
+    <q-btn color="accent" :loading="loading" @click="confirmNomination">Confirm nomination</q-btn>
   </q-card-section>
 </template>
 
@@ -89,7 +89,6 @@ const organization = computed(() => invitation.participant?.organization);
 const nominations = reactive<Record<string, string>>({});
 const nominationsToggle = reactive<Record<string, boolean>>({});
 const roleErrors = reactive<Record<string, string>>({});
-const isValid = computed(() => Object.values(nominationsToggle).some((f) => f));
 
 for (const event of invitation.events) {
   roleErrors[event.code] = "";
