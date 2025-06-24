@@ -13,6 +13,7 @@ export const useInvitationStore = defineStore("invitation", () => {
   const $q = useQuasar();
   const route = useRoute();
   const initialized = ref(false);
+  const roles = ref<string[]>([]);
   const contacts = ref<Contact[]>([]);
   const events = ref<MeetingEvent[]>([]);
   const nominations = ref<EventNomination[]>([]);
@@ -24,7 +25,13 @@ export const useInvitationStore = defineStore("invitation", () => {
   const actions = {
     async load() {
       try {
-        await Promise.all([this.loadEvents(), this.loadNominations(), this.loadOrganizations(), this.loadContacts()]);
+        await Promise.all([
+          this.loadEvents(),
+          this.loadNominations(),
+          this.loadOrganizations(),
+          this.loadContacts(),
+          this.loadRoles(),
+        ]);
       } catch (e) {
         switch ((e as AxiosError).status) {
           case 404:
@@ -55,6 +62,9 @@ export const useInvitationStore = defineStore("invitation", () => {
     async loadOrganizations() {
       organizations.value = (await api.get<Organization[]>(`/events-nominations/${token.value}/organizations/`)).data;
     },
+    async loadRoles() {
+      roles.value = (await api.get<string[]>(`/events-nominations/${token.value}/roles/`)).data;
+    },
   };
 
   return {
@@ -65,6 +75,7 @@ export const useInvitationStore = defineStore("invitation", () => {
     organizations,
     participant,
     participantId,
+    roles,
     token,
     ...actions,
   };

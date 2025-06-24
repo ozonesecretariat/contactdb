@@ -99,7 +99,7 @@
   </q-card-section>
   <q-card-section class="modal-footer">
     <q-btn :to="{ name: 'find-participant' }">Cancel</q-btn>
-    <q-btn color="accent" :loading="loading" @click="createParticipant">Save</q-btn>
+    <q-btn color="accent" :loading="loading" @click="saveForm">Save</q-btn>
   </q-card-section>
 </template>
 
@@ -116,6 +116,7 @@ const loading = ref(false);
 const invitation = useInvitationStore();
 const router = useRouter();
 const { errors, setErrors } = useFormErrors();
+
 const data = reactive({
   department: "",
   designation: "",
@@ -129,11 +130,26 @@ const data = reactive({
   title: "",
 });
 
-async function createParticipant() {
+if (invitation.participant) {
+  Object.assign(data, {
+    ...invitation.participant,
+    emailCcs: invitation.participant.emailCcs?.[0] ?? "",
+    emails: invitation.participant.emails?.[0] ?? "",
+    mobiles: invitation.participant.mobiles?.[0] ?? "",
+    organization: invitation.participant.organization?.id ?? "",
+    phones: invitation.participant.phones?.[0] ?? "",
+  });
+}
+
+async function saveForm() {
   loading.value = true;
+  const url = invitation.participantId
+    ? `/events-nominations/${invitation.token}/update-contact/${invitation.participantId}/`
+    : `/events-nominations/${invitation.token}/create-contact/`;
+
   try {
     const newContact = (
-      await api.post<Contact>(`/events-nominations/${invitation.token}/create-contact/`, {
+      await api.post<Contact>(url, {
         ...data,
         emailCcs: toList(data.emailCcs),
         emails: toList(data.emails),
@@ -142,7 +158,7 @@ async function createParticipant() {
       })
     ).data;
     await invitation.loadContacts();
-    await router.push({ name: "verify-participant", params: { participantId: newContact.id } });
+    await router.push({ name: "nominate-participant", params: { participantId: newContact.id } });
   } catch (e) {
     setErrors(e);
   } finally {
