@@ -1,0 +1,49 @@
+{% extends "admin/change_form.html" %}
+{% load admin_urls %}
+
+{% block submit_buttons_bottom %}
+  {{ block.super }}
+
+  {% if show_reminder_button %}
+    <div class="submit-row">
+      <a href="{{ reminder_url }}" class="button btn btn-high btn-success">Send Reminder Email</a>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block after_field_sets %}
+  {% if original_email %}
+    <fieldset class="module aligned">
+      <h2>Reminder Information</h2>
+      <div class="form-row">
+        <div>
+          <label><strong>This is a reminder for:</strong></label>
+          <p>
+            <a href="{% url 'admin:emails_invitationemail_change' original_email.pk %}">{{ original_email.subject }}</a>
+            <span class="help">(sent {{ original_email.created_at|date:"M d, Y" }})</span>
+          </p>
+        </div>
+      </div>
+    </fieldset>
+  {% endif %}
+
+  {% if reminder_emails %}
+    <fieldset class="module aligned">
+      <h2>Reminders Sent</h2>
+      <div class="form-row">
+        <div>
+          <label><strong>{{ reminder_emails|length }} reminder(s) sent for this email:</strong></label>
+          <ul class="admin-list">
+            {% for reminder in reminder_emails %}
+              <li>
+                <a href="{% url 'admin:emails_invitationemail_change' reminder.pk %}">{{ reminder.subject }}</a>
+                <span class="help">({{ reminder.created_at|date:"M d, Y H:i" }})</span>
+                {% if reminder.pk == object.pk %}<strong>(current)</strong>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </fieldset>
+  {% endif %}
+{% endblock %}

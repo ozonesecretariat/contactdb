@@ -4,7 +4,10 @@ from core.models import Organization
 
 
 def get_organization_recipients(
-    org_types, additional_cc_contacts=None, additional_bcc_contacts=None
+    org_types,
+    additional_cc_contacts=None,
+    additional_bcc_contacts=None,
+    invitation_email=None,
 ):
     """
     Get Contacts per organization for *invitation* emails, using the organization's
@@ -17,6 +20,7 @@ def get_organization_recipients(
     org_types: QuerySet of OrganizationType objects
     additional_cc_contacts: Optional set of additional contacts to CC
     additional_bcc_contacts: Optional set of additional contacts to BCC
+    invitation_email: Optional InvitationEmail used to filter only unregistered orgs
     """
     # First identify governments (called them countries, but there's a subtle difference)
     # for which GOV organizations exist.
@@ -32,28 +36,33 @@ def get_organization_recipients(
 
     gov_countries = {org.government for org in gov_orgs if org.government}
 
-    orgs_queryset = (
-        Organization.objects.filter(
-            organization_type__in=org_types, include_in_invitation=True
-        )
-        .prefetch_related(
-            "primary_contacts",
-            "secondary_contacts",
-            "government",
-        )
-        .filter(
-            # Organization is either:
-            # - one of the selected GOV orgs
-            # - or is not related to any GOV country
-            # This avoids mails being sent both as part of a GOV-wide invitations and as
-            # an individual invitation for the non-GOV organization.
-            models.Q(id__in=gov_orgs.values("id"))
-            | models.Q(
-                models.Q(government__isnull=True)
-                | ~models.Q(government__in=gov_countries)
+    # For reminders, keep only organizations that haven't registered anyone.
+    is_reminder = invitation_email is not None
+    if is_reminder:
+        orgs_queryset = invitation_email.unregistered_organizations
+    else:
+        orgs_queryset = (
+            Organization.objects.filter(
+                organization_type__in=org_types, include_in_invitation=True
+            )
+            .prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
+            .filter(
+                # Organization is either:
+                # - one of the selected GOV orgs
+                # - or is not related to any GOV country
+                # This avoids mails being sent both as part of a GOV-wide invitations and as
+                # an individual invitation for the non-GOV organization.
+                models.Q(id__in=gov_orgs.values("id"))
+                | models.Q(
+                    models.Q(government__isnull=True)
+                    | ~models.Q(government__in=gov_countries)
+                )
             )
         )
-    )
 
     additional_cc_contacts = set(additional_cc_contacts or [])
     additional_bcc_contacts = set(additional_bcc_contacts or [])
@@ -68,7 +77,7 @@ def get_organization_recipients(
         bcc_emails = set()
 
         # If it's a GOV, include all inviteable orgs from that country (incl. other GOVs)
-        if org.organization_type.acronym == "GOV":
+        if org.organization_type and org.organization_type.acronym == "GOV":
             related_orgs = Organization.objects.filter(
                 government=org.government, include_in_invitation=True
             ).prefetch_related("primary_contacts", "secondary_contacts")
@@ -82,10 +91,16 @@ def get_organization_recipients(
 
         if primary:
             to_emails.update(
-                email for contact in primary for email in (contact.emails or [])
+                email
+                for contact in primary
+                for email in (contact.emails or [])
+                if email
             )
             cc_emails.update(
-                email for contact in primary for email in (contact.email_ccs or [])
+                email
+                for contact in primary
+                for email in (contact.email_ccs or [])
+                if email
             )
 
         if secondary:
@@ -93,6 +108,7 @@ def get_organization_recipients(
                 email
                 for contact in secondary
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
+                if email
             )
 
         if additional_cc_contacts:
@@ -100,6 +116,7 @@ def get_organization_recipients(
                 email
                 for contact in additional_cc_contacts
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
+                if email
             )
 
         if additional_bcc_contacts:
@@ -107,7 +124,12 @@ def get_organization_recipients(
                 email
                 for contact in additional_bcc_contacts
                 for email in ((contact.emails or []) + (contact.email_ccs or []))
+                if email
             )
+            # Only add org if there is at least one "to" email address;
+            # otherwise email won't get sent and we'll just pollute the admin.
+            if not to_emails:
+                continue
 
         org_recipients[org] = {
             "to_contacts": primary,

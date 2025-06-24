@@ -2,6 +2,7 @@ import abc
 import io
 import textwrap
 from email import message_from_string
+from urllib.parse import urlencode
 
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -10,7 +11,7 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db import transaction
 from django.db.models import Q
-from django.http import FileResponse, HttpResponseForbidden
+from django.http import FileResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
@@ -500,6 +501,8 @@ class InvitationEmailForm(forms.ModelForm):
             "bcc_recipients",
             "subject",
             "content",
+            "is_reminder",
+            "original_email",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -573,6 +576,18 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     form = InvitationEmailForm
 
+    list_display = BaseEmailAdmin.list_display + (
+        "is_reminder",
+        "original_email_link",
+        "reminder_count",
+    )
+
+    list_filter = ("is_reminder", "original_email", "created_at")
+
+    # is_reminder and original_email should be readonly for both invitation and reminders
+    # This ensures consistent behaviour and separation of concerns.
+    readonly_fields = ("is_reminder_display", "original_email_display")
+
     autocomplete_fields = (
         "organization_types",
         "events",
@@ -632,6 +647,8 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     "the party name."
                 ),
                 "fields": (
+                    "is_reminder_display",
+                    "original_email_display",
                     "subject",
                     "content",
                 ),
@@ -644,32 +661,238 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             super()
             .get_queryset(request)
             .filter(email_type=Email.EmailTypeChoices.EVENT_INVITE)
+            .select_related("original_email")
+            .prefetch_related("reminder_emails")
         )
 
     def save_model(self, request, obj, form, change):
         obj.email_type = Email.EmailTypeChoices.EVENT_INVITE
         super().save_model(request, obj, form, change)
 
+    def get_urls(self):
+        urls = super().get_urls()
+        return [
+            path(
+                "<path:object_id>/send-reminder/",
+                self.admin_site.admin_view(self.send_reminder_view),
+                name="%s_%s_send_reminder" % self.opt_info,
+            ),
+        ] + urls
+
+    @admin.display(boolean=True, description="Is Reminder")
+    def is_reminder_display(self, obj):
+        if obj is None or obj.pk is None:
+            return (
+                "is_reminder" in self.request.GET
+                and "original_email_id" in self.request.GET
+            )
+        return obj.is_reminder
+
+    @admin.display(description="Original Email")
+    def original_email_display(self, obj):
+        original_email_id = None
+        if obj is None or obj.pk is None:
+            original_email_id = self.request.GET.get("original_email_id")
+        elif obj.original_email:
+            original_email_id = obj.original_email.pk
+        original_email = InvitationEmail.objects.filter(id=original_email_id).first()
+        if original_email:
+            url = reverse(
+                "admin:emails_invitationemail_change", args=[original_email.pk]
+            )
+            return format_html('<a href="{}">{}</a>', url, original_email.subject)
+        return "-"
+
+    def get_form(self, request, obj=None, **kwargs):
+        """Store request for use in display methods"""
+        self.request = request
+        return super().get_form(request, obj, **kwargs)
+
+    def get_changeform_initial_data(self, request):
+        """
+        Provides initial data for reminders in the changeform
+        (basically pre-populating all fields that can be pre-populated).
+        """
+        initial = super().get_changeform_initial_data(request)
+
+        # Check if this is a reminder being created
+        if "is_reminder" in request.GET and "original_email_id" in request.GET:
+            original_email_id = request.GET.get("original_email_id")
+
+            try:
+                original_email = InvitationEmail.objects.get(id=original_email_id)
+
+                # Count reminders already sent for this invitation email
+                reminder_count = original_email.reminder_emails.count()
+
+                # Preserve initial organization types and events
+                org_types = original_email.organization_types.all()
+                initial["organization_types"] = [org_type.pk for org_type in org_types]
+
+                events = list(original_email.events.all())
+                if events:
+                    initial["events"] = [event.pk for event in events]
+                if original_email.event_group:
+                    initial["event_group"] = original_email.event_group.pk
+
+                initial["is_reminder"] = True
+                initial["original_email"] = original_email.pk
+
+                # Show the number of reminders already sent out for this email
+                reminder_prefix = (
+                    f"Reminder {reminder_count + 1}"
+                    if reminder_count > 0
+                    else "Reminder"
+                )
+                initial["subject"] = f"{reminder_prefix}: {original_email.subject}"
+                initial["content"] = original_email.content
+
+            except InvitationEmail.DoesNotExist:
+                pass
+
+        # Is this an invitation email being created?
+        else:
+            initial["is_reminder"] = False
+            initial["original_email"] = None
+
+        return initial
+
+    def send_reminder_view(self, request, object_id):
+        """
+        Handle the send reminder action from the InvitationEmail change view.
+
+        This basically allows us to have a different behaviour for reminders.
+        """
+        obj = self.get_object(request, object_id)
+
+        if not obj:
+            self.message_user(
+                request,
+                "Cannot send reminder - invitation email not found.",
+                messages.ERROR,
+            )
+            return HttpResponseRedirect(
+                reverse("admin:emails_invitationemail_changelist")
+            )
+
+        add_url = reverse("admin:emails_invitationemail_add")
+        params = {
+            "original_email_id": str(
+                obj.original_email.id if obj.is_reminder else obj.id
+            ),
+            "is_reminder": "1",
+        }
+        redirect_url = f"{add_url}?{urlencode(params)}"
+
+        return HttpResponseRedirect(redirect_url)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        extra_context = extra_context or {}
+
+        # Add reminder button invitation & reminder emails; pre-populate context
+        obj = self.get_object(request, object_id)
+        if obj:
+            extra_context["show_reminder_button"] = True
+            extra_context["reminder_url"] = reverse(
+                "admin:emails_invitationemail_send_reminder", args=[object_id]
+            )
+            if obj.is_reminder:
+                extra_context["original_email"] = obj.original_email
+                extra_context["reminder_emails"] = (
+                    obj.original_email.reminder_emails.all()
+                )
+            else:
+                extra_context["original_email"] = None
+                extra_context["reminder_emails"] = obj.reminder_emails.all()
+
+        return super().change_view(request, object_id, form_url, extra_context)
+
+    def add_view(self, request, form_url="", extra_context=None):
+        """
+        Overridden to implement separate behaviour for reminder emails.
+        """
+        extra_context = extra_context or {}
+
+        # Always pop the reminder_original_email_id session key to avoid stale state
+        request.session.pop("reminder_original_email_id", None)
+
+        if "is_reminder" in request.GET and "original_email_id" in request.GET:
+            original_email_id = request.GET.get("original_email_id")
+
+            try:
+                original_email = InvitationEmail.objects.get(id=original_email_id)
+                unregistered_orgs = original_email.unregistered_organizations
+
+                org_count = len(unregistered_orgs)
+                events = list(original_email.events.all())
+                event_group = original_email.event_group
+
+                if events:
+                    event_info = ", ".join(event.title for event in events)
+                elif event_group:
+                    event_info = event_group.name
+                else:
+                    event_info = "event"
+                extra_context["title"] = (
+                    f"Send Reminder Email for {event_info} ({org_count} "
+                    f"unregistered organizations)"
+                )
+
+                # Store the original email ID for use in response_post_save_add()
+                request.session["reminder_original_email_id"] = original_email_id
+
+            except InvitationEmail.DoesNotExist:
+                self.message_user(
+                    request, "Original invitation email not found.", messages.ERROR
+                )
+                return redirect("admin:emails_invitationemail_changelist")
+
+        return super().add_view(request, form_url, extra_context)
+
     def response_post_save_add(self, request, obj):
+        # First check if this is a reminder
+        original_email_id = request.session.pop("reminder_original_email_id", None)
+        original_email = None
+        if original_email_id:
+            try:
+                original_email = InvitationEmail.objects.get(id=original_email_id)
+                if not obj.is_reminder:
+                    obj.is_reminder = True
+                obj.original_email = original_email
+                obj.save(update_fields=["is_reminder", "original_email"])
+            except InvitationEmail.DoesNotExist:
+                self.message_user(
+                    request,
+                    f"Error: Original email (ID: {original_email_id}) not found, "
+                    f"cannot create reminder email for it.",
+                    messages.ERROR,
+                )
+                # Delete the created object and redirect back to list
+                obj.delete()
+                return redirect("admin:emails_invitationemail_changelist")
+
         tasks = []
         event = obj.events.first() if obj.events.exists() else None
         event_group = obj.event_group
+
         org_recipients = get_organization_recipients(
             obj.organization_types.all(),
             additional_cc_contacts=obj.cc_recipients.all(),
             additional_bcc_contacts=obj.bcc_recipients.all(),
+            invitation_email=original_email,
         )
 
         for org, data in org_recipients.items():
-            if (
-                data["to_contacts"]
-                or data["cc_contacts"]
-                or data["to_emails"]
-                or data["cc_emails"]
-            ):
+            if data["to_emails"]:
                 with transaction.atomic():
-                    if org.organization_type.acronym == "GOV":
+                    if (
+                        org.organization_type
+                        and org.organization_type.acronym == "GOV"
+                        and org.government
+                    ):
                         # Create or get country-level invitation
+                        # If organization is missing the government field,
+                        # it will be processed below and invited simply as org
                         invitation, _ = EventInvitation.objects.get_or_create(
                             country=org.government,
                             event=event,
@@ -681,6 +904,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     else:
                         # Regular organization-level invitation
                         invitation, _ = EventInvitation.objects.get_or_create(
+                            country=None,
                             organization=org,
                             event=event,
                             event_group=event_group,
@@ -695,8 +919,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                         email_bcc=list(data["bcc_emails"]),
                     )
 
-                    # Set recipient contacts (M2M) as returned by
-                    # get_organization_recipients
+                    # Set contacts M2M as returned by get_organization_recipients()
                     task.to_contacts.set(data["to_contacts"])
                     task.cc_contacts.set(data["cc_contacts"])
                     task.bcc_contacts.set(data["bcc_contacts"])
@@ -704,12 +927,34 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     task.run(is_async=True)
                     tasks.append(task)
 
+        message_type = "reminder" if original_email else "invitation"
         self.message_user(
             request,
-            f"{len(tasks)} invitation emails scheduled for sending",
+            f"{len(tasks)} {message_type} emails scheduled for sending",
             messages.SUCCESS,
         )
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
+
+    @admin.display(description="Original Email")
+    def original_email_link(self, obj):
+        if obj.original_email:
+            url = reverse(
+                "admin:emails_invitationemail_change", args=[obj.original_email.pk]
+            )
+            return format_html('<a href="{}">{}</a>', url, obj.original_email.subject)
+        return "-"
+
+    @admin.display(description="Reminder Count")
+    def reminder_count(self, obj):
+        count = obj.reminder_emails.count()
+        if count > 0:
+            return format_html(
+                '<a href="{}?original_email__id__exact={}">{} reminders</a>',
+                reverse("admin:emails_invitationemail_changelist"),
+                obj.pk,
+                count,
+            )
+        return "0"
 
 
 class ContactAutocompleteFilter(AutocompleteFilter):
