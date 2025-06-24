@@ -293,6 +293,11 @@ if (invitation.participant) {
   });
 }
 
+// Auto-select the org if there is only one
+if (invitation.organizations.length === 1 && invitation.organizations?.[0]?.id) {
+  Object.assign(data, { organization: data.organization || invitation.organizations?.[0]?.id });
+}
+
 async function fileToBase64(file: File | null) {
   const result = await fileToBase64Dict(file);
   return result ? result.data : null;
