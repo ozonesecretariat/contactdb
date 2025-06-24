@@ -83,4 +83,5 @@ class NominationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = ("event", "contact", "role")
-        validators = []  # Disables auto-added UniqueTogetherValidator
+        # Disables auto-added UniqueTogetherValidator
+        validators = []
