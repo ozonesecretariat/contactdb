@@ -11,6 +11,7 @@ from django.db import migrations, models
 
 import common.array_field
 import emails.models
+import emails.validators
 
 
 class Migration(migrations.Migration):
@@ -39,7 +40,7 @@ class Migration(migrations.Migration):
                 (
                     "content",
                     ckeditor_uploader.fields.RichTextUploadingField(
-                        validators=[emails.models.validate_placeholders]
+                        validators=[emails.validators.validate_placeholders]
                     ),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
@@ -106,7 +107,7 @@ class Migration(migrations.Migration):
                 (
                     "content",
                     ckeditor_uploader.fields.RichTextUploadingField(
-                        validators=[emails.models.validate_placeholders]
+                        validators=[emails.validators.validate_placeholders]
                     ),
                 ),
             ],

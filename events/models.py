@@ -1,6 +1,7 @@
 import uuid
 from urllib.parse import urljoin
 
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -11,6 +12,7 @@ from django_task.models import TaskRQ
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
 from core.models import Contact, Country, Organization
+from emails.validators import validate_placeholders
 
 
 class LoadEventsFromKronosTask(TaskRQ):
@@ -66,6 +68,19 @@ class Event(models.Model):
         blank=True,
         related_name="events",
         help_text="Groups linking related events",
+    )
+
+    confirmation_subject = models.CharField(
+        max_length=900, validators=[validate_placeholders], default="", blank=True
+    )
+    confirmation_content = RichTextUploadingField(
+        validators=[validate_placeholders], default="", blank=True
+    )
+    refuse_subject = models.CharField(
+        max_length=900, validators=[validate_placeholders], default="", blank=True
+    )
+    refuse_content = RichTextUploadingField(
+        validators=[validate_placeholders], default="", blank=True
     )
 
     def __str__(self):

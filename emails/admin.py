@@ -28,8 +28,8 @@ from emails.models import (
     InvitationEmail,
     SendEmailTask,
 )
-from emails.placeholders import find_placeholders
 from emails.services import get_organization_recipients
+from emails.validators import find_placeholders
 from events.models import EventInvitation
 
 
@@ -443,6 +443,11 @@ class EmailAdmin(BaseEmailAdmin):
         if obj:
             return ()
         return super().get_inlines(request, obj)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
 
     def response_post_save_add(self, request, obj):
         tasks = []

@@ -9,6 +9,7 @@ from import_export.admin import ExportMixin
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
+from emails.admin import CKEditorTemplatesBase
 from events.models import (
     Event,
     EventGroup,
@@ -196,7 +197,7 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
 
 
 @admin.register(Event)
-class EventAdmin(ExportMixin, ModelAdmin):
+class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     search_fields = (
         "code",
         "title__unaccent",
@@ -238,6 +239,61 @@ class EventAdmin(ExportMixin, ModelAdmin):
         "registration_count": Count("registrations"),
     }
     actions = ["load_contacts_from_kronos", "send_email"]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "code",
+                    "title",
+                    "groups",
+                )
+            },
+        ),
+        (
+            "Location",
+            {
+                "fields": (
+                    "venue_country",
+                    "venue_city",
+                )
+            },
+        ),
+        (
+            "Dates",
+            {
+                "fields": (
+                    "start_date",
+                    "end_date",
+                    "dates",
+                )
+            },
+        ),
+        (
+            "Confirmation email",
+            {
+                "fields": (
+                    "confirmation_subject",
+                    "confirmation_content",
+                )
+            },
+        ),
+        (
+            "Refuse email",
+            {
+                "fields": (
+                    "refuse_subject",
+                    "refuse_content",
+                )
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": ("event_id",),
+            },
+        ),
+    )
 
     @admin.display(description="Registrations", ordering="registration_count")
     def registrations_count(self, obj):
