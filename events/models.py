@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django_task.models import TaskRQ
+from model_utils import FieldTracker
 
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
@@ -309,6 +310,8 @@ def get_default_status():
 
 
 class Registration(models.Model):
+    tracker = FieldTracker()
+
     contact = models.ForeignKey(
         Contact,
         on_delete=models.CASCADE,
@@ -353,6 +356,45 @@ class Registration(models.Model):
 
     def __str__(self):
         return f"{self.event.code} - {self.contact.full_name}"
+
+    def save(self, *args, **kwargs):
+        old_status = self.tracker.previous("status_id")
+        super().save(*args, **kwargs)
+
+        if old_status == self.status_id:
+            return
+
+        if self.status.name == "Accredited":
+            self.send_confirmation_email()
+        elif self.status.name == "Revoked":
+            self.send_refusal_email()
+
+    def send_confirmation_email(self):
+        if not (self.event.confirmation_subject and self.event.confirmation_content):
+            return
+
+        from emails.models import Email
+
+        msg = Email.objects.create(
+            subject=self.event.confirmation_subject,
+            content=self.event.confirmation_content,
+        )
+        msg.recipients.add(self.contact)
+        # TODO, generate and attach pass
+        msg.queue_emails()
+
+    def send_refusal_email(self):
+        if not (self.event.refuse_subject and self.event.refuse_content):
+            return
+
+        from emails.models import Email
+
+        msg = Email.objects.create(
+            subject=self.event.confirmation_subject,
+            content=self.event.confirmation_content,
+        )
+        msg.recipients.add(self.contact)
+        msg.queue_emails()
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):

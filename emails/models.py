@@ -166,12 +166,6 @@ class Email(models.Model):
     def __str__(self):
         return self.subject
 
-    def save(self, *args, **kwargs):
-        is_new = self.pk is None
-        super().save(*args, **kwargs)
-        if is_new:
-            self.queue_emails()
-
     def queue_emails(self):
         tasks = []
         for contact in self.all_to_contacts:

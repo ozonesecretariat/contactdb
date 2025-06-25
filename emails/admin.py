@@ -449,16 +449,8 @@ class EmailAdmin(BaseEmailAdmin):
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
 
-    def response_post_save_add(self, request, obj):
-        tasks = []
-        # Send emails to individual contacts
-        for contact in obj.all_to_contacts:
-            task = SendEmailTask.objects.create(
-                email=obj, contact=contact, created_by=request.user
-            )
-            task.run(is_async=True)
-            tasks.append(task)
-
+    def response_post_save_add(self, request, obj: Email):
+        tasks = obj.queue_emails()
         self.message_user(
             request,
             f"{len(tasks)} emails scheduled for sending",
