@@ -53,11 +53,17 @@
                 :error="!!roleErrors[event.code]"
                 :error-message="roleErrors[event.code]"
                 hide-bottom-space
+                :disable="nominationReadOnly(event)"
               />
             </div>
           </q-slide-transition>
         </div>
-        <q-toggle v-model="nominationsToggle[event.code]" />
+        <div class="column items-end">
+          <q-toggle v-model="nominationsToggle[event.code]" :disable="nominationReadOnly(event)" />
+          <p v-if="currentNominations[event.code]">
+            {{ currentNominations[event.code]?.status }}
+          </p>
+        </div>
       </div>
     </div>
   </q-card-section>
@@ -68,6 +74,9 @@
 </template>
 
 <script setup lang="ts">
+import type { MeetingEvent } from "src/types/event";
+import type { EventNomination } from "src/types/registration";
+
 import { useStorage } from "@vueuse/core";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
@@ -86,7 +95,18 @@ const organization = computed(() => invitation.participant?.organization);
 const nominations = reactive<Record<string, string>>({});
 const nominationsToggle = reactive<Record<string, boolean>>({});
 const roleErrors = reactive<Record<string, string>>({});
+const currentNominations = computed(() => {
+  const result: Record<string, EventNomination> = {};
+  for (const nomination of invitation.nominations) {
+    if (nomination.contact.id !== invitation.participant?.id) {
+      continue;
+    }
+    result[nomination.event.code] = nomination;
+  }
+  return result;
+});
 
+// Init values for all events
 for (const event of invitation.events) {
   roleErrors[event.code] = "";
   nominations[event.code] = "";
@@ -94,12 +114,9 @@ for (const event of invitation.events) {
 }
 
 // Load current nominations for this participant
-for (const nomination of invitation.nominations) {
-  if (nomination.contact.id !== invitation.participant?.id) {
-    continue;
-  }
-  nominations[nomination.event.code] = nomination.role;
-  nominationsToggle[nomination.event.code] = Boolean(nomination.status);
+for (const [code, nomination] of Object.entries(currentNominations.value)) {
+  nominations[code] = nomination.role;
+  nominationsToggle[code] = Boolean(nomination.status);
 }
 
 async function confirmNomination() {
@@ -136,6 +153,10 @@ async function confirmNomination() {
   } finally {
     loading.value = false;
   }
+}
+
+function nominationReadOnly(event: MeetingEvent) {
+  return Boolean(currentNominations.value[event.code]) && currentNominations.value[event.code]?.status !== "Nominated";
 }
 
 function validateNominations() {
