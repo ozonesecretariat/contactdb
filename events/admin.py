@@ -119,7 +119,7 @@ class RegistrationAdmin(ModelAdmin):
         "contact__last_name",
         "contact__emails",
         "contact__email_ccs",
-        "status__name",
+        "status",
         "role__name",
     ]
     list_display_links = ("contact", "event")
