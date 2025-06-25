@@ -24,6 +24,7 @@ from events.models import (
     EventInvitation,
     Registration,
     RegistrationRole,
+    get_default_status,
 )
 
 
@@ -48,7 +49,10 @@ class EventNominationViewSet(ViewSet):
     lookup_field = "token"
 
     def get_invitation(self, token) -> EventInvitation:
-        return get_object_or_404(EventInvitation, token=token)
+        invitation = get_object_or_404(EventInvitation, token=token)
+        invitation.link_accessed = True
+        invitation.save()
+        return invitation
 
     def get_queryset(self):
         # Get the invitation using the token from the URL
@@ -151,6 +155,7 @@ class EventNominationViewSet(ViewSet):
         current_nominations = {
             n.event: n for n in contact.registrations.filter(event__in=available_events)
         }
+        default_status = get_default_status()
 
         with transaction.atomic():
             for nomination in serializer.validated_data:
@@ -167,14 +172,28 @@ class EventNominationViewSet(ViewSet):
                 try:
                     registration = current_nominations.pop(event)
                 except KeyError:
-                    registration = Registration(event=event, contact=contact)
+                    registration = Registration(
+                        event=event,
+                        contact=contact,
+                    )
+
+                if (
+                    registration.status != default_status
+                    and registration.role != nomination["role"]
+                ):
+                    raise ValidationError({"status": "Registration cannot be updated."})
 
                 registration.role = nomination["role"]
+                registration.organization = contact.organization
+                registration.department = contact.department
+                registration.designation = contact.designation
                 registration.save()
 
             # Anything left of the current nominations that was not provided
             # needs to be removed.
             for registration in current_nominations.values():
+                if registration.status != default_status:
+                    raise ValidationError({"status": "Registration cannot be removed."})
                 registration.delete()
 
         return Response(serializer.data, status=status.HTTP_200_OK)

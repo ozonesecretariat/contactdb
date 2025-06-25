@@ -67,6 +67,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         super().setUpTestData()
         # Status needs to be created as it's referenced by all registrations
         cls.nomination_status = RegistrationStatusFactory(name="Nominated")
+        cls.accredited_status = RegistrationStatusFactory(name="Accredited")
         cls.role = RegistrationRoleFactory(name="Participant")
         cls.role_delegate = RegistrationRoleFactory(name="Delegate")
 
@@ -272,6 +273,81 @@ class TestEventNominationsAPI(BaseAPITestCase):
         # Check returned data
         response_data = response.json()
         self.assertEqual(len(response_data), 2)
+
+    def test_update_nominations_not_allowed(self):
+        RegistrationFactory(
+            contact=self.contact1,
+            event=self.event,
+            role=self.role,
+            status=self.accredited_status,
+        )
+
+        data = [
+            {
+                "event": self.event.code,
+                "contact": self.contact1.id,
+                "role": self.role_delegate.name,
+            },
+        ]
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": self.invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        # Registration cannot be modified once accredited
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_nominations_not_allowed_delete(self):
+        RegistrationFactory(
+            contact=self.contact1,
+            event=self.event,
+            role=self.role,
+            status=self.accredited_status,
+        )
+
+        data = []
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": self.invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        # Registration cannot be modified once accredited
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_nominations_no_change(self):
+        # The registration is already accredited, but no change is actually performed.
+        RegistrationFactory(
+            contact=self.contact1,
+            event=self.event,
+            role=self.role,
+            status=self.accredited_status,
+        )
+
+        data = [
+            {
+                "event": self.event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": self.invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
 
     def test_nominate_contacts_country_invitation(self):
         """Test that nomination works for any org contact with government == country."""
