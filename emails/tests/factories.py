@@ -10,6 +10,8 @@ class InvitationEmailFactory(DjangoModelFactory):
 
     subject = factory.Sequence(lambda n: f"Test Invitation {n}")
     content = factory.LazyAttribute(lambda obj: f"Body for {obj.subject}")
+    email_type = InvitationEmail.EmailTypeChoices.EVENT_INVITE
+    is_reminder = False
 
     @factory.post_generation
     def events(self, create, extracted, **kwargs):

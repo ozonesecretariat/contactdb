@@ -7,18 +7,23 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 
 from common.array_field import ArrayField
 from common.model import get_protected_storage
-from core.models import Contact, ContactGroup, OrganizationType
+from core.models import (
+    Contact,
+    ContactGroup,
+    Organization,
+    OrganizationType,
+)
 from emails.placeholders import (
     replace_placeholders,
     validate_placeholders,
 )
-from events.models import Event, EventGroup
+from events.models import Event, EventGroup, EventInvitation, Registration
 
 
 def get_relative_image_urls(email_body):
@@ -66,6 +71,23 @@ class Email(models.Model):
         max_length=32,
         choices=EmailTypeChoices.choices,
         default=EmailTypeChoices.EVENT_NOTIFICATION,
+    )
+
+    is_reminder = models.BooleanField(
+        default=False,
+        help_text=(
+            "Is this a reminder email for a previously sent invitation, "
+            "for organizations that have not registered any contacts yet. "
+            "This changes email behaviour: only sends mails to 'unregistered' orgs."
+        ),
+    )
+    original_email = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="reminder_emails",
+        help_text="The original invitation email this is a reminder for.",
     )
 
     recipients = models.ManyToManyField(
@@ -245,6 +267,66 @@ class InvitationEmail(Email):
         proxy = True
         verbose_name = "Invitation Email"
         verbose_name_plural = "Invitation Emails"
+
+    @property
+    def unregistered_organizations(self):
+        """
+        Get all organizations that were invited by this email but haven't registered yet.
+        Returns a queryset of organizations.
+        """
+        events = list(self.events.all())
+        event_group = self.event_group
+
+        if not (events or event_group):
+            return Organization.objects.none()
+
+        if events:
+            invitations = EventInvitation.objects.filter(event__in=events)
+        else:
+            invitations = EventInvitation.objects.filter(event_group=event_group)
+            events = list(event_group.events.all())
+
+        # These are ALL uregistered orgs, regardless of being invited directtly/via GOV
+        return (
+            Organization.objects.prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
+            .filter(
+                include_in_invitation=True,
+                organization_type__in=self.organization_types.all(),
+            )
+            .filter(
+                Q(
+                    # Direct org-based invitations;
+                    # include all orgs that have no registrations
+                    id__in=invitations.filter(organization__isnull=False).values_list(
+                        "organization_id", flat=True
+                    ),
+                )
+                & ~Exists(
+                    Registration.objects.filter(
+                        event__in=events if events else [],
+                        contact__organization=OuterRef("pk"),
+                    )
+                )
+                | Q(
+                    # Government/county invitations;
+                    # only include orgs when no org from same country has registrations
+                    government__in=invitations.filter(
+                        country__isnull=False
+                    ).values_list("country_id", flat=True),
+                )
+                & ~Exists(
+                    Registration.objects.filter(
+                        event__in=events if events else [],
+                        contact__organization__government=OuterRef("government"),
+                    )
+                )
+            )
+            .distinct()
+        )
 
 
 class SendEmailTask(TaskRQ):
