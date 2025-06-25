@@ -37,10 +37,18 @@ describe("Check nominations page", () => {
     cy.get("input[name=lastName]").type(lastName);
     cy.get("[aria-label=Organization]").click();
     cy.get("[role=option]").contains("Galactic Research Institute for Advanced Technologies").click();
+    // Add passport info
+    cy.get("[role=checkbox]:has([name=needsVisaLetter])").click();
+    cy.get("[name=nationality]").type("klingon");
+    cy.get("[name=passportNumber]").type("123456789");
+    cy.get("[name=passportDateOfIssue]").type("2022-01-01");
+    cy.get("[name=passportDateOfExpiry]").type("2025-01-01");
+    cy.get("[name=passport]").selectFile("fixtures/test/files/test-logo.png");
+    // Add the photo
+    cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo.png");
     cy.contains("Save").click();
     cy.contains("Nominate participant");
     // Add a nomination for the participant
-    cy.get("[role=switch][aria-checked=false]").click();
     cy.get('[aria-label="Role of the participant"]').click();
     cy.get("[role=option]").contains("Delegate").click();
     cy.contains("Confirm nomination").click();

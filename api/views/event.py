@@ -214,7 +214,7 @@ class EventNominationViewSet(ViewSet):
     def update_contact(self, request, token, contact_id):
         contact = get_object_or_404(self._get_contacts_qs(token), id=contact_id)
         serializer_class = self.get_serializer_class()
-        serializer = serializer_class(contact, data=request.data)
+        serializer = serializer_class(contact, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         if serializer.validated_data["organization"] not in self._get_org_qs(token):
             raise ValidationError({"organization": "Invalid organization"})

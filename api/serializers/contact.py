@@ -1,6 +1,11 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import transaction
 from django.urls import reverse
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
+from common.serializers import DateField
 from core.models import Contact, Country, Organization
 
 
@@ -40,6 +45,23 @@ class ContactSerializer(serializers.ModelSerializer):
     events nominations.
     """
 
+    passport = serializers.JSONField(write_only=True, required=False, allow_null=True)
+    credentials = serializers.JSONField(
+        write_only=True, required=False, allow_null=True
+    )
+    nationality = serializers.CharField(
+        write_only=True, required=False, allow_blank=True
+    )
+    passport_number = serializers.CharField(
+        write_only=True, required=False, allow_blank=True
+    )
+    passport_date_of_issue = DateField(
+        write_only=True, required=False, allow_blank=True
+    )
+    passport_date_of_expiry = DateField(
+        write_only=True, required=False, allow_blank=True
+    )
+    photo = Base64ImageField(write_only=True, required=False, allow_null=True)
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -55,6 +77,15 @@ class ContactSerializer(serializers.ModelSerializer):
             "full_name",
             "phones",
             "mobiles",
+            "has_credentials",
+            "needs_visa_letter",
+            "passport",
+            "credentials",
+            "nationality",
+            "passport_number",
+            "passport_date_of_issue",
+            "passport_date_of_expiry",
+            "photo",
             "photo_url",
         )
 
@@ -71,6 +102,24 @@ class ContactSerializer(serializers.ModelSerializer):
         if request:
             return request.build_absolute_uri(photo_url)
         return photo_url
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            instance = super().create(validated_data)
+            try:
+                instance.clean()
+            except DjangoValidationError as e:
+                raise ValidationError(e.message_dict) from e
+            return instance
+
+    def update(self, instance, validated_data):
+        with transaction.atomic():
+            instance = super().update(instance, validated_data)
+            try:
+                instance.clean()
+            except DjangoValidationError as e:
+                raise ValidationError(e.message_dict) from e
+            return instance
 
 
 class ContactDetailSerializer(ContactSerializer):

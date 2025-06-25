@@ -96,6 +96,147 @@
       label="Phone"
       name="phones"
     />
+    <q-file
+      v-model="data.photo"
+      :error="!!errors.photo"
+      :error-message="errors.photo"
+      name="photo"
+      outlined
+      accept=".jpeg,.jpg,.png"
+      :label="data.photoUrl ? 'Change photo' : 'Add photo'"
+    >
+      <template #append>
+        <q-btn v-if="data.photoUrl" label="View current" @click="currentImageDialog = true" />
+      </template>
+    </q-file>
+
+    <q-dialog v-model="currentImageDialog">
+      <q-card class="bg-primary text-white" style="width: 800px; max-width: 90vw">
+        <q-card-section class="row items-center">
+          <div class="text-h6">Current photo</div>
+          <q-space />
+          <q-btn v-close-popup flat round dense icon="close" />
+        </q-card-section>
+        <q-card-section>
+          <q-img :src="apiBase + data.photoUrl" alt="" style="max-height: 80vh" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-checkbox
+      v-model="data.hasCredentials"
+      :error="!!errors.hasCredentials"
+      :error-message="errors.hasCredentials"
+      name="hasCredentials"
+      label="Credentials"
+    />
+    <div v-if="data.hasCredentials">
+      <q-file
+        v-model="data.credentials"
+        :error="!!errors.credentials"
+        :error-message="errors.credentials"
+        label="Credentials"
+        outlined
+        accept=".pdf,.doc,.docx"
+        hint="Upload pdf or doc file"
+        name="credentials"
+      >
+        <template #append>
+          <q-icon name="attach_file" />
+        </template>
+      </q-file>
+    </div>
+    <q-checkbox
+      v-model="data.needsVisaLetter"
+      :error="!!errors.needsVisaLetter"
+      :error-message="errors.needsVisaLetter"
+      name="needsVisaLetter"
+      label="Needs visa letter"
+    />
+    <div v-if="data.needsVisaLetter">
+      <div class="row full-width">
+        <q-input
+          v-model="data.passportNumber"
+          :error="!!errors.passportNumber"
+          :error-message="errors.passportNumber"
+          name="passportNumber"
+          label="Passport number"
+          outlined
+          class="col"
+        />
+        <q-input
+          v-model="data.nationality"
+          :error="!!errors.nationality"
+          :error-message="errors.nationality"
+          name="nationality"
+          label="Nationality"
+          outlined
+          class="col q-ml-md"
+        />
+      </div>
+      <div class="row full-width">
+        <q-input
+          v-model="data.passportDateOfIssue"
+          :error="!!errors.passportDateOfIssue"
+          :error-message="errors.passportDateOfIssue"
+          name="passportDateOfIssue"
+          outlined
+          mask="####-##-##"
+          :rules="['date']"
+          label="Date of Issue"
+          class="col"
+        >
+          <template #append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                <q-date v-model="data.passportDateOfIssue" mask="YYYY-MM-DD">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+        <q-input
+          v-model="data.passportDateOfExpiry"
+          :error="!!errors.passportDateOfExpiry"
+          :error-message="errors.passportDateOfExpiry"
+          name="passportDateOfExpiry"
+          outlined
+          mask="####-##-##"
+          :rules="['date']"
+          label="Date of Expiry"
+          class="col q-ml-md"
+        >
+          <template #append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                <q-date v-model="data.passportDateOfExpiry" mask="YYYY-MM-DD">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+      <q-file
+        v-model="data.passport"
+        :error="!!errors.passport"
+        :error-message="errors.passport"
+        name="passport"
+        label="Passport"
+        outlined
+        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+        hint="Upload pdf, doc or image file"
+      >
+        <template #append>
+          <q-icon name="attach_file" />
+        </template>
+      </q-file>
+    </div>
   </q-card-section>
   <q-card-section class="modal-footer">
     <q-btn :to="{ name: 'find-participant' }">Cancel</q-btn>
@@ -106,7 +247,7 @@
 <script setup lang="ts">
 import type { Contact } from "src/types/registration";
 
-import { api } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
 import { reactive, ref } from "vue";
@@ -117,16 +258,27 @@ const invitation = useInvitationStore();
 const router = useRouter();
 const { errors, setErrors } = useFormErrors();
 
+const currentImageDialog = ref(false);
 const data = reactive({
+  credentials: null,
   department: "",
   designation: "",
   emailCcs: "",
   emails: "",
   firstName: "",
+  hasCredentials: false,
   lastName: "",
   mobiles: "",
+  nationality: "",
+  needsVisaLetter: false,
   organization: "",
+  passport: null,
+  passportDateOfExpiry: "",
+  passportDateOfIssue: "",
+  passportNumber: "",
   phones: "",
+  photo: null,
+  photoUrl: "",
   title: "",
 });
 
@@ -141,6 +293,35 @@ if (invitation.participant) {
   });
 }
 
+// Auto-select the org if there is only one
+if (invitation.organizations.length === 1 && invitation.organizations?.[0]?.id) {
+  Object.assign(data, { organization: data.organization || invitation.organizations?.[0]?.id });
+}
+
+async function fileToBase64(file: File | null) {
+  const result = await fileToBase64Dict(file);
+  return result ? result.data : null;
+}
+
+function fileToBase64Dict(file: File | null): Promise<null | { data: string; filename: string }> {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve(null);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve({
+        data: reader.result as string,
+        filename: file.name,
+      });
+    };
+    reader.onerror = () => reject(new Error(`Error while reading file.`));
+  });
+}
+
 async function saveForm() {
   loading.value = true;
   const url = invitation.participantId
@@ -151,10 +332,13 @@ async function saveForm() {
     const newContact = (
       await api.post<Contact>(url, {
         ...data,
+        credentials: data.hasCredentials ? await fileToBase64Dict(data.credentials) : null,
         emailCcs: toList(data.emailCcs),
         emails: toList(data.emails),
         mobiles: toList(data.mobiles),
+        passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
+        photo: await fileToBase64(data.photo),
       })
     ).data;
     await invitation.loadContacts();

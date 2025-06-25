@@ -10,13 +10,16 @@
           <p class="text-subtitle1">
             {{ participant.designation }}
           </p>
+          <p class="text-h6">
+            {{ participant.organization?.name }}
+          </p>
         </div>
-        <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
+        <div class="column q-gutter-y-md">
+          <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
+          <q-img v-if="participant.photoUrl" :src="apiBase + participant.photoUrl" alt="" />
+        </div>
       </div>
-      <p class="text-h6">
-        {{ participant.organization?.name }}
-      </p>
-      <div class="row items-start justify-between">
+      <div class="row items-start justify-between q-mt-md">
         <div v-if="organization">
           {{ organization.country?.name ?? organization.government?.name }}
           {{ organization.state }}
@@ -78,7 +81,7 @@ import type { MeetingEvent } from "src/types/event";
 import type { EventNomination } from "src/types/registration";
 
 import { useStorage } from "@vueuse/core";
-import { api } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import { useQuasar } from "quasar";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
@@ -110,7 +113,8 @@ const currentNominations = computed(() => {
 for (const event of invitation.events) {
   roleErrors[event.code] = "";
   nominations[event.code] = "";
-  nominationsToggle[event.code] = false;
+  // If we only have one event, default to it being enabled
+  nominationsToggle[event.code] = invitation.events.length === 1;
 }
 
 // Load current nominations for this participant
