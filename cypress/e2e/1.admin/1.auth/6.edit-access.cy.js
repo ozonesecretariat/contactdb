@@ -18,7 +18,6 @@ describe("Check user permissions", () => {
         eventinvitation: true,
         registration: true,
         registrationrole: true,
-        registrationstatus: true,
         registrationtag: true,
       },
     });

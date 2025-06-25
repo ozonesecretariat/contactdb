@@ -25,7 +25,6 @@ from events.models import (
     LoadParticipantsFromKronosTask,
     Registration,
     RegistrationRole,
-    RegistrationStatus,
     RegistrationTag,
 )
 
@@ -49,7 +48,6 @@ class Command(BaseCommand):
             # Events
             RegistrationTag,
             RegistrationRole,
-            RegistrationStatus,
         ),
         "test": (
             # User

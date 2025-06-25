@@ -24,7 +24,6 @@ from events.models import (
     EventInvitation,
     Registration,
     RegistrationRole,
-    get_default_status,
 )
 
 
@@ -60,7 +59,6 @@ class EventNominationViewSet(ViewSet):
         return (
             Registration.objects.select_related(
                 "role",
-                "status",
                 "event",
                 "event__venue_country",
                 "contact",
@@ -155,7 +153,6 @@ class EventNominationViewSet(ViewSet):
         current_nominations = {
             n.event: n for n in contact.registrations.filter(event__in=available_events)
         }
-        default_status = get_default_status()
 
         with transaction.atomic():
             for nomination in serializer.validated_data:
@@ -178,7 +175,7 @@ class EventNominationViewSet(ViewSet):
                     )
 
                 if (
-                    registration.status != default_status
+                    registration.status != Registration.Status.NOMINATED
                     and registration.role != nomination["role"]
                 ):
                     raise ValidationError({"status": "Registration cannot be updated."})
@@ -192,7 +189,7 @@ class EventNominationViewSet(ViewSet):
             # Anything left of the current nominations that was not provided
             # needs to be removed.
             for registration in current_nominations.values():
-                if registration.status != default_status:
+                if registration.status != Registration.Status.NOMINATED:
                     raise ValidationError({"status": "Registration cannot be removed."})
                 registration.delete()
 

@@ -25,7 +25,6 @@ class TestEventInvitationAdmin(TestCase):
     fixtures = [
         "initial/country",
         "initial/organizationtype",
-        "initial/registrationstatus",
         "initial/registrationrole",
     ]
 

@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from core.admin.contact_base import MergeContacts
 from core.models import Contact, Country, Organization
-from events.models import Event, Registration, RegistrationRole, RegistrationStatus
+from events.models import Event, Registration, RegistrationRole
 
 
 class TestMergeContactFk(TestCase):
@@ -12,7 +12,6 @@ class TestMergeContactFk(TestCase):
         "initial/country",
         "initial/organizationtype",
         "test/organization",
-        "initial/registrationstatus",
         "initial/registrationrole",
     ]
 
@@ -21,8 +20,8 @@ class TestMergeContactFk(TestCase):
         self.other_event = Event.objects.all()[1]
         self.organization = Organization.objects.first()
         self.country = Country.objects.first()
-        registered = RegistrationStatus.objects.get(name="Registered")
-        accredited = RegistrationStatus.objects.get(name="Accredited")
+        registered = Registration.Status.REGISTERED
+        accredited = Registration.Status.ACCREDITED
         role = RegistrationRole.objects.first()
 
         self.contact1 = Contact.objects.create(
@@ -89,6 +88,6 @@ class TestMergeContactFk(TestCase):
             event=self.event
         ).first()
         self.assertEqual(
-            event_registration.status.name,
+            event_registration.status,
             "Registered",
         )

@@ -18,7 +18,6 @@ from events.models import (
     LoadParticipantsFromKronosTask,
     Registration,
     RegistrationRole,
-    RegistrationStatus,
     RegistrationTag,
 )
 
@@ -97,13 +96,6 @@ class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
         return False
 
 
-@admin.register(RegistrationStatus)
-class RegistrationStatusAdmin(ExportMixin, ModelAdmin):
-    search_fields = ("name",)
-    list_display = ("name",)
-    list_display_links = ("name",)
-
-
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
@@ -127,7 +119,7 @@ class RegistrationAdmin(ModelAdmin):
         "contact__last_name",
         "contact__emails",
         "contact__email_ccs",
-        "status__name",
+        "status",
         "role__name",
     ]
     list_display_links = ("contact", "event")
@@ -144,17 +136,16 @@ class RegistrationAdmin(ModelAdmin):
         AutocompleteFilterFactory("organization", "contact__organization"),
         AutocompleteFilterFactory("government", "contact__organization__government"),
         AutocompleteFilterFactory("contact", "contact"),
-        AutocompleteFilterFactory("status", "status"),
+        "status",
         AutocompleteFilterFactory("role", "role"),
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
     ]
-    autocomplete_fields = ("contact", "event", "role", "status", "tags")
+    autocomplete_fields = ("contact", "event", "role", "tags")
     prefetch_related = (
         "contact",
         "contact__organization",
         "role",
-        "status",
         "tags",
     )
 
