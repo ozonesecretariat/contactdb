@@ -266,18 +266,6 @@ class RegistrationTag(models.Model):
         return self.name
 
 
-class RegistrationStatus(models.Model):
-    name = CICharField(max_length=250, unique=True)
-    kronos_value = KronosEnum()
-
-    class Meta:
-        ordering = ("name",)
-        verbose_name_plural = "registration statuses"
-
-    def __str__(self):
-        return self.name
-
-
 class RegistrationRole(models.Model):
     name = CICharField(max_length=250, unique=True)
     kronos_value = KronosEnum()
@@ -289,11 +277,13 @@ class RegistrationRole(models.Model):
         return self.name
 
 
-def get_default_status():
-    return RegistrationStatus.objects.get(name="Nominated")
-
-
 class Registration(models.Model):
+    class Status(models.TextChoices):
+        NOMINATED = "Nominated", "Nominated"
+        ACCREDITED = "Accredited", "Accredited"
+        REGISTERED = "Registered", "Registered"
+        REVOKED = "Revoked", "Revoked"
+
     contact = models.ForeignKey(
         Contact,
         on_delete=models.CASCADE,
@@ -305,8 +295,8 @@ class Registration(models.Model):
         related_name="registrations",
     )
 
-    status = models.ForeignKey(
-        RegistrationStatus, on_delete=models.CASCADE, default=get_default_status
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.NOMINATED
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
     priority_pass_code = models.CharField(max_length=150, blank=True)

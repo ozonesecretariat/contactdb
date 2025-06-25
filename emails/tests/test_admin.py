@@ -29,7 +29,6 @@ class TestInvitationEmailAdmin(TestCase):
     fixtures = [
         "initial/country",
         "initial/organizationtype",
-        "initial/registrationstatus",
         "initial/registrationrole",
     ]
 
@@ -557,7 +556,6 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
     fixtures = [
         "initial/country",
         "initial/organizationtype",
-        "initial/registrationstatus",
         "initial/registrationrole",
     ]
 
@@ -1174,7 +1172,6 @@ class TestInvitationEmailAdminReminders(TestCase):
     fixtures = [
         "initial/country",
         "initial/organizationtype",
-        "initial/registrationstatus",
         "initial/registrationrole",
     ]
 

@@ -15,7 +15,6 @@ class TestImportEvents(TestCase):
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
-        "initial/registrationstatus",
         "initial/registrationtag",
     ]
 

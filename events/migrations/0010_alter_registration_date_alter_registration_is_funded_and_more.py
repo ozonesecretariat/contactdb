@@ -4,8 +4,6 @@ import django.db.models.deletion
 import django.utils.timezone
 from django.db import migrations, models
 
-import events.models
-
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -27,7 +25,7 @@ class Migration(migrations.Migration):
             model_name="registration",
             name="status",
             field=models.ForeignKey(
-                default=events.models.get_default_status,
+                default=None,
                 on_delete=django.db.models.deletion.CASCADE,
                 to="events.registrationstatus",
             ),

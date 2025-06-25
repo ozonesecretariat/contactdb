@@ -19,7 +19,6 @@ describe("Check user permissions", () => {
         loadparticipantsfromkronostask: { view: true },
         registration: true,
         registrationrole: true,
-        registrationstatus: true,
         registrationtag: true,
       },
     });

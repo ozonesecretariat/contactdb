@@ -53,7 +53,6 @@ class EventSerializer(serializers.ModelSerializer):
 class RegistrationSerializer(serializers.ModelSerializer):
     contact = ContactSerializer(read_only=True)
     event = EventSerializer(read_only=True)
-    status = serializers.SlugRelatedField(slug_field="name", read_only=True)
     role = serializers.SlugRelatedField(
         slug_field="name", queryset=RegistrationRole.objects.all()
     )
