@@ -172,7 +172,10 @@ class EventNominationViewSet(ViewSet):
                 try:
                     registration = current_nominations.pop(event)
                 except KeyError:
-                    registration = Registration(event=event, contact=contact)
+                    registration = Registration(
+                        event=event,
+                        contact=contact,
+                    )
 
                 if (
                     registration.status != default_status
@@ -181,6 +184,9 @@ class EventNominationViewSet(ViewSet):
                     raise ValidationError({"status": "Registration cannot be updated."})
 
                 registration.role = nomination["role"]
+                registration.organization = contact.organization
+                registration.department = contact.department
+                registration.designation = contact.designation
                 registration.save()
 
             # Anything left of the current nominations that was not provided
