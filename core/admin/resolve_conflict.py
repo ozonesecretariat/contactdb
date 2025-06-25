@@ -95,7 +95,7 @@ class ResolveConflictAdmin(ContactAdminBase):
 
     @admin.display(description="Conflicting contact")
     def conflicting_contact(self, obj):
-        return self._link_to_conflict_resolution(obj, obj)
+        return self.get_object_display_link(obj)
 
     def has_add_permission(self, request):
         return False
