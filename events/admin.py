@@ -141,6 +141,8 @@ class RegistrationAdmin(ModelAdmin):
         AutocompleteFilterFactory("contact", "contact"),
         "status",
         AutocompleteFilterFactory("role", "role"),
+        "contact__has_credentials",
+        "contact__needs_visa_letter",
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
     ]
