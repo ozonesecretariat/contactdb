@@ -3,7 +3,6 @@ from itertools import chain
 
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
-from django.core.management import call_command
 from django.utils.html import format_html
 
 from common.urls import reverse
@@ -88,8 +87,7 @@ class ResolveConflictAdmin(ContactAdminBase):
         kronos_ids = set(chain.from_iterable(contacts))
 
         contact_parser = ContactParser()
-        for kronos_id in kronos_ids:
-            contact_parser.import_contact_with_registrations(kronos_id)
+        contact_parser.import_contacts_with_registrations(kronos_ids)
 
     @staticmethod
     def save_incoming_data(incoming_contact):

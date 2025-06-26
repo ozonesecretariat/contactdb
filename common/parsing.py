@@ -1,10 +1,8 @@
 import re
 import string
-from datetime import UTC, datetime
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
 CONTACT_MAPPING = {
-    "organizationId": "organization_id",
     "organization": "organization",
     "title": "title",
     "firstName": "first_name",
@@ -52,14 +50,3 @@ def parse_list(email_list):
                 result.add(addr)
 
     return sorted(result)
-
-
-def parse_date(self, value):
-    try:
-        return datetime.strptime(value, "%Y-%m-%d").astimezone(UTC).date()
-    except (TypeError, ValueError):
-        return None
-
-
-def parse_datetime(self, value):
-    return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").astimezone(UTC)

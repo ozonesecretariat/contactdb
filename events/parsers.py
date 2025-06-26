@@ -6,7 +6,7 @@ from functools import cached_property
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 
-from common.parsing import parse_list
+from common.parsing import CONTACT_MAPPING, parse_list
 from core.models import (
     Contact,
     Country,
@@ -145,28 +145,7 @@ class KronosEventsParser(KronosParser):
 
 
 class KronosParticipantsParser(KronosParser):
-    field_mapping = {
-        "organization": "organization",
-        "title": "title",
-        "firstName": "first_name",
-        "lastName": "last_name",
-        "designation": "designation",
-        "department": "department",
-        "affiliation": "affiliation",
-        "phones": "phones",
-        "mobiles": "mobiles",
-        "faxes": "faxes",
-        "emails": "emails",
-        "emailCcs": "email_ccs",
-        "notes": "notes",
-        "isUseOrganizationAddress": "is_use_organization_address",
-        "address": "address",
-        "city": "city",
-        "state": "state",
-        "country": "country",
-        "postalCode": "postal_code",
-        "dateOfBirth": "birth_date",
-    }
+    field_mapping = CONTACT_MAPPING
 
     def __init__(self, task):
         super().__init__(task=task)

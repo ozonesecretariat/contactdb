@@ -1,7 +1,9 @@
 import base64
 import logging
+from itertools import chain
 
 from django.core.files.base import ContentFile
+from django.db import transaction
 
 from common.parsing import CONTACT_MAPPING, REGISTRATION_MAPPING
 from core.models import Contact, Country, Organization
@@ -12,7 +14,7 @@ from events.models import (
     RegistrationRole,
     RegistrationTag,
 )
-from events.parsers import KRONOS_STATUS_MAP
+from events.parsers import KRONOS_STATUS_MAP, KronosParticipantsParser
 
 
 class ContactPhotosParser:
@@ -193,13 +195,14 @@ class ContactPhotosParser:
 
 
 class ContactParser:
-    def __init__(self, task):
+    def __init__(self):
         self.client = KronosClient()
 
     @staticmethod
     def get_or_create_registration_role(role_kronos_enum):
         if not role_kronos_enum:
-            return None
+            # TODO: handle this case properly
+            return RegistrationRole.objects.first()
 
         return RegistrationRole.objects.get_or_create(
             kronos_value=role_kronos_enum,
@@ -211,7 +214,7 @@ class ContactParser:
     @staticmethod
     def get_or_create_registration_tags(tags_list):
         if not tags_list:
-            return None
+            return []
         return [
             RegistrationTag.objects.get_or_create(name=tag.strip())[0]
             for tag in tags_list
@@ -220,27 +223,23 @@ class ContactParser:
 
     @staticmethod
     def create_registration(
-        registration_dict,
+        registration_data,
         contact: Contact = None,
         event: Event = None,
         role: RegistrationRole = None,
         tags: list[RegistrationTag] = None,
     ) -> Registration | None:
         """
-        `registration_dict` should be a dictionary with the following keys:
-            *"contact_id": "1",
-            *"event_id": "1",
-            *"status": status,
-            *"role": role,
-            "priority_pass_code": "",
-            "date": "2023-10-01T12:00:00Z",
-            *"tags": "",
-            "is_funded": "false",
-        }
-        * The keys marked with * can be passed as separate arguments
+        Create a Registration instance from a Kronos registration dictionary.
         """
-        if not registration_dict:
+        if not registration_data:
             return None
+
+        registration_dict = registration_dict = {
+            REGISTRATION_MAPPING[key]: value
+            for key, value in registration_data.items()
+            if key in REGISTRATION_MAPPING
+        }
 
         contact_id = registration_dict.pop("contact_id", None)
         event_id = registration_dict.pop("event_id", None)
@@ -262,17 +261,18 @@ class ContactParser:
         role = role or ContactParser.get_or_create_registration_role(role_value)
         tags = tags or ContactParser.get_or_create_registration_tags(tags_value)
 
+        if not (contact and event and role):
+            raise ValueError("Contact, event, and role must be provided.")
+
         registration = Registration.objects.create(
             contact=contact,
             event=event,
-            defaults={
-                "status": status,
-                "role": role,
-                **registration_dict,
-                "organization": contact.organization,
-                "designation": contact.designation,
-                "department": contact.department,
-            },
+            status=status,
+            role=role,
+            **registration_dict,
+            organization=contact.organization,
+            designation=contact.designation,
+            department=contact.department,
         )
 
         if tags:
@@ -282,14 +282,23 @@ class ContactParser:
 
     @staticmethod
     def create_contact(
-        contact_dict: dict, country=None, organization=None
+        contact_data: dict, country=None, organization=None
     ) -> Contact | None:
-        if not contact_dict:
+        """
+        Create a Contact instance from a Kronos contact dictionary.
+        """
+        if not contact_data:
             return None
 
-        country_code = contact_dict.pop("country", None)
-        organization_id = contact_dict.pop("organization", None)
-        contact_id = contact_dict.pop("contact_id", None)
+        country_code = contact_data.pop("country", None)
+        organization_id = contact_data.pop("organizationId", None)
+        contact_id = contact_data.pop("contactId", None)
+
+        contact_dict = {
+            CONTACT_MAPPING[key]: value
+            for key, value in contact_data.items()
+            if key in CONTACT_MAPPING
+        }
 
         country = (
             country or Country.objects.get(code=country_code) if country_code else None
@@ -300,39 +309,56 @@ class ContactParser:
             else None
         )
 
-        return Contact.objects.create(contact_ids=[contact_id], **contact_dict)
+        langs = KronosParticipantsParser.get_languages(contact_dict.get("notes", ""))
 
-    def import_contact_with_registrations(self, kronos_id: str) -> Contact | None:
+        return Contact.objects.create(
+            contact_ids=[contact_id],
+            organization=organization,
+            country=country,
+            **(contact_dict | langs),
+        )
+
+    def import_contacts_with_registrations(self, kronos_ids: list) -> Contact | None:
         """
         Import contact fron Kronos with registrations. Existing contacts
         are deleted and recreated.
         """
-        contact_dict = self.client.get_contact_data(kronos_id)
-        if not contact_dict:
-            return None
+        # Get all contacts with the given Kronos IDs
+        contacts = Contact.objects.filter(contact_ids__overlap=list(kronos_ids))
 
-        for key, value in contact_dict.items():
-            if key in CONTACT_MAPPING:
-                contact_dict[CONTACT_MAPPING[key]] = value
-                del contact_dict[key]
-            else:
-                contact_dict.pop(key, None)
-
-        contact = self.create_contact(contact_dict)
-
-        registrations_data = self.client.get_registrations_data(kronos_id).get(
-            "records", []
+        # Existing merged contacts with Kronos IDs will be reimported
+        all_kronos_ids = set(
+            list(chain.from_iterable(contacts.values_list("contact_ids", flat=True)))
+            + kronos_ids
         )
 
-        for registration_dict in registrations_data:
-            for key, value in registration_dict.items():
-                if key in REGISTRATION_MAPPING:
-                    registration_dict[REGISTRATION_MAPPING[key]] = value
-                    del registration_dict[key]
-                else:
-                    registration_dict.pop(key, None)
+        new_contacts = []
+        with transaction.atomic():
+            contacts.delete()
 
-            self.create_registration(
-                registration_dict,
-                contact=contact,
-            )
+            for kronos_id in all_kronos_ids:
+                if not kronos_id:
+                    continue
+
+                contact_data = self.client.get_contact_data(kronos_id)
+                if not contact_data:
+                    continue
+
+                contact_data["contactId"] = kronos_id
+
+                contact = self.create_contact(contact_data)
+                new_contacts.append(contact)
+
+                registrations_data = self.client.get_registrations_data(kronos_id).get(
+                    "records", []
+                )
+
+                for registration_dict in registrations_data:
+                    try:
+                        self.create_registration(
+                            registration_dict,
+                            contact=contact,
+                        )
+                    except ValueError:
+                        continue
+        return new_contacts
