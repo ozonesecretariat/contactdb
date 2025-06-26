@@ -351,12 +351,12 @@ class Registration(models.Model):
         old_status = self.tracker.previous("status_id")
         super().save(*args, **kwargs)
 
-        if old_status == self.status_id:
+        if old_status == self.status:
             return
 
-        if self.status.name == "Accredited":
+        if self.status == self.Status.ACCREDITED:
             self.send_confirmation_email()
-        elif self.status.name == "Revoked":
+        elif self.status == self.Status.REVOKED:
             self.send_refusal_email()
 
     def send_confirmation_email(self):
@@ -380,8 +380,8 @@ class Registration(models.Model):
         from emails.models import Email
 
         msg = Email.objects.create(
-            subject=self.event.confirmation_subject,
-            content=self.event.confirmation_content,
+            subject=self.event.refuse_subject,
+            content=self.event.refuse_content,
         )
         msg.recipients.add(self.contact)
         msg.queue_emails()
