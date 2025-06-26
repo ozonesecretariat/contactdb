@@ -200,6 +200,10 @@ class EventInvitation(models.Model):
         return urljoin(domain, url_path)
 
     @property
+    def invitation_link_html(self):
+        return f'<a href="{self.invitation_link}" target="_blank">{self.invitation_link}</a>'
+
+    @property
     def is_for_future_event(self):
         today = timezone.now()
 
