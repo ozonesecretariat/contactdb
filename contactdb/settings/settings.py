@@ -402,7 +402,7 @@ CKEDITOR_CONTACT_PLACEHOLDERS = {
 
 # Placeholders for event invitations
 CKEDITOR_INVITATION_PLACEHOLDERS = {
-    "invitation_link": {"attr": "invitation_link"},
+    "invitation_link": {"attr": "invitation_link_html"},
     # The party attribute can come from different fields depending on situation
     "party": {
         "attr": "country__name",

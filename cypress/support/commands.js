@@ -153,8 +153,8 @@ Cypress.Commands.addAll({
       const contact = {
         Contact_groups: [{ contactgroup: groupName }],
         emails: randomStr("test-email-", 10, "@example.org"),
-        first_name: randomStr("first-name-"),
-        last_name: randomStr("last-name-"),
+        first_name: randomStr(`${i}-first-name-`),
+        last_name: randomStr(`${i}-last-name-`),
         ...extraFields,
       };
       contacts.push(contact);
