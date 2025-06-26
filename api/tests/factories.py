@@ -8,7 +8,6 @@ from events.models import (
     EventInvitation,
     Registration,
     RegistrationRole,
-    RegistrationStatus,
 )
 
 
@@ -112,15 +111,6 @@ class EventInvitationFactory(factory.django.DjangoModelFactory):
         return super()._create(model_class, *args, **kwargs)
 
 
-class RegistrationStatusFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = RegistrationStatus
-        django_get_or_create = ("name",)
-
-    name = "Nominated"
-    kronos_value = 1
-
-
 class RegistrationRoleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RegistrationRole
@@ -136,7 +126,6 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
 
     contact = factory.SubFactory(ContactFactory)
     event = factory.SubFactory("events.tests.factories.EventFactory")
-    status = factory.SubFactory(RegistrationStatusFactory)
     role = factory.SubFactory(RegistrationRoleFactory)
     date = factory.LazyFunction(timezone.now)
     is_funded = False

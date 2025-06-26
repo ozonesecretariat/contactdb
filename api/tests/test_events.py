@@ -12,7 +12,6 @@ from api.tests.factories import (
     OrganizationFactory,
     RegistrationFactory,
     RegistrationRoleFactory,
-    RegistrationStatusFactory,
 )
 from core.models import Country, Organization, OrganizationType
 from events.models import Registration
@@ -66,8 +65,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
         """Sets up common data for all tests in this class."""
         super().setUpTestData()
         # Status needs to be created as it's referenced by all registrations
-        cls.nomination_status = RegistrationStatusFactory(name="Nominated")
-        cls.accredited_status = RegistrationStatusFactory(name="Accredited")
+        cls.nomination_status = Registration.Status.NOMINATED
+        cls.accredited_status = Registration.Status.ACCREDITED
         cls.role = RegistrationRoleFactory(name="Participant")
         cls.role_delegate = RegistrationRoleFactory(name="Delegate")
 

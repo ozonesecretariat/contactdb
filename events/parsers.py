@@ -19,9 +19,14 @@ from events.models import (
     Event,
     Registration,
     RegistrationRole,
-    RegistrationStatus,
     RegistrationTag,
 )
+
+KRONOS_STATUS_MAP = {
+    1: Registration.Status.NOMINATED,
+    2: Registration.Status.ACCREDITED,
+    4: Registration.Status.REGISTERED,
+}
 
 
 def check_is_different(obj, dictionary):
@@ -222,13 +227,6 @@ class KronosParticipantsParser(KronosParser):
                 continue
 
             event = Event.objects.filter(event_id=registration["eventId"]).first()
-            status_kronos_enum = registration["status"]
-            status = RegistrationStatus.objects.get_or_create(
-                kronos_value=status_kronos_enum,
-                defaults={
-                    "name": status_kronos_enum,
-                },
-            )[0]
             role_kronos_enum = registration.get("role")
             role = RegistrationRole.objects.get_or_create(
                 kronos_value=role_kronos_enum,
@@ -241,7 +239,7 @@ class KronosParticipantsParser(KronosParser):
                 contact=contact,
                 event=event,
                 defaults={
-                    "status": status,
+                    "status": KRONOS_STATUS_MAP[registration["status"]],
                     "role": role,
                     "date": registration.get("date"),
                     "is_funded": registration.get("isFunded"),

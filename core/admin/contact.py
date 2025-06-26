@@ -93,7 +93,7 @@ class ContactMembershipInline(admin.StackedInline):
 class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
     model = Registration
-    autocomplete_fields = ("event", "status", "role", "tags", "organization")
+    autocomplete_fields = ("event", "role", "tags", "organization")
     classes = ["collapse"]
 
     fieldsets = (
