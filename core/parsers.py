@@ -320,17 +320,16 @@ class ContactParser:
 
     def import_contacts_with_registrations(self, kronos_ids: list) -> Contact | None:
         """
-        Import contact fron Kronos with registrations. Existing contacts
+        Import contact from Kronos with registrations. Existing contacts
         are deleted and recreated.
         """
-        # Get all contacts with the given Kronos IDs
         contacts = Contact.objects.filter(contact_ids__overlap=list(kronos_ids))
 
-        # Existing merged contacts with Kronos IDs will be reimported
+        # Collect Kronos IDs of contacts that were merged into the
+        # main contact.
         all_kronos_ids = set(
-            list(chain.from_iterable(contacts.values_list("contact_ids", flat=True)))
-            + kronos_ids
-        )
+            chain.from_iterable(contacts.values_list("contact_ids", flat=True))
+        ) | set(kronos_ids)
 
         new_contacts = []
         with transaction.atomic():
@@ -352,6 +351,8 @@ class ContactParser:
                 registrations_data = self.client.get_registrations_data(kronos_id).get(
                     "records", []
                 )
+                if not registrations_data:
+                    continue
 
                 for registration_dict in registrations_data:
                     try:
