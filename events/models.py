@@ -362,6 +362,8 @@ class Registration(models.Model):
     def send_confirmation_email(self):
         if not (self.event.confirmation_subject and self.event.confirmation_content):
             return
+        if self.status != self.Status.ACCREDITED:
+            return
 
         from emails.models import Email
 
@@ -375,6 +377,8 @@ class Registration(models.Model):
 
     def send_refusal_email(self):
         if not (self.event.refuse_subject and self.event.refuse_content):
+            return
+        if self.status != self.Status.REVOKED:
             return
 
         from emails.models import Email

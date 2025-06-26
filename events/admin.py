@@ -1,3 +1,4 @@
+import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
@@ -10,6 +11,7 @@ from common.model_admin import ModelAdmin, TaskAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
+from events.jobs import resend_confirmation_email
 from events.models import (
     Event,
     EventGroup,
@@ -149,11 +151,7 @@ class RegistrationAdmin(ModelAdmin):
         "role",
         "tags",
     )
-
-    @admin.display(description="Tags")
-    def tags_display(self, obj: Registration):
-        return ", ".join(map(str, obj.tags.all()))
-
+    actions = ["resend_confirmation_emails"]
     fieldsets = (
         (
             None,
@@ -176,6 +174,25 @@ class RegistrationAdmin(ModelAdmin):
             },
         ),
     )
+
+    @admin.display(description="Tags")
+    def tags_display(self, obj: Registration):
+        return ", ".join(map(str, obj.tags.all()))
+
+    @admin.action(
+        description="Resend confirmation email for selected registrations",
+        permissions=["change"],
+    )
+    def resend_confirmation_emails(self, request, queryset):
+        count = 0
+        for registration in queryset:
+            # Queue instead of doing it instantly or in bulk as it will require
+            # generating the qr or badge.
+            django_rq.enqueue(resend_confirmation_email, registration.id)
+            count += 1
+        self.message_user(
+            request, f"{count} confirmation emails have been queued for sending"
+        )
 
 
 @admin.register(EventGroup)

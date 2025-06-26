@@ -2,6 +2,7 @@ import logging
 
 from django_task.job import Job
 
+from events.models import Registration
 from events.parsers import (
     KronosEventsParser,
     KronosOrganizationsParser,
@@ -51,3 +52,13 @@ class LoadOrganizationsFromKronos(Job):
     @staticmethod
     def on_complete(job, task):
         task.log(logging.INFO, "Organizations loaded")
+
+
+def resend_confirmation_email(registration_id):
+    try:
+        registration = Registration.objects.get(id=registration_id)
+    except Registration.DoesNotExist:
+        # Deleted while in the queue
+        return
+
+    registration.send_confirmation_email()

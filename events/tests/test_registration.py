@@ -1,7 +1,6 @@
+from django.core import mail
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
-from django.core import mail
-
 
 from api.tests.factories import ContactFactory, EventFactory, RegistrationFactory
 from emails.models import Email
