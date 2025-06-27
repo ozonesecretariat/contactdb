@@ -1,4 +1,5 @@
 from copy import copy
+from itertools import chain
 
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
@@ -7,7 +8,8 @@ from django.utils.html import format_html
 from common.urls import reverse
 from core.admin import ContactAdminBase
 from core.admin.contact_base import MERGE_FROM_PARAM
-from core.models import ResolveConflict
+from core.models import Contact, ResolveConflict
+from core.parsers import ContactParser
 
 
 @admin.register(ResolveConflict)
@@ -50,7 +52,7 @@ class ResolveConflictAdmin(ContactAdminBase):
         "existing_contact__organization",
         "existing_contact__organization__country",
     )
-    actions = ("accept_new_data",)
+    actions = ("accept_new_data", "keep_both_contacts")
 
     @admin.action(
         description="Accept new data for selected conflicts", permissions=["delete"]
@@ -65,6 +67,27 @@ class ResolveConflictAdmin(ContactAdminBase):
             f"{len(new_contacts)} conflicts resolved",
             messages.SUCCESS,
         )
+
+    @admin.action(
+        description="Keep both contacts",
+        permissions=["delete"],
+    )
+    def keep_both_contacts(self, request, queryset):
+        """
+        If contact has multiple contact ids (is a merged contact), all
+        contact_ids will be reimported. Useful when merging by accident.
+        """
+
+        contacts = (
+            Contact.objects.filter(conflicting_contacts__in=queryset)
+            .distinct()
+            .values_list("contact_ids", flat=True)
+        )
+
+        kronos_ids = set(chain.from_iterable(contacts))
+
+        contact_parser = ContactParser()
+        contact_parser.import_contacts_with_registrations(kronos_ids)
 
     @staticmethod
     def save_incoming_data(incoming_contact):
