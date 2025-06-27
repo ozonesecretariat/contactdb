@@ -1,8 +1,9 @@
 <template>
   <q-card-section class="col-grow column">
     <div class="flex q-gutter-md">
-      <q-input
+      <q-select
         v-model="data.title"
+        :options="titles"
         :error="!!errors.title"
         :error-message="errors.title"
         outlined
@@ -286,6 +287,7 @@ const data = reactive({
 const selectedOrganization = computed(() =>
   invitation.organizations.find((o) => o.id.toString() === data.organization.toString()),
 );
+const titles = ["", "Mr.", "Ms.", "H.E. Mr.", "Hon. Mr.", "Hon. Ms"];
 
 if (invitation.participant) {
   Object.assign(data, {
@@ -363,6 +365,6 @@ function toList(val: string) {
 
 <style scoped lang="scss">
 .small-input {
-  max-width: 5rem;
+  min-width: 7rem;
 }
 </style>
