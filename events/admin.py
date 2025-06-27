@@ -5,9 +5,10 @@ from django.db.models import Count, Q
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.html import format_html
+from import_export import fields
 from import_export.admin import ExportMixin
 
-from common.model_admin import ModelAdmin, TaskAdmin
+from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
@@ -113,8 +114,37 @@ class RegistrationTagAdmin(ExportMixin, ModelAdmin):
     list_display_links = ("name",)
 
 
+class RegistrationResource(ModelResource):
+    organization = fields.Field(
+        column_name="organization",
+        attribute="contact__organization__name",
+    )
+    event = fields.Field(
+        column_name="event",
+        attribute="event__title",
+    )
+    contact = fields.Field(
+        column_name="contact",
+        attribute="contact__full_name",
+    )
+    role = fields.Field(
+        column_name="role",
+        attribute="role__name",
+    )
+    prefetch_related = (
+        "organization",
+        "contact",
+        "role",
+    )
+
+    class Meta:
+        model = Registration
+        exclude = ("id",)
+
+
 @admin.register(Registration)
-class RegistrationAdmin(ModelAdmin):
+class RegistrationAdmin(ExportMixin, ModelAdmin):
+    resource_class = RegistrationResource
     ordering = ("contact__first_name", "contact__last_name", "event__title")
     search_fields = [
         "event__title",
@@ -153,16 +183,18 @@ class RegistrationAdmin(ModelAdmin):
         "role",
         "tags",
     )
-    actions = ["resend_confirmation_emails"]
+    actions = ("send_email", "resend_confirmation_emails")
+
     fieldsets = (
         (
             None,
             {
                 "fields": (
                     ("contact", "role"),
-                    ("event", "status", "tags"),
+                    ("event", "status"),
+                    "priority_pass_code",
+                    "is_funded",
                     "date",
-                    ("priority_pass_code", "is_funded"),
                 )
             },
         ),
@@ -175,7 +207,18 @@ class RegistrationAdmin(ModelAdmin):
                 )
             },
         ),
+        (
+            "Metadata",
+            {
+                "fields": (
+                    "tags",
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
     )
+    readonly_fields = ("created_at", "updated_at")
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
@@ -195,6 +238,18 @@ class RegistrationAdmin(ModelAdmin):
         self.message_user(
             request, f"{count} confirmation emails have been queued for sending"
         )
+
+    @admin.action(description="Send email to selected contacts", permissions=["view"])
+    def send_email(self, request, queryset):
+        ids = ",".join(
+            map(
+                str,
+                queryset.values_list("contact__id", flat=True)
+                .distinct("contact__id")
+                .order_by("contact_id"),
+            )
+        )
+        return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
 
 @admin.register(EventGroup)

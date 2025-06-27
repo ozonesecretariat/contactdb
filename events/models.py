@@ -336,7 +336,7 @@ class Registration(models.Model):
         related_name="registrations",
         verbose_name="Organization",
     )
-    designation = models.TextField(default="", blank=True)
+    designation = models.TextField(default="", blank=True, verbose_name="Job title")
     department = models.TextField(default="", blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
