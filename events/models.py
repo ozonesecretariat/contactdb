@@ -1,16 +1,19 @@
 import uuid
 from urllib.parse import urljoin
 
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django_task.models import TaskRQ
+from model_utils import FieldTracker
 
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
 from core.models import Contact, Country, Organization
+from emails.validators import validate_placeholders
 
 
 class LoadEventsFromKronosTask(TaskRQ):
@@ -66,6 +69,19 @@ class Event(models.Model):
         blank=True,
         related_name="events",
         help_text="Groups linking related events",
+    )
+
+    confirmation_subject = models.CharField(
+        max_length=900, validators=[validate_placeholders], default="", blank=True
+    )
+    confirmation_content = RichTextUploadingField(
+        validators=[validate_placeholders], default="", blank=True
+    )
+    refuse_subject = models.CharField(
+        max_length=900, validators=[validate_placeholders], default="", blank=True
+    )
+    refuse_content = RichTextUploadingField(
+        validators=[validate_placeholders], default="", blank=True
     )
 
     def __str__(self):
@@ -282,6 +298,8 @@ class RegistrationRole(models.Model):
 
 
 class Registration(models.Model):
+    tracker = FieldTracker()
+
     class Status(models.TextChoices):
         NOMINATED = "Nominated", "Nominated"
         ACCREDITED = "Accredited", "Accredited"
@@ -332,6 +350,49 @@ class Registration(models.Model):
 
     def __str__(self):
         return f"{self.event.code} - {self.contact.full_name}"
+
+    def save(self, *args, **kwargs):
+        old_status = self.tracker.previous("status_id")
+        super().save(*args, **kwargs)
+
+        if old_status == self.status:
+            return
+
+        if self.status == self.Status.ACCREDITED:
+            self.send_confirmation_email()
+        elif self.status == self.Status.REVOKED:
+            self.send_refusal_email()
+
+    def send_confirmation_email(self):
+        if not (self.event.confirmation_subject and self.event.confirmation_content):
+            return
+        if self.status != self.Status.ACCREDITED:
+            return
+
+        from emails.models import Email
+
+        msg = Email.objects.create(
+            subject=self.event.confirmation_subject,
+            content=self.event.confirmation_content,
+        )
+        msg.recipients.add(self.contact)
+        # TODO, generate and attach pass
+        msg.queue_emails()
+
+    def send_refusal_email(self):
+        if not (self.event.refuse_subject and self.event.refuse_content):
+            return
+        if self.status != self.Status.REVOKED:
+            return
+
+        from emails.models import Email
+
+        msg = Email.objects.create(
+            subject=self.event.refuse_subject,
+            content=self.event.refuse_content,
+        )
+        msg.recipients.add(self.contact)
+        msg.queue_emails()
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):

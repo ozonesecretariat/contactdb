@@ -3,6 +3,7 @@
 from django.db import migrations, models
 
 import emails.placeholders
+import emails.validators
 
 
 class Migration(migrations.Migration):
@@ -15,7 +16,7 @@ class Migration(migrations.Migration):
             model_name="email",
             name="subject",
             field=models.CharField(
-                max_length=900, validators=[emails.placeholders.validate_placeholders]
+                max_length=900, validators=[emails.validators.validate_placeholders]
             ),
         ),
     ]
