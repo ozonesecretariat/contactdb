@@ -177,7 +177,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             None,
             {
                 "fields": (
-                    ("title", "honorific", "respectful"),
+                    ("title", "honorific"),
                     "first_name",
                     "last_name",
                     "country",
@@ -204,7 +204,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     "organization",
                     "designation",
                     "department",
-                    "affiliation",
                     "org_head",
                     "is_use_organization_address",
                 )

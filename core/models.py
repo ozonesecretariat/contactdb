@@ -148,12 +148,10 @@ class BaseContact(models.Model):
     organization = None
     title = models.CharField(max_length=30, blank=True)
     honorific = models.CharField(max_length=30, default="", blank=True)
-    respectful = models.CharField(max_length=30, default="", blank=True)
     first_name = models.CharField(max_length=250, default="", blank=True)
     last_name = models.CharField(max_length=250, default="", blank=True)
     designation = models.TextField(default="", blank=True, verbose_name="Job title")
     department = models.TextField(default="", blank=True)
-    affiliation = models.TextField(default="", blank=True)
 
     class UNLanguage(models.TextChoices):
         ENGLISH = "E", "English"
