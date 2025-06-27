@@ -178,6 +178,14 @@ class RegistrationAdmin(ModelAdmin):
     )
 
 
+class EventInline(admin.TabularInline):
+    extra = 0
+    model = Event.groups.through
+    verbose_name = "Event"
+    verbose_name_plural = "Group's events"
+    autocomplete_fields = ["event"]
+
+
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
@@ -185,6 +193,7 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
     list_display_links = ("name",)
     ordering = ("name",)
     prefetch_related = ("events",)
+    inlines = [EventInline]
 
 
 @admin.register(Event)
