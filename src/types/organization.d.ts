@@ -9,6 +9,7 @@ export interface Organization {
   government: Country;
   id: number;
   name: string;
+  organizationType: string;
   phones: string[];
   postalCode: string;
   state: string;

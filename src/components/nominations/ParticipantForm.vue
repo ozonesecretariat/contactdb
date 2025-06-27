@@ -45,7 +45,7 @@
       :error="!!errors.designation"
       :error-message="errors.designation"
       outlined
-      label="Designation"
+      label="Job title"
       name="designation"
     />
     <q-input
@@ -53,7 +53,7 @@
       :error="!!errors.department"
       :error-message="errors.department"
       outlined
-      label="Department"
+      label="Department, Division or Unit (within the organization)"
       name="department"
     />
     <q-input
@@ -123,29 +123,31 @@
       </q-card>
     </q-dialog>
 
-    <q-checkbox
-      v-model="data.hasCredentials"
-      :error="!!errors.hasCredentials"
-      :error-message="errors.hasCredentials"
-      name="hasCredentials"
-      label="Credentials"
-    />
-    <div v-if="data.hasCredentials">
-      <q-file
-        v-model="data.credentials"
-        :error="!!errors.credentials"
-        :error-message="errors.credentials"
+    <template v-if="selectedOrganization?.organizationType === 'GOV'">
+      <q-checkbox
+        v-model="data.hasCredentials"
+        :error="!!errors.hasCredentials"
+        :error-message="errors.hasCredentials"
+        name="hasCredentials"
         label="Credentials"
-        outlined
-        accept=".pdf,.doc,.docx"
-        hint="Upload pdf or doc file"
-        name="credentials"
-      >
-        <template #append>
-          <q-icon name="attach_file" />
-        </template>
-      </q-file>
-    </div>
+      />
+      <div v-if="data.hasCredentials">
+        <q-file
+          v-model="data.credentials"
+          :error="!!errors.credentials"
+          :error-message="errors.credentials"
+          label="Credentials"
+          outlined
+          accept=".pdf,.doc,.docx"
+          hint="Upload pdf or doc file"
+          name="credentials"
+        >
+          <template #append>
+            <q-icon name="attach_file" />
+          </template>
+        </q-file>
+      </div>
+    </template>
     <q-checkbox
       v-model="data.needsVisaLetter"
       :error="!!errors.needsVisaLetter"
@@ -250,7 +252,7 @@ import type { Contact } from "src/types/registration";
 import { api, apiBase } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const loading = ref(false);
@@ -281,6 +283,9 @@ const data = reactive({
   photoUrl: "",
   title: "",
 });
+const selectedOrganization = computed(() =>
+  invitation.organizations.find((o) => o.id.toString() === data.organization.toString()),
+);
 
 if (invitation.participant) {
   Object.assign(data, {
