@@ -191,7 +191,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             {
                 "fields": (
                     ("contact", "role"),
-                    ("event", "status",),
+                    ("event", "status"),
                     "priority_pass_code",
                     "is_funded",
                     "date",
