@@ -19,6 +19,7 @@ from django.urls import path
 from django.utils.html import format_html
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
+from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.urls import reverse
 from emails.models import (
@@ -579,7 +580,14 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         "reminder_count",
     )
 
-    list_filter = ("is_reminder", "original_email", "created_at")
+    list_filter = (
+        AutocompleteFilterFactory("events", "events"),
+        AutocompleteFilterFactory("event_group", "event_group"),
+        AutocompleteFilterMultipleFactory("organization_types", "organization_types"),
+        "is_reminder",
+        "original_email",
+        "created_at",
+    )
 
     # is_reminder and original_email should be readonly for both invitation and reminders
     # This ensures consistent behaviour and separation of concerns.
