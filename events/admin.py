@@ -1,3 +1,4 @@
+import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
@@ -10,6 +11,8 @@ from import_export.admin import ExportMixin
 from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
+from emails.admin import CKEditorTemplatesBase
+from events.jobs import resend_confirmation_email
 from events.models import (
     Event,
     EventGroup,
@@ -168,6 +171,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("contact", "contact"),
         "status",
         AutocompleteFilterFactory("role", "role"),
+        "contact__has_credentials",
+        "contact__needs_visa_letter",
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
     ]
@@ -178,23 +183,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "role",
         "tags",
     )
-    actions = ("send_email",)
-
-    @admin.action(description="Send email to selected contacts", permissions=["view"])
-    def send_email(self, request, queryset):
-        ids = ",".join(
-            map(
-                str,
-                queryset.values_list("contact__id", flat=True)
-                .distinct("contact__id")
-                .order_by("contact_id"),
-            )
-        )
-        return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
-
-    @admin.display(description="Tags")
-    def tags_display(self, obj: Registration):
-        return ", ".join(map(str, obj.tags.all()))
+    actions = ("send_email", "resend_confirmation_emails")
 
     fieldsets = (
         (
@@ -219,6 +208,37 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         ),
     )
 
+    @admin.display(description="Tags")
+    def tags_display(self, obj: Registration):
+        return ", ".join(map(str, obj.tags.all()))
+
+    @admin.action(
+        description="Resend confirmation email for selected registrations",
+        permissions=["change"],
+    )
+    def resend_confirmation_emails(self, request, queryset):
+        count = 0
+        for registration in queryset:
+            # Queue instead of doing it instantly or in bulk as it will require
+            # generating the qr or badge.
+            django_rq.enqueue(resend_confirmation_email, registration.id)
+            count += 1
+        self.message_user(
+            request, f"{count} confirmation emails have been queued for sending"
+        )
+
+    @admin.action(description="Send email to selected contacts", permissions=["view"])
+    def send_email(self, request, queryset):
+        ids = ",".join(
+            map(
+                str,
+                queryset.values_list("contact__id", flat=True)
+                .distinct("contact__id")
+                .order_by("contact_id"),
+            )
+        )
+        return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
+
 
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
@@ -230,7 +250,7 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
 
 
 @admin.register(Event)
-class EventAdmin(ExportMixin, ModelAdmin):
+class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     search_fields = (
         "code",
         "title__unaccent",
@@ -272,6 +292,61 @@ class EventAdmin(ExportMixin, ModelAdmin):
         "registration_count": Count("registrations"),
     }
     actions = ["load_contacts_from_kronos", "send_email"]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "code",
+                    "title",
+                    "groups",
+                )
+            },
+        ),
+        (
+            "Location",
+            {
+                "fields": (
+                    "venue_country",
+                    "venue_city",
+                )
+            },
+        ),
+        (
+            "Dates",
+            {
+                "fields": (
+                    "start_date",
+                    "end_date",
+                    "dates",
+                )
+            },
+        ),
+        (
+            "Confirmation email",
+            {
+                "fields": (
+                    "confirmation_subject",
+                    "confirmation_content",
+                )
+            },
+        ),
+        (
+            "Refuse email",
+            {
+                "fields": (
+                    "refuse_subject",
+                    "refuse_content",
+                )
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": ("event_id",),
+            },
+        ),
+    )
 
     @admin.display(description="Registrations", ordering="registration_count")
     def registrations_count(self, obj):
