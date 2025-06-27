@@ -206,7 +206,17 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                 )
             },
         ),
+        (
+            "Metadata",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
     )
+    readonly_fields = ("created_at", "updated_at")
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
