@@ -20,4 +20,15 @@ describe("Check", () => {
       cy.deleteContactGroup(group);
     });
   });
+  it("Check sending email", () => {
+    cy.loginAdmin();
+    cy.triggerAction({
+      action: "Send email to selected contacts",
+      modelName: "Registrations",
+      searchValue: "kai nova",
+    });
+    cy.contains("Add email");
+    cy.get(".select2-selection__choice").contains("MP Kai Nova");
+    cy.get(".select2-selection__choice").contains("Mr. Kai-Nova Nova");
+  });
 });

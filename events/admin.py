@@ -148,6 +148,19 @@ class RegistrationAdmin(ModelAdmin):
         "role",
         "tags",
     )
+    actions = ("send_email",)
+
+    @admin.action(description="Send email to selected contacts", permissions=["view"])
+    def send_email(self, request, queryset):
+        ids = ",".join(
+            map(
+                str,
+                queryset.values_list("contact__id", flat=True)
+                .distinct("contact__id")
+                .order_by("contact_id"),
+            )
+        )
+        return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
