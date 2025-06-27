@@ -4,9 +4,10 @@ from django.db.models import Count, Q
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.html import format_html
+from import_export import fields
 from import_export.admin import ExportMixin
 
-from common.model_admin import ModelAdmin, TaskAdmin
+from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
 from common.permissions import has_model_permission
 from common.urls import reverse
 from events.models import (
@@ -110,8 +111,37 @@ class RegistrationTagAdmin(ExportMixin, ModelAdmin):
     list_display_links = ("name",)
 
 
+class RegistrationResource(ModelResource):
+    organization = fields.Field(
+        column_name="organization",
+        attribute="contact__organization__name",
+    )
+    event = fields.Field(
+        column_name="event",
+        attribute="event__title",
+    )
+    contact = fields.Field(
+        column_name="contact",
+        attribute="contact__full_name",
+    )
+    role = fields.Field(
+        column_name="role",
+        attribute="role__name",
+    )
+    prefetch_related = (
+        "organization",
+        "contact",
+        "role",
+    )
+
+    class Meta:
+        model = Registration
+        exclude = ("id",)
+
+
 @admin.register(Registration)
-class RegistrationAdmin(ModelAdmin):
+class RegistrationAdmin(ExportMixin, ModelAdmin):
+    resource_class = RegistrationResource
     ordering = ("contact__first_name", "contact__last_name", "event__title")
     search_fields = [
         "event__title",

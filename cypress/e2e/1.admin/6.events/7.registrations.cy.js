@@ -31,4 +31,16 @@ describe("Check", () => {
     cy.get(".select2-selection__choice").contains("MP Kai Nova");
     cy.get(".select2-selection__choice").contains("Mr. Kai-Nova Nova");
   });
+  it("Check export", () => {
+    cy.loginView();
+    cy.checkExport({
+      expected: ["MP Kai Nova", "Mr. Kai-Nova Nova"],
+      filePattern: "Registration",
+      filters: {
+        event: "NN:FDP",
+      },
+      modelName: "Registrations",
+      searchValue: "kai nova",
+    });
+  });
 });
