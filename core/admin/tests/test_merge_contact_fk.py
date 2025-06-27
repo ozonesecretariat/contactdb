@@ -46,7 +46,7 @@ class TestMergeContacts(TestCase):
             last_name="Eyre 1",
             country=self.country1,
             emails=["janeeyre1@book.com"],
-            email_ccs=["janeeyphore1@book.net"],
+            email_ccs=["janeeyre1@book.net"],
             phones=["1000000000"],
             mobiles=["1000000000"],
             faxes=["1000000000"],
