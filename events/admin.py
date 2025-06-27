@@ -142,7 +142,7 @@ class RegistrationAdmin(ModelAdmin):
         "is_funded",
         AutocompleteFilterFactory("event group", "event__groups"),
     ]
-    autocomplete_fields = ("contact", "event", "role", "tags")
+    autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
         "contact",
         "contact__organization",
