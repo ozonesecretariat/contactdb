@@ -585,8 +585,8 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     list_filter = (
         AutocompleteFilterFactory("events", "events"),
-        AutocompleteFilterFactory("event_group", "event_group"),
-        AutocompleteFilterMultipleFactory("organization_types", "organization_types"),
+        AutocompleteFilterFactory("event group", "event_group"),
+        AutocompleteFilterMultipleFactory("organization types", "organization_types"),
         "is_reminder",
         "original_email",
         "created_at",
@@ -1006,6 +1006,11 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     )
     list_display_links = ("email",)
     list_filter = (
+        AutocompleteFilterFactory("organization", "organization"),
+        AutocompleteFilterFactory("government", "organization__government"),
+        AutocompleteFilterMultipleFactory(
+            "organization types", "organization__organization_type"
+        ),
         AutocompleteFilterFactory("email", "email"),
         ContactAutocompleteFilter,
         AutocompleteFilterFactory("to", "contact"),
