@@ -152,7 +152,6 @@ class KronosParticipantsParser(KronosParser):
         "lastName": "last_name",
         "designation": "designation",
         "department": "department",
-        "affiliation": "affiliation",
         "phones": "phones",
         "mobiles": "mobiles",
         "faxes": "faxes",
