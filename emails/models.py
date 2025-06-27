@@ -11,6 +11,7 @@ from django.db.models import Exists, OuterRef, Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
 
+from accounts.models import User
 from common.array_field import ArrayField
 from common.model import get_protected_storage
 from core.models import (
@@ -21,8 +22,8 @@ from core.models import (
 )
 from emails.placeholders import (
     replace_placeholders,
-    validate_placeholders,
 )
+from emails.validators import validate_placeholders
 from events.models import Event, EventGroup, EventInvitation, Registration
 
 
@@ -155,9 +156,25 @@ class Email(models.Model):
     subject = models.CharField(max_length=900, validators=[validate_placeholders])
     content = RichTextUploadingField(validators=[validate_placeholders])
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="created_emails",
+    )
 
     def __str__(self):
         return self.subject
+
+    def queue_emails(self):
+        tasks = []
+        for contact in self.all_to_contacts:
+            task = SendEmailTask.objects.create(
+                email=self, contact=contact, created_by=self.created_by
+            )
+            task.run(is_async=True)
+            tasks.append(task)
+        return tasks
 
     @property
     def all_to_contacts(self):

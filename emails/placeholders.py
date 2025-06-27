@@ -1,9 +1,7 @@
-import re
 from functools import singledispatch
 from typing import Any
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
 
 from core.models import Contact
 from events.models import EventInvitation
@@ -25,17 +23,6 @@ def _(obj):
 @get_placeholders.register(EventInvitation)
 def _(obj):
     return settings.CKEDITOR_INVITATION_PLACEHOLDERS
-
-
-def find_placeholders(value):
-    return set(re.findall(r"\[\[([\w-]{1,50})\]\]", value or ""))
-
-
-def validate_placeholders(value):
-    placeholders = find_placeholders(value)
-    if invalid := placeholders.difference(settings.CKEDITOR_PLACEHOLDERS):
-        msg = ", ".join([f"[[{item}]]" for item in invalid])
-        raise ValidationError(f"Invalid placeholders: {msg}")
 
 
 def deep_getattr(obj, attr, default=None):

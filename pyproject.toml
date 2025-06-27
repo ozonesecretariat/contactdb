@@ -20,6 +20,7 @@ dependencies = [
     "django-group-model>=1.0.1",
     "django-health-check>=3.19.0",
     "django-import-export[xlsx]>=4.3.7",
+    "django-model-utils>=5.0.0",
     "django-more-admin-filters>=1.12",
     "django-object-actions>=5.0.0",
     "django-redis>=5.4.0",

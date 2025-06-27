@@ -28,8 +28,8 @@ from emails.models import (
     InvitationEmail,
     SendEmailTask,
 )
-from emails.placeholders import find_placeholders
 from emails.services import get_organization_recipients
+from emails.validators import find_placeholders
 from events.models import EventInvitation
 
 
@@ -444,16 +444,13 @@ class EmailAdmin(BaseEmailAdmin):
             return ()
         return super().get_inlines(request, obj)
 
-    def response_post_save_add(self, request, obj):
-        tasks = []
-        # Send emails to individual contacts
-        for contact in obj.all_to_contacts:
-            task = SendEmailTask.objects.create(
-                email=obj, contact=contact, created_by=request.user
-            )
-            task.run(is_async=True)
-            tasks.append(task)
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
 
+    def response_post_save_add(self, request, obj: Email):
+        tasks = obj.queue_emails()
         self.message_user(
             request,
             f"{len(tasks)} emails scheduled for sending",
