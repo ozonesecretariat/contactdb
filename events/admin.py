@@ -191,9 +191,10 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             {
                 "fields": (
                     ("contact", "role"),
-                    ("event", "status", "tags"),
+                    ("event", "status",),
+                    "priority_pass_code",
+                    "is_funded",
                     "date",
-                    ("priority_pass_code", "is_funded"),
                 )
             },
         ),
@@ -210,6 +211,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             "Metadata",
             {
                 "fields": (
+                    "tags",
                     "created_at",
                     "updated_at",
                 )
