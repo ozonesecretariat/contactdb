@@ -148,7 +148,7 @@ class RegistrationResource(ModelResource):
 
     class Meta:
         model = Registration
-        exclude = ("id", )
+        exclude = ("id",)
 
 
 @admin.register(Registration)
@@ -382,7 +382,9 @@ class PriorityPassAdmin(ModelAdmin):
 
     def pass_scan_view(self, request):
         if not (code := request.GET.get("code")):
-            self.message_user(request, "Please provide a code", level=messages.ERROR)
+            self.message_user(
+                request, "No priority pass code provided", level=messages.ERROR
+            )
             return redirect(reverse("admin:events_prioritypass_changelist"))
 
         if not (priority_pass := self.get_object(request, code, "code")):
