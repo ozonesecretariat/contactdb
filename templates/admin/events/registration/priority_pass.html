@@ -134,7 +134,7 @@
       <img src="{% static 'img/logo.png' %}" alt="Logo" />
       <div class="qr-code">
         {% qr_from_text qr_url image_format='png' %}
-        {{ registration.priority_pass_code }}
+        {{ priority_pass.code }}
       </div>
     </header>
     <table>
@@ -145,30 +145,32 @@
           <th>Dates</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>{{ registration.event.code }}</td>
-          <td>{{ registration.event.venue }}</td>
-          <td>{{ registration.event.dates }}</td>
-        </tr>
-        <tr>
-          <td colspan="3">{{ registration.event.title }}</td>
-        </tr>
-      </tbody>
+      {% for registration in registrations %}
+        <tbody>
+          <tr>
+            <td>{{ registration.event.code }}</td>
+            <td>{{ registration.event.venue }}</td>
+            <td>{{ registration.event.dates }}</td>
+          </tr>
+          <tr>
+            <td colspan="3">{{ registration.event.title }}</td>
+          </tr>
+        </tbody>
+      {% endfor %}
     </table>
     <h1 class="country">{{ country|default:'' }}</h1>
     <section class="details">
       <div>
         <p class="name">{{ contact.display_name }}</p>
         <p class="org">
-          {{ contact.designation }}
+          {{ contact.designation|default:'-' }}
           <br />
-          <b>{{ contact.organization }}</b>
+          <b>{{ contact.organization|default:'-' }}</b>
         </p>
         <p>
-          {{ contact.organization.city }}
+          {{ contact.organization.city|default:'-' }}
           <br />
-          {{ contact.organization.country }}
+          {{ contact.organization.country|default:'-' }}
         </p>
       </div>
       <dl>

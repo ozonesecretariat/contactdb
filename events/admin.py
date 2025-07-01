@@ -203,8 +203,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                     "role",
                     "event",
                     "status",
-                    "pass_download_link",
-                    "priority_pass_code",
+                    "priority_pass",
                     "is_funded",
                     "date",
                 )
@@ -233,8 +232,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     readonly_fields = (
         "created_at",
         "updated_at",
-        "pass_download_link",
-        "priority_pass_code",
+        "priority_pass",
     )
 
     def get_readonly_fields(self, request, obj=None):
@@ -276,9 +274,66 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         )
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
+
+class RegistrationInline(admin.TabularInline):
+    model = Registration
+    extra = 0
+    max_num = 0
+    fields = (
+        "contact",
+        "event",
+        "role",
+        "status",
+        "is_funded",
+    )
+    readonly_fields = ("contact", "event")
+    can_delete = False
+
+
+@admin.register(PriorityPass)
+class PriorityPassAdmin(ModelAdmin):
+    inlines = (RegistrationInline,)
+    search_fields = ("code",)
+    list_display = ("code", "registrations_links", "pass_download_link", "created_at")
+    list_filter = (
+        AutocompleteFilterFactory("contact", "registrations__contact"),
+        AutocompleteFilterFactory("event", "registrations__event"),
+    )
+    fields = (
+        "code",
+        "pass_download_link",
+        "created_at",
+    )
+    prefetch_related = (
+        "registrations",
+        "registrations__event",
+        "registrations__contact",
+        "registrations__contact__organization",
+    )
+    readonly_fields = (
+        "code",
+        "registrations_links",
+        "pass_download_link",
+        "created_at",
+    )
+    ordering = ("-created_at",)
+    annotate_query = {
+        "registration_count": Count("registrations"),
+    }
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
+
+    @admin.display(description="Registrations", ordering="registration_count")
+    def registrations_links(self, obj):
+        return self.get_m2m_links(obj.registrations.all())
+
     @admin.display(description="Priority pass")
     def pass_download_link(self, obj):
-        url = reverse("admin:registration_pass_view", args=[obj.id]) + "?pdf=true"
+        url = reverse("admin:priority_pass_view", args=[obj.id]) + "?pdf=true"
         url_download = url + "&download=true"
         return format_html(
             '<a href="{}" target="_blank">View</a> | <a href="{}" target="_blank">Download</a>',
@@ -289,70 +344,52 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     def get_urls(self):
         return [
             path(
+                "pass-scan-view/",
+                self.admin_site.admin_view(self.pass_scan_view),
+                name="priority_pass_scan_view",
+            ),
+            path(
                 "<path:object_id>/pass/",
                 self.admin_site.admin_view(self.pass_view),
-                name="registration_pass_view",
+                name="priority_pass_view",
             ),
             *super().get_urls(),
         ]
 
     def pass_view(self, request, object_id):
-        registration = self.get_object(request, object_id)
+        priority_pass = self.get_object(request, object_id)
         context = {
             **self.admin_site.each_context(request),
-            **registration.priority_pass_context,
+            **priority_pass.priority_pass_context,
         }
         if request.GET.get("pdf") == "true":
             return FileResponse(
                 print_pdf(
-                    registration.priority_pass_template,
+                    priority_pass.priority_pass_template,
                     context=context,
                     request=request,
                 ),
                 content_type="application/pdf",
-                filename=f"pass_{registration.event.code}.pdf",
+                filename=f"{priority_pass.code}.pdf",
                 as_attachment=request.GET.get("download") == "true",
             )
 
-        return TemplateResponse(request, registration.priority_pass_template, context)
+        return TemplateResponse(request, priority_pass.priority_pass_template, context)
 
+    def pass_scan_view(self, request):
+        if not (code := request.GET.get("code")):
+            self.message_user(request, "Please provide a code", level=messages.ERROR)
+            return redirect(reverse("admin:events_prioritypass_changelist"))
 
-@admin.register(PriorityPass)
-class PriorityPassAdmin(ModelAdmin):
-    search_fields = ("code",)
-    list_display = ("code", "registrations_links", "created_at")
-    list_filter = (
-        AutocompleteFilterFactory("contact", "registrations__contact"),
-        AutocompleteFilterFactory("event", "registrations__event"),
-    )
-    fields = (
-        "code",
-        "registrations_links",
-        "created_at",
-    )
-    prefetch_related = (
-        "registrations",
-        "registrations__event",
-        "registrations__contact",
-    )
-    readonly_fields = ("code", "registrations_links")
-    ordering = ("-created_at",)
-    annotate_query = {
-        "registration_count": Count("registrations"),
-    }
+        if not (priority_pass := self.get_object(request, code, "code")):
+            self.message_user(
+                request, "Priority pass does not exist!", level=messages.ERROR
+            )
+            return redirect(reverse("admin:events_prioritypass_changelist"))
 
-    @admin.display(description="Registrations", ordering="registration_count")
-    def registrations_links(self, obj):
-        return self.get_m2m_links(obj.registrations.all())
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request):
-        return False
+        return redirect(
+            reverse("admin:events_prioritypass_change", args=[priority_pass.id])
+        )
 
 
 @admin.register(EventGroup)

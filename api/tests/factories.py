@@ -129,4 +129,3 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
     role = factory.SubFactory(RegistrationRoleFactory)
     date = factory.LazyFunction(timezone.now)
     is_funded = False
-    priority_pass_code = ""

@@ -353,8 +353,65 @@ class PriorityPass(models.Model):
             )
 
     @property
+    def qr_url(self):
+        return (
+            settings.PROTOCOL
+            + settings.MAIN_BACKEND_HOST
+            + reverse("admin:priority_pass_scan_view")
+            + f"?code={self.code}"
+        )
+
+    @property
+    def priority_pass_template(self):
+        return "admin/events/registration/priority_pass.html"
+
+    @property
+    def priority_pass_context(self):
+        return {
+            "priority_pass": self,
+            "qr_url": self.qr_url,
+            "registrations": self.valid_registrations,
+            "organization": self.organization,
+            "contact": self.contact,
+            "country": self.country,
+        }
+
+    @property
+    def valid_registrations(self):
+        return self.registrations.exclude(status=Registration.Status.REVOKED)
+
+    @property
+    def contact(self):
+        for registration in self.valid_registrations:
+            if registration.contact:
+                return registration.contact
+
+        return None
+
+    @property
     def contact_ids(self):
-        return set(self.registrations.values_list("contact_id", flat=True))
+        return {r.contact_id for r in self.registrations}
+
+    @property
+    def organization(self):
+        for registration in self.valid_registrations:
+            if registration.organization:
+                return registration.organization
+
+        if self.contact:
+            return self.contact.organization
+
+        return None
+
+    @property
+    def country(self):
+        if self.organization:
+            return self.organization.government or self.organization.country
+
+        if self.contact:
+            return self.contact.country
+
+        return None
 
 
 class Registration(models.Model):
@@ -435,12 +492,6 @@ class Registration(models.Model):
                 "Priority pass can only be used for one contact at a time"
             )
 
-    @property
-    def priority_pass_code(self):
-        if self.priority_pass:
-            return self.priority_pass.code
-        return ""
-
     def send_confirmation_email(self):
         if not (self.event.confirmation_subject and self.event.confirmation_content):
             return
@@ -454,14 +505,14 @@ class Registration(models.Model):
             content=self.event.confirmation_content,
         )
         msg.recipients.add(self.contact)
-        if self.event.attach_priority_pass:
+        if self.event.attach_priority_pass and self.priority_pass:
             msg.attachments.create(
                 file=File(
                     print_pdf(
-                        template=self.priority_pass_template,
-                        context=self.priority_pass_context,
+                        template=self.priority_pass.priority_pass_template,
+                        context=self.priority_pass.priority_pass_context,
                     ),
-                    name=f"pass_{self.event.code}.pdf",
+                    name=f"{self.priority_pass.code}.pdf",
                 ),
             )
         msg.queue_emails()
@@ -480,31 +531,6 @@ class Registration(models.Model):
         )
         msg.recipients.add(self.contact)
         msg.queue_emails()
-
-    @property
-    def qr_url(self):
-        return (
-            settings.PROTOCOL
-            + settings.MAIN_BACKEND_HOST
-            + reverse("admin:events_registration_changelist")
-            + f"?_from_pass=true&q={self.priority_pass_code}"
-        )
-
-    @property
-    def priority_pass_template(self):
-        return "admin/events/registration/priority_pass.html"
-
-    @property
-    def priority_pass_context(self):
-        organization = self.organization or self.organization
-        return {
-            "registration": self,
-            "qr_url": self.qr_url,
-            "contact": self.contact,
-            "country": (
-                organization and (organization.government or organization.country)
-            ),
-        }
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):
