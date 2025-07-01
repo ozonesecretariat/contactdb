@@ -311,6 +311,21 @@ class RegistrationRole(models.Model):
         return self.name
 
 
+class PriorityPass(models.Model):
+    code = RandomCharField(length=10, blank=True, uppercase=True, unique=True)
+
+    def clean(self):
+        super().clean()
+        if len(self.contact_ids) > 1:
+            raise ValidationError(
+                "Priority pass can only be used for one contact at a time"
+            )
+
+    @property
+    def contact_ids(self):
+        return set(self.registrations.values_list("contact_id", flat=True))
+
+
 class Registration(models.Model):
     tracker = FieldTracker()
 
@@ -335,7 +350,12 @@ class Registration(models.Model):
         max_length=20, choices=Status.choices, default=Status.NOMINATED
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
-    priority_pass_code = RandomCharField(length=10, blank=True, uppercase=True)
+    priority_pass = models.ForeignKey(
+        PriorityPass,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="registrations",
+    )
     date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField(default=False)
@@ -357,16 +377,16 @@ class Registration(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
-        unique_together = (
-            ("contact", "event"),
-            ("event", "priority_pass_code"),
-        )
+        unique_together = ("contact", "event")
 
     def __str__(self):
         return f"{self.event.code} - {self.contact.full_name}"
 
     def save(self, *args, **kwargs):
         old_status = self.tracker.previous("status_id")
+        if not self.priority_pass:
+            self.priority_pass = PriorityPass.objects.create()
+
         super().save(*args, **kwargs)
 
         if old_status == self.status:
@@ -377,9 +397,20 @@ class Registration(models.Model):
         elif self.status == self.Status.REVOKED:
             self.send_refusal_email()
 
-    def send_confirmation_email(
-        self,
-    ):
+    def clean(self):
+        super().clean()
+        if self.priority_pass and {self.contact_id} != self.priority_pass.contact_ids:
+            raise ValidationError(
+                "Priority pass can only be used for one contact at a time"
+            )
+
+    @property
+    def priority_pass_code(self):
+        if self.priority_pass:
+            return self.priority_pass.code
+        return ""
+
+    def send_confirmation_email(self):
         if not (self.event.confirmation_subject and self.event.confirmation_content):
             return
         if self.status != self.Status.ACCREDITED:

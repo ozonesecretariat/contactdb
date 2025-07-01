@@ -158,7 +158,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__email_ccs",
         "status",
         "role__name",
-        "priority_pass_code",
+        "priority_pass__code",
     ]
     list_display_links = ("contact", "event")
     list_display = (
@@ -198,8 +198,10 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             None,
             {
                 "fields": (
-                    ("contact", "role"),
-                    ("event", "status"),
+                    "contact",
+                    "role",
+                    "event",
+                    "status",
                     "pass_download_link",
                     "priority_pass_code",
                     "is_funded",
@@ -233,6 +235,12 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "pass_download_link",
         "priority_pass_code",
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("contact", "event",)
+        return self.readonly_fields
+
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
