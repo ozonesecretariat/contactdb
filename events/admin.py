@@ -297,7 +297,18 @@ class RegistrationInline(admin.TabularInline):
 @admin.register(PriorityPass)
 class PriorityPassAdmin(ModelAdmin):
     inlines = (RegistrationInline,)
-    search_fields = ("code",)
+    search_fields = (
+        "code",
+        "registrations__event__code",
+        "registrations__event__title",
+        "registrations__contact__first_name",
+        "registrations__contact__last_name",
+        "registrations__contact__emails",
+        "registrations__contact__email_ccs",
+        "registrations__contact__phones",
+        "registrations__contact__organization__name",
+        "registrations__organization__name",
+    )
     list_display = ("code", "registrations_links", "pass_download_link", "created_at")
     list_filter = (
         AutocompleteFilterFactory("contact", "registrations__contact"),
