@@ -181,7 +181,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
     ]
-    autocomplete_fields = ("contact", "event", "role", "tags")
+    autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
         "contact",
         "event",
@@ -200,8 +200,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                 "fields": (
                     ("contact", "role"),
                     ("event", "status"),
-                    "priority_pass_code",
                     "pass_download_link",
+                    "priority_pass_code",
                     "is_funded",
                     "date",
                 )
@@ -287,25 +287,14 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
 
     def pass_view(self, request, object_id):
         registration = self.get_object(request, object_id)
-        contact = registration.contact
-        organization = registration.organization or contact.organization
-        template = "admin/events/registration/priority_pass.html"
         context = {
             **self.admin_site.each_context(request),
-            "registration": registration,
-            "qr_url": request.build_absolute_uri(
-                reverse("admin:events_registration_changelist")
-                + f"?_from_pass=true&q={registration.priority_pass_code}"
-            ),
-            "contact": contact,
-            "country": (
-                organization and (organization.government or organization.country)
-            ),
+            **registration.priority_pass_context,
         }
         if request.GET.get("pdf") == "true":
             return FileResponse(
                 print_pdf(
-                    template,
+                    registration.priority_pass_template,
                     context=context,
                     request=request,
                 ),
@@ -314,7 +303,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                 as_attachment=request.GET.get("download") == "true",
             )
 
-        return TemplateResponse(request, template, context)
+        return TemplateResponse(request, registration.priority_pass_template, context)
 
 
 @admin.register(EventGroup)
@@ -403,6 +392,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "Confirmation email",
             {
                 "fields": (
+                    "attach_priority_pass",
                     "confirmation_subject",
                     "confirmation_content",
                 )

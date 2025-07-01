@@ -4,8 +4,10 @@ from urllib.parse import urljoin
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.db import models
 from django.db.models import Exists, OuterRef, Q
+from django.urls import reverse
 from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
@@ -13,6 +15,7 @@ from model_utils import FieldTracker
 
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
+from common.pdf import print_pdf
 from core.models import Contact, Country, Organization
 from emails.validators import validate_placeholders
 
@@ -72,6 +75,10 @@ class Event(models.Model):
         help_text="Groups linking related events",
     )
 
+    attach_priority_pass = models.BooleanField(
+        default=False,
+        help_text="Automatically attach priority pass to the accredited confirmation email",
+    )
     confirmation_subject = models.CharField(
         max_length=900, validators=[validate_placeholders], default="", blank=True
     )
@@ -370,7 +377,9 @@ class Registration(models.Model):
         elif self.status == self.Status.REVOKED:
             self.send_refusal_email()
 
-    def send_confirmation_email(self):
+    def send_confirmation_email(
+        self,
+    ):
         if not (self.event.confirmation_subject and self.event.confirmation_content):
             return
         if self.status != self.Status.ACCREDITED:
@@ -383,7 +392,16 @@ class Registration(models.Model):
             content=self.event.confirmation_content,
         )
         msg.recipients.add(self.contact)
-        # TODO, generate and attach pass
+        if self.event.attach_priority_pass:
+            msg.attachments.create(
+                file=File(
+                    print_pdf(
+                        template=self.priority_pass_template,
+                        context=self.priority_pass_context,
+                    ),
+                    name=f"pass_{self.event.code}.pdf",
+                ),
+            )
         msg.queue_emails()
 
     def send_refusal_email(self):
@@ -400,6 +418,31 @@ class Registration(models.Model):
         )
         msg.recipients.add(self.contact)
         msg.queue_emails()
+
+    @property
+    def qr_url(self):
+        return (
+            settings.PROTOCOL
+            + settings.MAIN_BACKEND_HOST
+            + reverse("admin:events_registration_changelist")
+            + f"?_from_pass=true&q={self.priority_pass_code}"
+        )
+
+    @property
+    def priority_pass_template(self):
+        return "admin/events/registration/priority_pass.html"
+
+    @property
+    def priority_pass_context(self):
+        organization = self.organization or self.organization
+        return {
+            "registration": self,
+            "qr_url": self.qr_url,
+            "contact": self.contact,
+            "country": (
+                organization and (organization.government or organization.country)
+            ),
+        }
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):
