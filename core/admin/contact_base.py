@@ -39,7 +39,7 @@ class ContactAdminBase(ModelAdmin):
         "country",
     )
     prefetch_related = (
-        "organization",
+        "organization__government",
         "organization__country",
         "country",
     )
