@@ -2,13 +2,17 @@ import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
+from django.http import FileResponse
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
 from import_export import fields
 from import_export.admin import ExportMixin
 
 from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
+from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
@@ -194,6 +198,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                     ("event", "status"),
                     "priority_pass_code",
                     "is_funded",
+                    "pass_download_link",
                     "date",
                 )
             },
@@ -218,7 +223,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             },
         ),
     )
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("created_at", "updated_at", "pass_download_link")
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
@@ -250,6 +255,55 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             )
         )
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
+
+    @admin.display(description="Download pass")
+    def pass_download_link(self, obj):
+        return format_html(
+            '<a href="{}" target="_blank">Download pass</a>',
+            reverse("admin:registration_pass_view", args=[obj.id])
+            + "?pdf=true&download=true",
+        )
+
+    def get_urls(self):
+        return [
+            path(
+                "<path:object_id>/pass/",
+                self.admin_site.admin_view(self.pass_view),
+                name="registration_pass_view",
+            ),
+            *super().get_urls(),
+        ]
+
+    def pass_view(self, request, object_id):
+        registration = self.get_object(request, object_id)
+        contact = registration.contact
+        organization = registration.organization or contact.organization
+        template = "admin/events/registration/priority_pass.html"
+        context = {
+            **self.admin_site.each_context(request),
+            "registration": registration,
+            "qr_url": request.build_absolute_uri(
+                reverse("admin:events_registration_change", args=[registration.id])
+                + "?_from_pass=true"
+            ),
+            "contact": contact,
+            "country": (
+                organization and (organization.government or organization.country)
+            ),
+        }
+        if request.GET.get("pdf") == "true":
+            return FileResponse(
+                print_pdf(
+                    template,
+                    context=context,
+                    request=request,
+                ),
+                content_type="application/pdf",
+                filename=f"pass_{registration.event.code}.pdf",
+                as_attachment=request.GET.get("download") == "true",
+            )
+
+        return TemplateResponse(request, template, context)
 
 
 @admin.register(EventGroup)

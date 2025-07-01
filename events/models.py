@@ -97,6 +97,12 @@ class Event(models.Model):
             return self.import_tasks.latest()
         return None
 
+    @property
+    def venue(self):
+        if self.venue_country:
+            return f"{self.venue_city}, {self.venue_country.name}"
+        return self.venue_city
+
     def clean(self):
         if not self.start_date or not self.end_date:
             return
