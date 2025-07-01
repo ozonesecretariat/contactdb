@@ -309,6 +309,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     prefetch_related = (
         "venue_country",
         "registrations",
+        "groups",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
