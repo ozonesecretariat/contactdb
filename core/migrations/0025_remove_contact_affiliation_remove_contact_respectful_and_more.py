@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0023_contact_credentials_contact_has_credentials_and_more"),
+        ("core", "0024_alter_contact_designation_and_more"),
     ]
 
     operations = [
