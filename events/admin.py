@@ -180,7 +180,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
         "contact",
-        "contact__organization",
+        "contact__organization__country",
+        "contact__organization__government",
         "role",
         "tags",
     )
