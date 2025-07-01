@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 from model_utils import FieldTracker
 
@@ -327,7 +328,7 @@ class Registration(models.Model):
         max_length=20, choices=Status.choices, default=Status.NOMINATED
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
-    priority_pass_code = models.CharField(max_length=150, blank=True)
+    priority_pass_code = RandomCharField(length=10, blank=True, uppercase=True)
     date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField(default=False)
@@ -350,8 +351,8 @@ class Registration(models.Model):
 
     class Meta:
         unique_together = (
-            "contact",
-            "event",
+            ("contact", "event"),
+            ("event", "priority_pass_code"),
         )
 
     def __str__(self):

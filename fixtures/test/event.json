@@ -11,6 +11,10 @@
       "venue_country": "MM",
       "venue_city": "Tashkent",
       "dates": "15-22 April",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": [2]
     }
   },
@@ -26,6 +30,10 @@
       "venue_country": "AF",
       "venue_city": "Oslo",
       "dates": "15-22 April",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": [2]
     }
   },
@@ -41,6 +49,10 @@
       "venue_country": "IN",
       "venue_city": "Prague",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -56,6 +68,10 @@
       "venue_country": "HN",
       "venue_city": "Hanoi",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -71,6 +87,10 @@
       "venue_country": "SL",
       "venue_city": "Dodoma",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -86,6 +106,10 @@
       "venue_country": "ME",
       "venue_city": "Bandar Seri Begawan",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -101,6 +125,10 @@
       "venue_country": "MX",
       "venue_city": "Prague",
       "dates": "15-22 April",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": [2]
     }
   },
@@ -116,6 +144,10 @@
       "venue_country": "HU",
       "venue_city": "Riyadh",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -131,6 +163,10 @@
       "venue_country": "GR",
       "venue_city": "Mata-Utu",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -146,6 +182,10 @@
       "venue_country": "AD",
       "venue_city": "Apia",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -161,6 +201,10 @@
       "venue_country": "MG",
       "venue_city": "Budapest",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -176,6 +220,10 @@
       "venue_country": "PL",
       "venue_city": "Porto-Novo",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -191,6 +239,10 @@
       "venue_country": "TD",
       "venue_city": "Damascus",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -206,6 +258,10 @@
       "venue_country": "BZ",
       "venue_city": "Suva",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -221,6 +277,10 @@
       "venue_country": "KW",
       "venue_city": "Online",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -236,6 +296,10 @@
       "venue_country": "MD",
       "venue_city": "Kuwait City",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -251,6 +315,10 @@
       "venue_country": "BH",
       "venue_city": "Online",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -266,6 +334,10 @@
       "venue_country": "GY",
       "venue_city": "Ottawa",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -281,6 +353,10 @@
       "venue_country": "BD",
       "venue_city": "Nouakchott",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   },
@@ -296,6 +372,10 @@
       "venue_country": "AF",
       "venue_city": "Yaoundé",
       "dates": "",
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": "",
       "groups": []
     }
   }
