@@ -158,6 +158,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__email_ccs",
         "status",
         "role__name",
+        "priority_pass_code",
     ]
     list_display_links = ("contact", "event")
     list_display = (
@@ -183,7 +184,10 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     autocomplete_fields = ("contact", "event", "role", "tags")
     prefetch_related = (
         "contact",
+        "event",
         "contact__organization",
+        "contact__organization__government",
+        "contact__organization__country",
         "role",
         "tags",
     )
@@ -197,8 +201,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                     ("contact", "role"),
                     ("event", "status"),
                     "priority_pass_code",
-                    "is_funded",
                     "pass_download_link",
+                    "is_funded",
                     "date",
                 )
             },
@@ -223,7 +227,12 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             },
         ),
     )
-    readonly_fields = ("created_at", "updated_at", "pass_download_link")
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "pass_download_link",
+        "priority_pass_code",
+    )
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
@@ -256,12 +265,14 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         )
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
-    @admin.display(description="Download pass")
+    @admin.display(description="Priority pass")
     def pass_download_link(self, obj):
+        url = reverse("admin:registration_pass_view", args=[obj.id]) + "?pdf=true"
+        url_download = url + "&download=true"
         return format_html(
-            '<a href="{}" target="_blank">Download pass</a>',
-            reverse("admin:registration_pass_view", args=[obj.id])
-            + "?pdf=true&download=true",
+            '<a href="{}" target="_blank">View</a> | <a href="{}" target="_blank">Download</a>',
+            url,
+            url_download,
         )
 
     def get_urls(self):
@@ -283,8 +294,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             **self.admin_site.each_context(request),
             "registration": registration,
             "qr_url": request.build_absolute_uri(
-                reverse("admin:events_registration_change", args=[registration.id])
-                + "?_from_pass=true"
+                reverse("admin:events_registration_changelist")
+                + f"?_from_pass=true&q={registration.priority_pass_code}"
             ),
             "contact": contact,
             "country": (
