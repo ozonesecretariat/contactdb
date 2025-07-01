@@ -56,34 +56,25 @@ class EventNominationViewSet(ViewSet):
     def get_queryset(self):
         # Get the invitation using the token from the URL
         token = self.kwargs[self.lookup_field]
-        return (
-            Registration.objects.select_related(
-                "role",
-                "event",
-                "event__venue_country",
-                "contact",
-                "contact__organization",
-                "contact__organization__country",
-                "contact__organization__government",
-            )
-            .prefetch_related("event__groups")
-            .filter(
-                contact__organization_id__in=Subquery(
-                    self._get_org_qs(token).values("id")
-                ),
-                event_id__in=Subquery(self._get_event_qs(token).values("id")),
-            )
+        return Registration.objects.select_related(
+            "role",
+            "event",
+            "event__group",
+            "event__venue_country",
+            "contact",
+            "contact__organization",
+            "contact__organization__country",
+            "contact__organization__government",
+        ).filter(
+            contact__organization_id__in=Subquery(self._get_org_qs(token).values("id")),
+            event_id__in=Subquery(self._get_event_qs(token).values("id")),
         )
 
     def _get_event_qs(self, token):
         invitation = self.get_invitation(token)
-        qs = (
-            Event.objects.all()
-            .select_related("venue_country")
-            .prefetch_related("groups")
-        )
+        qs = Event.objects.all().select_related("venue_country", "group")
         if invitation.event_group_id:
-            qs = qs.filter(groups__id__in=[invitation.event_group_id])
+            qs = qs.filter(group__id=[invitation.event_group_id])
         else:
             qs = qs.filter(id=invitation.event_id)
         return qs

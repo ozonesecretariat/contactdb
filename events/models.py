@@ -68,11 +68,13 @@ class Event(models.Model):
     venue_city = models.CharField(max_length=150)
     dates = models.CharField(max_length=255)
 
-    groups = models.ManyToManyField(
+    group = models.ForeignKey(
         EventGroup,
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
         related_name="events",
-        help_text="Groups linking related events",
+        help_text="Group linking related events",
     )
 
     attach_priority_pass = models.BooleanField(
@@ -121,6 +123,28 @@ class Event(models.Model):
                 {
                     "start_date": msg,
                     "end_date": msg,
+                }
+            )
+
+        if self.attach_priority_pass and (
+            not self.confirmation_content or not self.confirmation_subject
+        ):
+
+            msg = "Cannot attach priority pass without confirmation email content and subject"
+            raise ValidationError(
+                {
+                    "attach_priority_pass": msg,
+                    "confirmation_subject": msg,
+                    "confirmation_content": msg,
+                }
+            )
+
+        if self.attach_priority_pass and self.group:
+            msg = "Cannot automatically attach priority pass to event group"
+            raise ValidationError(
+                {
+                    "attach_priority_pass": msg,
+                    "group": msg,
                 }
             )
 
@@ -313,6 +337,13 @@ class RegistrationRole(models.Model):
 
 class PriorityPass(models.Model):
     code = RandomCharField(length=10, blank=True, uppercase=True, unique=True)
+
+    class Meta:
+        verbose_name = "priority pass"
+        verbose_name_plural = "priority passes"
+
+    def __str__(self):
+        return self.code
 
     def clean(self):
         super().clean()

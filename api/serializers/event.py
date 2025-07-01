@@ -34,7 +34,7 @@ class EventGroupSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     venue_country = CountrySerializer()
-    groups = EventGroupSerializer(many=True, read_only=True)
+    group = EventGroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -46,7 +46,7 @@ class EventSerializer(serializers.ModelSerializer):
             "venue_country",
             "venue_city",
             "dates",
-            "groups",
+            "group",
         )
 
 

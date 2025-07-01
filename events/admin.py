@@ -24,6 +24,7 @@ from events.models import (
     LoadEventsFromKronosTask,
     LoadOrganizationsFromKronosTask,
     LoadParticipantsFromKronosTask,
+    PriorityPass,
     Registration,
     RegistrationRole,
     RegistrationTag,
@@ -238,9 +239,11 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return self.readonly_fields + ("contact", "event",)
+            return self.readonly_fields + (
+                "contact",
+                "event",
+            )
         return self.readonly_fields
-
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
@@ -314,6 +317,30 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         return TemplateResponse(request, registration.priority_pass_template, context)
 
 
+@admin.register(PriorityPass)
+class PriorityPassAdmin(ModelAdmin):
+    search_fields = ("code",)
+    list_display = ("code", "registrations_links")
+    list_filter = (
+        AutocompleteFilterFactory("contact", "registrations__contact"),
+        AutocompleteFilterFactory("event", "registrations__event"),
+    )
+    fields = (
+        "code",
+        "registrations_links",
+    )
+    prefetch_related = (
+        "registrations",
+        "registrations__event",
+        "registrations__contact",
+    )
+    readonly_fields = ("code", "registrations_links")
+
+    @admin.display(description="Registrations")
+    def registrations_links(self, obj):
+        return self.get_m2m_links(obj.registrations.all())
+
+
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
@@ -332,7 +359,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "venue_country__code",
         "venue_country__name__unaccent",
         "dates",
-        "groups__name",
+        "group__name",
     )
     list_display_links = ("code", "title")
     list_display = (
@@ -344,12 +371,12 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "end_date",
         "dates",
         "registrations_count",
-        "groups_display",
+        "group",
     )
-    autocomplete_fields = ("venue_country", "groups")
+    autocomplete_fields = ("venue_country", "group")
     list_filter = (
         AutocompleteFilterFactory("venue country", "venue_country"),
-        AutocompleteFilterFactory("groups", "groups"),
+        AutocompleteFilterFactory("group", "group"),
         "start_date",
         "end_date",
     )
@@ -361,6 +388,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     prefetch_related = (
         "venue_country",
         "registrations",
+        "group",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -373,7 +401,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 "fields": (
                     "code",
                     "title",
-                    "groups",
+                    "group",
                 )
             },
         ),
@@ -431,10 +459,6 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "event",
             f"{obj.registration_count} participants",
         )
-
-    @admin.display(description="Event Groups")
-    def groups_display(self, obj):
-        return ", ".join(map(str, obj.groups.all()))
 
     def has_load_contacts_from_kronos_permission(self, request):
         return self.has_add_permission(request) and has_model_permission(

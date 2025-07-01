@@ -5,7 +5,7 @@ import django_extensions.db.fields
 from django.db import migrations, models
 
 
-def forwards_func(apps, schema_editor):
+def migrate_priority_pass(apps, schema_editor):
     registration_model = apps.get_model("events", "Registration")
     pass_model = apps.get_model("events", "PriorityPass")
     db_alias = schema_editor.connection.alias
@@ -28,8 +28,16 @@ def forwards_func(apps, schema_editor):
             )
 
 
-class Migration(migrations.Migration):
+def migrate_event_groups(apps, schema_editor):
+    event_model = apps.get_model("events", "Event")
+    db_alias = schema_editor.connection.alias
 
+    for event in event_model.objects.using(db_alias).filter(groups__isnull=False):
+        event.group = event.groups.first()
+        event.save()
+
+
+class Migration(migrations.Migration):
     dependencies = [
         ("events", "0013_alter_registration_designation"),
     ]
@@ -37,6 +45,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.CreateModel(
             name="PriorityPass",
+            options={
+                "verbose_name": "priority pass",
+                "verbose_name_plural": "priority passes",
+            },
             fields=[
                 (
                     "id",
@@ -77,9 +89,26 @@ class Migration(migrations.Migration):
                 to="events.prioritypass",
             ),
         ),
-        migrations.RunPython(forwards_func, migrations.RunPython.noop),
+        migrations.RunPython(migrate_priority_pass, migrations.RunPython.noop),
         migrations.RemoveField(
             model_name="registration",
             name="priority_pass_code",
+        ),
+        migrations.AddField(
+            model_name="event",
+            name="group",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Group linking related events",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="events",
+                to="events.eventgroup",
+            ),
+        ),
+        migrations.RunPython(migrate_event_groups, migrations.RunPython.noop),
+        migrations.RemoveField(
+            model_name="event",
+            name="groups",
         ),
     ]
