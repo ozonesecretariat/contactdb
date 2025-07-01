@@ -129,7 +129,6 @@ class Event(models.Model):
         if self.attach_priority_pass and (
             not self.confirmation_content or not self.confirmation_subject
         ):
-
             msg = "Cannot attach priority pass without confirmation email content and subject"
             raise ValidationError(
                 {
@@ -337,6 +336,7 @@ class RegistrationRole(models.Model):
 
 class PriorityPass(models.Model):
     code = RandomCharField(length=10, blank=True, uppercase=True, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "priority pass"

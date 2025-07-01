@@ -320,7 +320,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
 @admin.register(PriorityPass)
 class PriorityPassAdmin(ModelAdmin):
     search_fields = ("code",)
-    list_display = ("code", "registrations_links")
+    list_display = ("code", "registrations_links", "created_at")
     list_filter = (
         AutocompleteFilterFactory("contact", "registrations__contact"),
         AutocompleteFilterFactory("event", "registrations__event"),
@@ -328,6 +328,7 @@ class PriorityPassAdmin(ModelAdmin):
     fields = (
         "code",
         "registrations_links",
+        "created_at",
     )
     prefetch_related = (
         "registrations",
@@ -335,10 +336,23 @@ class PriorityPassAdmin(ModelAdmin):
         "registrations__contact",
     )
     readonly_fields = ("code", "registrations_links")
+    ordering = ("-created_at",)
+    annotate_query = {
+        "registration_count": Count("registrations"),
+    }
 
-    @admin.display(description="Registrations")
+    @admin.display(description="Registrations", ordering="registration_count")
     def registrations_links(self, obj):
         return self.get_m2m_links(obj.registrations.all())
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(EventGroup)

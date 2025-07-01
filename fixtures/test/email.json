@@ -55,7 +55,7 @@
       "content": "<p>Dear user,</p>\r\n\r\n<p>---</p>\r\n\r\n<p>Kind Regards,<br />\r\nOzone</p>",
       "created_at": "2024-06-19T09:38:58.152Z",
       "created_by": null,
-      "recipients": [61, 93],
+      "recipients": [93, 61],
       "cc_recipients": [66, 54],
       "bcc_recipients": [32, 67],
       "groups": [["Fitness Fusion Crew"], ["The Wanderlust Explorers"]],

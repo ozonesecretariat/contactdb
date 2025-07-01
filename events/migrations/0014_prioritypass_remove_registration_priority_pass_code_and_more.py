@@ -69,6 +69,10 @@ class Migration(migrations.Migration):
                         uppercase=True,
                     ),
                 ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True),
+                ),
             ],
         ),
         migrations.AddField(
