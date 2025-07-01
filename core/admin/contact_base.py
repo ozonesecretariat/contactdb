@@ -39,8 +39,9 @@ class ContactAdminBase(ModelAdmin):
         "country",
     )
     prefetch_related = (
-        "organization__government",
+        "organization",
         "organization__country",
+        "organization__government",
         "country",
     )
     readonly_fields = (
