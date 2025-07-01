@@ -390,7 +390,7 @@ class PriorityPass(models.Model):
 
     @property
     def contact_ids(self):
-        return {r.contact_id for r in self.registrations}
+        return {r.contact_id for r in self.registrations.all()}
 
     @property
     def organization(self):

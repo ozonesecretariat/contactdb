@@ -22,6 +22,7 @@ from core.models import Contact, Organization
 from events.models import (
     Event,
     EventInvitation,
+    PriorityPass,
     Registration,
     RegistrationRole,
 )
@@ -74,7 +75,7 @@ class EventNominationViewSet(ViewSet):
         invitation = self.get_invitation(token)
         qs = Event.objects.all().select_related("venue_country", "group")
         if invitation.event_group_id:
-            qs = qs.filter(group__id=[invitation.event_group_id])
+            qs = qs.filter(group__id=invitation.event_group_id)
         else:
             qs = qs.filter(id=invitation.event_id)
         return qs
@@ -145,6 +146,11 @@ class EventNominationViewSet(ViewSet):
             n.event: n for n in contact.registrations.filter(event__in=available_events)
         }
 
+        if not current_nominations:
+            priority_pass = PriorityPass.objects.create()
+        else:
+            priority_pass = list(current_nominations.values())[0].priority_pass
+
         with transaction.atomic():
             for nomination in serializer.validated_data:
                 event = nomination["event"]
@@ -175,6 +181,7 @@ class EventNominationViewSet(ViewSet):
                 registration.organization = contact.organization
                 registration.department = contact.department
                 registration.designation = contact.designation
+                registration.priority_pass = priority_pass
                 registration.save()
 
             # Anything left of the current nominations that was not provided
