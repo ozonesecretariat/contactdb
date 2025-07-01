@@ -136,6 +136,10 @@ class RegistrationResource(ModelResource):
         column_name="role",
         attribute="role__name",
     )
+    priority_pass = fields.Field(
+        column_name="priority_pass",
+        attribute="priority_pass__code",
+    )
     prefetch_related = (
         "organization",
         "contact",
@@ -144,7 +148,7 @@ class RegistrationResource(ModelResource):
 
     class Meta:
         model = Registration
-        exclude = ("id",)
+        exclude = ("id", )
 
 
 @admin.register(Registration)

@@ -17,6 +17,7 @@ from core.models import (
 from events.kronos import KronosClient
 from events.models import (
     Event,
+    PriorityPass,
     Registration,
     RegistrationRole,
     RegistrationTag,
@@ -221,6 +222,11 @@ class KronosParticipantsParser(KronosParser):
 
         return obj
 
+    def get_priority_pass(self, code):
+        if not code:
+            return PriorityPass.objects.create()
+        return PriorityPass.objects.get_or_create(code=code)[0]
+
     def create_registrations(self, contact_dict, contact):
         for registration in contact_dict["registrationStatuses"]:
             if registration is None:
@@ -243,7 +249,9 @@ class KronosParticipantsParser(KronosParser):
                     "role": role,
                     "date": registration.get("date"),
                     "is_funded": registration.get("isFunded"),
-                    "priority_pass_code": registration.get("priorityPassCode", ""),
+                    "priority_pass": self.get_priority_pass(
+                        registration.get("priorityPassCode", "")
+                    ),
                     "organization": contact.organization,
                     "designation": contact.designation,
                     "department": contact.department,
