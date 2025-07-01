@@ -10,7 +10,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import FileResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -266,6 +266,18 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                sent_count=Count("email_logs"),
+                success_count=Count("id", filter=Q(email_logs__status="SUCCESS")),
+                failure_count=Count("id", filter=Q(email_logs__status="FAILURE")),
+                pending_count=Count("id", filter=Q(email_logs__status="PENDING")),
+            )
+        )
+
     def get_email_object(self, obj: Email) -> Email:
         return obj
 
@@ -278,15 +290,9 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def _get_count_link(self, obj, status=None):
+    def _get_count_link(self, obj, attr=None):
         extra_filters = {}
-        if status:
-            extra_filters["status__exact"] = status
-            count = len(
-                [task for task in obj.email_logs.all() if task.status == status]
-            )
-        else:
-            count = len(obj.email_logs.all())
+        count = getattr(obj, f"{attr.lower()}_count", None)
 
         return self.get_related_link(
             obj,
@@ -298,7 +304,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
     @admin.display(description="Total")
     def sent_count(self, obj):
-        return self._get_count_link(obj)
+        return self._get_count_link(obj, "SENT")
 
     @admin.display(description="Success")
     def success_count(self, obj):
