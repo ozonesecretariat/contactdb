@@ -2,12 +2,10 @@
 {% load admin_urls %}
 
 {% block object-tools-items %}
-    {{ block.super }}
-    <li>
-        <a href="{% url 'admin:emails_email_add' %}?recipients={{ original.id }}">
-            Send Email
-        </a>
-    </li>
+  {{ block.super }}
+  <li>
+    <a href="{% url 'admin:emails_email_add' %}?recipients={{ original.id }}">Send Email</a>
+  </li>
 {% endblock %}
 
 {% block after_field_sets %}

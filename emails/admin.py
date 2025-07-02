@@ -290,9 +290,12 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def _get_count_link(self, obj, attr=None):
+    def _get_count_link(self, obj, status=None):
         extra_filters = {}
-        count = getattr(obj, f"{attr.lower()}_count", None)
+        if status:
+            extra_filters["status__exact"] = status
+
+        count = getattr(obj, f"{status.lower()}_count", None)
 
         return self.get_related_link(
             obj,
