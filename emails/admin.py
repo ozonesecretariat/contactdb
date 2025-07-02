@@ -1028,14 +1028,12 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     )
     ordering = ("-created_on",)
     prefetch_related = (
-        "email",
-        "contact",
-        "organization",
-        "invitation",
         "contact__organization",
-        "to_contacts__organization",
-        "cc_contacts__organization",
-        "bcc_contacts__organization",
+        "contact__organization__government",
+        "contact__organization__country",
+        "organization",
+        "organization__government",
+        "organization__country",
     )
     fieldsets = [
         (
