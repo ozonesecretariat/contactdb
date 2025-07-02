@@ -32,6 +32,15 @@ class InvitationEmailFactory(DjangoModelFactory):
                 self.organization_types.add(org_type)
 
     @factory.post_generation
+    def organizations(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for org_type in extracted:
+                self.organizations.add(org_type)
+
+    @factory.post_generation
     def cc_recipients(self, create, extracted, **kwargs):
         if not create:
             return
