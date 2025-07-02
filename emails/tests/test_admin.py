@@ -2144,3 +2144,110 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertIsNotNone(task.invitation.organization)
         self.assertEqual(task.organization, countryless_gov_org)
         self.assertIsNone(task.invitation.country)
+
+    def test_reminders_organizations_list(self):
+        """Test that reminders work with specific organizations list."""
+        org1 = OrganizationFactory(
+            organization_type=self.org_type, emails=["org1@example.com"]
+        )
+        org2 = OrganizationFactory(
+            organization_type=self.org_type, emails=["org2@example.com"]
+        )
+
+        contact1 = ContactFactory(organization=org1, emails=["contact1@example.com"])
+        ContactFactory(organization=org2, emails=["contact2@example.com"])
+
+        # Register only org1
+        RegistrationFactory(event=self.event, contact=contact1)
+
+        # Create invitations
+        EventInvitationFactory(event=self.event, organization=org1)
+        EventInvitationFactory(event=self.event, organization=org2)
+
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[org1, org2],
+            organization_types=[],
+        )
+
+        # Only org2 should be unregistered
+        unregistered_orgs = list(original_email.unregistered_organizations)
+        self.assertIn(org2, unregistered_orgs)
+        self.assertNotIn(org1, unregistered_orgs)
+
+        # Create reminder
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[org1, org2],
+            organization_types=[],
+            is_reminder=True,
+            original_email=original_email,
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # There should only be a task for org2 (the unregistered one)
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 1)
+        self.assertEqual(tasks.first().organization, org2)
+
+    def test_reminder_organizations_list_include_flag(self):
+        """
+        Test include_in_invitation is not taken into account for reminders with specific
+        organizations list.
+        """
+        org1 = OrganizationFactory(
+            organization_type=self.org_type,
+            emails=["org1@example.com"],
+            include_in_invitation=True,
+        )
+        org2 = OrganizationFactory(
+            organization_type=self.org_type,
+            emails=["org2@example.com"],
+            include_in_invitation=False,
+        )
+
+        ContactFactory(organization=org1, emails=["contact1@example.com"])
+        ContactFactory(organization=org2, emails=["contact2@example.com"])
+
+        # Create invitations
+        EventInvitationFactory(event=self.event, organization=org1)
+        EventInvitationFactory(event=self.event, organization=org2)
+        original_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[org1, org2],
+            organization_types=[],
+        )
+
+        # Both organizations should be unregistered
+        unregistered_orgs = set(original_email.unregistered_organizations)
+        self.assertSetEqual({org1, org2}, unregistered_orgs)
+
+        # Create reminder
+        reminder_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[org1, org2],
+            organization_types=[],
+            is_reminder=True,
+            original_email=original_email,
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {"reminder_original_email_id": str(original_email.id)}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, reminder_email)
+
+        # There should be tasks for both orgs, regardless of include flag
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 2)
+        self.assertSetEqual(
+            {t.organization for t in tasks},
+            {org1, org2},
+        )
