@@ -324,18 +324,21 @@ class InvitationEmail(Email):
             invitations = EventInvitation.objects.filter(event_group=event_group)
             events = list(event_group.events.all())
 
-        # These are ALL uregistered orgs, regardless of being invited directtly/via GOV
-        return (
-            Organization.objects.prefetch_related(
-                "primary_contacts",
-                "secondary_contacts",
-                "government",
-            )
-            .filter(
+        if self.organizations.exists():
+            # This is an organizations-list-based invitation
+            # Not taking include_in_invitation into account in this case
+            organizations_qs = self.organizations.all()
+        elif self.organization_types.exists():
+            organizations_qs = Organization.objects.filter(
                 include_in_invitation=True,
                 organization_type__in=self.organization_types.all(),
             )
-            .filter(
+        else:
+            return Organization.objects.none()
+
+        # These are ALL uregistered orgs, regardless of being invited directly/via GOV
+        return (
+            organizations_qs.filter(
                 Q(
                     # Direct org-based invitations;
                     # include all orgs that have no registrations
@@ -364,6 +367,11 @@ class InvitationEmail(Email):
                 )
             )
             .distinct()
+            .prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
         )
 
 

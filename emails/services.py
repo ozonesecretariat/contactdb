@@ -5,7 +5,7 @@ from core.models import Organization
 
 def get_organization_recipients(
     org_types,
-    organizations=None,
+    organizations,
     additional_cc_contacts=None,
     additional_bcc_contacts=None,
     invitation_email=None,
@@ -18,8 +18,8 @@ def get_organization_recipients(
     upcoming event.
 
     Args:
-    org_types: Optional QuerySet of OrganizationType objects
-    organizations: Optional QuerySet of Organization objects
+    org_types: QuerySet of OrganizationType objects (can be empty)
+    organizations: QuerySet of Organization objects (can be empty)
     additional_cc_contacts: Optional set of additional contacts to CC
     additional_bcc_contacts: Optional set of additional contacts to BCC
     invitation_email: Optional InvitationEmail used to filter only unregistered orgs
@@ -40,46 +40,40 @@ def get_organization_recipients(
 
     is_reminder = invitation_email is not None
 
-    if organizations:
-        if is_reminder:
-            # For reminders, keep all unregistered orgs without any other GOV logic
-            specific_org_ids = set(organizations.values_list("id", flat=True))
-            orgs_queryset = invitation_email.unregistered_organizations.filter(
-                id__in=specific_org_ids
-            )
-        else:
-            # For invitations, just use those orgs
-            orgs_queryset = organizations.prefetch_related(
-                "primary_contacts", "secondary_contacts", "government"
-            )
+    if is_reminder:
+        # For reminders, keep only orgs that haven't registered anyone.
+        # unregistered_organizations can handle both org_types / organizations list
+        orgs_queryset = invitation_email.unregistered_organizations
 
-    if org_types:
-        if is_reminder:
-            # For reminders, keep only orgs that haven't registered anyone.
-            orgs_queryset = invitation_email.unregistered_organizations
-        else:
-            orgs_queryset = (
-                Organization.objects.filter(
-                    organization_type__in=org_types, include_in_invitation=True
-                )
-                .prefetch_related(
-                    "primary_contacts",
-                    "secondary_contacts",
-                    "government",
-                )
-                .filter(
-                    # Organization is either:
-                    # - one of the selected GOV orgs
-                    # - or is not related to any GOV country
-                    # This avoids mails being sent both as part of a GOV-wide invitations and as
-                    # an individual invitation for the non-GOV organization.
-                    models.Q(id__in=gov_orgs.values("id"))
-                    | models.Q(
-                        models.Q(government__isnull=True)
-                        | ~models.Q(government__in=gov_countries)
-                    )
+    elif organizations:
+        # For invitations, just use those orgs
+        orgs_queryset = organizations.prefetch_related(
+            "primary_contacts", "secondary_contacts", "government"
+        )
+
+    elif org_types:
+        orgs_queryset = (
+            Organization.objects.filter(
+                organization_type__in=org_types, include_in_invitation=True
+            )
+            .prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
+            .filter(
+                # Organization is either:
+                # - one of the selected GOV orgs
+                # - or is not related to any GOV country
+                # This avoids mails being sent both as part of a GOV-wide invitations and as
+                # an individual invitation for the non-GOV organization.
+                models.Q(id__in=gov_orgs.values("id"))
+                | models.Q(
+                    models.Q(government__isnull=True)
+                    | ~models.Q(government__in=gov_countries)
                 )
             )
+        )
 
     org_recipients = {}
     for org in orgs_queryset:
