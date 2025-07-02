@@ -294,8 +294,9 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         extra_filters = {}
         if status:
             extra_filters["status__exact"] = status
-
-        count = getattr(obj, f"{status.lower()}_count", None)
+            count = getattr(obj, f"{status.lower()}_count", None)
+        else:
+            count = obj.sent_count
 
         return self.get_related_link(
             obj,
@@ -307,7 +308,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
     @admin.display(description="Total")
     def sent_count(self, obj):
-        return self._get_count_link(obj, "SENT")
+        return self._get_count_link(obj)
 
     @admin.display(description="Success")
     def success_count(self, obj):
