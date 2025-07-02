@@ -11,7 +11,22 @@
         <q-inner-loading :showing="isLoading">
           <q-spinner-gears size="4rem" color="secondary" />
         </q-inner-loading>
-        <qrcode-stream :track="paintBoundingBox" @detect="onDetect" @error="onError" @camera-on="isLoading = false" />
+
+        <div class="camera-controls q-mb-md">
+          <select-camera v-model="selectedCamera" />
+        </div>
+
+        <qrcode-stream
+          :constraints="
+            selectedCamera ?? {
+              facingMode: 'environment',
+            }
+          "
+          :track="paintBoundingBox"
+          @detect="onDetect"
+          @error="onError"
+          @camera-on="onCameraOn"
+        />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -19,6 +34,7 @@
 
 <script setup lang="ts">
 import { apiHost } from "boot/axios";
+import SelectCamera from "components/SelectCamera.vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { type DetectedBarcode, type EmittedError, QrcodeStream } from "vue-qrcode-reader";
@@ -26,11 +42,17 @@ import { type DetectedBarcode, type EmittedError, QrcodeStream } from "vue-qrcod
 const $q = useQuasar();
 const isLoading = ref(true);
 const showDialog = ref(false);
+const selectedCamera = ref<MediaDeviceInfo | null>(null);
+
 const emit = defineEmits({ code: (code: string) => code || code === "" });
 
 function isValidHost(url: URL) {
   const host = url.host.toLowerCase();
   return host === apiHost.toLowerCase() || host === window.location.host.toLowerCase();
+}
+
+function onCameraOn() {
+  isLoading.value = false;
 }
 
 function onDetect(detectedCodes: DetectedBarcode[]) {

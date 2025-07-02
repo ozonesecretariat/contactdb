@@ -12,6 +12,10 @@
           <q-spinner-gears size="4rem" color="secondary" />
         </q-inner-loading>
 
+        <div class="camera-controls q-mb-md">
+          <select-camera v-model="selectedCamera" />
+        </div>
+
         <div class="camera-container">
           <video ref="videoElement" autoplay playsinline />
           <canvas ref="canvasElement" style="display: none" />
@@ -26,8 +30,9 @@
 </template>
 
 <script setup lang="ts">
+import SelectCamera from "components/SelectCamera.vue";
 import { useQuasar } from "quasar";
-import { onUnmounted, ref } from "vue";
+import { onUnmounted, ref, watch } from "vue";
 
 const $q = useQuasar();
 const isLoading = ref(true);
@@ -35,6 +40,7 @@ const showDialog = ref(false);
 const videoElement = ref<HTMLVideoElement | null>(null);
 const canvasElement = ref<HTMLCanvasElement | null>(null);
 const stream = ref<MediaStream | null>(null);
+const selectedCamera = ref<MediaDeviceInfo | null>(null);
 
 const emit = defineEmits({
   capture: (imageData: string) => typeof imageData === "string",
@@ -63,10 +69,13 @@ function capturePicture() {
 
 async function initCamera() {
   try {
-    stream.value = await navigator.mediaDevices.getUserMedia({
+    const constraints = {
       audio: false,
-      video: { facingMode: "environment" },
-    });
+      video: selectedCamera.value ?? { facingMode: "environment" },
+    };
+
+    stopCamera();
+    stream.value = await navigator.mediaDevices.getUserMedia(constraints);
 
     if (videoElement.value && stream.value) {
       videoElement.value.srcObject = stream.value;
@@ -93,6 +102,12 @@ function stopCamera() {
     stream.value = null;
   }
 }
+
+watch(selectedCamera, () => {
+  if (showDialog.value) {
+    initCamera();
+  }
+});
 
 onUnmounted(() => {
   stopCamera();
