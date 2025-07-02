@@ -1030,6 +1030,85 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         # Should create 2 tasks for each organization
         self.assertEqual(tasks.count(), 2)
 
+    def test_response_post_save_add_with_organizations_list(self):
+        """Test that specific organizations are used when provided."""
+        # Create multiple orgs, but only specify some in the list
+        org1 = OrganizationFactory(
+            organization_type=self.org_type, emails=["org1@example.com"]
+        )
+        org2 = OrganizationFactory(
+            organization_type=self.org_type, emails=["org2@example.com"]
+        )
+        org3 = OrganizationFactory(
+            organization_type=self.org_type, emails=["org3@example.com"]
+        )
+
+        # Add contacts
+        ContactFactory(organization=org1, emails=["contact1@example.com"])
+        ContactFactory(organization=org2, emails=["contact2@example.com"])
+        ContactFactory(organization=org3, emails=["contact3@example.com"])
+
+        # Create invitation email only for org1 and org2
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[org1, org2],
+            organization_types=[],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 2)
+
+        task_orgs = {task.organization for task in tasks}
+        self.assertEqual(task_orgs, {org1, org2})
+        # There should be not task for org3
+        self.assertNotIn(org3, task_orgs)
+
+    def test_specific_organizations_with_include_in_invitation_flag(self):
+        """
+        Test that organizations in list are included even when
+        include_in_invitation=False.
+        """
+        org_not_included = OrganizationFactory(
+            organization_type=self.org_type,
+            include_in_invitation=False,
+            emails=["not-included@example.com"],
+        )
+        org_included = OrganizationFactory(
+            organization_type=self.org_type,
+            include_in_invitation=True,
+            emails=["included@example.com"],
+        )
+
+        ContactFactory(organization=org_not_included, emails=["contact1@example.com"])
+        ContactFactory(organization=org_included, emails=["contact2@example.com"])
+
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[org_not_included, org_included],
+            organization_types=[],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 2)
+
+        # Both orgs should have tasks, regardless of include_in_invitation flag
+        task_orgs = {task.organization for task in tasks}
+        self.assertEqual(task_orgs, {org_not_included, org_included})
+
     def test_email_duplication(self):
         """Test that emails are not duplicated across to, cc and bcc."""
         # Create organization with overlapping emails
