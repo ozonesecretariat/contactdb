@@ -85,12 +85,8 @@ def get_organization_recipients(
         bcc_emails = set()
 
         # If it's a GOV, include all inviteable orgs from that country (incl. other GOVs)
-        # TODO: not sure about the `not organizations` part.
-        # TODO: ^ maybe we should simply behave the same regardless of GOV/include
         should_expand_gov = (
-            org.organization_type
-            and org.organization_type.acronym == "GOV"
-            and (not organizations or org.include_in_invitation)
+            org.organization_type and org.organization_type.acronym == "GOV"
         )
 
         if should_expand_gov:
