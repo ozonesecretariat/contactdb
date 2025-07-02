@@ -44,11 +44,14 @@ class ResolveConflictAdmin(ContactAdminBase):
         "conflicting_contact",
     )
     prefetch_related = (
+        "country",
         "organization",
         "organization__country",
+        "organization__government",
         "existing_contact",
         "existing_contact__organization",
         "existing_contact__organization__country",
+        "existing_contact__organization__government",
     )
     actions = ("accept_new_data",)
 
