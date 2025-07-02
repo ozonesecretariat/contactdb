@@ -41,7 +41,6 @@ class TestMergeContacts(TestCase):
         self.contact1 = Contact.objects.create(
             title="Ms.1",
             honorific="Miss 1",
-            respectful="Madam Secretary 1",
             first_name="Jane 1",
             last_name="Eyre 1",
             country=self.country1,
@@ -53,7 +52,6 @@ class TestMergeContacts(TestCase):
             organization=self.org1,
             designation="State secretary 1",
             department="Department of State 1",
-            affiliation="Affiliation 1",
             org_head=True,
             is_use_organization_address=True,
             city="City 1",
@@ -73,7 +71,6 @@ class TestMergeContacts(TestCase):
         self.contact2 = Contact.objects.create(
             title="Ms.2",
             honorific="Miss 2",
-            respectful="Madam Secretary 2",
             first_name="Jane 2",
             last_name="Eyre 2",
             country=self.country2,
@@ -85,7 +82,6 @@ class TestMergeContacts(TestCase):
             organization=self.org2,
             designation="State secretary 2",
             department="Department of State 2",
-            affiliation="Affiliation 2",
             org_head=False,
             is_use_organization_address=False,
             city="City 2",
@@ -140,7 +136,6 @@ class TestMergeContacts(TestCase):
         self.assertEqual(ResolveConflict.objects.count(), 1)
         self.assertEqual(self.contact1.title, "Ms.1")
         self.assertEqual(self.contact1.honorific, "Miss 1")
-        self.assertEqual(self.contact1.respectful, "Madam Secretary 1")
         self.assertEqual(self.contact1.first_name, "Jane 1")
         self.assertEqual(self.contact1.last_name, "Eyre 1")
         self.assertEqual(self.contact1.country, self.country1)
@@ -156,7 +151,6 @@ class TestMergeContacts(TestCase):
         self.assertEqual(self.contact1.organization, self.org1)
         self.assertEqual(self.contact1.designation, "State secretary 1")
         self.assertEqual(self.contact1.department, "Department of State 1")
-        self.assertEqual(self.contact1.affiliation, "Affiliation 1")
         self.assertTrue(self.contact1.org_head)
         self.assertTrue(self.contact1.is_use_organization_address)
         self.assertEqual(self.contact1.city, "City 1")
@@ -178,7 +172,6 @@ class TestMergeContacts(TestCase):
         self.assertIsNotNone(conflict)
         self.assertEqual(conflict.title, "Ms.2")
         self.assertEqual(conflict.honorific, "Miss 2")
-        self.assertEqual(conflict.respectful, "Madam Secretary 2")
         self.assertEqual(conflict.first_name, "Jane 2")
         self.assertEqual(conflict.last_name, "Eyre 2")
         self.assertEqual(conflict.country, self.country2)
@@ -190,7 +183,6 @@ class TestMergeContacts(TestCase):
         self.assertEqual(conflict.organization, self.org2)
         self.assertEqual(conflict.designation, "State secretary 2")
         self.assertEqual(conflict.department, "Department of State 2")
-        self.assertEqual(conflict.affiliation, "Affiliation 2")
         self.assertFalse(conflict.org_head)
         self.assertFalse(conflict.is_use_organization_address)
         self.assertEqual(conflict.city, "City 2")
@@ -253,7 +245,6 @@ class TestMergeContacts(TestCase):
             "last_name",
             "designation",
             "department",
-            "affiliation",
             "phones",
             "mobiles",
             "faxes",

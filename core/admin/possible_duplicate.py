@@ -78,6 +78,7 @@ class PossibleDuplicateContactAdmin(MergeContacts, DjangoObjectActions, ModelAdm
         "contacts",
         "contacts__organization",
         "contacts__organization__country",
+        "contacts__organization__government",
     )
     annotate_query = {
         "field_count": ArrayLength("duplicate_fields"),

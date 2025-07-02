@@ -175,11 +175,13 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__needs_visa_letter",
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
+        AutocompleteFilterFactory("event group", "event__groups"),
     ]
-    autocomplete_fields = ("contact", "event", "role", "tags")
+    autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
         "contact",
-        "contact__organization",
+        "contact__organization__country",
+        "contact__organization__government",
         "role",
         "tags",
     )
@@ -252,6 +254,14 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
 
+class EventInline(admin.TabularInline):
+    extra = 0
+    model = Event.groups.through
+    verbose_name = "Event"
+    verbose_name_plural = "Group's events"
+    autocomplete_fields = ["event"]
+
+
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
@@ -259,6 +269,7 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
     list_display_links = ("name",)
     ordering = ("name",)
     prefetch_related = ("events",)
+    inlines = [EventInline]
 
 
 @admin.register(Event)
@@ -299,6 +310,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     prefetch_related = (
         "venue_country",
         "registrations",
+        "groups",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
