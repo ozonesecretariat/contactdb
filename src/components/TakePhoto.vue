@@ -106,6 +106,8 @@ function stopCamera() {
 watch(selectedCamera, () => {
   if (showDialog.value) {
     initCamera();
+  } else {
+    stopCamera();
   }
 });
 

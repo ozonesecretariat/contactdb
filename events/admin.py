@@ -351,9 +351,16 @@ class PriorityPassAdmin(ModelAdmin):
         url = reverse("admin:priority_pass_view", args=[obj.id]) + "?pdf=true"
         url_download = url + "&download=true"
         return format_html(
-            '<a href="{}" target="_blank">View</a> | <a href="{}" target="_blank">Download</a>',
+            " | ".join(
+                [
+                    '<a href="{}" target="_blank">View</a>',
+                    '<a href="{}" target="_blank">Download</a>',
+                    '<a href="{}" target="_blank">Scan</a>',
+                ]
+            ),
             url,
             url_download,
+            obj.qr_url,
         )
 
     def get_urls(self):

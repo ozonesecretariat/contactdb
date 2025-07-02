@@ -2,9 +2,10 @@
   <q-page class="q-pa-md">
     <code-scanner ref="codeScannerRef" @code="setCode" />
     <take-photo ref="takePhotoRef" @capture="setPicture" />
-    <section class="flex q-gutter-md">
+    <p class="text-grey">Scan QR or enter code</p>
+    <section class="flex q-gutter-md items-center">
       <q-btn label="Scan code" color="primary" icon="qr_code_scanner" @click="codeScannerRef?.show()" />
-      <q-input v-model="passCode" label="Code" filled />
+      <q-input v-model="passCode" label="Code" filled autofocus dense />
       <q-btn
         label="Verify"
         color="positive"
@@ -19,7 +20,7 @@
         <q-card flat bordered class="contact-card">
           <div class="row wrap">
             <q-card-section class="q-pt-xs col-grow">
-              <div class="text-overline">{{ passCode }} | {{ pass.country?.name }}</div>
+              <div class="text-overline">{{ pass.code }} | {{ pass.country?.name }}</div>
               <div class="text-h5 q-mt-sm q-mb-xs">
                 {{ pass.contact?.fullName }}
               </div>
@@ -32,9 +33,18 @@
               </div>
               <div class="text-body1">
                 <ul>
-                  <li>Emails: {{ pass.contact?.emails?.join(", ") || "-" }}</li>
-                  <li>Phones: {{ pass.contact?.phones?.join(", ") || "-" }}</li>
-                  <li>Department: {{ pass.contact?.department || "-" }}</li>
+                  <li>
+                    <b>Emails:</b>
+                    {{ pass.contact?.emails?.join(", ") || "-" }}
+                  </li>
+                  <li>
+                    <b>Phones:</b>
+                    {{ pass.contact?.phones?.join(", ") || "-" }}
+                  </li>
+                  <li>
+                    <b>Department:</b>
+                    {{ pass.contact?.department || "-" }}
+                  </li>
                 </ul>
               </div>
             </q-card-section>
@@ -48,7 +58,7 @@
           <q-separator />
 
           <q-card-actions>
-            <q-btn color="primary" icon="picture_as_pdf" @click="printBadge">Print badge</q-btn>
+            <q-btn color="positive" icon="picture_as_pdf" @click="printBadge">Print badge</q-btn>
             <q-btn v-if="canEditContact" color="primary" icon="photo_camera" @click="takePhotoRef?.show()">
               Take photo
             </q-btn>
