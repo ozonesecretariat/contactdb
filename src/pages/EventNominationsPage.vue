@@ -52,8 +52,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Contact, EventNomination } from "src/types/nomination";
 import type { QTableColumnWithTooltip } from "src/types/quasar";
-import type { Contact, EventNomination } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
 import AddNomination from "components/nominations/AddNomination.vue";

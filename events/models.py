@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.db import models
 from django.db.models import Exists, OuterRef, Q
-from django.urls import reverse
 from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
@@ -356,8 +355,8 @@ class PriorityPass(models.Model):
     def qr_url(self):
         return (
             settings.PROTOCOL
-            + settings.MAIN_BACKEND_HOST
-            + reverse("admin:priority_pass_scan_view")
+            + settings.MAIN_FRONTEND_HOST
+            + "/scan-pass"
             + f"?code={self.code}"
         )
 
@@ -382,7 +381,7 @@ class PriorityPass(models.Model):
 
     @property
     def contact(self):
-        for registration in self.valid_registrations:
+        for registration in self.registrations.all():
             if registration.contact:
                 return registration.contact
 
