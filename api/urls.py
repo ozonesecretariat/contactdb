@@ -7,12 +7,18 @@ from drf_spectacular.views import (
 from rest_framework import routers
 
 import api.views.user
-from api.views.contact import PhotoUploadView, SecurePhotoView
-from api.views.event import EventNominationViewSet, EventViewSet
+from api.views.contact import ContactViewSet, PhotoUploadView, SecurePhotoView
+from api.views.event import EventViewSet
 from api.views.misc import AppSettingsView
+from api.views.nomination import EventNominationViewSet
+from api.views.priority_pass import PriorityPassViewSet
+from api.views.registration import RegistrationStatusViewSet
 
 router = routers.SimpleRouter()
 router.register("events", EventViewSet)
+router.register("contacts", ContactViewSet)
+router.register("priority-passes", PriorityPassViewSet)
+router.register("registration-status", RegistrationStatusViewSet)
 router.register(
     "events-nominations", EventNominationViewSet, basename="events-nominations"
 )
