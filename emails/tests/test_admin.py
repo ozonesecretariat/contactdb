@@ -1109,6 +1109,122 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         task_orgs = {task.organization for task in tasks}
         self.assertEqual(task_orgs, {org_not_included, org_included})
 
+    def test_organizations_list_gov_expands_include_true(self):
+        """
+        Test that GOV orgs in specified orgs list "expands" (adds related orgs contacts)
+        if GOV org's include_in_invitation is True.
+        """
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        gov_org = OrganizationFactory(
+            organization_type=gov_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["gov@example.com"],
+        )
+        related_org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["related@example.com"],
+        )
+
+        gov_contact = ContactFactory(
+            organization=gov_org, emails=["gov-contact@example.com"]
+        )
+        related_contact = ContactFactory(
+            organization=related_org, emails=["related-contact@example.com"]
+        )
+        gov_org.primary_contacts.add(gov_contact)
+        related_org.primary_contacts.add(related_contact)
+
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[gov_org],
+            organization_types=[],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 1)
+
+        task = tasks.first()
+        self.assertEqual(task.organization, gov_org)
+
+        # Should include related org emails
+        expected_emails = {
+            "gov@example.com",
+            "gov-contact@example.com",
+            "related@example.com",
+            "related-contact@example.com",
+        }
+        self.assertEqual(set(task.email_to), expected_emails)
+
+    def test_organizations_list_gov_expands_include_false(self):
+        """
+        Test that GOV orgs in specified orgs list "expands" (adds related orgs contacts)
+        if GOV org's include_in_invitation is False.
+        """
+        government = Country.objects.first()
+        gov_type = OrganizationType.objects.get(acronym="GOV")
+
+        gov_org = OrganizationFactory(
+            organization_type=gov_type,
+            government=government,
+            include_in_invitation=False,
+            emails=["gov@example.com"],
+        )
+        related_org = OrganizationFactory(
+            organization_type=self.org_type,
+            government=government,
+            include_in_invitation=True,
+            emails=["related@example.com"],
+        )
+
+        gov_contact = ContactFactory(
+            organization=gov_org, emails=["gov-contact@example.com"]
+        )
+        related_contact = ContactFactory(
+            organization=related_org, emails=["related-contact@example.com"]
+        )
+        gov_org.primary_contacts.add(gov_contact)
+        related_org.primary_contacts.add(related_contact)
+
+        invitation_email = InvitationEmailFactory(
+            events=[self.event],
+            organizations=[gov_org],
+            organization_types=[],
+        )
+
+        request = self.factory.post("/fake-url/")
+        request.user = self.user
+        request.session = {}
+        request._messages = FallbackStorage(request)
+
+        self.admin.response_post_save_add(request, invitation_email)
+
+        tasks = SendEmailTask.objects.all()
+        self.assertEqual(tasks.count(), 1)
+
+        task = tasks.first()
+        self.assertEqual(task.organization, gov_org)
+
+        # Should include related org emails
+        expected_emails = {
+            "gov@example.com",
+            "gov-contact@example.com",
+            "related@example.com",
+            "related-contact@example.com",
+        }
+        self.assertEqual(set(task.email_to), expected_emails)
+
     def test_email_duplication(self):
         """Test that emails are not duplicated across to, cc and bcc."""
         # Create organization with overlapping emails
