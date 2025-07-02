@@ -89,6 +89,10 @@ class ContactMembershipInline(admin.StackedInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related("contactgroup")
+
 
 class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
@@ -114,6 +118,18 @@ class ContactRegistrationsInline(admin.StackedInline):
             },
         ),
     )
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+
+        return queryset.select_related(
+            "contact",
+            "event",
+            "role",
+            "organization",
+            "organization__country",
+            "organization__government",
+        ).prefetch_related("tags")
 
 
 @admin.register(Contact)
