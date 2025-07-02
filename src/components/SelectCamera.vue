@@ -1,19 +1,20 @@
 <template>
   <q-select
     :model-value="modelValue"
-    @update:model-value="$emit('update:model-value', $event)"
     :options="cameras"
     option-value="deviceId"
     option-label="label"
     label="Select Camera"
     dense
     outlined
+    @update:model-value="$emit('update:model-value', $event)"
   />
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { useStorage } from "@vueuse/core";
 import { useQuasar } from "quasar";
+import { onMounted, ref, watch } from "vue";
 
 const props = defineProps<{
   modelValue: MediaDeviceInfo | null;
@@ -25,6 +26,7 @@ const emit = defineEmits<{
 
 const $q = useQuasar();
 const cameras = ref<MediaDeviceInfo[]>([]);
+const storedCameraId = useStorage("selectedCameraId", "");
 
 onMounted(getCameras);
 
@@ -33,9 +35,11 @@ async function getCameras() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     cameras.value = devices.filter((device) => device.kind === "videoinput");
 
-    // Select the first camera by default if none is selected
-    if (cameras.value.length > 0 && !props.modelValue) {
-      emit("update:model-value", cameras.value[0] ?? null);
+    if (cameras.value.length > 0) {
+      const storedCamera = cameras.value.find((camera) => camera.deviceId === storedCameraId.value);
+      if (!props.modelValue) {
+        emit("update:model-value", storedCamera ?? cameras.value[0] ?? null);
+      }
     }
   } catch (error) {
     $q.notify({
@@ -45,6 +49,15 @@ async function getCameras() {
     throw error;
   }
 }
+
+watch(
+  () => props.modelValue?.deviceId,
+  (newId) => {
+    if (newId) {
+      storedCameraId.value = newId;
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss"></style>

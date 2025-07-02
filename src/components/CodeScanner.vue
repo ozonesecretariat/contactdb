@@ -17,11 +17,8 @@
         </div>
 
         <qrcode-stream
-          :constraints="
-            selectedCamera ?? {
-              facingMode: 'environment',
-            }
-          "
+          v-if="selectedCamera"
+          :constraints="selectedCamera"
           :track="paintBoundingBox"
           @detect="onDetect"
           @error="onError"
