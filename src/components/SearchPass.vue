@@ -14,6 +14,7 @@
           filled
           dense
           autofocus
+          role="search"
           @keyup.enter="searchPasses"
         >
           <template #append>
@@ -25,7 +26,7 @@
         <q-list v-if="passes.length" class="q-mt-md">
           <q-item v-for="pass in passes" :key="pass.code" v-ripple clickable @click="selectPass(pass.code)">
             <q-item-section>
-              <q-item-label>{{ pass.registrations.map((r) => r.event.code).join(",") }}</q-item-label>
+              <q-item-label>{{ pass.registrations.map((r) => r.event.code).join(", ") }}</q-item-label>
               <q-item-label caption>{{ pass.contact?.fullName }} | {{ pass.organization?.name }}</q-item-label>
             </q-item-section>
           </q-item>
