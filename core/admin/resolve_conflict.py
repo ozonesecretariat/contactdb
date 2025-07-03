@@ -3,6 +3,8 @@ from itertools import chain
 
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
+from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.utils.html import format_html
 
 from common.urls import reverse
@@ -75,19 +77,79 @@ class ResolveConflictAdmin(ContactAdminBase):
     def keep_both_contacts(self, request, queryset):
         """
         If contact has multiple contact ids (is a merged contact), all
-        contact_ids will be reimported. Useful when merging by accident.
+        contact_ids will be reimported otherwise, keep the conflict as
+        a contact.
         """
 
-        contacts = (
-            Contact.objects.filter(conflicting_contacts__in=queryset)
-            .distinct()
-            .values_list("contact_ids", flat=True)
+        def conflicts_to_contacts(conflicts):
+            conflicts_to_delete = []
+            with transaction.atomic():
+                for conflict in conflicts:
+                    conflict.pop("existing_contact_id", None)
+                    cid = conflict.pop("id", None)
+
+                    try:
+                        Contact.objects.create(**conflict)
+                        conflicts_to_delete.append(cid)
+                    except IntegrityError:
+                        self.message_user(
+                            request,
+                            f"Failed to create contact from conflict (ID: {cid}).",
+                            messages.ERROR,
+                        )
+                ResolveConflict.objects.filter(pk__in=conflicts_to_delete).delete()
+            return conflicts_to_delete
+
+        # For contacts with no contact_ids, create a new contact
+        conflicts = queryset.filter(
+            Q(existing_contact__contact_ids__isnull=True)
+            | Q(existing_contact__contact_ids=[])
+        ).values()
+
+        n_contacts = conflicts_to_contacts(conflicts)
+
+        self.message_user(
+            request,
+            f"Created {len(n_contacts)} contacts from conflicts.",
+            messages.SUCCESS,
         )
 
-        kronos_ids = set(chain.from_iterable(contacts))
+        # For contacts with contact_ids, reimport them from Kronos.
+        # Since conflicts from different sources can't be distinguished,
+        # convert all conflicts to contacts to ensure no data is lost.
+        kronos_contacts = (
+            Contact.objects.prefetch_related("conflicting_contacts")
+            .filter(conflicting_contacts__in=queryset, contact_ids__isnull=False)
+            .exclude(contact_ids=[])
+            .distinct()
+        )
 
+        n_contacts = conflicts_to_contacts(
+            ResolveConflict.objects.filter(
+                existing_contact__in=kronos_contacts
+            ).values()
+        )
+
+        self.message_user(
+            request,
+            f"Created {len(n_contacts)} contacts from conflicts.",
+            messages.SUCCESS,
+        )
+
+        kronos_ids = set(
+            chain.from_iterable(kronos_contacts.values_list("contact_ids", flat=True))
+        )
+
+        # Reimport kronos contacts with registrations
         contact_parser = ContactParser()
-        contact_parser.import_contacts_with_registrations(kronos_ids)
+        new_contacts = contact_parser.import_contacts_with_registrations(kronos_ids)
+
+        if new_contacts:
+            self.message_user(
+                request,
+                f"Reimported {len(new_contacts)} contacts with registrations from Kronos.",
+                messages.SUCCESS,
+            )
 
     @staticmethod
     def save_incoming_data(incoming_contact):

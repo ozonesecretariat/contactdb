@@ -14,7 +14,7 @@ from core.parsers import ContactParser
 from events.models import Event
 
 
-class TestImportEvents(TestCase):
+class TestImportContactFromKronos(TestCase):
     fixtures = [
         "initial/region",
         "initial/subregion",
@@ -156,7 +156,7 @@ class TestImportEvents(TestCase):
     def tearDown(self):
         patch.stopall()
 
-    def test_load_participant(self):
+    def test_import_contact_from_kronos(self):
         parser = ContactParser()
 
         parser.import_contacts_with_registrations(
