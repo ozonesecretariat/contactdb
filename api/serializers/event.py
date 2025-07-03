@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
-from api.serializers.contact import ContactSerializer, OrganizationSerializer
+from api.serializers.contact import (
+    ContactDetailSerializer,
+    OrganizationSerializer,
+)
 from api.serializers.country import CountrySerializer
 from core.models import Contact
 from events.models import (
@@ -36,7 +39,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    contact = ContactSerializer(read_only=True)
+    contact = ContactDetailSerializer(read_only=True)
     event = EventSerializer(read_only=True)
     role = serializers.SlugRelatedField(
         slug_field="name", queryset=RegistrationRole.objects.all()
