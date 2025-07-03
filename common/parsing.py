@@ -28,7 +28,7 @@ REGISTRATION_MAPPING = {
     "contactId": "contact_id",
     "eventId": "event_id",
     "status": "status",
-    # "role": "role",
+    "role": "role",
     "priorityPassCode": "priority_pass_code",
     "createdOn": "date",
     "isFunded": "is_funded",

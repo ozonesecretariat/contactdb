@@ -200,10 +200,6 @@ class ContactParser:
 
     @staticmethod
     def get_or_create_registration_role(role_kronos_enum):
-        if not role_kronos_enum:
-            # TODO: handle this case properly
-            return RegistrationRole.objects.first()
-
         return RegistrationRole.objects.get_or_create(
             kronos_value=role_kronos_enum,
             defaults={
@@ -235,7 +231,7 @@ class ContactParser:
         if not registration_data:
             return None
 
-        registration_dict = registration_dict = {
+        registration_dict = {
             REGISTRATION_MAPPING[key]: value
             for key, value in registration_data.items()
             if key in REGISTRATION_MAPPING
@@ -318,7 +314,7 @@ class ContactParser:
             **(contact_dict | langs),
         )
 
-    def import_contacts_with_registrations(self, kronos_ids: list) -> Contact | None:
+    def import_contacts_with_registrations(self, kronos_ids: list) -> list:
         """
         Import contact from Kronos with registrations. Existing contacts
         are deleted and recreated.
@@ -348,9 +344,7 @@ class ContactParser:
                 contact = self.create_contact(contact_data)
                 new_contacts.append(contact)
 
-                registrations_data = self.client.get_registrations_data(kronos_id).get(
-                    "records", []
-                )
+                registrations_data = self.client.get_registrations_data(kronos_id)
                 if not registrations_data:
                     continue
 
@@ -360,6 +354,9 @@ class ContactParser:
                             registration_dict,
                             contact=contact,
                         )
-                    except ValueError:
-                        continue
+                    except ValueError as e:
+                        raise (
+                            "Failed to create registration for contact "
+                            f"{contact.id} with Kronos ID {kronos_id}"
+                        ) from e
         return new_contacts

@@ -1,5 +1,4 @@
 import json
-import urllib
 
 import requests
 from django.conf import settings
@@ -135,11 +134,18 @@ class KronosClient:
                 return None
             raise
 
-    def get_registrations_data(self, contact_kronos_id: str):
+    def get_registrations_data(self, contact_kronos_ids: str):
         """Get Kronos data for contact registrations."""
         try:
-            query = urllib.parse.urlencode({"q": {"contactIds": [contact_kronos_id]}})
-            return self.send_kronos(f"/api/v2018/event-participants?{query}")
+            qparams = {
+                "contactIds": [contact_kronos_ids],
+            }
+            return self.send_kronos(
+                path="/api/v2018/event-participants",
+                params={
+                    "q": json.dumps(qparams),
+                },
+            ).get("records", [])
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 return None
