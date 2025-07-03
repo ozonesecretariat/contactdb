@@ -2,18 +2,25 @@
   <q-page class="q-pa-md">
     <code-scanner ref="codeScannerRef" @code="setCode" />
     <take-photo ref="takePhotoRef" @capture="setPicture" />
+    <search-pass ref="searchPassRef" @code="setCode" />
+
     <p class="text-grey">Scan QR or enter code</p>
-    <section class="flex q-gutter-md items-center">
-      <q-btn label="Scan code" color="primary" icon="qr_code_scanner" @click="codeScannerRef?.show()" />
-      <q-input v-model="passCode" label="Code" filled autofocus dense />
-      <q-btn
-        label="Verify"
-        color="positive"
-        icon="how_to_reg"
-        :loading="loading"
-        :disable="passCode.length < 10"
-        @click="loadPriorityPass()"
-      />
+    <section class="flex items-center justify-between q-col-gutter-md">
+      <div class="flex q-gutter-md items-center">
+        <q-btn label="Scan code" color="secondary" icon="qr_code_scanner" @click="codeScannerRef?.show()" />
+        <q-btn color="primary" label="Search for pass" icon="search" @click="searchPassRef?.show()" />
+      </div>
+      <div class="flex q-gutter-md items-center">
+        <q-input v-model="passCode" label="Code" filled autofocus dense />
+        <q-btn
+          label="Verify"
+          color="positive"
+          icon="how_to_reg"
+          :loading="loading"
+          :disable="passCode.length < 10"
+          @click="loadPriorityPass()"
+        />
+      </div>
     </section>
     <div v-if="pass" class="pass-container">
       <section class="contact-section q-mt-lg">
@@ -119,6 +126,7 @@ import type { Registration } from "src/types/registration";
 import { useRouteQuery } from "@vueuse/router";
 import { api } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
+import SearchPass from "components/SearchPass.vue";
 import TakePhoto from "components/TakePhoto.vue";
 import { useQuasar } from "quasar";
 import { useUserStore } from "stores/userStore";
@@ -129,6 +137,7 @@ const userStore = useUserStore();
 
 const takePhotoRef = useTemplateRef("takePhotoRef");
 const codeScannerRef = useTemplateRef("codeScannerRef");
+const searchPassRef = useTemplateRef("searchPassRef");
 
 const passCode = useRouteQuery<string>("code", "");
 const pass = ref<null | PriorityPass>(null);
@@ -251,7 +260,14 @@ async function updateRegistrationStatus(registration: Registration, newStatus: R
 
 .contact-card,
 .event-card {
-  max-width: 50rem;
+  max-width: 40rem;
+}
+
+@media (min-width: 2000px) {
+  .contact-card,
+  .event-card {
+    max-width: 50rem;
+  }
 }
 
 .contact-photo {

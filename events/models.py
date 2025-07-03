@@ -377,7 +377,9 @@ class PriorityPass(models.Model):
 
     @property
     def valid_registrations(self):
-        return self.registrations.exclude(status=Registration.Status.REVOKED)
+        return [
+            r for r in self.registrations.all() if r.status != Registration.Status.REVOKED
+        ]
 
     @property
     def contact(self):
