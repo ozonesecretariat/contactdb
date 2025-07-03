@@ -30,6 +30,14 @@
       "org_head": false,
       "created_at": "2024-04-17T12:06:50.959Z",
       "updated_at": "2024-04-17T12:06:50.959Z",
+      "has_credentials": false,
+      "credentials": null,
+      "needs_visa_letter": false,
+      "passport": null,
+      "passport_number": null,
+      "nationality": null,
+      "passport_date_of_issue": null,
+      "passport_date_of_expiry": null,
       "organization": 1,
       "existing_contact": 26
     }
@@ -65,6 +73,14 @@
       "org_head": false,
       "created_at": "2024-04-17T12:06:51.008Z",
       "updated_at": "2024-04-17T12:06:51.008Z",
+      "has_credentials": false,
+      "credentials": null,
+      "needs_visa_letter": false,
+      "passport": null,
+      "passport_number": null,
+      "nationality": null,
+      "passport_date_of_issue": null,
+      "passport_date_of_expiry": null,
       "organization": 5,
       "existing_contact": 26
     }
@@ -100,6 +116,14 @@
       "org_head": false,
       "created_at": "2024-04-17T12:06:51.041Z",
       "updated_at": "2024-04-17T12:06:51.041Z",
+      "has_credentials": false,
+      "credentials": null,
+      "needs_visa_letter": false,
+      "passport": null,
+      "passport_number": null,
+      "nationality": null,
+      "passport_date_of_issue": null,
+      "passport_date_of_expiry": null,
       "organization": 1,
       "existing_contact": 26
     }

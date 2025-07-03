@@ -144,6 +144,15 @@ const routes: RouteRecordRaw[] = [
         path: "events",
       },
       {
+        component: () => import("pages/ScanPassPage.vue"),
+        meta: {
+          header: "Scan Pass",
+          requirePermissions: ["events.view_registration", "events.view_prioritypass"],
+        },
+        name: "scan-pass",
+        path: "scan-pass",
+      },
+      {
         component: () => import("pages/HomePage.vue"),
         meta: {
           header: "",

@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import type { MeetingEvent } from "src/types/event";
-import type { EventNomination } from "src/types/registration";
+import type { EventNomination } from "src/types/nomination";
 
 import { useStorage } from "@vueuse/core";
 import { api, apiBase } from "boot/axios";

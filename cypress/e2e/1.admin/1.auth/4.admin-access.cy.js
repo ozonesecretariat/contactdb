@@ -40,6 +40,7 @@ describe("Check user permissions", () => {
         loadeventsfromkronostask: { add: true, view: true },
         loadorganizationsfromkronostask: { view: true },
         loadparticipantsfromkronostask: { view: true },
+        prioritypass: { change: true, view: true },
         registration: true,
         registrationrole: true,
         registrationtag: true,

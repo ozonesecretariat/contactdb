@@ -1,10 +1,13 @@
+import unicodedata
 from datetime import UTC, datetime, timedelta
+from io import BytesIO
 
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
+from pdfminer.high_level import extract_text
 
 from api.tests.factories import (
     ContactFactory,
@@ -12,13 +15,19 @@ from api.tests.factories import (
     EventGroupFactory,
     EventInvitationFactory,
     OrganizationFactory,
+    PriorityPassFactory,
     RegistrationFactory,
 )
 from core.models import Country, OrganizationType
 from emails.models import SendEmailTask
 from emails.tests.factories import InvitationEmailFactory
-from events.admin import EventInvitationAdmin, FutureEventFilter, HasUnregisteredFilter
-from events.models import EventInvitation
+from events.admin import (
+    EventInvitationAdmin,
+    FutureEventFilter,
+    HasUnregisteredFilter,
+    PriorityPassAdmin,
+)
+from events.models import EventInvitation, PriorityPass
 
 
 class TestEventInvitationAdmin(TestCase):
@@ -270,3 +279,56 @@ class TestEventInvitationAdmin(TestCase):
         filtered = past_filter.queryset(request, queryset)
         self.assertEqual(filtered.count(), 1)
         self.assertEqual(filtered.first(), past_invitation)
+
+
+class TestPriorityPassAdmin(TestCase):
+    fixtures = ["initial/role", "test/user"]
+
+    def setUp(self):
+        self.site = AdminSite()
+        self.admin = PriorityPassAdmin(PriorityPass, self.site)
+
+        self.group = EventGroupFactory()
+        self.event1 = EventFactory(group=self.group)
+        self.event2 = EventFactory(group=self.group)
+        self.contact = ContactFactory()
+        self.priority_pass = PriorityPassFactory()
+        self.registration1 = RegistrationFactory(
+            contact=self.contact, event=self.event1, priority_pass=self.priority_pass
+        )
+        self.registration2 = RegistrationFactory(
+            contact=self.contact, event=self.event2, priority_pass=self.priority_pass
+        )
+
+    def extract_pdf_text(self, resp):
+        content = b"".join(resp.streaming_content)
+        self.assertTrue(content.startswith(b"%PDF"))
+        text = extract_text(BytesIO(content))
+        return unicodedata.normalize("NFKD", text)
+
+    def test_priority_pass_view(self):
+        self.client.login(email="admin@example.com", password="admin")
+        resp = self.client.get(
+            reverse("admin:priority_pass_view", args=[self.priority_pass.id])
+            + "?pdf=true"
+        )
+        self.assertEqual(resp.status_code, 200)
+        text = self.extract_pdf_text(resp)
+
+        self.assertIn(self.event1.title, text)
+        self.assertIn(self.event2.title, text)
+        self.assertIn(self.contact.full_name, text)
+
+    def test_priority_pass_download(self):
+        self.client.login(email="admin@example.com", password="admin")
+        resp = self.client.get(
+            reverse("admin:priority_pass_view", args=[self.priority_pass.id])
+            + "?pdf=true&download=true"
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("attachment", resp.headers["Content-Disposition"])
+        text = self.extract_pdf_text(resp)
+
+        self.assertIn(self.event1.title, text)
+        self.assertIn(self.event2.title, text)
+        self.assertIn(self.contact.full_name, text)

@@ -51,6 +51,10 @@ jobs:
         id: "e2eTests"
         run: |
           npm run test
+      - name: "Dump logs"
+        if: ${{ !cancelled()  }}
+        run: |
+          docker compose logs
       - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
         with:

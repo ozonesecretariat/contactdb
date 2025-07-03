@@ -248,7 +248,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Contact } from "src/types/registration";
+import type { Contact } from "src/types/nomination";
 
 import { api, apiBase } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";

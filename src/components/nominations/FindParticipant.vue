@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Contact } from "src/types/registration";
+import type { Contact } from "src/types/nomination";
 
 import { useRouteQuery } from "@vueuse/router";
 import { type QTableColumn, useQuasar } from "quasar";

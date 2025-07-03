@@ -92,10 +92,12 @@ class ContactMembershipInline(admin.StackedInline):
 
 class ContactRegistrationsInline(admin.StackedInline):
     extra = 0
+    max_num = 0
+    can_delete = 0
     model = Registration
     autocomplete_fields = ("event", "role", "tags", "organization")
     classes = ["collapse"]
-
+    readonly_fields = ("event", "priority_pass")
     fieldsets = (
         (
             None,
@@ -107,7 +109,7 @@ class ContactRegistrationsInline(admin.StackedInline):
                 "fields": (
                     "date",
                     "role",
-                    ("priority_pass_code", "is_funded", "tags"),
+                    ("priority_pass", "is_funded", "tags"),
                     ("organization", "designation", "department"),
                 ),
                 "classes": ("collapse",),

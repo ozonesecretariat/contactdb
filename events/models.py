@@ -4,14 +4,17 @@ from urllib.parse import urljoin
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.db import models
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 from model_utils import FieldTracker
 
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
+from common.pdf import print_pdf
 from core.models import Contact, Country, Organization
 from emails.validators import validate_placeholders
 
@@ -64,13 +67,19 @@ class Event(models.Model):
     venue_city = models.CharField(max_length=150)
     dates = models.CharField(max_length=255)
 
-    groups = models.ManyToManyField(
+    group = models.ForeignKey(
         EventGroup,
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
         related_name="events",
-        help_text="Groups linking related events",
+        help_text="Group linking related events",
     )
 
+    attach_priority_pass = models.BooleanField(
+        default=False,
+        help_text="Automatically attach priority pass to the accredited confirmation email",
+    )
     confirmation_subject = models.CharField(
         max_length=900, validators=[validate_placeholders], default="", blank=True
     )
@@ -97,6 +106,12 @@ class Event(models.Model):
             return self.import_tasks.latest()
         return None
 
+    @property
+    def venue(self):
+        if self.venue_country:
+            return f"{self.venue_city}, {self.venue_country.name}"
+        return self.venue_city
+
     def clean(self):
         if not self.start_date or not self.end_date:
             return
@@ -107,6 +122,27 @@ class Event(models.Model):
                 {
                     "start_date": msg,
                     "end_date": msg,
+                }
+            )
+
+        if self.attach_priority_pass and (
+            not self.confirmation_content or not self.confirmation_subject
+        ):
+            msg = "Cannot attach priority pass without confirmation email content and subject"
+            raise ValidationError(
+                {
+                    "attach_priority_pass": msg,
+                    "confirmation_subject": msg,
+                    "confirmation_content": msg,
+                }
+            )
+
+        if self.attach_priority_pass and self.group:
+            msg = "Cannot automatically attach priority pass to event group"
+            raise ValidationError(
+                {
+                    "attach_priority_pass": msg,
+                    "group": msg,
                 }
             )
 
@@ -297,6 +333,90 @@ class RegistrationRole(models.Model):
         return self.name
 
 
+class PriorityPass(models.Model):
+    code = RandomCharField(length=10, blank=True, uppercase=True, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "priority pass"
+        verbose_name_plural = "priority passes"
+
+    def __str__(self):
+        return self.code
+
+    def clean(self):
+        super().clean()
+        if len(self.contact_ids) > 1:
+            raise ValidationError(
+                "Priority pass can only be used for one contact at a time"
+            )
+
+    @property
+    def qr_url(self):
+        return (
+            settings.PROTOCOL
+            + settings.MAIN_FRONTEND_HOST
+            + "/scan-pass"
+            + f"?code={self.code}"
+        )
+
+    @property
+    def priority_pass_template(self):
+        return "admin/events/registration/priority_pass.html"
+
+    @property
+    def priority_pass_context(self):
+        return {
+            "priority_pass": self,
+            "qr_url": self.qr_url,
+            "registrations": self.valid_registrations,
+            "organization": self.organization,
+            "contact": self.contact,
+            "country": self.country,
+        }
+
+    @property
+    def valid_registrations(self):
+        return [
+            r
+            for r in self.registrations.all()
+            if r.status != Registration.Status.REVOKED
+        ]
+
+    @property
+    def contact(self):
+        for registration in self.registrations.all():
+            if registration.contact:
+                return registration.contact
+
+        return None
+
+    @property
+    def contact_ids(self):
+        return {r.contact_id for r in self.registrations.all()}
+
+    @property
+    def organization(self):
+        for registration in self.valid_registrations:
+            if registration.organization:
+                return registration.organization
+
+        if self.contact:
+            return self.contact.organization
+
+        return None
+
+    @property
+    def country(self):
+        if self.organization:
+            return self.organization.government or self.organization.country
+
+        if self.contact:
+            return self.contact.country
+
+        return None
+
+
 class Registration(models.Model):
     tracker = FieldTracker()
 
@@ -321,7 +441,12 @@ class Registration(models.Model):
         max_length=20, choices=Status.choices, default=Status.NOMINATED
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
-    priority_pass_code = models.CharField(max_length=150, blank=True)
+    priority_pass = models.ForeignKey(
+        PriorityPass,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="registrations",
+    )
     date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField(default=False)
@@ -343,16 +468,16 @@ class Registration(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
-        unique_together = (
-            "contact",
-            "event",
-        )
+        unique_together = ("contact", "event")
 
     def __str__(self):
         return f"{self.event.code} - {self.contact.full_name}"
 
     def save(self, *args, **kwargs):
         old_status = self.tracker.previous("status_id")
+        if not self.priority_pass:
+            self.priority_pass = PriorityPass.objects.create()
+
         super().save(*args, **kwargs)
 
         if old_status == self.status:
@@ -362,6 +487,13 @@ class Registration(models.Model):
             self.send_confirmation_email()
         elif self.status == self.Status.REVOKED:
             self.send_refusal_email()
+
+    def clean(self):
+        super().clean()
+        if self.priority_pass and {self.contact_id} != self.priority_pass.contact_ids:
+            raise ValidationError(
+                "Priority pass can only be used for one contact at a time"
+            )
 
     def send_confirmation_email(self):
         if not (self.event.confirmation_subject and self.event.confirmation_content):
@@ -376,7 +508,16 @@ class Registration(models.Model):
             content=self.event.confirmation_content,
         )
         msg.recipients.add(self.contact)
-        # TODO, generate and attach pass
+        if self.event.attach_priority_pass and self.priority_pass:
+            msg.attachments.create(
+                file=File(
+                    print_pdf(
+                        template=self.priority_pass.priority_pass_template,
+                        context=self.priority_pass.priority_pass_context,
+                    ),
+                    name=f"{self.priority_pass.code}.pdf",
+                ),
+            )
         msg.queue_emails()
 
     def send_refusal_email(self):

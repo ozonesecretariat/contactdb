@@ -23,6 +23,7 @@ from events.models import (
     EventInvitation,
     LoadEventsFromKronosTask,
     LoadParticipantsFromKronosTask,
+    PriorityPass,
     Registration,
     RegistrationRole,
     RegistrationTag,
@@ -65,6 +66,7 @@ class Command(BaseCommand):
             EventInvitation,
             LoadEventsFromKronosTask,
             LoadParticipantsFromKronosTask,
+            PriorityPass,
             Registration,
             # Email
             EmailTemplate,

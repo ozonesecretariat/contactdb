@@ -2,11 +2,13 @@ import mimetypes
 import uuid
 
 from django.http import FileResponse, HttpResponse
+from rest_framework import mixins, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.permissions import PhotoAccessPermission, PhotoUploadPermission
+from api.serializers.contact import ContactSerializer
 from core.models import Contact
 
 
@@ -56,3 +58,8 @@ class PhotoUploadView(APIView):
             },
             status=201,
         )
+
+
+class ContactViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    serializer_class = ContactSerializer
+    queryset = Contact.objects.all()

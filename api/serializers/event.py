@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
-from api.serializers.contact import OrganizationSerializer
+from api.serializers.contact import (
+    ContactDetailSerializer,
+    OrganizationSerializer,
+)
 from api.serializers.country import CountrySerializer
 from core.models import Contact
 from events.models import (
@@ -11,21 +14,6 @@ from events.models import (
 )
 
 
-class ContactSerializer(serializers.ModelSerializer):
-    organization = OrganizationSerializer(read_only=True)
-
-    class Meta:
-        model = Contact
-        fields = (
-            "id",
-            "first_name",
-            "last_name",
-            "emails",
-            "organization",
-            "full_name",
-        )
-
-
 class EventGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventGroup
@@ -34,7 +22,7 @@ class EventGroupSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     venue_country = CountrySerializer()
-    groups = EventGroupSerializer(many=True, read_only=True)
+    group = EventGroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -46,21 +34,39 @@ class EventSerializer(serializers.ModelSerializer):
             "venue_country",
             "venue_city",
             "dates",
-            "groups",
+            "group",
         )
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    contact = ContactSerializer(read_only=True)
+    contact = ContactDetailSerializer(read_only=True)
     event = EventSerializer(read_only=True)
     role = serializers.SlugRelatedField(
         slug_field="name", queryset=RegistrationRole.objects.all()
     )
+    organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = Registration
-        fields = ("id", "event", "contact", "created_at", "status", "role")
-        read_only_fields = ("created_at", "status")
+        fields = (
+            "id",
+            "event",
+            "contact",
+            "created_at",
+            "status",
+            "role",
+            "organization",
+            "designation",
+            "department",
+        )
+        read_only_fields = ("id", "created_at", "status")
+
+
+class RegistrationStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Registration
+        fields = ("status", "id")
+        read_only_fields = ("id",)
 
 
 class NominationSerializer(serializers.ModelSerializer):

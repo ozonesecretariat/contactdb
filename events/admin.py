@@ -2,13 +2,17 @@ import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
 from django.db.models import Count, Q
+from django.http import FileResponse
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
 from import_export import fields
 from import_export.admin import ExportMixin
 
 from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
+from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
@@ -20,6 +24,7 @@ from events.models import (
     LoadEventsFromKronosTask,
     LoadOrganizationsFromKronosTask,
     LoadParticipantsFromKronosTask,
+    PriorityPass,
     Registration,
     RegistrationRole,
     RegistrationTag,
@@ -131,6 +136,10 @@ class RegistrationResource(ModelResource):
         column_name="role",
         attribute="role__name",
     )
+    priority_pass = fields.Field(
+        column_name="priority_pass",
+        attribute="priority_pass__code",
+    )
     prefetch_related = (
         "organization",
         "contact",
@@ -154,6 +163,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__email_ccs",
         "status",
         "role__name",
+        "priority_pass__code",
     ]
     list_display_links = ("contact", "event")
     list_display = (
@@ -176,10 +186,13 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
     ]
-    autocomplete_fields = ("contact", "event", "role", "tags")
+    autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
         "contact",
+        "event",
         "contact__organization",
+        "contact__organization__government",
+        "contact__organization__country",
         "role",
         "tags",
     )
@@ -190,9 +203,11 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             None,
             {
                 "fields": (
-                    ("contact", "role"),
-                    ("event", "status"),
-                    "priority_pass_code",
+                    "contact",
+                    "role",
+                    "event",
+                    "status",
+                    "priority_pass",
                     "is_funded",
                     "date",
                 )
@@ -218,7 +233,19 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             },
         ),
     )
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "priority_pass",
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + (
+                "contact",
+                "event",
+            )
+        return self.readonly_fields
 
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
@@ -252,6 +279,143 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
 
+class RegistrationInline(admin.TabularInline):
+    model = Registration
+    extra = 0
+    max_num = 0
+    fields = (
+        "contact",
+        "event",
+        "role",
+        "status",
+        "is_funded",
+    )
+    readonly_fields = ("contact", "event")
+    can_delete = False
+
+
+@admin.register(PriorityPass)
+class PriorityPassAdmin(ModelAdmin):
+    inlines = (RegistrationInline,)
+    search_fields = (
+        "code",
+        "registrations__event__code",
+        "registrations__event__title",
+        "registrations__contact__first_name",
+        "registrations__contact__last_name",
+        "registrations__contact__emails",
+        "registrations__contact__email_ccs",
+        "registrations__contact__phones",
+        "registrations__contact__organization__name",
+        "registrations__organization__name",
+    )
+    list_display = ("code", "registrations_links", "pass_download_link", "created_at")
+    list_filter = (
+        AutocompleteFilterFactory("contact", "registrations__contact"),
+        AutocompleteFilterFactory("event", "registrations__event"),
+    )
+    fields = (
+        "code",
+        "pass_download_link",
+        "created_at",
+    )
+    prefetch_related = (
+        "registrations",
+        "registrations__event",
+        "registrations__contact",
+        "registrations__contact__organization",
+    )
+    readonly_fields = (
+        "code",
+        "registrations_links",
+        "pass_download_link",
+        "created_at",
+    )
+    ordering = ("-created_at",)
+    annotate_query = {
+        "registration_count": Count("registrations"),
+    }
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
+
+    @admin.display(description="Registrations", ordering="registration_count")
+    def registrations_links(self, obj):
+        return self.get_m2m_links(obj.registrations.all())
+
+    @admin.display(description="Priority pass")
+    def pass_download_link(self, obj):
+        url = reverse("admin:priority_pass_view", args=[obj.id]) + "?pdf=true"
+        url_download = url + "&download=true"
+        return format_html(
+            " | ".join(
+                [
+                    '<a href="{}" target="_blank">View</a>',
+                    '<a href="{}" target="_blank">Download</a>',
+                    '<a href="{}" target="_blank">Scan</a>',
+                ]
+            ),
+            url,
+            url_download,
+            obj.qr_url,
+        )
+
+    def get_urls(self):
+        return [
+            path(
+                "pass-scan-view/",
+                self.admin_site.admin_view(self.pass_scan_view),
+                name="priority_pass_scan_view",
+            ),
+            path(
+                "<path:object_id>/pass/",
+                self.admin_site.admin_view(self.pass_view),
+                name="priority_pass_view",
+            ),
+            *super().get_urls(),
+        ]
+
+    def pass_view(self, request, object_id):
+        priority_pass = self.get_object(request, object_id)
+        context = {
+            **self.admin_site.each_context(request),
+            **priority_pass.priority_pass_context,
+        }
+        if request.GET.get("pdf") == "true":
+            return FileResponse(
+                print_pdf(
+                    priority_pass.priority_pass_template,
+                    context=context,
+                    request=request,
+                ),
+                content_type="application/pdf",
+                filename=f"{priority_pass.code}.pdf",
+                as_attachment=request.GET.get("download") == "true",
+            )
+
+        return TemplateResponse(request, priority_pass.priority_pass_template, context)
+
+    def pass_scan_view(self, request):
+        if not (code := request.GET.get("code")):
+            self.message_user(
+                request, "No priority pass code provided", level=messages.ERROR
+            )
+            return redirect(reverse("admin:events_prioritypass_changelist"))
+
+        if not (priority_pass := self.get_object(request, code, "code")):
+            self.message_user(
+                request, "Priority pass does not exist!", level=messages.ERROR
+            )
+            return redirect(reverse("admin:events_prioritypass_changelist"))
+
+        return redirect(
+            reverse("admin:events_prioritypass_change", args=[priority_pass.id])
+        )
+
+
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
@@ -270,7 +434,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "venue_country__code",
         "venue_country__name__unaccent",
         "dates",
-        "groups__name",
+        "group__name",
     )
     list_display_links = ("code", "title")
     list_display = (
@@ -282,12 +446,12 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "end_date",
         "dates",
         "registrations_count",
-        "groups_display",
+        "group",
     )
-    autocomplete_fields = ("venue_country", "groups")
+    autocomplete_fields = ("venue_country", "group")
     list_filter = (
         AutocompleteFilterFactory("venue country", "venue_country"),
-        AutocompleteFilterFactory("groups", "groups"),
+        AutocompleteFilterFactory("group", "group"),
         "start_date",
         "end_date",
     )
@@ -299,6 +463,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     prefetch_related = (
         "venue_country",
         "registrations",
+        "group",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -311,7 +476,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 "fields": (
                     "code",
                     "title",
-                    "groups",
+                    "group",
                 )
             },
         ),
@@ -338,6 +503,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "Confirmation email",
             {
                 "fields": (
+                    "attach_priority_pass",
                     "confirmation_subject",
                     "confirmation_content",
                 )
@@ -368,10 +534,6 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "event",
             f"{obj.registration_count} participants",
         )
-
-    @admin.display(description="Event Groups")
-    def groups_display(self, obj):
-        return ", ".join(map(str, obj.groups.all()))
 
     def has_load_contacts_from_kronos_permission(self, request):
         return self.has_add_permission(request) and has_model_permission(

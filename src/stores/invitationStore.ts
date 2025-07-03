@@ -1,7 +1,7 @@
 import type { AxiosError } from "axios";
 import type { MeetingEvent } from "src/types/event";
+import type { Contact, EventNomination } from "src/types/nomination";
 import type { Organization } from "src/types/organization";
-import type { Contact, EventNomination } from "src/types/registration";
 
 import { api } from "boot/axios";
 import { defineStore } from "pinia";

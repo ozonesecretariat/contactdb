@@ -117,6 +117,7 @@ INSTALLED_APPS = [
     "health_check",
     "health_check.db",
     "health_check.contrib.redis",
+    "qr_code",
     # This app
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",

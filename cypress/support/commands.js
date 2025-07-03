@@ -326,3 +326,14 @@ Cypress.Commands.addAll({
     });
   },
 });
+
+/**
+ * Clicking on a link might open a new tab, for those cases use this command to keep the page
+ * in the same tab. This is needed because cypress will ignore the newly open tab.
+ */
+Cypress.Commands.add("goToHref", { prevSubject: true }, (subject) =>
+  cy
+    .wrap(subject)
+    .invoke("attr", "href")
+    .then((href) => cy.visit(href)),
+);
