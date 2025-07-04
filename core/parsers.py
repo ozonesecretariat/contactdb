@@ -226,7 +226,8 @@ class ContactParser:
         tags: list[RegistrationTag] = None,
     ) -> Registration | None:
         """
-        Create a Registration instance from a Kronos registration dictionary.
+        Create a Registration instance from a Kronos registration
+        dictionary.
         """
         if not registration_data:
             return None
