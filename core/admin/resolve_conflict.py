@@ -76,41 +76,41 @@ class ResolveConflictAdmin(ContactAdminBase):
     )
     def keep_both_contacts(self, request, queryset):
         """
-        If contact has multiple contact ids (is a merged contact), all
-        contact_ids will be reimported otherwise, keep the conflict as
-        a contact.
+        Convert conflicts to contacts. If a contact has multiple
+        contact_ids (e.g. it's a merged Kronos contact), all contact_ids
+        will be reimported from Kronos.
         """
 
-        def conflicts_to_contacts(conflicts):
-            conflicts_to_delete = []
+        def create_contacts_from_conflicts(conflict_queryset) -> int:
+            conflicts_dict = list(conflict_queryset.values())
+            conflicts_ids = []
+
             with transaction.atomic():
-                for conflict in conflicts:
+                for conflict in conflicts_dict:
                     conflict.pop("existing_contact_id", None)
-                    cid = conflict.pop("id", None)
+                    conflict_id = conflict.pop("id", None)
+                    conflicts_ids.append(conflict_id)
 
                     Contact.objects.create(**conflict)
-                    conflicts_to_delete.append(cid)
 
-                ResolveConflict.objects.filter(pk__in=conflicts_to_delete).delete()
-            return conflicts_to_delete
+                ResolveConflict.objects.filter(pk__in=conflicts_ids).delete()
+            return len(conflicts_ids)
 
-        # For contacts with no contact_ids, create a new contact
-        conflicts = queryset.filter(
+        # Handle conflicts with no contact_ids
+        no_contact_ids_qs = queryset.filter(
             Q(existing_contact__contact_ids__isnull=True)
             | Q(existing_contact__contact_ids=[])
         ).values()
+        count_created = create_contacts_from_conflicts(no_contact_ids_qs)
 
-        n_contacts = conflicts_to_contacts(conflicts)
+        if count_created:
+            self.message_user(
+                request,
+                f"Created {count_created} contacts from conflicts.",
+                messages.SUCCESS,
+            )
 
-        self.message_user(
-            request,
-            f"Created {len(n_contacts)} contacts from conflicts.",
-            messages.SUCCESS,
-        )
-
-        # For contacts with contact_ids, reimport them from Kronos.
-        # Since conflicts from different sources can't be distinguished,
-        # convert all conflicts to contacts to ensure no data is lost.
+        # Reimport contacts with contact_ids from Kronos
         kronos_contacts = (
             Contact.objects.filter(
                 conflicting_contacts__in=queryset, contact_ids__isnull=False
@@ -119,32 +119,37 @@ class ResolveConflictAdmin(ContactAdminBase):
             .distinct()
         )
 
-        kronos_ids = set(
-            chain.from_iterable(kronos_contacts.values_list("contact_ids", flat=True))
-        )
-
-        n_contacts = conflicts_to_contacts(
-            ResolveConflict.objects.filter(
-                existing_contact__in=kronos_contacts
-            ).values()
-        )
-
-        self.message_user(
-            request,
-            f"Created {len(n_contacts)} contacts from conflicts.",
-            messages.SUCCESS,
-        )
-
-        # Reimport kronos contacts with registrations
-        contact_parser = ContactParser()
-        new_contacts = contact_parser.import_contacts_with_registrations(kronos_ids)
-
-        if new_contacts:
-            self.message_user(
-                request,
-                f"Reimported {len(new_contacts)} contacts with registrations from Kronos.",
-                messages.SUCCESS,
+        if kronos_contacts.exists():
+            kronos_ids = set(
+                chain.from_iterable(
+                    kronos_contacts.values_list("contact_ids", flat=True)
+                )
             )
+
+            # Convert all related conflicts to contacts when reimporting
+            related_conflicts = ResolveConflict.objects.filter(
+                existing_contact__in=kronos_contacts
+            )
+            count_created = create_contacts_from_conflicts(related_conflicts)
+
+            if count_created:
+                self.message_user(
+                    request,
+                    f"Created {count_created} contacts from conflicts.",
+                    messages.SUCCESS,
+                )
+
+            contact_parser = ContactParser()
+            imported_contacts = contact_parser.import_contacts_with_registrations(
+                kronos_ids
+            )
+
+            if imported_contacts:
+                self.message_user(
+                    request,
+                    f"Reimported {len(imported_contacts)} contacts with registrations from Kronos.",
+                    messages.SUCCESS,
+                )
 
     @staticmethod
     def save_incoming_data(incoming_contact):
