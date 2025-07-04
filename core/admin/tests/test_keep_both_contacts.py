@@ -216,15 +216,13 @@ class TestKeepBothContacts(BaseAPITestCase):
         self.assertEqual(self.contact.registrations.count(), 1)
 
         self.login_admin()
+        url = reverse("admin:core_resolveconflict_changelist")
         data = {
             "action": "keep_both_contacts",
             "select_across": "0",
             "index": "0",
             "_selected_action": self.conflict1.pk,
         }
-
-        url = reverse("admin:core_resolveconflict_changelist")
-
         response = self.client.post(
             path=url,
             data=data,
@@ -232,8 +230,6 @@ class TestKeepBothContacts(BaseAPITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-
-        # The conflict is transformed into a new contact
         self.assertEqual(Contact.objects.count(), 2)
         self.assertEqual(ResolveConflict.objects.count(), 1)
         self.assertEqual(ResolveConflict.objects.first().first_name, "Conflict2")
@@ -243,27 +239,25 @@ class TestKeepBothContacts(BaseAPITestCase):
 
     def test_keep_both_kronos_contacts(self):
         """
-        Test that keep both contacts works with Kronos contacts.
+        Test that `keep both contacts` works with Kronos contacts.
         All contact_ids of the main contact will be reimported, all
         conflicts will be made into new contacts.
         """
-
         self.contact.contact_ids = ["contactid1", "contactid2"]
         self.contact.save()
+
         self.assertEqual(Contact.objects.count(), 1)
         self.assertEqual(ResolveConflict.objects.count(), 2)
         self.assertEqual(Registration.objects.count(), 1)
-        self.assertEqual(self.contact.registrations.count(), 1)
 
         self.login_admin()
+        url = reverse("admin:core_resolveconflict_changelist")
         data = {
             "action": "keep_both_contacts",
             "select_across": "0",
             "index": "0",
             "_selected_action": self.conflict1.pk,
         }
-
-        url = reverse("admin:core_resolveconflict_changelist")
         response = self.client.post(
             path=url,
             data=data,
@@ -271,13 +265,12 @@ class TestKeepBothContacts(BaseAPITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-
-        # Two new contacts are reimported from Kronos
-        # Two conflicts are transformed into new contacts
         self.assertEqual(Contact.objects.count(), 4)
-
         self.assertEqual(ResolveConflict.objects.count(), 0)
         self.assertEqual(Registration.objects.count(), 1)
+
+        imported_contacts = Contact.objects.filter(contact_ids__isnull=False)
+        self.assertEqual(imported_contacts.count(), 2)
 
         contact1 = Contact.objects.get(contact_ids=["contactid1"])
         contact2 = Contact.objects.get(contact_ids=["contactid2"])
@@ -286,6 +279,8 @@ class TestKeepBothContacts(BaseAPITestCase):
 
         self.assertEqual(contact1.title, "Ms.1")
         self.assertEqual(contact2.title, "Ms.2")
+        self.assertEqual(contact1.registrations.count(), 1)
+
         self.assertEqual(Contact.objects.filter(contact_ids__isnull=True).count(), 2)
 
     def test_keep_both_mixed_contacts(self):
@@ -296,11 +291,11 @@ class TestKeepBothContacts(BaseAPITestCase):
         self.contact.contact_ids = ["contactid1"]
         self.contact.save()
 
-        contact = ContactFactory(
+        local_contact = ContactFactory(
             first_name="Other contact",
             emails=["jane@book.com"],
         )
-        self.conflict2.existing_contact = contact
+        self.conflict2.existing_contact = local_contact
         self.conflict2.save()
 
         self.assertEqual(Contact.objects.count(), 2)
@@ -308,14 +303,13 @@ class TestKeepBothContacts(BaseAPITestCase):
         self.assertEqual(Registration.objects.count(), 1)
 
         self.login_admin()
+        url = reverse("admin:core_resolveconflict_changelist")
         data = {
             "action": "keep_both_contacts",
             "select_across": "0",
             "index": "0",
             "_selected_action": [self.conflict1.pk, self.conflict2.pk],
         }
-
-        url = reverse("admin:core_resolveconflict_changelist")
         response = self.client.post(
             path=url,
             data=data,
@@ -323,13 +317,12 @@ class TestKeepBothContacts(BaseAPITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-
         self.assertEqual(Contact.objects.count(), 4)
-        self.assertEqual(Contact.objects.filter(contact_ids__isnull=True).count(), 3)
-
         self.assertEqual(ResolveConflict.objects.count(), 0)
         self.assertEqual(Registration.objects.count(), 1)
 
         contact1 = Contact.objects.get(contact_ids=["contactid1"])
         self.assertEqual(contact1.first_name, "Jane")
         self.assertEqual(contact1.registrations.count(), 1)
+
+        self.assertEqual(Contact.objects.filter(contact_ids__isnull=True).count(), 3)

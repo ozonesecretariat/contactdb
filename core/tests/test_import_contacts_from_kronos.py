@@ -11,7 +11,7 @@ from core.models import (
     OrganizationType,
 )
 from core.parsers import ContactParser
-from events.models import Event
+from events.models import Event, RegistrationRole
 
 
 class TestImportContactFromKronos(TestCase):
@@ -212,8 +212,6 @@ class TestImportContactFromKronos(TestCase):
             ),
         )
         self.assertEqual(registration.is_funded, False)
-
-        # TODO
-        # self.assertEqual(
-        #     registration.role, RegistrationRole.objects.get(name="Alternate Head")
-        # )
+        self.assertEqual(
+            registration.role, RegistrationRole.objects.get(name="Alternate Head")
+        )
