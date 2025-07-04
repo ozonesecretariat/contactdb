@@ -349,14 +349,9 @@ class ContactParser:
                     continue
 
                 for registration_dict in registrations_data:
-                    try:
-                        self.create_registration(
-                            registration_dict,
-                            contact=contact,
-                        )
-                    except ValueError as e:
-                        raise (
-                            "Failed to create registration for contact "
-                            f"{contact.id} with Kronos ID {kronos_id}"
-                        ) from e
+                    self.create_registration(
+                        registration_dict,
+                        contact=contact,
+                    )
+
         return new_contacts

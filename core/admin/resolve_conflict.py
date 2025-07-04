@@ -3,7 +3,7 @@ from itertools import chain
 
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Q
 from django.utils.html import format_html
 
@@ -88,15 +88,9 @@ class ResolveConflictAdmin(ContactAdminBase):
                     conflict.pop("existing_contact_id", None)
                     cid = conflict.pop("id", None)
 
-                    try:
-                        Contact.objects.create(**conflict)
-                        conflicts_to_delete.append(cid)
-                    except IntegrityError:
-                        self.message_user(
-                            request,
-                            f"Failed to create contact from conflict (ID: {cid}).",
-                            messages.ERROR,
-                        )
+                    Contact.objects.create(**conflict)
+                    conflicts_to_delete.append(cid)
+
                 ResolveConflict.objects.filter(pk__in=conflicts_to_delete).delete()
             return conflicts_to_delete
 
@@ -118,10 +112,15 @@ class ResolveConflictAdmin(ContactAdminBase):
         # Since conflicts from different sources can't be distinguished,
         # convert all conflicts to contacts to ensure no data is lost.
         kronos_contacts = (
-            Contact.objects.prefetch_related("conflicting_contacts")
-            .filter(conflicting_contacts__in=queryset, contact_ids__isnull=False)
+            Contact.objects.filter(
+                conflicting_contacts__in=queryset, contact_ids__isnull=False
+            )
             .exclude(contact_ids=[])
             .distinct()
+        )
+
+        kronos_ids = set(
+            chain.from_iterable(kronos_contacts.values_list("contact_ids", flat=True))
         )
 
         n_contacts = conflicts_to_contacts(
@@ -134,10 +133,6 @@ class ResolveConflictAdmin(ContactAdminBase):
             request,
             f"Created {len(n_contacts)} contacts from conflicts.",
             messages.SUCCESS,
-        )
-
-        kronos_ids = set(
-            chain.from_iterable(kronos_contacts.values_list("contact_ids", flat=True))
         )
 
         # Reimport kronos contacts with registrations
