@@ -126,7 +126,8 @@ class ResolveConflictAdmin(ContactAdminBase):
                 )
             )
 
-            # Convert all related conflicts to contacts when reimporting
+            # Convert all related conflicts to contacts before
+            # reimporting
             related_conflicts = ResolveConflict.objects.filter(
                 existing_contact__in=kronos_contacts
             )
