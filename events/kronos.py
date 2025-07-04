@@ -133,3 +133,20 @@ class KronosClient:
             if e.response.status_code == 404:
                 return None
             raise
+
+    def get_registrations_data(self, contact_kronos_ids: str):
+        """Get Kronos data for contact registrations."""
+        try:
+            qparams = {
+                "contactIds": [contact_kronos_ids],
+            }
+            return self.send_kronos(
+                path="/api/v2018/event-participants",
+                params={
+                    "q": json.dumps(qparams),
+                },
+            ).get("records", [])
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                return None
+            raise
