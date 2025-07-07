@@ -291,6 +291,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "email_links",
         "passport_display",
         "credentials_display",
+        "has_credentials",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
