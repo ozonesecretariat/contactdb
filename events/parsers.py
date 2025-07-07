@@ -6,8 +6,9 @@ from functools import cached_property
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 
-from common.parsing import parse_list
+from common.parsing import parse_list, title_map
 from core.models import (
+    BaseContact,
     Contact,
     Country,
     Organization,
@@ -315,7 +316,10 @@ class KronosParticipantsParser(KronosParser):
         )
         contact_dict["emails"] = parse_list(contact_dict.get("emails"))
         contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
-
+        title = title_map.get(
+            contact_dict.get("title", ""), contact_dict.get("title", "")
+        )
+        contact_dict["title"] = title if title in BaseContact.Title.values else ""
         langs = self.get_languages(contact_dict.get("notes", ""))
 
         contact_defaults = {
