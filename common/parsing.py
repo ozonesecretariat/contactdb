@@ -3,6 +3,14 @@ import string
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
 
+title_map = {
+    "Mr": "Mr.",
+    "Ms": "Ms.",
+    "Mrs": "Ms.",
+    "Mrs.": "Ms.",
+    "Mme": "Mme.",
+}
+
 
 def remove_punctuation(value: str):
     return value.translate(punctuation_translate)
