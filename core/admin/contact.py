@@ -180,7 +180,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     ("title", "honorific", "respectful"),
                     "first_name",
                     "last_name",
-                    "country",
                     "photo",
                 ),
             },
@@ -206,7 +205,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                     "department",
                     "affiliation",
                     "org_head",
-                    "is_use_organization_address",
                 )
             },
         ),
@@ -215,7 +213,9 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             {
                 "classes": ["collapse"],
                 "fields": (
-                    ("city", "state", "postal_code"),
+                    "is_use_organization_address",
+                    ("country", "city"),
+                    ("state", "postal_code"),
                     "address",
                 ),
             },
