@@ -1,0 +1,197 @@
+{% load static %}
+{% load qr_code %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Pass for {{ contact.full_name }}</title>
+
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
+    />
+    <style>
+      @page {
+        size: A4;
+        margin: 0.75cm 0.75cm 0.25cm 0.75cm;
+      }
+
+      /* Preview for 72dpi */
+      @media screen {
+        body,
+        footer {
+          max-width: 595px;
+        }
+      }
+
+      /* Preview for 96dpi */
+      @media screen and (min-resolution: 96dpi) {
+        body,
+        footer {
+          max-width: 794px;
+        }
+      }
+
+      body {
+        background-color: white;
+        font-family: Arial, sans-serif;
+      }
+
+      p {
+        margin: 4px 0;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      header .qr-code {
+        max-width: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      header .qr-code img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      table {
+        margin-top: 16px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background-color: #1479ba;
+        text-transform: uppercase;
+        color: white;
+        font-size: 18px;
+      }
+
+      th,
+      td {
+        padding: 4px 16px;
+      }
+
+      tbody:before {
+        content: "-";
+        display: block;
+        line-height: 1em;
+        color: transparent;
+      }
+
+      tbody tr td {
+        background-color: #62a6d2;
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .country {
+        margin-top: 24px;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .name {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+        justify-content: space-between;
+      }
+
+      footer {
+        position: absolute;
+        bottom: 0;
+        font-size: 12px;
+      }
+
+      footer .warning {
+        font-weight: bold;
+        background-color: #89010c;
+        color: white;
+        padding: 4px 8px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="{% static 'img/logo.png' %}" alt="Logo" />
+      <div class="qr-code">
+        {% qr_from_text qr_url image_format='png' %}
+        {{ priority_pass.code }}
+      </div>
+    </header>
+    <table>
+      <thead>
+        <tr>
+          <th>Meeting</th>
+          <th>Venue</th>
+          <th>Dates</th>
+        </tr>
+      </thead>
+      {% for registration in registrations %}
+        <tbody>
+          <tr>
+            <td>{{ registration.event.code }}</td>
+            <td>{{ registration.event.venue }}</td>
+            <td>{{ registration.event.dates }}</td>
+          </tr>
+          <tr>
+            <td colspan="3">{{ registration.event.title }}</td>
+          </tr>
+        </tbody>
+      {% endfor %}
+    </table>
+    <h1 class="country">{{ country|default:'' }}</h1>
+    <section class="details">
+      <div>
+        <p class="name">{{ contact.display_name }}</p>
+        <p class="org">
+          {{ contact.designation|default:'-' }}
+          <br />
+          <b>{{ contact.organization|default:'-' }}</b>
+        </p>
+        <p>
+          {{ contact.organization.city|default:'-' }}
+          <br />
+          {{ contact.organization.country|default:'-' }}
+        </p>
+      </div>
+      <dl>
+        <dt>Phone</dt>
+        <dd>{{ contact.phones|join:", "|default:"-" }}</dd>
+        <dt>Email</dt>
+        <dd>{{ contact.emails|join:", "|default:"-" }}</dd>
+        <dt>Other emails</dt>
+        <dd>{{ contact.email_ccs|join:", "|default:"-" }}</dd>
+      </dl>
+    </section>
+    <footer>
+      <p><b>Note</b></p>
+      <p>
+        This Priority Pass bears the information needed to obtain your conference badge. Please bring a copy of this
+        Priority Pass on-site and have your PASSPORT ready for verification.
+      </p>
+      <p>This is only valid for the person whose name is mentioned on this pass. This pass is non-transferable.</p>
+      <p class="warning">
+        !! THIS PASS DOES NOT GRANT ACCESS TO THE VENUE. IT CAN SOLELY BE USED TO OBTAIN AN ACCESS BADGE !!
+      </p>
+    </footer>
+  </body>
+</html>

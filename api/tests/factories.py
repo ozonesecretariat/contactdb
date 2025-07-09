@@ -6,6 +6,7 @@ from events.models import (
     Event,
     EventGroup,
     EventInvitation,
+    PriorityPass,
     Registration,
     RegistrationRole,
 )
@@ -120,6 +121,11 @@ class RegistrationRoleFactory(factory.django.DjangoModelFactory):
     kronos_value = 1
 
 
+class PriorityPassFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PriorityPass
+
+
 class RegistrationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Registration
@@ -129,4 +135,4 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
     role = factory.SubFactory(RegistrationRoleFactory)
     date = factory.LazyFunction(timezone.now)
     is_funded = False
-    priority_pass_code = ""
+    priority_pass = factory.SubFactory(PriorityPassFactory)

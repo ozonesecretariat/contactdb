@@ -274,6 +274,11 @@ class EmailAttachment(models.Model):
     def __str__(self):
         return self.name or self.file.name
 
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = self.file.name
+        super().save(*args, **kwargs)
+
 
 class InvitationEmail(Email):
     """
