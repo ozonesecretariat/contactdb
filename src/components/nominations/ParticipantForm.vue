@@ -313,8 +313,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Contact } from "src/types/nomination";
 import type { QSelectOnFilterUpdate } from "src/types/quasar";
-import type { Contact } from "src/types/registration";
 
 import { api, apiBase } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
@@ -357,7 +357,6 @@ const data = reactive({
   photoUrl: "",
   postalCode: "",
   state: "",
-  street: "",
   title: "",
 });
 const selectedOrganization = computed(() =>

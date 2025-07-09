@@ -11,7 +11,12 @@
       "venue_country": "MM",
       "venue_city": "Tashkent",
       "dates": "15-22 April",
-      "groups": [2]
+      "group": 2,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -26,7 +31,12 @@
       "venue_country": "AF",
       "venue_city": "Oslo",
       "dates": "15-22 April",
-      "groups": [2]
+      "group": 2,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -41,7 +51,12 @@
       "venue_country": "IN",
       "venue_city": "Prague",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -56,7 +71,12 @@
       "venue_country": "HN",
       "venue_city": "Hanoi",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -71,7 +91,12 @@
       "venue_country": "SL",
       "venue_city": "Dodoma",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -86,7 +111,12 @@
       "venue_country": "ME",
       "venue_city": "Bandar Seri Begawan",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -101,7 +131,12 @@
       "venue_country": "MX",
       "venue_city": "Prague",
       "dates": "15-22 April",
-      "groups": [2]
+      "group": 2,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -116,7 +151,12 @@
       "venue_country": "HU",
       "venue_city": "Riyadh",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -131,7 +171,12 @@
       "venue_country": "GR",
       "venue_city": "Mata-Utu",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -146,7 +191,12 @@
       "venue_country": "AD",
       "venue_city": "Apia",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -161,7 +211,12 @@
       "venue_country": "MG",
       "venue_city": "Budapest",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -176,7 +231,12 @@
       "venue_country": "PL",
       "venue_city": "Porto-Novo",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -191,7 +251,12 @@
       "venue_country": "TD",
       "venue_city": "Damascus",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -206,7 +271,12 @@
       "venue_country": "BZ",
       "venue_city": "Suva",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -221,7 +291,12 @@
       "venue_country": "KW",
       "venue_city": "Online",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -236,7 +311,12 @@
       "venue_country": "MD",
       "venue_city": "Kuwait City",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -251,7 +331,12 @@
       "venue_country": "BH",
       "venue_city": "Online",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -266,7 +351,12 @@
       "venue_country": "GY",
       "venue_city": "Ottawa",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -281,7 +371,12 @@
       "venue_country": "BD",
       "venue_city": "Nouakchott",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   },
   {
@@ -296,7 +391,12 @@
       "venue_country": "AF",
       "venue_city": "Yaoundé",
       "dates": "",
-      "groups": []
+      "group": null,
+      "attach_priority_pass": false,
+      "confirmation_subject": "",
+      "confirmation_content": "",
+      "refuse_subject": "",
+      "refuse_content": ""
     }
   }
 ]
