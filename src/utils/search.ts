@@ -1,5 +1,9 @@
 export function unaccentMatch(valueToFind: string, searchFields: (null | string | string[] | undefined)[]) {
   const searchValue = normalizeString(valueToFind);
+  if (!searchValue) {
+    return true;
+  }
+
   for (const field of searchFields) {
     if (!field) {
       continue;

@@ -110,7 +110,6 @@
         <q-btn v-if="data.photoUrl" label="View current" @click="currentImageDialog = true" />
       </template>
     </q-file>
-
     <q-dialog v-model="currentImageDialog">
       <q-card class="bg-primary text-white" style="width: 800px; max-width: 90vw">
         <q-card-section class="row items-center">
@@ -123,7 +122,73 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-
+    <div class="text-subtitle2">Address</div>
+    <q-checkbox
+      v-model="data.isUseOrganizationAddress"
+      label="Use organization address"
+      :error="!!errors.isUseOrganizationAddress"
+      :error-message="errors.isUseOrganizationAddress"
+      name="isUseOrganizationAddress"
+    />
+    <template v-if="!data.isUseOrganizationAddress">
+      <div class="address-row">
+        <q-select
+          v-model="data.country"
+          :options="countries"
+          option-value="code"
+          option-label="name"
+          map-options
+          emit-value
+          outlined
+          label="Country"
+          use-input
+          input-debounce="0"
+          @filter="searchCountries"
+        >
+          <template #no-option>
+            <q-item>
+              <q-item-section class="text-grey">No results</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-input
+          v-model="data.city"
+          :error="!!errors.city"
+          :error-message="errors.city"
+          outlined
+          label="City"
+          name="city"
+        />
+      </div>
+      <div class="address-row">
+        <q-input
+          v-model="data.state"
+          :error="!!errors.state"
+          :error-message="errors.state"
+          outlined
+          label="State"
+          name="state"
+        />
+        <q-input
+          v-model="data.postalCode"
+          :error="!!errors.postalCode"
+          :error-message="errors.postalCode"
+          outlined
+          label="Postal Code"
+          name="postalCode"
+        />
+      </div>
+      <q-input
+        v-model="data.address"
+        :error="!!errors.address"
+        :error-message="errors.address"
+        outlined
+        type="textarea"
+        label="Address"
+        name="address"
+      />
+    </template>
+    <div class="text-subtitle2">Files</div>
     <template v-if="selectedOrganization?.organizationType === 'GOV'">
       <q-checkbox
         v-model="data.hasCredentials"
@@ -248,10 +313,12 @@
 </template>
 
 <script setup lang="ts">
+import type { QSelectOnFilterUpdate } from "src/types/quasar";
 import type { Contact } from "src/types/registration";
 
 import { api, apiBase } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
+import { unaccentSearch } from "src/utils/search";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -261,8 +328,13 @@ const invitation = useInvitationStore();
 const router = useRouter();
 const { errors, setErrors } = useFormErrors();
 
+const countries = ref(invitation.countries);
+
 const currentImageDialog = ref(false);
 const data = reactive({
+  address: "",
+  city: "",
+  country: "",
   credentials: null,
   department: "",
   designation: "",
@@ -270,6 +342,7 @@ const data = reactive({
   emails: "",
   firstName: "",
   hasCredentials: false,
+  isUseOrganizationAddress: false,
   lastName: "",
   mobiles: "",
   nationality: "",
@@ -282,6 +355,9 @@ const data = reactive({
   phones: "",
   photo: null,
   photoUrl: "",
+  postalCode: "",
+  state: "",
+  street: "",
   title: "",
 });
 const selectedOrganization = computed(() =>
@@ -359,6 +435,8 @@ async function saveForm() {
     const newContact = (
       await api.post<Contact>(url, {
         ...data,
+        address: data.isUseOrganizationAddress ? "" : data.address,
+        city: data.isUseOrganizationAddress ? "" : data.city,
         credentials: data.hasCredentials ? await fileToBase64Dict(data.credentials) : null,
         emailCcs: toList(data.emailCcs),
         emails: toList(data.emails),
@@ -366,6 +444,8 @@ async function saveForm() {
         passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
         photo: await fileToBase64(data.photo),
+        postalCode: data.isUseOrganizationAddress ? "" : data.postalCode,
+        state: data.isUseOrganizationAddress ? "" : data.state,
       })
     ).data;
     await invitation.loadContacts();
@@ -377,6 +457,16 @@ async function saveForm() {
   }
 }
 
+function searchCountries(valueToFind: string, update: QSelectOnFilterUpdate) {
+  update(() => {
+    countries.value = unaccentSearch(valueToFind, invitation.countries, (row) => [
+      row.code,
+      row.name,
+      row.officialName,
+    ]);
+  });
+}
+
 function toList(val: string) {
   if (!val) return [];
   return [val];
@@ -386,5 +476,11 @@ function toList(val: string) {
 <style scoped lang="scss">
 .small-input {
   min-width: 7rem;
+}
+
+.address-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 </style>
