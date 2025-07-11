@@ -1,7 +1,7 @@
 import factory
 from django.utils import timezone
 
-from core.models import Contact, Country, Organization
+from core.models import BaseContact, Contact, Country, Organization
 from events.models import (
     Event,
     EventGroup,
@@ -47,7 +47,7 @@ class ContactFactory(factory.django.DjangoModelFactory):
     mobiles = factory.LazyFunction(lambda: [])
     faxes = factory.LazyFunction(lambda: [])
 
-    title = "Mr."
+    title = BaseContact.Title.MR
     designation = "Test Designation"
     department = "Test Department"
     primary_lang = Contact.UNLanguage.ENGLISH

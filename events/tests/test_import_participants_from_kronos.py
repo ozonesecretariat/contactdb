@@ -4,7 +4,13 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
 
-from core.models import Contact, Organization, OrganizationType, ResolveConflict
+from core.models import (
+    BaseContact,
+    Contact,
+    Organization,
+    OrganizationType,
+    ResolveConflict,
+)
 from events.models import Event, LoadParticipantsFromKronosTask
 
 
@@ -206,7 +212,7 @@ class TestImportEvents(TestCase):
         # Change something in the contact
         self.assertEqual(Contact.objects.count(), 1)
         contact = Contact.objects.first()
-        contact.title = "Mr."
+        contact.title = BaseContact.Title.MR
         contact.save()
 
         # Load again
@@ -216,7 +222,7 @@ class TestImportEvents(TestCase):
 
         conflict = ResolveConflict.objects.first()
         self.assertEqual(conflict.existing_contact, contact)
-        self.assertEqual(conflict.title, "Ms.")
+        self.assertEqual(conflict.title, BaseContact.Title.MS)
 
         # Load again to check a duplicate conflict is NOT created
         self.load_participants()
