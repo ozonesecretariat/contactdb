@@ -492,6 +492,7 @@ class InvitationEmailForm(forms.ModelForm):
         model = InvitationEmail
         fields = [
             "organization_types",
+            "organizations",
             "events",
             "event_group",
             "cc_recipients",
@@ -516,6 +517,8 @@ class InvitationEmailForm(forms.ModelForm):
         cleaned_data = super().clean()
         events = cleaned_data.get("events")
         event_group = cleaned_data.get("event_group")
+        organization_types = cleaned_data.get("organization_types")
+        organizations = cleaned_data.get("organizations")
 
         if events and event_group:
             raise forms.ValidationError("Cannot select both events and event groups")
@@ -526,15 +529,25 @@ class InvitationEmailForm(forms.ModelForm):
         if events and events.count() > 1:
             raise forms.ValidationError("Only one event can be selected")
 
-        return cleaned_data
-
-    def clean_organization_types(self):
-        organization_types = self.cleaned_data.get("organization_types")
-        if not organization_types or not organization_types.exists():
+        if (not organization_types or not organization_types.exists()) and (
+            not organizations or not organizations.exists()
+        ):
             raise forms.ValidationError(
-                "At least one organization type must be selected"
+                "Must select at lease one organization type or one organization "
+                "(but not both)."
             )
-        return organization_types
+
+        if (
+            organization_types
+            and organization_types.exists()
+            and organizations
+            and organizations.exists()
+        ):
+            raise forms.ValidationError(
+                "Cannot choose both organization types and specific organizations"
+            )
+
+        return cleaned_data
 
     def clean_events(self):
         events = self.cleaned_data.get("events")
@@ -587,6 +600,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     autocomplete_fields = (
         "organization_types",
+        "organizations",
         "events",
         "event_group",
         "cc_recipients",
@@ -605,10 +619,12 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             "Recipients",
             {
                 "description": (
-                    "Select organization types to send invitations. Primary contacts "
-                    "will be set as To recipients, secondary contacts as CC."
+                    "Select organization types or organizations to send invitations. "
+                    "Only one of organization types or organizations can be selected. "
+                    "Primary contacts will be set as To recipients, "
+                    "secondary contacts as CC."
                 ),
-                "fields": ("organization_types",),
+                "fields": ("organization_types", "organizations"),
             },
         ),
         (
@@ -722,9 +738,12 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 # Count reminders already sent for this invitation email
                 reminder_count = original_email.reminder_emails.count()
 
-                # Preserve initial organization types and events
+                # Preserve initial organizations, organization types and events
                 org_types = original_email.organization_types.all()
                 initial["organization_types"] = [org_type.pk for org_type in org_types]
+
+                organizations = original_email.organizations.all()
+                initial["organizations"] = [org.pk for org in organizations]
 
                 events = list(original_email.events.all())
                 if events:
@@ -874,6 +893,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
         org_recipients = get_organization_recipients(
             obj.organization_types.all(),
+            obj.organizations.all(),
             additional_cc_contacts=obj.cc_recipients.all(),
             additional_bcc_contacts=obj.bcc_recipients.all(),
             invitation_email=original_email,

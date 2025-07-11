@@ -5,8 +5,9 @@ from functools import cached_property
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Exists, OuterRef, Q
 from django.utils.html import strip_tags
 from django_task.models import TaskRQ
@@ -147,10 +148,18 @@ class Email(models.Model):
         related_name="sent_emails",
         help_text="Send the email to all participants of the events in this event group.",
     )
+    # `organizations` and `organization_types` are mutually exclusive
     organization_types = models.ManyToManyField(
         OrganizationType,
         blank=True,
         help_text="Send the email to primary contacts of these organization types.",
+        related_name="sent_emails",
+    )
+    organizations = models.ManyToManyField(
+        Organization,
+        null=True,
+        blank=True,
+        help_text="Send the email to primary contacts of these organizations.",
         related_name="sent_emails",
     )
     subject = models.CharField(max_length=900, validators=[validate_placeholders])
@@ -165,6 +174,18 @@ class Email(models.Model):
 
     def __str__(self):
         return self.subject
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            # Typically, validations would be performed before save(),
+            # but since these are M2M fields, save is needed to have their values.
+            # Wrapping this in a transaction so we don't commit "bad" data.
+            super().save(*args, **kwargs)
+
+            if self.organization_types.exists() and self.organizations.exists():
+                raise ValidationError(
+                    "Cannot specify both organization types and specific organizations."
+                )
 
     def queue_emails(self):
         tasks = []
@@ -308,18 +329,21 @@ class InvitationEmail(Email):
             invitations = EventInvitation.objects.filter(event_group=event_group)
             events = list(event_group.events.all())
 
-        # These are ALL uregistered orgs, regardless of being invited directtly/via GOV
-        return (
-            Organization.objects.prefetch_related(
-                "primary_contacts",
-                "secondary_contacts",
-                "government",
-            )
-            .filter(
+        if self.organizations.exists():
+            # This is an organizations-list-based invitation
+            # Not taking include_in_invitation into account in this case
+            organizations_qs = self.organizations.all()
+        elif self.organization_types.exists():
+            organizations_qs = Organization.objects.filter(
                 include_in_invitation=True,
                 organization_type__in=self.organization_types.all(),
             )
-            .filter(
+        else:
+            return Organization.objects.none()
+
+        # These are ALL uregistered orgs, regardless of being invited directly/via GOV
+        return (
+            organizations_qs.filter(
                 Q(
                     # Direct org-based invitations;
                     # include all orgs that have no registrations
@@ -348,6 +372,11 @@ class InvitationEmail(Email):
                 )
             )
             .distinct()
+            .prefetch_related(
+                "primary_contacts",
+                "secondary_contacts",
+                "government",
+            )
         )
 
 
