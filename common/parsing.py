@@ -2,6 +2,36 @@ import re
 import string
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
+CONTACT_MAPPING = {
+    "organization": "organization",
+    "title": "title",
+    "firstName": "first_name",
+    "lastName": "last_name",
+    "designation": "designation",
+    "department": "department",
+    "phones": "phones",
+    "mobiles": "mobiles",
+    "faxes": "faxes",
+    "emails": "emails",
+    "emailCcs": "email_ccs",
+    "notes": "notes",
+    "isUseOrganizationAddress": "is_use_organization_address",
+    "address": "address",
+    "city": "city",
+    "state": "state",
+    "country": "country",
+    "postalCode": "postal_code",
+    "dateOfBirth": "birth_date",
+}
+REGISTRATION_MAPPING = {
+    "contactId": "contact_id",
+    "eventId": "event_id",
+    "status": "status",
+    "role": "role",
+    "priorityPassCode": "priority_pass_code",
+    "createdOn": "date",
+    "isFunded": "is_funded",
+}
 
 FIX_TITLE_MAPPING = {
     "Mr": "Mr.",

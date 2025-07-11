@@ -1,7 +1,7 @@
 import factory
 from django.utils import timezone
 
-from core.models import BaseContact, Contact, Country, Organization
+from core.models import BaseContact, Contact, Country, Organization, ResolveConflict
 from events.models import (
     Event,
     EventGroup,
@@ -136,3 +136,25 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
     date = factory.LazyFunction(timezone.now)
     is_funded = False
     priority_pass = factory.SubFactory(PriorityPassFactory)
+    priority_pass_code = ""
+
+
+class ResolveConflictFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ResolveConflict
+
+    organization = factory.SubFactory(OrganizationFactory)
+    first_name = factory.Sequence(lambda n: f"First{n}")
+    last_name = factory.Sequence(lambda n: f"Last{n}")
+    emails = factory.LazyFunction(lambda: ["contact@example.com"])
+    email_ccs = factory.LazyFunction(lambda: [])
+    phones = factory.LazyFunction(lambda: [])
+    mobiles = factory.LazyFunction(lambda: [])
+    faxes = factory.LazyFunction(lambda: [])
+
+    title = "Mr."
+    designation = "Test Designation"
+    department = "Test Department"
+    primary_lang = Contact.UNLanguage.ENGLISH
+    is_use_organization_address = True
+    org_head = False
