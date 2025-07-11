@@ -1,4 +1,5 @@
 import type { AxiosError } from "axios";
+import type { Country } from "src/types/country";
 import type { MeetingEvent } from "src/types/event";
 import type { Contact, EventNomination } from "src/types/nomination";
 import type { Organization } from "src/types/organization";
@@ -18,6 +19,7 @@ export const useInvitationStore = defineStore("invitation", () => {
   const events = ref<MeetingEvent[]>([]);
   const nominations = ref<EventNomination[]>([]);
   const organizations = ref<Organization[]>([]);
+  const countries = ref<Country[]>([]);
   const token = computed(() => route.params.invitationToken as string);
   const participantId = computed(() => route.params.participantId as string);
   const participant = computed(() => contacts.value.find((c) => c.id === Number(participantId.value)));
@@ -31,6 +33,7 @@ export const useInvitationStore = defineStore("invitation", () => {
           this.loadOrganizations(),
           this.loadContacts(),
           this.loadRoles(),
+          this.loadCountries(),
         ]);
       } catch (e) {
         switch ((e as AxiosError).status) {
@@ -53,6 +56,9 @@ export const useInvitationStore = defineStore("invitation", () => {
     async loadContacts() {
       contacts.value = (await api.get<Contact[]>(`/events-nominations/${token.value}/available-contacts/`)).data;
     },
+    async loadCountries() {
+      countries.value = (await api.get<Country[]>(`/events-nominations/${token.value}/countries/`)).data;
+    },
     async loadEvents() {
       events.value = (await api.get<MeetingEvent[]>(`/events-nominations/${token.value}/events/`)).data;
     },
@@ -69,6 +75,7 @@ export const useInvitationStore = defineStore("invitation", () => {
 
   return {
     contacts,
+    countries,
     events,
     initialized,
     nominations,

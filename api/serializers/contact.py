@@ -89,6 +89,12 @@ class ContactSerializer(serializers.ModelSerializer):
             "passport_date_of_expiry",
             "photo",
             "photo_url",
+            # Address
+            "country",
+            "state",
+            "postal_code",
+            "address",
+            "is_use_organization_address",
         )
 
     def get_photo_url(self, obj):

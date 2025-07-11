@@ -2,6 +2,9 @@ import type { MeetingEvent } from "./event";
 import type { Organization } from "./organization";
 
 export interface Contact {
+  address: string;
+  city: string;
+  country: string;
   department: string;
   designation: string;
   emailCcs: string[];
@@ -16,6 +19,8 @@ export interface Contact {
   organization?: Organization;
   phones: string[];
   photoUrl: null | string;
+  postalCode: string;
+  state: string;
   title: string;
 }
 

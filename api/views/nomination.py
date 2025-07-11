@@ -11,6 +11,7 @@ from rest_framework.viewsets import ViewSet
 from api.serializers.contact import (
     ContactDetailSerializer,
     ContactSerializer,
+    CountrySerializer,
     OrganizationSerializer,
 )
 from api.serializers.event import (
@@ -20,6 +21,7 @@ from api.serializers.event import (
 )
 from core.models import Contact, Organization
 from events.models import (
+    Country,
     Event,
     EventInvitation,
     PriorityPass,
@@ -94,6 +96,7 @@ class EventNominationViewSet(ViewSet):
             "nominate_contact": NominationSerializer,
             "events": EventSerializer,
             "organizations": OrganizationSerializer,
+            "countries": CountrySerializer,
         }
         return serializer_map[self.action]
 
@@ -215,3 +218,9 @@ class EventNominationViewSet(ViewSet):
     def roles(self, request, token):
         self.get_invitation(token)
         return Response(RegistrationRole.objects.all().values_list("name", flat=True))
+
+    @action(detail=True, methods=["get"])
+    def countries(self, request, token):
+        self.get_invitation(token)
+        serializer_class = self.get_serializer_class()
+        return Response(serializer_class(Country.objects.all(), many=True).data)
