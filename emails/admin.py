@@ -10,7 +10,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import FileResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -19,6 +19,7 @@ from django.urls import path
 from django.utils.html import format_html
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
+from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.urls import reverse
 from emails.models import (
@@ -265,6 +266,18 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                sent_count=Count("email_logs"),
+                success_count=Count("id", filter=Q(email_logs__status="SUCCESS")),
+                failure_count=Count("id", filter=Q(email_logs__status="FAILURE")),
+                pending_count=Count("id", filter=Q(email_logs__status="PENDING")),
+            )
+        )
+
     def get_email_object(self, obj: Email) -> Email:
         return obj
 
@@ -281,11 +294,9 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         extra_filters = {}
         if status:
             extra_filters["status__exact"] = status
-            count = len(
-                [task for task in obj.email_logs.all() if task.status == status]
-            )
+            count = getattr(obj, f"{status.lower()}_count", None)
         else:
-            count = len(obj.email_logs.all())
+            count = obj.sent_count
 
         return self.get_related_link(
             obj,
@@ -592,7 +603,14 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         "reminder_count",
     )
 
-    list_filter = ("is_reminder", "original_email", "created_at")
+    list_filter = (
+        AutocompleteFilterFactory("events", "events"),
+        AutocompleteFilterFactory("event group", "event_group"),
+        AutocompleteFilterMultipleFactory("organization types", "organization_types"),
+        "is_reminder",
+        "original_email",
+        "created_at",
+    )
 
     # is_reminder and original_email should be readonly for both invitation and reminders
     # This ensures consistent behaviour and separation of concerns.
@@ -1015,6 +1033,11 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     )
     list_display_links = ("email",)
     list_filter = (
+        AutocompleteFilterFactory("organization", "organization"),
+        AutocompleteFilterFactory("government", "organization__government"),
+        AutocompleteFilterMultipleFactory(
+            "organization types", "organization__organization_type"
+        ),
         AutocompleteFilterFactory("email", "email"),
         ContactAutocompleteFilter,
         AutocompleteFilterFactory("to", "contact"),
@@ -1025,14 +1048,12 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
     )
     ordering = ("-created_on",)
     prefetch_related = (
-        "email",
-        "contact",
-        "organization",
-        "invitation",
         "contact__organization",
-        "to_contacts__organization",
-        "cc_contacts__organization",
-        "bcc_contacts__organization",
+        "contact__organization__government",
+        "contact__organization__country",
+        "organization",
+        "organization__government",
+        "organization__country",
     )
     fieldsets = [
         (

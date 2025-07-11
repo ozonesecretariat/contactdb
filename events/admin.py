@@ -185,6 +185,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__needs_visa_letter",
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
+        AutocompleteFilterFactory("event group", "event__group"),
     ]
     autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
@@ -416,6 +417,12 @@ class PriorityPassAdmin(ModelAdmin):
         )
 
 
+class EventInline(admin.TabularInline):
+    max_num = 0
+    model = Event
+    fields = readonly_fields = ("code", "title", "start_date", "end_date")
+
+
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
@@ -423,6 +430,7 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
     list_display_links = ("name",)
     ordering = ("name",)
     prefetch_related = ("events",)
+    inlines = [EventInline]
 
 
 @admin.register(Event)

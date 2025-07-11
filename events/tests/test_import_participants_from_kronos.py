@@ -32,7 +32,6 @@ class TestImportEvents(TestCase):
         )
         self.fake_item = {
             "address": "1234 Giggleberry Lane, Fluffytown, Fantasia 98765",
-            "affiliation": "",
             "city": "Luanda",
             "contactId": "99999999999999",
             "country": "ao",

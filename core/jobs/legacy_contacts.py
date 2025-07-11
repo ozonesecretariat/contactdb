@@ -43,7 +43,6 @@ class ImportLegacyContacts(Job):
             primary_lang=item.get("Primary Language", ""),
             second_lang=item.get("Second Language", ""),
             honorific=item.get("Salutation", ""),
-            respectful=item.get("Respectful Address", ""),
             phones=parse_list(item.get("Telephone", "")),
         )
         contact.add_to_group("Legacy contacts")

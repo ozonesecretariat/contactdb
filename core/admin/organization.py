@@ -48,7 +48,13 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "email_links",
     )
     autocomplete_fields = ("country", "government", "organization_type")
-    prefetch_related = ("country", "government", "organization_type")
+    prefetch_related = (
+        "country",
+        "government",
+        "organization_type",
+        "primary_contacts",
+        "secondary_contacts",
+    )
     annotate_query = {
         "contacts_count": Count("contacts", distinct=True),
         "has_primary_contacts": Case(

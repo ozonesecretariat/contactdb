@@ -19,3 +19,4 @@ class CountryAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("region", "region"),
         AutocompleteFilterFactory("subregion", "subregion"),
     )
+    prefetch_related = ("region", "subregion")
