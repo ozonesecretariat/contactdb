@@ -334,7 +334,9 @@ class RegistrationRole(models.Model):
 
 
 class PriorityPass(models.Model):
-    code = RandomCharField(length=10, blank=True, uppercase=True, unique=True)
+    code = RandomCharField(
+        length=10, blank=True, uppercase=True, unique=True, keep_default=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

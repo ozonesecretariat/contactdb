@@ -10,6 +10,7 @@ from core.models import Contact, Country, Organization
 from events.kronos import KronosClient
 from events.models import (
     Event,
+    PriorityPass,
     Registration,
     RegistrationRole,
     RegistrationTag,
@@ -218,12 +219,19 @@ class ContactParser:
         ]
 
     @staticmethod
+    def get_priority_pass(code):
+        if not code:
+            return PriorityPass.objects.create()
+        return PriorityPass.objects.get_or_create(code=code)[0]
+
+    @staticmethod
     def create_registration(
         registration_data,
         contact: Contact = None,
         event: Event = None,
         role: RegistrationRole = None,
         tags: list[RegistrationTag] = None,
+        priority_pass: PriorityPass = None,
     ) -> Registration | None:
         """
         Create a Registration instance from a Kronos registration
@@ -240,6 +248,7 @@ class ContactParser:
 
         contact_id = registration_dict.pop("contact_id", None)
         event_id = registration_dict.pop("event_id", None)
+        priority_pass_code = registration_dict.pop("priority_pass_code", None)
         status_value = registration_dict.pop("status", None)
         role_value = registration_dict.pop("role", None)
         tags_value = registration_dict.pop("tags", None)
@@ -257,6 +266,9 @@ class ContactParser:
         status = KRONOS_STATUS_MAP[status_value] if status_value else None
         role = role or ContactParser.get_or_create_registration_role(role_value)
         tags = tags or ContactParser.get_or_create_registration_tags(tags_value)
+        priority_pass = priority_pass or ContactParser.get_priority_pass(
+            priority_pass_code
+        )
 
         if not (contact and event and role):
             raise ValueError("Contact, event, and role must be provided.")
@@ -266,6 +278,7 @@ class ContactParser:
             event=event,
             status=status,
             role=role,
+            priority_pass=priority_pass,
             **registration_dict,
             organization=contact.organization,
             designation=contact.designation,

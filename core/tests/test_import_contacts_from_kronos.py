@@ -52,7 +52,6 @@ class TestImportContactFromKronos(TestCase):
             "lastName": "Eyre",
             "designation": "Expert",
             "department": "Environment and Energy",
-            "affiliation": "Literary Society",
             "phones": ["+4999999999"],
             "mobiles": ["+4999999999"],
             "faxes": ["+4999999999"],
@@ -123,7 +122,6 @@ class TestImportContactFromKronos(TestCase):
                 "lastName": "Eyre",
                 "designation": "Expert",
                 "department": "Environment and Energy",
-                "affiliation": "Literary Society",
                 "phones": ["+4999999999"],
                 "mobiles": ["+4999999999"],
                 "faxes": ["+4999999999"],
@@ -177,7 +175,6 @@ class TestImportContactFromKronos(TestCase):
         self.assertEqual(contact.last_name, "Eyre")
         self.assertEqual(contact.designation, "Expert")
         self.assertEqual(contact.department, "Environment and Energy")
-        self.assertEqual(contact.affiliation, "Literary Society")
         self.assertEqual(contact.phones, ["+4999999999"])
         self.assertEqual(contact.mobiles, ["+4999999999"])
         self.assertEqual(contact.faxes, ["+4999999999"])
@@ -204,7 +201,7 @@ class TestImportContactFromKronos(TestCase):
         self.assertEqual(registration.event, self.event)
         self.assertEqual(registration.contact, contact)
         self.assertEqual(registration.status, "Registered")
-        self.assertEqual(registration.priority_pass_code, "LETMEIN")
+        self.assertEqual(registration.priority_pass.code, "LETMEIN")
         self.assertEqual(
             registration.date,
             datetime.datetime(

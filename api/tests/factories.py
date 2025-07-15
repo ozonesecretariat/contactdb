@@ -136,7 +136,6 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
     date = factory.LazyFunction(timezone.now)
     is_funded = False
     priority_pass = factory.SubFactory(PriorityPassFactory)
-    priority_pass_code = ""
 
 
 class ResolveConflictFactory(factory.django.DjangoModelFactory):
