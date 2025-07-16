@@ -17,10 +17,10 @@ function forceArray(val) {
 }
 
 Cypress.Commands.addAll({
-  addModel(modelName, fields) {
+  addModel(modelName, fields, saveButtonSelector = "input[value=Save]") {
     cy.goToModelAdd(modelName);
     cy.fillInputs(fields);
-    cy.get("input[value=Save]").click();
+    cy.get(saveButtonSelector).click();
     cy.contains("was added successfully");
   },
   checkAccess(accessSpec) {
@@ -101,6 +101,7 @@ Cypress.Commands.addAll({
     nameField = "name",
     searchValue = null,
     suffix = "",
+    saveButtonSelector = "input[value=Save]",
   }) {
     let identifier = searchValue;
     const fields = { ...extraFields };
@@ -109,7 +110,7 @@ Cypress.Commands.addAll({
       fields[nameField] = randomStr(`test-${modelName}-`, 10, suffix);
       identifier ??= fields[nameField];
     }
-    cy.addModel(modelName, fields);
+    cy.addModel(modelName, fields, saveButtonSelector);
     if (checkDelete) {
       cy.deleteModel(modelName, identifier, filters);
       cy.checkNotFound({ filters, modelName, searchValue: identifier });

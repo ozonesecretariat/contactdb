@@ -16,6 +16,7 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       suffix: "-email-subject",
+      saveButtonSelector: "input[name=_save]",
     });
   });
   it("Check send Cc fields", () => {
@@ -31,6 +32,7 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       suffix: "-email-subject",
+      saveButtonSelector: "input[name=_save]",
     });
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
@@ -60,6 +62,7 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       suffix: "-email-subject",
+      saveButtonSelector: "input[name=_save]",
     });
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
@@ -87,6 +90,7 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       suffix: "-email-subject",
+      saveButtonSelector: "input[name=_save]",
     });
 
     // Wait for the task to finish
@@ -123,6 +127,7 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       suffix: "-email-subject",
+      saveButtonSelector: "input[name=_save]",
     });
 
     // Wait for the task to finish and go to the SendEmailTask detail admin
@@ -162,7 +167,7 @@ describe("Check", () => {
     cy.get("a.cke_button__templates").click();
     cy.get("a").contains("Test placeholders").click();
     cy.getIframeBody(".field-content iframe").contains("Dear [[full_name]");
-    cy.get("input[value=Save]").click();
+    cy.get("input[name=_save]").click();
 
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
@@ -190,7 +195,7 @@ describe("Check", () => {
     cy.get("a").contains("Send it to the Server").click();
     cy.get("a").contains("OK").click();
     cy.getIframeBody(".field-content iframe").find("img").should("be.visible");
-    cy.get("input[value=Save]").click();
+    cy.get("input[name=_save]").click();
 
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
@@ -218,6 +223,7 @@ describe("Check", () => {
       modelName: "Emails",
       nameField: "subject",
       suffix: "-email-subject",
+      saveButtonSelector: "input[name=_save]",
     });
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
