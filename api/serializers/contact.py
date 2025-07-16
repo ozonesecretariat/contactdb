@@ -91,6 +91,7 @@ class ContactSerializer(serializers.ModelSerializer):
             "photo_url",
             # Address
             "country",
+            "city",
             "state",
             "postal_code",
             "address",
