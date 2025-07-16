@@ -80,7 +80,7 @@ class TestImportEvents(TestCase):
                 }
             ],
             "state": "",
-            "title": "Ms.",
+            "title": "Mme.",
             "updatedBy": "Snickerdoodle Wobblepants",
             "updatedOn": "2010-01-00T00:00:00.000Z",
         }
@@ -151,6 +151,9 @@ class TestImportEvents(TestCase):
         self.assertEqual(contact.emails, ["zephyr.m@example.com"])
         self.assertEqual(contact.phones, ["+777777777"])
         self.assertEqual(contact.registrations.count(), 1)
+
+        self.assertEqual(contact.title, BaseContact.Title.MS)
+        self.assertEqual(contact.title_localized, BaseContact.LocalizedTitle.MME)
 
         registration = contact.registrations.first()
         self.assertEqual(registration.event, self.event)

@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-from common.parsing import title_map
+from common.parsing import FIX_TITLE_MAPPING
 from core.models import BaseContact
 
 
@@ -11,7 +11,7 @@ def migrate_title(apps, schema_editor):
 
     for contact in Contact.objects.all():
         if contact.title:
-            contact_title = title_map.get(contact.title, contact.title)
+            contact_title = FIX_TITLE_MAPPING.get(contact.title, contact.title)
             contact.title_new = (
                 contact_title if contact_title in BaseContact.Title.values else ""
             )

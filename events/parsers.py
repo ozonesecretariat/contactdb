@@ -6,7 +6,7 @@ from functools import cached_property
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 
-from common.parsing import parse_list, title_map
+from common.parsing import LOCALIZED_TITLE_TO_ENGLISH, FIX_TITLE_MAPPING, parse_list
 from core.models import (
     BaseContact,
     Contact,
@@ -307,6 +307,21 @@ class KronosParticipantsParser(KronosParser):
             org.primary_contacts.add(*org.filter_contacts_by_emails(org.emails))
             org.secondary_contacts.add(*org.filter_contacts_by_emails(org.email_ccs))
 
+    def normalize_title(self, raw_title):
+        """
+        Normalize and return (english_title, localized_title) tuple.
+        """
+
+        title = FIX_TITLE_MAPPING.get(raw_title, raw_title)
+
+        english_title = LOCALIZED_TITLE_TO_ENGLISH.get(title, title)
+        english_title = (
+            english_title if english_title in BaseContact.Title.values else ""
+        )
+        localized_title = title if title in BaseContact.LocalizedTitle.values else ""
+
+        return english_title, localized_title
+
     def _handle_contact(self, contact_dict):
         contact_id = contact_dict["contactId"]
         contact_dict["dateOfBirth"] = self.parse_date(contact_dict.get("dateOfBirth"))
@@ -316,16 +331,19 @@ class KronosParticipantsParser(KronosParser):
         )
         contact_dict["emails"] = parse_list(contact_dict.get("emails"))
         contact_dict["emailCcs"] = parse_list(contact_dict.get("emailCcs"))
-        title = title_map.get(
-            contact_dict.get("title", ""), contact_dict.get("title", "")
-        )
-        contact_dict["title"] = title if title in BaseContact.Title.values else ""
+
         langs = self.get_languages(contact_dict.get("notes", ""))
 
         contact_defaults = {
             model_attr: contact_dict.get(kronos_attr)
             for kronos_attr, model_attr in self.field_mapping.items()
         } | langs
+
+        # Update the contact's title
+        raw_title = contact_defaults.get("title", "")
+        english_title, localized_title = self.normalize_title(raw_title)
+        contact_defaults["title"] = english_title
+        contact_defaults["title_localized"] = localized_title
 
         contact = (
             Contact.objects.filter(contact_ids__contains=[contact_id])
