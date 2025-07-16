@@ -1,0 +1,27 @@
+{% extends "admin/submit_line.html" %}
+
+{% block submit-row %}
+  {% if show_save %}
+    <input type="submit" value="Send Emails Now" class="default send-email-btn" name="_save" />
+  {% endif %}
+
+  {% if show_reminder_button %}
+    <a href="{{ reminder_url }}" class="primarylink">Send Reminder Email</a>
+  {% endif %}
+
+  {% if not show_save %}
+    {{ block.super }}
+  {% endif %}
+
+  <style>
+    .send-email-btn {
+      background-color: #28a745 !important;
+      border-color: #28a745 !important;
+      color: white !important;
+    }
+    .send-email-btn:hover {
+      background-color: #218838 !important;
+      border-color: #1e7e34 !important;
+    }
+  </style>
+{% endblock %}

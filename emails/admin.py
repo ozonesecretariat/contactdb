@@ -739,6 +739,14 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         self.request = request
         return super().get_form(request, obj, **kwargs)
 
+    def changeform_view(self, request, object_id=None, form_url="", extra_context=None):
+        """Overridden to disable "save and continue/add another" buttons."""
+        extra_context = extra_context or {}
+        extra_context["show_save_and_add_another"] = False
+        extra_context["show_save_and_continue"] = False
+
+        return super().changeform_view(request, object_id, extra_context=extra_context)
+
     def get_changeform_initial_data(self, request):
         """
         Provides initial data for reminders in the changeform
