@@ -370,18 +370,6 @@ const titles = [
   "H.E. Ms.",
   "Hon. Mr.",
   "Hon. Ms.",
-  "M.",
-  "Mme.",
-  "H.E. M.",
-  "H.E. Mme.",
-  "Hon. M.",
-  "Hon. Mme.",
-  "Sr.",
-  "Sra.",
-  "H.E. Sr.",
-  "H.E. Sra.",
-  "Hon. Sr.",
-  "Hon. Sra.",
 ];
 
 if (invitation.participant) {
