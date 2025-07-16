@@ -2,7 +2,7 @@
 
 {% block submit-row %}
   {% if show_save %}
-    <input type="submit" value="Send Emails Now" class="default send-email-btn" name="_save">
+    <input type="submit" value="Send Emails Now" class="default send-email-btn" name="_save" />
   {% endif %}
 
   {% if show_reminder_button %}
@@ -13,16 +13,15 @@
     {{ block.super }}
   {% endif %}
 
-<style>
-.send-email-btn {
-  background-color: #28a745 !important;
-  border-color: #28a745 !important;
-  color: white !important;
-}
-.send-email-btn:hover {
-  background-color: #218838 !important;
-  border-color: #1e7e34 !important;
-}
-</style>
-
+  <style>
+    .send-email-btn {
+      background-color: #28a745 !important;
+      border-color: #28a745 !important;
+      color: white !important;
+    }
+    .send-email-btn:hover {
+      background-color: #218838 !important;
+      border-color: #1e7e34 !important;
+    }
+  </style>
 {% endblock %}
