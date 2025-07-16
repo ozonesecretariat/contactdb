@@ -18,6 +18,7 @@
         outlined
         label="First Name"
         name="firstName"
+        class="col-grow"
       />
       <q-input
         v-model="data.lastName"
@@ -26,6 +27,7 @@
         outlined
         label="Last Name"
         name="lastName"
+        class="col-grow"
       />
     </div>
     <q-select
@@ -187,6 +189,15 @@
         label="Address"
         name="address"
       />
+    </template>
+    <template v-else>
+      <div class="text-subtitle2">Organization Address</div>
+      <p>
+        {{ selectedOrganization?.country?.name }} {{ selectedOrganization?.city }} {{ selectedOrganization?.state }}
+        {{ selectedOrganization?.postalCode }}
+        <br />
+        {{ selectedOrganization?.address }}
+      </p>
     </template>
     <div class="text-subtitle2">Files</div>
     <template v-if="selectedOrganization?.organizationType === 'GOV'">

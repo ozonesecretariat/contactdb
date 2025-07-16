@@ -89,6 +89,8 @@ class ContactSerializer(serializers.ModelSerializer):
             "passport_date_of_expiry",
             "photo",
             "photo_url",
+            "department",
+            "designation",
             # Address
             "country",
             "city",
