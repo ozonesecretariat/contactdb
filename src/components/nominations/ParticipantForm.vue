@@ -434,8 +434,8 @@ async function saveForm() {
     const newContact = (
       await api.post<Contact>(url, {
         ...data,
-        address: data.isUseOrganizationAddress ? "" : data.address,
-        city: data.isUseOrganizationAddress ? "" : data.city,
+        address: data.address,
+        city: data.city,
         credentials: data.hasCredentials ? await fileToBase64Dict(data.credentials) : null,
         emailCcs: toList(data.emailCcs),
         emails: toList(data.emails),
@@ -443,8 +443,8 @@ async function saveForm() {
         passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
         photo: await fileToBase64(data.photo),
-        postalCode: data.isUseOrganizationAddress ? "" : data.postalCode,
-        state: data.isUseOrganizationAddress ? "" : data.state,
+        postalCode: data.postalCode,
+        state: data.state,
       })
     ).data;
     await invitation.loadContacts();
