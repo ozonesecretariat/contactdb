@@ -13,6 +13,7 @@ export interface Contact {
   fullName: string;
   hasCredentials: boolean;
   id: number;
+  isUseOrganizationAddress: boolean;
   lastName: string;
   mobiles: string[];
   needsVisaLetter: boolean;

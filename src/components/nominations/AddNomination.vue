@@ -24,7 +24,8 @@ const invitation = useInvitationStore();
 
 <style scoped lang="scss">
 .nomination-modal {
-  max-width: 90rem;
+  max-width: 55rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
