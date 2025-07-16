@@ -398,6 +398,7 @@ CKEDITOR_CONTACT_PLACEHOLDERS = {
     "first_name": {"attr": "first_name"},
     "last_name": {"attr": "last_name"},
     "title": {"attr": "title"},
+    "title_localized": {"attr": "title_localized"},
     "party": {"attr": "organization__government__name"},
     "organization": {"attr": "organization__name"},
 }

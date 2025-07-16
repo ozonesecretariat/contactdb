@@ -146,7 +146,47 @@ class Organization(models.Model):
 
 class BaseContact(models.Model):
     organization = None
-    title = models.CharField(max_length=30, blank=True)
+
+    class Title(models.TextChoices):
+        MR = "Mr.", "Mr."
+        MS = "Ms.", "Ms."
+        HE_MR = "H.E. Mr.", "H.E. Mr."
+        HE_MS = "H.E. Ms.", "H.E. Ms."
+        HON_MR = "Hon. Mr.", "Hon. Mr."
+        HON_MS = "Hon. Ms.", "Hon. Ms."
+
+    title = models.CharField(max_length=30, choices=Title.choices, blank=True)
+
+    class LocalizedTitle(models.TextChoices):
+        # English
+        MR = "Mr.", "Mr."
+        MS = "Ms.", "Ms."
+        HE_MR = "H.E. Mr.", "H.E. Mr."
+        HE_MS = "H.E. Ms.", "H.E. Ms."
+        HON_MR = "Hon. Mr.", "Hon. Mr."
+        HON_MS = "Hon. Ms.", "Hon. Ms."
+        # French
+        M = "M.", "M."
+        MME = "Mme.", "Mme."
+        HE_M = "H.E. M.", "H.E. M."
+        HE_MME = "H.E. Mme.", "H.E. Mme."
+        HON_M = "Hon. M.", "Hon. M."
+        HON_MME = "Hon. Mme.", "Hon. Mme."
+        # Spanish
+        SR = "Sr.", "Sr."
+        SRA = "Sra.", "Sra."
+        HE_SR = "H.E. Sr.", "H.E. Sr."
+        HE_SRA = "H.E. Sra.", "H.E. Sra."
+        HON_SR = "Hon. Sr.", "Hon. Sr."
+        HON_SRA = "Hon. Sra.", "Hon. Sra."
+
+    title_localized = models.CharField(
+        max_length=30,
+        choices=LocalizedTitle.choices,
+        blank=True,
+        help_text="Localized title in French or Spanish.",
+    )
+
     honorific = models.CharField(max_length=30, default="", blank=True)
     first_name = models.CharField(max_length=250, default="", blank=True)
     last_name = models.CharField(max_length=250, default="", blank=True)

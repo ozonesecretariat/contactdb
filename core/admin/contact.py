@@ -195,7 +195,9 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             None,
             {
                 "fields": (
-                    ("title", "honorific"),
+                    "title",
+                    "title_localized",
+                    "honorific",
                     "first_name",
                     "last_name",
                     "photo",

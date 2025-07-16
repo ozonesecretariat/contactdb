@@ -3,6 +3,31 @@ import string
 
 punctuation_translate = {ord(c): " " for c in string.punctuation}
 
+FIX_TITLE_MAPPING = {
+    "Mr": "Mr.",
+    "Ms": "Ms.",
+    "Mrs": "Ms.",
+    "Mrs.": "Ms.",
+    "Mme": "Mme.",
+}
+
+LOCALIZED_TITLE_TO_ENGLISH = {
+    # French
+    "M.": "Mr.",
+    "Mme.": "Ms.",
+    "H.E. M.": "H.E. Mr.",
+    "H.E. Mme.": "H.E. Ms.",
+    "Hon. M.": "Hon. Mr.",
+    "Hon. Mme.": "Hon. Ms.",
+    # Spanish
+    "Sr.": "Mr.",
+    "Sra.": "Ms.",
+    "H.E. Sr.": "H.E. Mr.",
+    "H.E. Sra.": "H.E. Ms.",
+    "Hon. Sr.": "Hon. Mr.",
+    "Hon. Sra.": "Hon. Ms.",
+}
+
 
 def remove_punctuation(value: str):
     return value.translate(punctuation_translate)

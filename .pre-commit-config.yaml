@@ -5,3 +5,14 @@ repos:
       - id: ruff # This runs `ruff check`
       - id: ruff-format # This runs `ruff format --check`
         args: [--check]
+
+  - repo: local # Use 'local' for custom hooks that aren't part of a pre-defined repository
+    hooks:
+      - id: prettier
+        name: prettier
+        entry: npm run lint:prettier:check
+        language: system
+      - id: eslint
+        name: eslint
+        entry: npm run lint:eslint:check
+        language: system
