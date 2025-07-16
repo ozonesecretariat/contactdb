@@ -106,6 +106,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
+      saveButtonSelector: "input[name=_save]",
       suffix: "-email-subject",
     });
 
