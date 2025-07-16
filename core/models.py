@@ -280,16 +280,6 @@ class BaseContact(models.Model):
             if errors:
                 raise ValidationError(errors)
 
-        if self.is_use_organization_address:
-            errors = {}
-            msg = "A contact address cannot be provided when using the organization's address."
-            for field in ["address", "city", "state", "postal_code"]:
-                if getattr(self, field):
-                    errors[field] = msg
-            if errors:
-                errors["is_use_organization_address"] = msg
-                raise ValidationError(errors)
-
 
 class Contact(BaseContact):
     contact_ids = ArrayField(
