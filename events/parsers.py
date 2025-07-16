@@ -6,7 +6,7 @@ from functools import cached_property
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 
-from common.parsing import LOCALIZED_TITLE_TO_ENGLISH, FIX_TITLE_MAPPING, parse_list
+from common.parsing import FIX_TITLE_MAPPING, LOCALIZED_TITLE_TO_ENGLISH, parse_list
 from core.models import (
     BaseContact,
     Contact,
