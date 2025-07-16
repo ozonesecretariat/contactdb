@@ -99,9 +99,9 @@ Cypress.Commands.addAll({
     filters = {},
     modelName,
     nameField = "name",
+    saveButtonSelector = "input[value=Save]",
     searchValue = null,
     suffix = "",
-    saveButtonSelector = "input[value=Save]",
   }) {
     let identifier = searchValue;
     const fields = { ...extraFields };

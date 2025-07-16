@@ -15,8 +15,8 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      suffix: "-email-subject",
       saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
     });
   });
   it("Check send Cc fields", () => {
@@ -31,8 +31,8 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      suffix: "-email-subject",
       saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
     });
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
@@ -61,8 +61,8 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      suffix: "-email-subject",
       saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
     });
     // Check that only 1 email has been sent.
     cy.contains("1 send email task");
@@ -89,8 +89,8 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      suffix: "-email-subject",
       saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
     });
 
     // Wait for the task to finish
@@ -126,8 +126,8 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      suffix: "-email-subject",
       saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
     });
 
     // Wait for the task to finish and go to the SendEmailTask detail admin
@@ -222,8 +222,8 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      suffix: "-email-subject",
       saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
     });
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
