@@ -21,7 +21,7 @@ def migrate_title(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0025_contact_title_new_resolveconflict_title_new"),
+        ("core", "0026_contact_title_new_resolveconflict_title_new"),
     ]
 
     operations = [
