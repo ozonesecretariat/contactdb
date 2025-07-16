@@ -1,16 +1,6 @@
 {% extends "admin/change_form.html" %}
 {% load admin_urls %}
 
-{% block submit_buttons_bottom %}
-  {{ block.super }}
-
-  {% if show_reminder_button %}
-    <div class="submit-row">
-      <a href="{{ reminder_url }}" class="primarylink">Send Reminder Email</a>
-    </div>
-  {% endif %}
-{% endblock %}
-
 {% block after_field_sets %}
   {% if original_email %}
     <fieldset class="module aligned">
