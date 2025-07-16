@@ -362,15 +362,7 @@ const data = reactive({
 const selectedOrganization = computed(() =>
   invitation.organizations.find((o) => o.id.toString() === data.organization.toString()),
 );
-const titles = [
-  "",
-  "Mr.",
-  "Ms.",
-  "H.E. Mr.",
-  "H.E. Ms.",
-  "Hon. Mr.",
-  "Hon. Ms.",
-];
+const titles = ["", "Mr.", "Ms.", "H.E. Mr.", "H.E. Ms.", "Hon. Mr.", "Hon. Ms."];
 
 if (invitation.participant) {
   Object.assign(data, {
