@@ -190,6 +190,7 @@ function validateNominations() {
 <style scoped lang="scss">
 .event {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: start;
 }
