@@ -255,7 +255,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
     inlines = (EmailAttachmentAdmin,)
     list_display = (
-        "subject",
+        "subject_display",
         "created_at",
         "is_draft",
         "sent_count",
@@ -350,6 +350,12 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
             extra_filters=extra_filters,
         )
 
+    @admin.display(description="Subject", ordering="subject")
+    def subject_display(self, obj):
+        """Display subject using the [DRAFT] prefix for drafts."""
+        prefix = "[DRAFT] " if obj.is_draft else ""
+        return f"{prefix}{obj.subject}"
+
     @admin.display(description="Total")
     def sent_count(self, obj):
         return self._get_count_link(obj)
@@ -375,6 +381,7 @@ class EmailAdmin(BaseEmailAdmin):
     """
 
     form = EmailAdminForm
+    list_filter = ("is_draft",)
     autocomplete_fields = (
         "recipients",
         "cc_recipients",
@@ -664,6 +671,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
     )
 
     list_filter = (
+        "is_draft",
         AutocompleteFilterFactory("events", "events"),
         AutocompleteFilterFactory("event group", "event_group"),
         AutocompleteFilterMultipleFactory("organization types", "organization_types"),
@@ -946,6 +954,7 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                     f"Send Reminder Email for {event_info} ({org_count} "
                     f"unregistered organizations)"
                 )
+                extra_context["is_reminder_creation"] = True
 
                 # Store the original email ID for use in response_post_save_add()
                 request.session["reminder_original_email_id"] = original_email_id

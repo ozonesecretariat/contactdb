@@ -2,7 +2,9 @@
 
 {% block submit-row %}
   {% if show_save %}
-    <input type="submit" value="Save Draft" class="default" name="_save_draft" />
+    {% if not is_reminder_creation %}
+      <input type="submit" value="Save Draft" class="default" name="_save_draft" />
+    {% endif %}
     <input type="submit" value="Send Emails Now" class="default send-email-btn" name="_save" />
   {% endif %}
 
