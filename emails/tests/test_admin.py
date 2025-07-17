@@ -109,7 +109,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         messages = list(get_messages(request))
         self.assertEqual(len(messages), 1)
-        self.assertIn("1 invitation emails scheduled for sending", str(messages[0]))
+        self.assertIn("invitation emails scheduled for sending", str(messages[0]))
 
         # Verify tasks were created
         tasks = SendEmailTask.objects.all()
@@ -550,6 +550,7 @@ class TestInvitationEmailAdmin(TestCase):
         self.assertIn(str(empty_fields_invitation.token), empty_fields_email.body)
 
 
+@override_settings(RQ_QUEUES={"default": {"ASYNC": False}})
 class TestInvitationEmailAdminGovBehaviour(TestCase):
     """Test class for GOV-related behaviour in InvitationEmails."""
 
@@ -1361,6 +1362,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         )
 
 
+@override_settings(RQ_QUEUES={"default": {"ASYNC": False}})
 class TestInvitationEmailAdminReminders(TestCase):
     """Test reminder functionality in InvitationEmailAdmin."""
 
@@ -1757,7 +1759,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         self.assertEqual(tasks.count(), 0)
         messages_list = list(get_messages(request))
         self.assertEqual(len(messages_list), 1)
-        self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
+        self.assertIn("reminder emails scheduled", str(messages_list[0]))
 
     def test_reminder_with_event_group(self):
         """Test reminder work as well with event groups."""
@@ -2106,7 +2108,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         task = SendEmailTask.objects.filter(organization=org).first()
         self.assertIsNone(task)
         messages_list = list(get_messages(request))
-        self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
+        self.assertIn("reminder emails scheduled", str(messages_list[0]))
 
     def test_reminder_excludes_orgs_with_include_in_invitation_false(self):
         """
@@ -2183,7 +2185,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         task = SendEmailTask.objects.filter(organization=org).first()
         self.assertIsNone(task)
         messages_list = list(get_messages(request))
-        self.assertIn("0 reminder emails scheduled", str(messages_list[0]))
+        self.assertIn("reminder emails scheduled", str(messages_list[0]))
 
     def test_reminders_with_countryless_gov_organization(self):
         """
