@@ -274,7 +274,6 @@ class RegistrationInline(admin.TabularInline):
         "event",
         "role",
         "status",
-        "is_funded",
     )
     readonly_fields = ("contact", "event")
     can_delete = False
@@ -304,6 +303,9 @@ class PriorityPassAdmin(ModelAdmin):
         "code",
         "pass_download_link",
         "created_at",
+        "attach_priority_pass",
+        "confirmation_email",
+        "refused_email",
     )
     prefetch_related = (
         "registrations",
@@ -316,6 +318,9 @@ class PriorityPassAdmin(ModelAdmin):
         "registrations_links",
         "pass_download_link",
         "created_at",
+        "attach_priority_pass",
+        "confirmation_email",
+        "refused_email",
     )
     ordering = ("-created_at",)
     annotate_query = {
@@ -349,6 +354,18 @@ class PriorityPassAdmin(ModelAdmin):
             url_download,
             obj.qr_url,
         )
+
+    @admin.display(description="Attach priority pass", boolean=True)
+    def attach_priority_pass(self, obj):
+        return obj.main_event and obj.main_event.attach_priority_pass
+
+    @admin.display(description="Confirmation email", boolean=True)
+    def confirmation_email(self, obj):
+        return obj.main_event and obj.main_event.has_confirmation_email
+
+    @admin.display(description="Refused email", boolean=True)
+    def refused_email(self, obj):
+        return obj.main_event and obj.main_event.has_refused_email
 
     def get_urls(self):
         return [

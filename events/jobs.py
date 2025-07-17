@@ -60,7 +60,7 @@ class LoadOrganizationsFromKronos(Job):
 def send_priority_pass_status_emails(priority_pass_id):
     if priority_pass := get_model_from_id(PriorityPass, priority_pass_id):
         priority_pass.send_confirmation_email()
-        priority_pass.send_revoke_email()
+        priority_pass.send_refused_email()
     else:
         logger.warning(
             "Could not find priority pass %s to end confirmation email",

@@ -116,7 +116,7 @@ class Event(models.Model):
         return bool(self.confirmation_subject and self.confirmation_content)
 
     @property
-    def has_revoke_email(self):
+    def has_refused_email(self):
         return bool(self.refuse_subject and self.refuse_content)
 
     def clean(self):
@@ -485,7 +485,7 @@ class PriorityPass(models.Model):
             )
         msg.queue_emails()
 
-    def send_revoke_email(self):
+    def send_refused_email(self):
         if not self.main_event or not self.main_event.has_revoke_email:
             return
         if not self.revoked_registrations:
