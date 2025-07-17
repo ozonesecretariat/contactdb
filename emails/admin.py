@@ -303,7 +303,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         """
         if "_save_draft" in request.POST:
             obj.is_draft = True
-            obj.save()
+            obj.save(update_fields=["is_draft"])
             self.message_user(
                 request, f'Email "{obj.subject}" was saved as draft.', messages.SUCCESS
             )
@@ -311,7 +311,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
         if "_save" in request.POST:
             obj.is_draft = False
-            obj.save()
+            obj.save(update_fields=["is_draft"])
             return self.response_post_save_add(request, obj)
 
         return super().response_add(request, obj, post_url_redirect)
@@ -323,7 +323,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         if "_save_draft" in request.POST:
             # Continue editing draft
             obj.is_draft = True
-            obj.save()
+            obj.save(update_fields=["is_draft"])
             self.message_user(
                 request, f'Draft "{obj.subject}" was updated.', messages.SUCCESS
             )
@@ -332,7 +332,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         if "_save" in request.POST:
             # Mail now becomes "permanent" - i.e. it gets sent and non-editable
             obj.is_draft = False
-            obj.save()
+            obj.save(update_fields=["is_draft"])
             return self.response_post_save_add(request, obj)
 
         return super().response_change(request, obj)
