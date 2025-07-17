@@ -35,7 +35,7 @@ describe("Check", () => {
       suffix: "-email-subject",
     });
     // Check that only 1 email has been sent.
-    cy.contains("1 send email task");
+    cy.reloadUntilText(".paginator", "1 send email task");
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
@@ -65,7 +65,7 @@ describe("Check", () => {
       suffix: "-email-subject",
     });
     // Check that only 1 email has been sent.
-    cy.contains("1 send email task");
+    cy.reloadUntilText(".paginator", "1 send email task");
     // Wait for the task to finish
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
@@ -94,6 +94,7 @@ describe("Check", () => {
     });
 
     // Wait for the task to finish
+    cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
   });
   it("Checking sending to contact with no name", () => {
@@ -111,6 +112,7 @@ describe("Check", () => {
     });
 
     // Wait for the task to finish
+    cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
     // Check interpolation
@@ -132,6 +134,7 @@ describe("Check", () => {
     });
 
     // Wait for the task to finish and go to the SendEmailTask detail admin
+    cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get(".field-email a").click();
     cy.get(".field-email_to").contains("ţēśţ.παράδειγμα+ó@उदाहरण例子παράδειγμαпример例.test");
@@ -171,6 +174,7 @@ describe("Check", () => {
     cy.get("input[name=_save]").click();
 
     // Wait for the task to finish
+    cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get("a").contains(subject).click();
 
@@ -199,6 +203,7 @@ describe("Check", () => {
     cy.get("input[name=_save]").click();
 
     // Wait for the task to finish
+    cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get("a").contains(subject).click();
     //
@@ -227,6 +232,7 @@ describe("Check", () => {
       suffix: "-email-subject",
     });
     // Wait for the task to finish
+    cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
     cy.get("#result_list tbody th a").click();
 

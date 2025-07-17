@@ -1,6 +1,7 @@
 import logging
 
 from django_task.job import Job
+from django_task.utils import get_model_from_id
 
 from events.models import Registration
 from events.parsers import (
@@ -8,6 +9,8 @@ from events.parsers import (
     KronosOrganizationsParser,
     KronosParticipantsParser,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class LoadEventsFromKronos(Job):
@@ -55,10 +58,10 @@ class LoadOrganizationsFromKronos(Job):
 
 
 def resend_confirmation_email(registration_id):
-    try:
-        registration = Registration.objects.get(id=registration_id)
-    except Registration.DoesNotExist:
-        # Deleted while in the queue
-        return
-
-    registration.send_confirmation_email()
+    if registration := get_model_from_id(Registration, registration_id):
+        registration.send_confirmation_email()
+    else:
+        logger.warning(
+            "Could not find registration %s to resend confirmation email",
+            registration_id,
+        )
