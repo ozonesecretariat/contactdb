@@ -536,6 +536,18 @@ class EmailAdmin(BaseEmailAdmin):
         django_rq.enqueue(queue_emails, obj.id)
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
 
+    def response_post_save_change(self, request, obj):
+        """
+        Since drafts can be edited, now we need to override the post_change as well.
+        This ensures the custom logic in post_save_add is called after editing as well!
+        """
+        if not obj.is_draft:
+            # If this was a draft that got "converted" to sent, trigger the sending!
+            # We're sure this is a conversion because there's no change for non-drafts.
+            return self.response_post_save_add(request, obj)
+
+        return super().response_post_save_change(request, obj)
+
     @admin.display(description="Recipients")
     def recipients_links(self, obj):
         return self.get_m2m_links(obj.recipients.all())
@@ -1010,6 +1022,18 @@ class InvitationEmailAdmin(BaseEmailAdmin):
             messages.SUCCESS,
         )
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
+
+    def response_post_save_change(self, request, obj):
+        """
+        Since drafts can be edited, now we need to override the post_change as well.
+        This ensures the custom logic in post_save_add is called after editing as well!
+        """
+        if not obj.is_draft:
+            # If this was a draft that got "converted" to sent, trigger the sending!
+            # We're sure this is a conversion because there's no change for non-drafts.
+            return self.response_post_save_add(request, obj)
+
+        return super().response_post_save_change(request, obj)
 
     @admin.display(description="Original Email")
     def original_email_link(self, obj):
