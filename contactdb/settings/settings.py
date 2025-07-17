@@ -227,6 +227,9 @@ RQ_QUEUES = {
     }
 }
 
+# https://github.com/morlandi/django-task?tab=readme-ov-file#app-settings
+DJANGOTASK_JOB_TRACE_ENABLED = env.bool("DJANGOTASK_JOB_TRACE_ENABLED", default=False)
+
 # Hide RQ admin, since we are using Django Task models instead
 RQ_SHOW_ADMIN_LINK = False
 
@@ -395,6 +398,7 @@ CKEDITOR_CONTACT_PLACEHOLDERS = {
     "first_name": {"attr": "first_name"},
     "last_name": {"attr": "last_name"},
     "title": {"attr": "title"},
+    "title_localized": {"attr": "title_localized"},
     "party": {"attr": "organization__government__name"},
     "organization": {"attr": "organization__name"},
 }

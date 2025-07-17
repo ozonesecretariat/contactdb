@@ -34,6 +34,7 @@ class UserAdmin(ModelAdmin):
         "permission_count",
         "is_superuser",
         "is_active",
+        "is_staff",
         "has_2fa",
         "last_login",
     )
@@ -66,6 +67,7 @@ class UserAdmin(ModelAdmin):
             "Permissions",
             {
                 "fields": (
+                    "is_staff",
                     "is_superuser",
                     "roles",
                     "user_permissions",

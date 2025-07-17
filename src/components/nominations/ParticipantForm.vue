@@ -18,6 +18,7 @@
         outlined
         label="First Name"
         name="firstName"
+        class="col-grow"
       />
       <q-input
         v-model="data.lastName"
@@ -26,6 +27,7 @@
         outlined
         label="Last Name"
         name="lastName"
+        class="col-grow"
       />
     </div>
     <q-select
@@ -187,6 +189,15 @@
         label="Address"
         name="address"
       />
+    </template>
+    <template v-else>
+      <div class="text-subtitle2">Organization Address</div>
+      <p>
+        {{ selectedOrganization?.country?.name }} {{ selectedOrganization?.city }} {{ selectedOrganization?.state }}
+        {{ selectedOrganization?.postalCode }}
+        <br />
+        {{ selectedOrganization?.address }}
+      </p>
     </template>
     <div class="text-subtitle2">Files</div>
     <template v-if="selectedOrganization?.organizationType === 'GOV'">
@@ -362,27 +373,7 @@ const data = reactive({
 const selectedOrganization = computed(() =>
   invitation.organizations.find((o) => o.id.toString() === data.organization.toString()),
 );
-const titles = [
-  "",
-  "Mr.",
-  "Ms.",
-  "H.E. Mr.",
-  "H.E. Ms.",
-  "Hon. Mr.",
-  "Hon. Ms.",
-  "M.",
-  "Mme.",
-  "H.E. M.",
-  "H.E. Mme.",
-  "Hon. M.",
-  "Hon. Mme.",
-  "Sr.",
-  "Sra.",
-  "H.E. Sr.",
-  "H.E. Sra.",
-  "Hon. Sr.",
-  "Hon. Sra.",
-];
+const titles = ["", "Mr.", "Ms.", "H.E. Mr.", "H.E. Ms.", "Hon. Mr.", "Hon. Ms."];
 
 if (invitation.participant) {
   Object.assign(data, {
@@ -434,8 +425,8 @@ async function saveForm() {
     const newContact = (
       await api.post<Contact>(url, {
         ...data,
-        address: data.isUseOrganizationAddress ? "" : data.address,
-        city: data.isUseOrganizationAddress ? "" : data.city,
+        address: data.address,
+        city: data.city,
         credentials: data.hasCredentials ? await fileToBase64Dict(data.credentials) : null,
         emailCcs: toList(data.emailCcs),
         emails: toList(data.emails),
@@ -443,8 +434,8 @@ async function saveForm() {
         passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
         photo: await fileToBase64(data.photo),
-        postalCode: data.isUseOrganizationAddress ? "" : data.postalCode,
-        state: data.isUseOrganizationAddress ? "" : data.state,
+        postalCode: data.postalCode,
+        state: data.state,
       })
     ).data;
     await invitation.loadContacts();

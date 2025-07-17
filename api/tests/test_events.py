@@ -587,16 +587,14 @@ class TestEventNominationsAPI(BaseAPITestCase):
                 "lastName": "Doe",
                 "emails": ["test-create@example.com"],
                 "organization": self.organization.id,
+                "city": "Night City",
             },
             format="json",
         )
         self.assertEqual(response.status_code, 201)
 
-        self.assertTrue(
-            self.organization.contacts.filter(
-                emails=["test-create@example.com"]
-            ).exists()
-        )
+        contact = self.organization.contacts.get(emails=["test-create@example.com"])
+        self.assertEqual(contact.city, "Night City")
 
     def test_create_contact_government_related_orgs(self):
         ro = Country.objects.get(code="RO")

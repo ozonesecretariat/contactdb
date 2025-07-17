@@ -7,25 +7,24 @@
           <p class="text-h6 text-secondary">
             {{ participant?.fullName }}
           </p>
-          <p class="text-subtitle1">
-            {{ participant.designation }}
-          </p>
-          <p class="text-h6">
+          <div class="text-h6">
             {{ participant.organization?.name }}
-          </p>
+          </div>
+          <div class="text-subtitle1">{{ participant.designation }} {{ participant.department }}</div>
         </div>
         <div class="column q-gutter-y-md">
           <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
           <q-img v-if="participant.photoUrl" :src="apiBase + participant.photoUrl" alt="" />
         </div>
       </div>
-      <div class="row items-start justify-between q-mt-md">
-        <div v-if="organization">
-          {{ organization.country?.name ?? organization.government?.name }}
-          {{ organization.state }}
-          {{ organization.postalCode }}
+      <div class="row items-start justify-between q-mt-md q-col-gutter-sm">
+        <div v-if="addressEntity">
+          {{ country }}
+          {{ addressEntity.city }}
+          {{ addressEntity.state }}
+          {{ addressEntity.postalCode }}
           <br />
-          {{ organization.address }}
+          {{ addressEntity.address }}
         </div>
         <div>
           Email: {{ participant.emails?.[0] ?? "-" }}
@@ -93,7 +92,15 @@ const router = useRouter();
 const loading = ref(false);
 const invitation = useInvitationStore();
 const participant = computed(() => invitation.participant);
-const organization = computed(() => invitation.participant?.organization);
+const country = computed(() => {
+  if (invitation.participant?.isUseOrganizationAddress) {
+    return invitation.participant.organization?.country?.name ?? invitation.participant.organization?.government?.name;
+  }
+  return invitation.participant?.country;
+});
+const addressEntity = computed(() =>
+  invitation.participant?.isUseOrganizationAddress ? invitation.participant?.organization : invitation.participant,
+);
 
 const nominations = reactive<Record<string, string>>({});
 const nominationsToggle = reactive<Record<string, boolean>>({});
@@ -183,6 +190,7 @@ function validateNominations() {
 <style scoped lang="scss">
 .event {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: start;
 }
