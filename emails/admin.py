@@ -984,7 +984,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "email_cc_preview",
         "created_on",
         "status_display",
-        "progress_display",
+        "repeat_action",
     )
     list_display_links = ("email",)
     list_filter = (
