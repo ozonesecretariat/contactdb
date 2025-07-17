@@ -5,7 +5,7 @@ from itertools import chain
 from django.core.files.base import ContentFile
 from django.db import transaction
 
-from common.parsing import CONTACT_MAPPING, REGISTRATION_MAPPING
+from common.parsing import CONTACT_MAPPING, REGISTRATION_MAPPING, normalize_title
 from core.models import Contact, Country, Organization
 from events.kronos import KronosClient
 from events.models import (
@@ -309,6 +309,12 @@ class ContactParser:
             for key, value in contact_data.items()
             if key in CONTACT_MAPPING
         }
+
+        # Update the contact's title
+        raw_title = contact_dict.get("title", "")
+        english_title, localized_title = normalize_title(raw_title)
+        contact_dict["title"] = english_title
+        contact_dict["title_localized"] = localized_title
 
         country = (
             country or Country.objects.get(code=country_code) if country_code else None

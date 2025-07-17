@@ -75,7 +75,7 @@ class TestKeepBothContacts(BaseAPITestCase):
             "contactId": "contactid1",
             "organizationId": "orgid",
             "organizationType": "GOV",
-            "title": "Ms.1",
+            "title": "H.E. Sr.",
             "firstName": "Jane",
             "lastName": "Eyre",
             "designation": "Expert",
@@ -104,7 +104,7 @@ class TestKeepBothContacts(BaseAPITestCase):
             "contactId": "contactid2",
             "organizationId": "orgid",
             "organizationType": "GOV",
-            "title": "Ms.2",
+            "title": "H.E. Sra.",
             "firstName": "Jane",
             "lastName": "Eyre",
             "designation": "Expert",
@@ -274,8 +274,10 @@ class TestKeepBothContacts(BaseAPITestCase):
 
         self.assertEqual(contact1.registrations.count(), 1)
 
-        self.assertEqual(contact1.title, "Ms.1")
-        self.assertEqual(contact2.title, "Ms.2")
+        self.assertEqual(contact1.title, "H.E. Mr.")
+        self.assertEqual(contact1.title_localized, "H.E. Sr.")
+        self.assertEqual(contact2.title, "H.E. Ms.")
+        self.assertEqual(contact2.title_localized, "H.E. Sra.")
         self.assertEqual(contact1.registrations.count(), 1)
 
         self.assertEqual(Contact.objects.filter(contact_ids__isnull=True).count(), 2)

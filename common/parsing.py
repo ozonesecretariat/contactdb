@@ -1,6 +1,8 @@
 import re
 import string
 
+from core.models import BaseContact
+
 punctuation_translate = {ord(c): " " for c in string.punctuation}
 CONTACT_MAPPING = {
     "organization": "organization",
@@ -74,3 +76,17 @@ def parse_list(email_list):
                 result.add(addr)
 
     return sorted(result)
+
+
+def normalize_title(raw_title):
+    """
+    Normalize and return (english_title, localized_title) tuple.
+    """
+
+    title = FIX_TITLE_MAPPING.get(raw_title, raw_title)
+
+    english_title = LOCALIZED_TITLE_TO_ENGLISH.get(title, title)
+    english_title = english_title if english_title in BaseContact.Title.values else ""
+    localized_title = title if title in BaseContact.LocalizedTitle.values else ""
+
+    return english_title, localized_title

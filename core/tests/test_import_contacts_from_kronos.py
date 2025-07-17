@@ -47,7 +47,7 @@ class TestImportContactFromKronos(TestCase):
             "contactId": "contactid",
             "organizationId": "orgid",
             "organizationType": "GOV",
-            "title": "Ms.",
+            "title": "Mme.",
             "firstName": "Jane",
             "lastName": "Eyre",
             "designation": "Expert",
@@ -171,6 +171,7 @@ class TestImportContactFromKronos(TestCase):
         self.assertIsNotNone(contact.country)
 
         self.assertEqual(contact.title, "Ms.")
+        self.assertEqual(contact.title_localized, "Mme.")
         self.assertEqual(contact.first_name, "Jane")
         self.assertEqual(contact.last_name, "Eyre")
         self.assertEqual(contact.designation, "Expert")
