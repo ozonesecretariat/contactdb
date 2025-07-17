@@ -193,10 +193,11 @@
     <template v-else>
       <div class="text-subtitle2">Organization Address</div>
       <p>
-        {{ selectedOrganization?.country?.name }} {{ selectedOrganization?.city }} {{ selectedOrganization?.state }}
-        {{ selectedOrganization?.postalCode }}
-        <br />
         {{ selectedOrganization?.address }}
+        <br />
+        {{ selectedOrganization?.city }} {{ selectedOrganization?.state }} {{ selectedOrganization?.postalCode }}
+        <br />
+        {{ selectedOrganization?.country?.name }}
       </p>
     </template>
     <div class="text-subtitle2">Files</div>

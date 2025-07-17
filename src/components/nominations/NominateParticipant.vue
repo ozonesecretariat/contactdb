@@ -10,7 +10,11 @@
           <div class="text-h6">
             {{ participant.organization?.name }}
           </div>
-          <div class="text-subtitle1">{{ participant.designation }} {{ participant.department }}</div>
+          <div class="text-subtitle1">
+            {{ participant.designation }}
+            <span v-if="participant.designation && participant.department">,</span>
+            {{ participant.department }}
+          </div>
         </div>
         <div class="column q-gutter-y-md">
           <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
@@ -19,12 +23,13 @@
       </div>
       <div class="row items-start justify-between q-mt-md q-col-gutter-sm">
         <div v-if="addressEntity">
-          {{ country }}
+          {{ addressEntity.address }}
+          <br />
           {{ addressEntity.city }}
           {{ addressEntity.state }}
           {{ addressEntity.postalCode }}
           <br />
-          {{ addressEntity.address }}
+          {{ country }}
         </div>
         <div>
           Email: {{ participant.emails?.[0] ?? "-" }}
