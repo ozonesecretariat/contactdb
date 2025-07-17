@@ -9,6 +9,8 @@ class TestAppSettingsAPI(BaseAPITestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data["require2fa"], False)
+        self.assertEqual(data["appTitle"], "Meeting Registration")
+        self.assertEqual(data["welcomeMessage"], "")
 
     def test_get_app_settings_admin(self):
         self.login_admin()
@@ -16,6 +18,8 @@ class TestAppSettingsAPI(BaseAPITestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data["require2fa"], False)
+        self.assertEqual(data["appTitle"], "Meeting Registration")
+        self.assertEqual(data["welcomeMessage"], "")
 
     def test_get_app_settings_user(self):
         self.login_view_user()
@@ -23,3 +27,5 @@ class TestAppSettingsAPI(BaseAPITestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data["require2fa"], False)
+        self.assertEqual(data["appTitle"], "Meeting Registration")
+        self.assertEqual(data["welcomeMessage"], "")

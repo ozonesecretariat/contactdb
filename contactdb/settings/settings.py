@@ -354,6 +354,14 @@ CONSTANCE_CONFIG = {
         "Require two-factor authentication. Users will not be able to use "
         "the application until they complete the 2FA setup.",
     ),
+    "APP_TITLE": (
+        "Meeting Registration",
+        "The title of the application, displayed in the page header.",
+    ),
+    "WELCOME_MESSAGE": (
+        "",
+        "The description under the main title.",
+    ),
 }
 CONSTANCE_CONFIG_FIELDSETS = (
     (
@@ -361,6 +369,16 @@ CONSTANCE_CONFIG_FIELDSETS = (
         {
             "collapse": False,
             "fields": ("REQUIRE_2FA",),
+        },
+    ),
+    (
+        "User Interface",
+        {
+            "collapse": False,
+            "fields": (
+                "APP_TITLE",
+                "WELCOME_MESSAGE",
+            ),
         },
     ),
 )

@@ -5,7 +5,7 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          ContactDB
+          {{ appSettingsStore.appTitle }}
           <template v-if="route.meta.header">&middot; {{ route.meta.header }}</template>
         </q-toolbar-title>
         <q-space />
@@ -40,6 +40,7 @@ import { useStorage } from "@vueuse/core";
 import { apiBase } from "boot/axios";
 import MenuList from "components/MenuList.vue";
 import { useQuasar } from "quasar";
+import { useAppSettingsStore } from "stores/appSettingsStore";
 import { useUserStore } from "stores/userStore";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -50,6 +51,7 @@ const router = useRouter();
 const userStore = useUserStore();
 const leftDrawerOpen = useStorage("leftDrawerOpen", true);
 const isDarkMode = useStorage<boolean>("isDarkMode", window.matchMedia("(prefers-color-scheme: dark)").matches);
+const appSettingsStore = useAppSettingsStore();
 
 function toggleDarkMode() {
   isDarkMode.value = !isDarkMode.value;
