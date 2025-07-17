@@ -16,7 +16,7 @@ from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
-from events.jobs import resend_confirmation_email
+from events.jobs import send_priority_pass_status_emails
 from events.models import (
     Event,
     EventGroup,
@@ -252,21 +252,6 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     def tags_display(self, obj: Registration):
         return ", ".join(map(str, obj.tags.all()))
 
-    @admin.action(
-        description="Resend confirmation email for selected registrations",
-        permissions=["change"],
-    )
-    def resend_confirmation_emails(self, request, queryset):
-        count = 0
-        for registration in queryset:
-            # Queue instead of doing it instantly or in bulk as it will require
-            # generating the qr or badge.
-            django_rq.enqueue(resend_confirmation_email, registration.id)
-            count += 1
-        self.message_user(
-            request, f"{count} confirmation emails have been queued for sending"
-        )
-
     @admin.action(description="Send email to selected contacts", permissions=["view"])
     def send_email(self, request, queryset):
         ids = ",".join(
@@ -336,6 +321,7 @@ class PriorityPassAdmin(ModelAdmin):
     annotate_query = {
         "registration_count": Count("registrations"),
     }
+    actions = ("send_confirmation_emails",)
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -414,6 +400,27 @@ class PriorityPassAdmin(ModelAdmin):
 
         return redirect(
             reverse("admin:events_prioritypass_change", args=[priority_pass.id])
+        )
+
+    def response_change(self, request, obj):
+        resp = super().response_change(request, obj)
+        if "_save_without_sending" not in request.POST:
+            self.send_confirmation_emails(request, [obj])
+        return resp
+
+    @admin.action(
+        description="Send confirmation email for selected priority passes",
+        permissions=["change"],
+    )
+    def send_confirmation_emails(self, request, queryset):
+        count = 0
+        for priority_pass in queryset:
+            # Queue instead of doing it instantly or in bulk as it will require
+            # generating the qr or badge.
+            django_rq.enqueue(send_priority_pass_status_emails, priority_pass.id)
+            count += 1
+        self.message_user(
+            request, f"{count} confirmation emails have been queued for sending"
         )
 
 
