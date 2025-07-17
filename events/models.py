@@ -486,7 +486,7 @@ class PriorityPass(models.Model):
         msg.queue_emails()
 
     def send_refused_email(self):
-        if not self.main_event or not self.main_event.has_revoke_email:
+        if not self.main_event or not self.main_event.has_refused_email:
             return
         if not self.revoked_registrations:
             return
