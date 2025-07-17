@@ -553,7 +553,7 @@ class Registration(models.Model):
         unique_together = ("contact", "event")
 
     def __str__(self):
-        return f"{self.event.code} - {self.contact.full_name}"
+        return f"{self.event.code} - {self.contact.full_name} ({self.status})"
 
     def save(self, *args, **kwargs):
         if not self.priority_pass:
