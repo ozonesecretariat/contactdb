@@ -2,6 +2,20 @@
 {% load admin_urls %}
 
 {% block after_field_sets %}
+  {% if object.is_draft %}
+    <fieldset class="module aligned">
+      <h2>Draft Information</h2>
+      <div class="form-row">
+        <div>
+          <p class="help">
+            This email is currently saved as a draft. You can either continue editing it and save it as draft again, or
+            send it now using the buttons below.
+          </p>
+        </div>
+      </div>
+    </fieldset>
+  {% endif %}
+
   {% if original_email %}
     <fieldset class="module aligned">
       <h2>Reminder Information</h2>

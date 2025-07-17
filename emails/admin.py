@@ -258,6 +258,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     list_display = (
         "subject",
         "created_at",
+        "is_draft",
         "sent_count",
         "success_count",
         "failed_count",
@@ -285,10 +286,56 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         return obj.build_email().message().as_string()
 
     def has_change_permission(self, request, obj=None):
+        """Only allow the editing of draft emails; sent emails can only be viewed"""
+        if obj and obj.is_draft:
+            return super().has_change_permission(request, obj)
         return False
 
     def has_delete_permission(self, request, obj=None):
+        """Only allow deleting for draft emails; sent emails can only be viewed"""
+        if obj and obj.is_draft:
+            return super().has_delete_permission(request, obj)
         return False
+
+    def response_add(self, request, obj, post_url_redirect=None):
+        """
+        Overridden to handle different responses for "Save Draft" vs. "Send Email Now".
+        """
+        if "_save_draft" in request.POST:
+            obj.is_draft = True
+            obj.save()
+            self.message_user(
+                request, f'Email "{obj.subject}" was saved as draft.', messages.SUCCESS
+            )
+            return redirect(f"admin:emails_{obj._meta.model_name}_change", obj.pk)
+
+        if "_save" in request.POST:
+            obj.is_draft = False
+            obj.save()
+            return self.response_post_save_add(request, obj)
+
+        return super().response_add(request, obj, post_url_redirect)
+
+    def response_change(self, request, obj):
+        """
+        On edit, we should automatically set is_draft based on the button used.
+        """
+        if "_save_draft" in request.POST:
+            # Continue editing draft
+            obj.is_draft = True
+            obj.save()
+            self.message_user(
+                request, f'Draft "{obj.subject}" was updated.', messages.SUCCESS
+            )
+            return redirect(f"admin:emails_{obj._meta.model_name}_change", obj.pk)
+
+        if "_save" in request.POST:
+            # Mail now becomes "permanent" - i.e. it gets sent and non-editable
+            obj.is_draft = False
+            obj.save()
+            return self.response_post_save_add(request, obj)
+
+        return super().response_change(request, obj)
 
     def _get_count_link(self, obj, status=None):
         extra_filters = {}
@@ -442,6 +489,14 @@ class EmailAdmin(BaseEmailAdmin):
             },
         ),
     )
+    # is_draft should be readonly as its value is set by clicking separate buttons
+    readonly_fields = ("is_draft",)
+
+    def get_fieldsets(self, request, obj=None):
+        if obj and not obj.is_draft:
+            return self.view_fieldsets
+        # For new emails or drafts (editable), return the "normal" fieldsets
+        return self.fieldsets
 
     def get_queryset(self, request):
         return (
@@ -461,6 +516,11 @@ class EmailAdmin(BaseEmailAdmin):
         super().save_model(request, obj, form, change)
 
     def response_post_save_add(self, request, obj: Email):
+        if obj.is_draft:
+            # We're not sending out any emails on drafts
+            self.message_user(request, "Draft saved successfully.", messages.SUCCESS)
+            return redirect("admin:emails_email_change", obj.pk)
+
         tasks = obj.queue_emails()
         self.message_user(
             request,
@@ -614,7 +674,12 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
     # is_reminder and original_email should be readonly for both invitation and reminders
     # This ensures consistent behaviour and separation of concerns.
-    readonly_fields = ("is_reminder_display", "original_email_display")
+    # is_draft should also be readonly as its value is set by clicking separate buttons
+    readonly_fields = (
+        "is_draft",
+        "is_reminder_display",
+        "original_email_display",
+    )
 
     autocomplete_fields = (
         "organization_types",
@@ -892,6 +957,11 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         return super().add_view(request, form_url, extra_context)
 
     def response_post_save_add(self, request, obj):
+        if obj.is_draft:
+            # We're not sending out any emails on drafts
+            self.message_user(request, "Draft saved successfully.", messages.SUCCESS)
+            return redirect("admin:emails_invitationemail_change", obj.pk)
+
         # First check if this is a reminder
         original_email_id = request.session.pop("reminder_original_email_id", None)
         original_email = None
