@@ -3,38 +3,43 @@
     <p class="text-weight-medium">1. Review participant details below. Use the 'Edit' button to modify information:</p>
     <div class="bg-grey-2 q-pa-md rounded-borders">
       <div class="row items-start justify-between">
-        <div>
-          <p class="text-h6 text-secondary">
-            {{ participant?.fullName }}
-          </p>
-          <div class="text-h6">
-            {{ participant.organization?.name }}
+        <div class="col">
+          <div class="col-10 q-gutter-x-lg">
+            <p class="text-h6 text-secondary">
+              {{ participant?.fullName }}
+            </p>
+            <div class="text-subtitle1">
+              {{ participant.designation }}
+              <br v-if="participant.designation && participant.department" />
+              {{ participant.department }}
+            </div>
+            <div class="text-h6">
+              {{ participant.organization?.name }}
+            </div>
+            <div v-if="participant.organization?.government" class="text-h6">
+              {{ participant.organization?.government?.name }}
+            </div>
           </div>
-          <div class="text-subtitle1">
-            {{ participant.designation }}
-            <span v-if="participant.designation && participant.department">,</span>
-            {{ participant.department }}
+          <div class="row items-start justify-left q-mt-md q-col-gutter-sm">
+            <div v-if="addressEntity" class="col-6">
+              {{ addressEntity.address }}
+              <br v-if="addressEntity.address" />
+              {{ addressEntity.city }}
+              {{ addressEntity.state }}
+              {{ addressEntity.postalCode }}
+              <br v-if="addressEntity.city || addressEntity.state || addressEntity.postalCode" />
+              {{ country }}
+            </div>
+            <div>
+              Email: {{ participant.emails?.[0] ?? "-" }}
+              <br />
+              Mobile: {{ participant.mobiles?.[0] ?? "-" }}
+            </div>
           </div>
         </div>
-        <div class="column q-gutter-y-md">
+        <div class="col-2 q-gutter-y-md">
           <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
           <q-img v-if="participant.photoUrl" :src="apiBase + participant.photoUrl" alt="" />
-        </div>
-      </div>
-      <div class="row items-start justify-between q-mt-md q-col-gutter-sm">
-        <div v-if="addressEntity">
-          {{ addressEntity.address }}
-          <br />
-          {{ addressEntity.city }}
-          {{ addressEntity.state }}
-          {{ addressEntity.postalCode }}
-          <br />
-          {{ country }}
-        </div>
-        <div>
-          Email: {{ participant.emails?.[0] ?? "-" }}
-          <br />
-          Mobile: {{ participant.mobiles?.[0] ?? "-" }}
         </div>
       </div>
     </div>
@@ -101,7 +106,7 @@ const country = computed(() => {
   if (invitation.participant?.isUseOrganizationAddress) {
     return invitation.participant.organization?.country?.name ?? invitation.participant.organization?.government?.name;
   }
-  return invitation.participant?.country;
+  return invitation.countries.find((_country) => _country.code === invitation.participant?.country)?.name;
 });
 const addressEntity = computed(() =>
   invitation.participant?.isUseOrganizationAddress ? invitation.participant?.organization : invitation.participant,
