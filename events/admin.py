@@ -298,8 +298,12 @@ class PriorityPassAdmin(ModelAdmin):
     list_filter = (
         "registrations__status",
         AutocompleteFilterFactory("contact", "registrations__contact"),
-        AutocompleteFilterFactory("organization", "registrations__contact__organization"),
-        AutocompleteFilterFactory("government", "registrations__contact__organization__government"),
+        AutocompleteFilterFactory(
+            "organization", "registrations__contact__organization"
+        ),
+        AutocompleteFilterFactory(
+            "government", "registrations__contact__organization__government"
+        ),
         AutocompleteFilterFactory("event", "registrations__event"),
         AutocompleteFilterFactory("event group", "registrations__event__group"),
     )
