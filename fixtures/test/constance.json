@@ -1,0 +1,23 @@
+[
+  {
+    "model": "constance.constance",
+    "pk": 1,
+    "fields": { "key": "REQUIRE_2FA", "value": "{\"__type__\": \"default\", \"__value__\": false}" }
+  },
+  {
+    "model": "constance.constance",
+    "pk": 2,
+    "fields": {
+      "key": "APP_TITLE",
+      "value": "{\"__type__\": \"default\", \"__value__\": \"Meeting Registration Test\"}"
+    }
+  },
+  {
+    "model": "constance.constance",
+    "pk": 3,
+    "fields": {
+      "key": "WELCOME_MESSAGE",
+      "value": "{\"__type__\": \"default\", \"__value__\": \"Meeting Registration Test Welcome Message\"}"
+    }
+  }
+]

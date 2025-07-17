@@ -9,9 +9,11 @@ export const useAppSettingsStore = defineStore("appSettings", {
     },
   },
   state: () => ({
+    appTitle: "",
     environmentName: "",
     initialized: false,
     require2fa: false,
     sentryDsn: "",
+    welcomeMessage: "",
   }),
 });
