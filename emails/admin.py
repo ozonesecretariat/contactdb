@@ -899,10 +899,12 @@ class InvitationEmailAdmin(BaseEmailAdmin):
         # Add reminder button invitation & reminder emails; pre-populate context
         obj = self.get_object(request, object_id)
         if obj:
-            extra_context["show_reminder_button"] = True
-            extra_context["reminder_url"] = reverse(
-                "admin:emails_invitationemail_send_reminder", args=[object_id]
-            )
+            if not obj.is_draft:
+                # Do not show reminder button for drafts
+                extra_context["show_reminder_button"] = True
+                extra_context["reminder_url"] = reverse(
+                    "admin:emails_invitationemail_send_reminder", args=[object_id]
+                )
             if obj.is_reminder:
                 extra_context["original_email"] = obj.original_email
                 extra_context["reminder_emails"] = (
