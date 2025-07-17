@@ -217,6 +217,39 @@ class TestEmailAdminDrafts(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/admin/emails/sendemailtask", response.url)
 
+    def test_draft_actions_display_for_drafts(self):
+        """Test that the delete link is shown for draft emails, but not for others."""
+        # Creating one draft and one sent to check the behaviour of each case.
+        draft_email = EmailFactory(is_draft=True)
+        sent_email = EmailFactory(is_draft=False)
+
+        draft_actions = self.admin.draft_actions(draft_email)
+        self.assertIn("deletelink", draft_actions)
+        self.assertIn(f"/admin/emails/email/{draft_email.pk}/delete/", draft_actions)
+
+        # For the sent email, only a "-" should be displayed
+        sent_actions = self.admin.draft_actions(sent_email)
+        self.assertEqual(sent_actions, "-")
+
+    def test_delete_view_redirect(self):
+        """
+        Test that the delete view redirects to the emails list after successful deletion.
+        """
+        draft_email = EmailFactory(is_draft=True)
+
+        request = self._make_request("GET")
+        response = self.admin.delete_view(request, str(draft_email.pk))
+        self.assertEqual(response.status_code, 200)
+
+        request = self._make_request("POST", data={"post": "yes"})
+        request._dont_enforce_csrf_checks = True
+        response = self.admin.delete_view(request, str(draft_email.pk))
+
+        # Should delete and redirect to changelist
+        self.assertFalse(Email.objects.filter(pk=draft_email.pk).exists())
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/emails/email/", response.url)
+
 
 class TestInvitationEmailAdminDrafts(TestCase):
     """Test draft functionality in InvitationEmailAdmin."""
@@ -382,3 +415,38 @@ class TestInvitationEmailAdminDrafts(TestCase):
         self.assertGreater(SendEmailTask.objects.count(), 0)
         self.assertEqual(response.status_code, 302)
         self.assertIn("/admin/emails/sendemailtask", response.url)
+
+    def test_draft_actions_display_for_drafts(self):
+        """Test that the delete link is shown for draft emails, but not for others."""
+        # Creating one draft and one sent to check the behaviour of each case.
+        draft_email = InvitationEmailFactory(is_draft=True)
+        sent_email = InvitationEmailFactory(is_draft=False)
+
+        draft_actions = self.admin.draft_actions(draft_email)
+        self.assertIn("deletelink", draft_actions)
+        self.assertIn(
+            f"/admin/emails/invitationemail/{draft_email.pk}/delete/", draft_actions
+        )
+
+        # For the sent email, only a "-" should be displayed
+        sent_actions = self.admin.draft_actions(sent_email)
+        self.assertEqual(sent_actions, "-")
+
+    def test_delete_view_redirect(self):
+        """
+        Test that the delete view redirects to the emails list after successful deletion.
+        """
+        draft_email = InvitationEmailFactory(is_draft=True)
+
+        request = self._make_request("GET")
+        response = self.admin.delete_view(request, str(draft_email.pk))
+        self.assertEqual(response.status_code, 200)
+
+        request = self._make_request("POST", data={"post": "yes"})
+        request._dont_enforce_csrf_checks = True
+        response = self.admin.delete_view(request, str(draft_email.pk))
+
+        # Should delete and redirect to changelist
+        self.assertFalse(InvitationEmail.objects.filter(pk=draft_email.pk).exists())
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/emails/invitationemail/", response.url)

@@ -262,6 +262,7 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
         "success_count",
         "failed_count",
         "pending_count",
+        "draft_actions",
     )
     ordering = ("-created_at",)
     search_fields = ("subject", "content")
@@ -334,6 +335,39 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
 
         return super().response_change(request, obj)
 
+    def delete_view(self, request, object_id, extra_context=None):
+        """
+        Overridden to redirect back to the emails list after performing deletion.
+        """
+        obj = self.get_object(request, object_id)
+        if obj and not obj.is_draft:
+            self.message_user(
+                request,
+                "Cannot delete sent emails. Only draft emails can be deleted.",
+                messages.ERROR,
+            )
+            model_name = self.model._meta.model_name
+            return redirect(f"admin:emails_{model_name}_changelist")
+
+        # If the object doesn't exist, let Django handle the 404.
+        # This helps prevent deleting emails via URL alone.
+        if not obj:
+            return super().delete_view(request, object_id, extra_context)
+
+        model_name = self.model._meta.model_name
+        response = super().delete_view(request, object_id, extra_context)
+
+        # If deletion was successful, redirect to the emails changelist, not main admin
+        if (
+            hasattr(response, "status_code")
+            and response.status_code == 302
+            and "/admin/" in response.url
+            and "changelist" not in response.url
+        ):
+            return redirect(f"admin:emails_{model_name}_changelist")
+
+        return response
+
     def _get_count_link(self, obj, status=None):
         extra_filters = {}
         if status:
@@ -371,6 +405,15 @@ class BaseEmailAdmin(ViewEmailMixIn, CKEditorTemplatesBase):
     @admin.display(description="Pending")
     def pending_count(self, obj):
         return self._get_count_link(obj, "PENDING")
+
+    @admin.display(description="Actions", ordering=None)
+    def draft_actions(self, obj):
+        if obj.is_draft:
+            delete_url = reverse(
+                f"admin:emails_{obj._meta.model_name}_delete", args=[obj.pk]
+            )
+            return format_html('<a href="{}" class="deletelink">Delete</a>', delete_url)
+        return "-"
 
 
 @admin.register(Email)
