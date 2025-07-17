@@ -1,6 +1,6 @@
 <template>
   <div class="flex column q-gutter-y-md">
-    <div class="text-subtitle2">Ozone Secretariat</div>
+    <div class="text-h6">{{ invitedOrganization }}</div>
     <div class="flex q-gutter-md">
       <q-input v-model="search" placeholder="Search" autofocus role="search" filled dense class="col-grow">
         <template #prepend>
@@ -138,6 +138,15 @@ const filteredNominations = computed(() =>
     item.contact.emails,
   ]),
 );
+
+const invitedOrganization = computed(() => {
+  for (const org of invitation.organizations) {
+    if (org.organizationType === "GOV") {
+      return org.government.name;
+    }
+  }
+  return invitation.organizations.map((org) => org.name).join(", ");
+});
 
 function handleRowClick(ev: Event, row: GroupedEventNomination) {
   if ($q.screen.lt.md) {

@@ -4,12 +4,12 @@ import textwrap
 from email import message_from_string
 from urllib.parse import urlencode
 
+import django_rq
 from admin_auto_filters.filters import AutocompleteFilter, AutocompleteFilterFactory
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
-from django.db import transaction
 from django.db.models import Count, Q
 from django.http import FileResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import redirect
@@ -22,6 +22,7 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.model_admin import ModelAdmin, TaskAdmin
 from common.urls import reverse
+from emails.jobs import queue_emails, queue_invitation_emails
 from emails.models import (
     Email,
     EmailAttachment,
@@ -29,9 +30,7 @@ from emails.models import (
     InvitationEmail,
     SendEmailTask,
 )
-from emails.services import get_organization_recipients
 from emails.validators import find_placeholders
-from events.models import EventInvitation
 
 
 class ViewEmailMixIn:
@@ -519,12 +518,15 @@ class EmailAdmin(BaseEmailAdmin):
             self.message_user(request, "Draft saved successfully.", messages.SUCCESS)
             return redirect("admin:emails_email_change", obj.pk)
 
-        tasks = obj.queue_emails()
         self.message_user(
             request,
-            f"{len(tasks)} emails scheduled for sending",
+            f"{len(obj.all_to_contacts)} emails scheduled for sending",
             level=messages.SUCCESS,
         )
+        # The changeform runs in a transaction, so we cannot immediately start queueing
+        # messages as that may run into race conditions where tasks are executed before
+        # the changes are committed in the DB.
+        django_rq.enqueue(queue_emails, obj.id)
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
 
     @admin.display(description="Recipients")
@@ -956,13 +958,13 @@ class InvitationEmailAdmin(BaseEmailAdmin):
 
         return super().add_view(request, form_url, extra_context)
 
-    def response_post_save_add(self, request, obj):
+    def response_post_save_add(self, request, obj: InvitationEmail):
         if obj.is_draft:
             # We're not sending out any emails on drafts
             self.message_user(request, "Draft saved successfully.", messages.SUCCESS)
             return redirect("admin:emails_invitationemail_change", obj.pk)
 
-        # First check if this is a reminder
+        # Check if this is a reminder
         original_email_id = request.session.pop("reminder_original_email_id", None)
         original_email = None
         if original_email_id:
@@ -983,67 +985,19 @@ class InvitationEmailAdmin(BaseEmailAdmin):
                 obj.delete()
                 return redirect("admin:emails_invitationemail_changelist")
 
-        tasks = []
-        event = obj.events.first() if obj.events.exists() else None
-        event_group = obj.event_group
-
-        org_recipients = get_organization_recipients(
-            obj.organization_types.all(),
-            obj.organizations.all(),
-            additional_cc_contacts=obj.cc_recipients.all(),
-            additional_bcc_contacts=obj.bcc_recipients.all(),
-            invitation_email=original_email,
+        # The changeform runs in a transaction, so we cannot immediately start queueing
+        # messages as that may run into race conditions where tasks are executed before
+        # the changes are committed in the DB.
+        django_rq.enqueue(
+            queue_invitation_emails,
+            obj.id,
+            original_email.id if original_email else None,
         )
-
-        for org, data in org_recipients.items():
-            if data["to_emails"]:
-                with transaction.atomic():
-                    if (
-                        org.organization_type
-                        and org.organization_type.acronym == "GOV"
-                        and org.government
-                    ):
-                        # Create or get country-level invitation
-                        # If organization is missing the government field,
-                        # it will be processed below and invited simply as org
-                        invitation, _ = EventInvitation.objects.get_or_create(
-                            country=org.government,
-                            event=event,
-                            event_group=event_group,
-                            # This (together with setting the country) signifies we're
-                            # inviting all GOV-related organizations from that country.
-                            organization=None,
-                        )
-                    else:
-                        # Regular organization-level invitation
-                        invitation, _ = EventInvitation.objects.get_or_create(
-                            country=None,
-                            organization=org,
-                            event=event,
-                            event_group=event_group,
-                        )
-                    task = SendEmailTask.objects.create(
-                        email=obj,
-                        organization=org,
-                        invitation=invitation,
-                        created_by=request.user,
-                        email_to=list(data["to_emails"]),
-                        email_cc=list(data["cc_emails"]),
-                        email_bcc=list(data["bcc_emails"]),
-                    )
-
-                    # Set contacts M2M as returned by get_organization_recipients()
-                    task.to_contacts.set(data["to_contacts"])
-                    task.cc_contacts.set(data["cc_contacts"])
-                    task.bcc_contacts.set(data["bcc_contacts"])
-
-                    task.run(is_async=True)
-                    tasks.append(task)
 
         message_type = "reminder" if original_email else "invitation"
         self.message_user(
             request,
-            f"{len(tasks)} {message_type} emails scheduled for sending",
+            f"{message_type} emails scheduled for sending",
             messages.SUCCESS,
         )
         return redirect(self.get_admin_list_filter_link(obj, "email_logs", "email"))
@@ -1108,6 +1062,7 @@ class SendEmailTaskAdmin(ViewEmailMixIn, TaskAdmin):
         "email_cc_preview",
         "created_on",
         "status_display",
+        "repeat_action",
     )
     list_display_links = ("email",)
     list_filter = (

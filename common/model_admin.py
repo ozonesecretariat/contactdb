@@ -196,6 +196,12 @@ class TaskAdmin(_CustomModelAdminMixIn, BaseTaskAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    @admin.display(description="Repeat")
+    def repeat_action(self, obj):
+        info = self.model._meta.app_label, self.model._meta.model_name
+        url = reverse("admin:%s_%s_repeat" % info, args=(obj.id,))
+        return format_html('<a href="{}">Repeat</a>', url)
+
 
 class ModelResource(_QuerysetMixIn, resources.ModelResource):
     @classmethod

@@ -158,19 +158,21 @@
         </tbody>
       {% endfor %}
     </table>
-    <h1 class="country">{{ country|default:'' }}</h1>
+    {% if priority_pass.is_gov %}
+      <h1 class="country">{{ country.name|default:'' }}</h1>
+    {% endif %}
     <section class="details">
       <div>
         <p class="name">{{ contact.display_name }}</p>
         <p class="org">
           {{ contact.designation|default:'-' }}
           <br />
-          <b>{{ contact.organization|default:'-' }}</b>
+          {{ organization_name|default:'-' }}
         </p>
         <p>
-          {{ contact.organization.city|default:'-' }}
+          {{ organization.city|default:'-' }}
           <br />
-          {{ contact.organization.country|default:'-' }}
+          {{ organization.country.name|default:'-' }}
         </p>
       </div>
       <dl>

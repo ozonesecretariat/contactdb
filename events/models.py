@@ -371,6 +371,7 @@ class PriorityPass(models.Model):
             "qr_url": self.qr_url,
             "registrations": self.valid_registrations,
             "organization": self.organization,
+            "organization_name": self.organization_name,
             "contact": self.contact,
             "country": self.country,
         }
@@ -405,6 +406,21 @@ class PriorityPass(models.Model):
             return self.contact.organization
 
         return None
+
+    @property
+    def organization_name(self):
+        if not self.organization:
+            return None
+        if self.is_gov:
+            return str(self.organization)
+        return self.organization.name
+
+    @property
+    def is_gov(self):
+        try:
+            return self.organization.organization_type.acronym == "GOV"
+        except AttributeError:
+            return False
 
     @property
     def country(self):

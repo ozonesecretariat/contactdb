@@ -3,10 +3,10 @@
     <q-page-container class="token-container">
       <q-page class="q-pa-lg">
         <h1 class="text-secondary">
-          {{ route.meta.header }}
+          {{ appSettingsStore.appTitle }}
         </h1>
         <p class="text-subtitle1">
-          {{ route.meta.subtitle }}
+          {{ appSettingsStore.welcomeMessage }}
         </p>
         <div class="bg-white q-pa-lg rounded-borders">
           <router-view />
@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { useAppSettingsStore } from "stores/appSettingsStore";
 
-const route = useRoute();
+const appSettingsStore = useAppSettingsStore();
 </script>
 
 <style scoped lang="scss">

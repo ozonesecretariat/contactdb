@@ -202,7 +202,7 @@ class Email(models.Model):
     def queue_emails(self):
         tasks = []
         for contact in self.all_to_contacts:
-            task = SendEmailTask.objects.create(
+            task = SendEmailTask(
                 email=self, contact=contact, created_by=self.created_by
             )
             task.run(is_async=True)

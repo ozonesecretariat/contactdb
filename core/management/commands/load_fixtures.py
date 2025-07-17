@@ -1,5 +1,6 @@
 import logging
 
+from constance.models import Constance
 from django.conf import settings
 from django.core.management import BaseCommand, call_command
 
@@ -72,6 +73,8 @@ class Command(BaseCommand):
             EmailTemplate,
             Email,
             SendEmailTask,
+            # Config
+            Constance,
         ),
     }
 
