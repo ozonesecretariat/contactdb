@@ -337,3 +337,26 @@ Cypress.Commands.add("goToHref", { prevSubject: true }, (subject) =>
     .invoke("attr", "href")
     .then((href) => cy.visit(href)),
 );
+
+Cypress.Commands.add("reloadUntilText", (selector, expectedText, maxRetries = 5, waitTime = 1000) => {
+  let retries = 0;
+
+  function check() {
+    cy.get(selector).then(($el) => {
+      if ($el.text().includes(expectedText)) {
+        // Text found, stop retrying
+        cy.log(`Found "${expectedText}" in ${selector}`);
+      } else if (retries < maxRetries) {
+        retries += 1;
+        cy.log(`Retry ${retries}/${maxRetries}: Text not found, refreshing...`);
+        cy.reload();
+        cy.wait(waitTime);
+        check();
+      } else {
+        throw new Error(`Failed to find "${expectedText}" in ${selector} after ${maxRetries} retries`);
+      }
+    });
+  }
+
+  check();
+});
