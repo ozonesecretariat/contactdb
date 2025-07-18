@@ -1,6 +1,9 @@
 <template>
   <q-card-section v-if="participant" class="col-grow">
     <p class="text-weight-medium">1. Review participant details below. Use the 'Edit' button to modify information:</p>
+    <div v-if="errors.contact" class="text-negative">
+      {{ errors.contact }}
+    </div>
     <div class="bg-grey-2 q-pa-md rounded-borders">
       <div class="row items-start justify-between">
         <div class="col">
@@ -90,12 +93,11 @@ import type { MeetingEvent } from "src/types/event";
 import type { EventNomination } from "src/types/nomination";
 
 import { api, apiBase } from "boot/axios";
-import { useQuasar } from "quasar";
+import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
-const $q = useQuasar();
 const router = useRouter();
 const loading = ref(false);
 const invitation = useInvitationStore();
@@ -110,6 +112,7 @@ const addressEntity = computed(() =>
   invitation.participant?.isUseOrganizationAddress ? invitation.participant?.organization : invitation.participant,
 );
 
+const { errors, setErrors } = useFormErrors();
 const nominations = reactive<Record<string, string>>({});
 const nominationsToggle = reactive<Record<string, boolean>>({});
 const roleErrors = reactive<Record<string, string>>({});
@@ -160,10 +163,7 @@ async function confirmNomination() {
     await invitation.loadNominations();
     await router.push({ name: "event-nominations" });
   } catch (e) {
-    $q.notify({
-      message: "Unknown error, please try again later.",
-      type: "negative",
-    });
+    setErrors(e);
     throw e;
   } finally {
     loading.value = false;

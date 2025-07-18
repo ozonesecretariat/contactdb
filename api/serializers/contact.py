@@ -119,6 +119,7 @@ class ContactSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             instance = super().create(validated_data)
             try:
+                instance.clean_for_nomination()
                 instance.clean()
             except DjangoValidationError as e:
                 raise ValidationError(e.message_dict) from e
@@ -132,6 +133,7 @@ class ContactSerializer(serializers.ModelSerializer):
                 instance.photo_access_uuid = uuid.uuid4()
                 instance.save()
             try:
+                instance.clean_for_nomination()
                 instance.clean()
             except DjangoValidationError as e:
                 raise ValidationError(e.message_dict) from e
