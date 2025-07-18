@@ -11,6 +11,7 @@ export interface Contact {
   emails: string[];
   firstName: string;
   fullName: string;
+  gender: string;
   hasCredentials: boolean;
   id: number;
   isUseOrganizationAddress: boolean;

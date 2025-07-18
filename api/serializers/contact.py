@@ -71,6 +71,7 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
+            "gender",
             "first_name",
             "last_name",
             "emails",

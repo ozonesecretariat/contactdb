@@ -99,6 +99,15 @@
       label="Phone"
       name="phones"
     />
+    <q-select
+      v-model="data.gender"
+      :options="genders"
+      :error="!!errors.gender"
+      :error-message="errors.gender"
+      outlined
+      label="Gender"
+      name="gender"
+    />
     <q-file
       v-model="data.photo"
       :error="!!errors.photo"
@@ -353,6 +362,7 @@ const data = reactive({
   emailCcs: "",
   emails: "",
   firstName: "",
+  gender: "",
   hasCredentials: false,
   isUseOrganizationAddress: false,
   lastName: "",
@@ -375,6 +385,7 @@ const selectedOrganization = computed(() =>
   invitation.organizations.find((o) => o.id.toString() === data.organization.toString()),
 );
 const titles = ["", "Mr.", "Ms.", "H.E. Mr.", "H.E. Ms.", "Hon. Mr.", "Hon. Ms."];
+const genders = ["Male", "Female", "Other", "Choose not to disclose"];
 
 if (invitation.participant) {
   Object.assign(data, {

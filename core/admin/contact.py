@@ -275,11 +275,12 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             },
         ),
         (
-            "Other",
+            "Personal information",
             {
                 "classes": ["collapse"],
                 "fields": (
                     "birth_date",
+                    "gender",
                     "notes",
                 ),
             },
