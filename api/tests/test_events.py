@@ -588,6 +588,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
                 "emails": ["test-create@example.com"],
                 "organization": self.organization.id,
                 "city": "Night City",
+                "designation": "Netrunner",
+                "country": "US",
             },
             format="json",
         )
@@ -595,6 +597,30 @@ class TestEventNominationsAPI(BaseAPITestCase):
 
         contact = self.organization.contacts.get(emails=["test-create@example.com"])
         self.assertEqual(contact.city, "Night City")
+        self.assertEqual(contact.country.code, "US")
+
+    def test_create_contact_use_org_address(self):
+        url = api_reverse(
+            "events-nominations-create-contact",
+            kwargs={"token": self.invitation.token},
+        )
+        response = self.client.post(
+            url,
+            {
+                "firstName": "John",
+                "lastName": "Doe",
+                "emails": ["test-create@example.com"],
+                "organization": self.organization.id,
+                "is_use_organization_address": True,
+                "designation": "Netrunner",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        contact = self.organization.contacts.get(emails=["test-create@example.com"])
+        self.assertEqual(contact.city, "")
+        self.assertIsNone(contact.country)
 
     def test_create_contact_government_related_orgs(self):
         ro = Country.objects.get(code="RO")
@@ -625,6 +651,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
                 "organization": org2.id,
                 "firstName": "John",
                 "lastName": "Doe",
+                "is_use_organization_address": True,
+                "designation": "Netrunner",
             },
             format="json",
         )

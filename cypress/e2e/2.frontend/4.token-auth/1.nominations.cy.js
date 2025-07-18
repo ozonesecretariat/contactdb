@@ -43,6 +43,8 @@ describe("Check nominations page", () => {
     cy.get("input[name=emails]").type(email);
     cy.get("input[name=firstName]").type("John");
     cy.get("input[name=lastName]").type(lastName);
+    cy.get("input[name=designation]").type("Corpo");
+    cy.get("[role=checkbox]:has([name=isUseOrganizationAddress])").click();
     cy.get("[aria-label=Organization]").click();
     cy.get("[role=option]").contains("Galactic Research Institute for Advanced Technologies").click();
     // Add passport info
