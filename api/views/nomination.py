@@ -217,7 +217,11 @@ class EventNominationViewSet(ViewSet):
     @action(detail=True, methods=["get"])
     def roles(self, request, token):
         self.get_invitation(token)
-        return Response(RegistrationRole.objects.all().values_list("name", flat=True))
+        return Response(
+            RegistrationRole.objects.filter(hide_for_nomination=False).values_list(
+                "name", flat=True
+            )
+        )
 
     @action(detail=True, methods=["get"])
     def countries(self, request, token):

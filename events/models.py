@@ -324,6 +324,9 @@ class RegistrationTag(models.Model):
 
 class RegistrationRole(models.Model):
     name = CICharField(max_length=250, unique=True)
+    hide_for_nomination = models.BooleanField(
+        default=False, help_text="Hide this role in the nomination form."
+    )
     kronos_value = KronosEnum()
 
     class Meta:
