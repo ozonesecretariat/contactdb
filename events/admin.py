@@ -16,6 +16,7 @@ from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
+from emails.models import SendEmailTask
 from events.jobs import resend_confirmation_email
 from events.models import (
     Event,
@@ -802,6 +803,48 @@ class EventInvitationAdmin(ModelAdmin):
                 "event", "event_group", "organization", "country", "email_tasks"
             )
         )
+
+    def get_deleted_objects(self, objs, request):
+        """
+        Overridden to allow deleting invitations.
+        """
+        # Get the standard deletion info for invitations
+        deleted_objects, model_count, perms_needed, protected = (
+            super().get_deleted_objects(objs, request)
+        )
+
+        permision_name = SendEmailTask._meta.verbose_name
+        perms_needed.discard(permision_name)
+
+        return deleted_objects, model_count, perms_needed, protected
+
+    def delete_model(self, request, obj):
+        """Overridden to show info on deleted related SendEmailTask objects."""
+        deleted_task_count = obj.email_tasks.count()
+
+        super().delete_model(request, obj)
+
+        if deleted_task_count > 0:
+            self.message_user(
+                request,
+                f"Deleted {deleted_task_count} related email task(s).",
+                messages.SUCCESS,
+            )
+
+    def delete_queryset(self, request, queryset):
+        """Overridden to show info on deleted related SendEmailTask objects."""
+        deleted_task_count = SendEmailTask.objects.filter(
+            invitation__in=queryset
+        ).count()
+
+        super().delete_queryset(request, queryset)
+
+        if deleted_task_count > 0:
+            self.message_user(
+                request,
+                f"Deleted {deleted_task_count} related send email task(s).",
+                messages.SUCCESS,
+            )
 
     @admin.display(description="Target")
     def event_or_group(self, obj):
