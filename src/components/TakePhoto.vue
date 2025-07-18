@@ -42,9 +42,9 @@ const canvasElement = ref<HTMLCanvasElement | null>(null);
 const stream = ref<MediaStream | null>(null);
 const selectedCamera = ref<MediaDeviceInfo | null>(null);
 
-const emit = defineEmits({
-  capture: (imageData: string) => typeof imageData === "string",
-});
+const emit = defineEmits<{
+  capture: [imageData: string];
+}>();
 
 function capturePicture() {
   if (!videoElement.value || !canvasElement.value) return;
@@ -68,6 +68,8 @@ function capturePicture() {
 }
 
 async function initCamera() {
+  isLoading.value = true;
+
   try {
     const constraints = {
       audio: false,
@@ -91,9 +93,7 @@ async function initCamera() {
 }
 
 function show() {
-  isLoading.value = true;
   showDialog.value = true;
-  initCamera();
 }
 
 function stopCamera() {
@@ -103,7 +103,9 @@ function stopCamera() {
   }
 }
 
-watch(selectedCamera, () => {
+watch(selectedCamera, initCamera);
+
+watch(showDialog, () => {
   if (showDialog.value) {
     initCamera();
   } else {

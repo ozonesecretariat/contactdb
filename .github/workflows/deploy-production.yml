@@ -4,6 +4,7 @@ concurrency: contactdb-production
 
 permissions:
   contents: read
+  packages: write
 
 on:
   workflow_dispatch:

@@ -28,6 +28,7 @@ from events.models import (
     Registration,
     RegistrationRole,
     RegistrationTag,
+    SendEmailTask,
 )
 
 
@@ -108,7 +109,7 @@ class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name",)
+    list_display = ("name", "hide_for_nomination")
     list_display_links = ("name",)
 
 
@@ -456,7 +457,21 @@ class PriorityPassAdmin(ModelAdmin):
 class EventInline(admin.TabularInline):
     max_num = 0
     model = Event
-    fields = readonly_fields = ("code", "title", "start_date", "end_date")
+    fields = readonly_fields = ("code", "event_link", "start_date", "end_date")
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def event_link(self, obj):
+        if not obj:
+            return self.get_empty_value_display()
+
+        url = reverse("admin:events_event_change", args=(obj.pk,))
+        return format_html(
+            '<a href="{url}">{link_text}</a>', url=url, link_text=obj.title or obj
+        )
+
+    event_link.short_description = "Event title"
 
 
 @admin.register(EventGroup)
@@ -824,6 +839,48 @@ class EventInvitationAdmin(ModelAdmin):
                 "event", "event_group", "organization", "country", "email_tasks"
             )
         )
+
+    def get_deleted_objects(self, objs, request):
+        """
+        Overridden to allow deleting invitations.
+        """
+        # Get the standard deletion info for invitations
+        deleted_objects, model_count, perms_needed, protected = (
+            super().get_deleted_objects(objs, request)
+        )
+
+        permision_name = SendEmailTask._meta.verbose_name
+        perms_needed.discard(permision_name)
+
+        return deleted_objects, model_count, perms_needed, protected
+
+    def delete_model(self, request, obj):
+        """Overridden to show info on deleted related SendEmailTask objects."""
+        deleted_task_count = obj.email_tasks.count()
+
+        super().delete_model(request, obj)
+
+        if deleted_task_count > 0:
+            self.message_user(
+                request,
+                f"Deleted {deleted_task_count} related email task(s).",
+                messages.SUCCESS,
+            )
+
+    def delete_queryset(self, request, queryset):
+        """Overridden to show info on deleted related SendEmailTask objects."""
+        deleted_task_count = SendEmailTask.objects.filter(
+            invitation__in=queryset
+        ).count()
+
+        super().delete_queryset(request, queryset)
+
+        if deleted_task_count > 0:
+            self.message_user(
+                request,
+                f"Deleted {deleted_task_count} related send email task(s).",
+                messages.SUCCESS,
+            )
 
     @admin.display(description="Target")
     def event_or_group(self, obj):
