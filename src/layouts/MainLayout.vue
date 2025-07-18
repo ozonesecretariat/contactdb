@@ -27,6 +27,10 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" side="left" bordered>
+      <div class="row q-pa-md">
+        <ozone-logo />
+      </div>
+      <q-separator />
       <menu-list :items="drawerItems" />
     </q-drawer>
     <q-page-container>
@@ -39,6 +43,7 @@
 import { useStorage } from "@vueuse/core";
 import { apiBase } from "boot/axios";
 import MenuList from "components/MenuList.vue";
+import OzoneLogo from "components/OzoneLogo.vue";
 import { useQuasar } from "quasar";
 import { useAppSettingsStore } from "stores/appSettingsStore";
 import { useUserStore } from "stores/userStore";
