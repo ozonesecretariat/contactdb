@@ -2,6 +2,7 @@
 
 {% block submit-row %}
   {% if show_save %}
+    <input type="submit" value="Save Draft" class="default" name="_save_draft" />
     <input type="submit" value="Send Emails Now" class="default send-email-btn" name="_save" />
   {% endif %}
 
@@ -18,6 +19,7 @@
       background-color: #28a745 !important;
       border-color: #28a745 !important;
       color: white !important;
+      margin-left: 10px !important;
     }
     .send-email-btn:hover {
       background-color: #218838 !important;
