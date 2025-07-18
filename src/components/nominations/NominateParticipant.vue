@@ -89,14 +89,12 @@
 import type { MeetingEvent } from "src/types/event";
 import type { EventNomination } from "src/types/nomination";
 
-import { useStorage } from "@vueuse/core";
 import { api, apiBase } from "boot/axios";
 import { useQuasar } from "quasar";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
-const dontShowNominationConfirmation = useStorage("dontShowNominationConfirmation", false);
 const $q = useQuasar();
 const router = useRouter();
 const loading = ref(false);
@@ -160,11 +158,7 @@ async function confirmNomination() {
         })),
     );
     await invitation.loadNominations();
-    if (dontShowNominationConfirmation.value) {
-      await router.push({ name: "event-nominations" });
-    } else {
-      await router.push({ name: "confirm-nomination" });
-    }
+    await router.push({ name: "event-nominations" });
   } catch (e) {
     $q.notify({
       message: "Unknown error, please try again later.",

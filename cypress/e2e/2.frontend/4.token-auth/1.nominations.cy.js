@@ -60,7 +60,6 @@ describe("Check nominations page", () => {
     cy.get('[aria-label="Role of the participant"]').click();
     cy.get("[role=option]").contains("Delegate").click();
     cy.contains("Confirm nomination").click();
-    cy.contains("Close").click();
     // Check that the new nomination was added and the store was reloaded
     cy.get("[role=search]").type(email);
     cy.contains("1-1 of 1");
@@ -69,7 +68,6 @@ describe("Check nominations page", () => {
     // Remove the nomination we just added
     cy.get("[role=switch][aria-checked=true]").click();
     cy.contains("Confirm nomination").click();
-    cy.contains("Close").click();
     // Check it was removed
     cy.get("[role=search]").type(email);
     cy.contains("No data available");

@@ -71,14 +71,6 @@ const routes: RouteRecordRaw[] = [
             name: "nominate-participant",
             path: "nominate/:participantId",
           },
-          {
-            component: () => import("components/nominations/ConfirmNomination.vue"),
-            meta: {
-              modalHeader: "Nomination confirmed",
-            },
-            name: "confirm-nomination",
-            path: "confirm",
-          },
         ],
         component: () => import("pages/EventNominationsPage.vue"),
         meta: {
