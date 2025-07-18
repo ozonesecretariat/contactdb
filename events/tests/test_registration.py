@@ -4,6 +4,7 @@ from django.test.utils import override_settings
 
 from api.tests.factories import ContactFactory, EventFactory, RegistrationFactory
 from emails.models import Email
+from events.jobs import send_priority_pass_status_emails
 from events.models import Registration
 
 
@@ -24,6 +25,8 @@ class TestRegistrationStatus(TestCase):
         self.registration.status = Registration.Status.ACCREDITED
         self.registration.save()
 
+        send_priority_pass_status_emails(self.registration.priority_pass.id)
+
         email = Email.objects.get()
         task = email.email_logs.get()
         task.run(is_async=False)
@@ -38,6 +41,8 @@ class TestRegistrationStatus(TestCase):
         mail.outbox = []
         self.registration.status = Registration.Status.REVOKED
         self.registration.save()
+
+        send_priority_pass_status_emails(self.registration.priority_pass.id)
 
         email = Email.objects.get()
         task = email.email_logs.get()

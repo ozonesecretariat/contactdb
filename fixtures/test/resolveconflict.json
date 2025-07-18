@@ -4,6 +4,7 @@
     "pk": 1,
     "fields": {
       "title": "",
+      "title_localized": "",
       "honorific": "",
       "first_name": "Aurora",
       "last_name": "Phoenix",
@@ -45,6 +46,7 @@
     "pk": 2,
     "fields": {
       "title": "Mr.",
+      "title_localized": "",
       "honorific": "",
       "first_name": "Aurora",
       "last_name": "Vortex",
@@ -86,6 +88,7 @@
     "pk": 3,
     "fields": {
       "title": "Mr.",
+      "title_localized": "",
       "honorific": "",
       "first_name": "Aurora",
       "last_name": "Xenon",

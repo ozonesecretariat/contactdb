@@ -17,7 +17,7 @@ from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
-from events.jobs import resend_confirmation_email
+from events.jobs import send_priority_pass_status_emails
 from events.models import (
     Event,
     EventGroup,
@@ -253,21 +253,6 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     def tags_display(self, obj: Registration):
         return ", ".join(map(str, obj.tags.all()))
 
-    @admin.action(
-        description="Resend confirmation email for selected registrations",
-        permissions=["change"],
-    )
-    def resend_confirmation_emails(self, request, queryset):
-        count = 0
-        for registration in queryset:
-            # Queue instead of doing it instantly or in bulk as it will require
-            # generating the qr or badge.
-            django_rq.enqueue(resend_confirmation_email, registration.id)
-            count += 1
-        self.message_user(
-            request, f"{count} confirmation emails have been queued for sending"
-        )
-
     @admin.action(description="Send email to selected contacts", permissions=["view"])
     def send_email(self, request, queryset):
         ids = ",".join(
@@ -290,7 +275,6 @@ class RegistrationInline(admin.TabularInline):
         "event",
         "role",
         "status",
-        "is_funded",
     )
     readonly_fields = ("contact", "event")
     can_delete = False
@@ -313,13 +297,28 @@ class PriorityPassAdmin(ModelAdmin):
     )
     list_display = ("code", "registrations_links", "pass_download_link", "created_at")
     list_filter = (
+        "registrations__status",
         AutocompleteFilterFactory("contact", "registrations__contact"),
+        AutocompleteFilterFactory(
+            "organization", "registrations__contact__organization"
+        ),
+        AutocompleteFilterFactory(
+            "organization type",
+            "registrations__contact__organization__organization_type",
+        ),
+        AutocompleteFilterFactory(
+            "government", "registrations__contact__organization__government"
+        ),
         AutocompleteFilterFactory("event", "registrations__event"),
+        AutocompleteFilterFactory("event group", "registrations__event__group"),
     )
     fields = (
         "code",
         "pass_download_link",
         "created_at",
+        "attach_priority_pass",
+        "confirmation_email",
+        "refused_email",
     )
     prefetch_related = (
         "registrations",
@@ -332,11 +331,15 @@ class PriorityPassAdmin(ModelAdmin):
         "registrations_links",
         "pass_download_link",
         "created_at",
+        "attach_priority_pass",
+        "confirmation_email",
+        "refused_email",
     )
     ordering = ("-created_at",)
     annotate_query = {
         "registration_count": Count("registrations"),
     }
+    actions = ("send_confirmation_emails",)
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -364,6 +367,18 @@ class PriorityPassAdmin(ModelAdmin):
             url_download,
             obj.qr_url,
         )
+
+    @admin.display(description="Attach priority pass", boolean=True)
+    def attach_priority_pass(self, obj):
+        return obj.main_event and obj.main_event.attach_priority_pass
+
+    @admin.display(description="Confirmation email", boolean=True)
+    def confirmation_email(self, obj):
+        return obj.main_event and obj.main_event.has_confirmation_email
+
+    @admin.display(description="Refused email", boolean=True)
+    def refused_email(self, obj):
+        return obj.main_event and obj.main_event.has_refused_email
 
     def get_urls(self):
         return [
@@ -415,6 +430,27 @@ class PriorityPassAdmin(ModelAdmin):
 
         return redirect(
             reverse("admin:events_prioritypass_change", args=[priority_pass.id])
+        )
+
+    def response_change(self, request, obj):
+        resp = super().response_change(request, obj)
+        if "_save_without_sending" not in request.POST:
+            self.send_confirmation_emails(request, [obj])
+        return resp
+
+    @admin.action(
+        description="Send confirmation email for selected priority passes",
+        permissions=["change"],
+    )
+    def send_confirmation_emails(self, request, queryset):
+        count = 0
+        for priority_pass in queryset:
+            # Queue instead of doing it instantly or in bulk as it will require
+            # generating the qr or badge.
+            django_rq.enqueue(send_priority_pass_status_emails, priority_pass.id)
+            count += 1
+        self.message_user(
+            request, f"{count} confirmation emails have been queued for sending"
         )
 
 

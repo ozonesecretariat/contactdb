@@ -3,7 +3,7 @@ import logging
 from django_task.job import Job
 from django_task.utils import get_model_from_id
 
-from events.models import Registration
+from events.models import PriorityPass
 from events.parsers import (
     KronosEventsParser,
     KronosOrganizationsParser,
@@ -57,11 +57,12 @@ class LoadOrganizationsFromKronos(Job):
         task.log(logging.INFO, "Organizations loaded")
 
 
-def resend_confirmation_email(registration_id):
-    if registration := get_model_from_id(Registration, registration_id):
-        registration.send_confirmation_email()
+def send_priority_pass_status_emails(priority_pass_id):
+    if priority_pass := get_model_from_id(PriorityPass, priority_pass_id):
+        priority_pass.send_confirmation_email()
+        priority_pass.send_refused_email()
     else:
         logger.warning(
-            "Could not find registration %s to resend confirmation email",
-            registration_id,
+            "Could not find priority pass %s to end confirmation email",
+            priority_pass_id,
         )

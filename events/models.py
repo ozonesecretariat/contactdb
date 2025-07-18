@@ -10,7 +10,6 @@ from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
-from model_utils import FieldTracker
 
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
@@ -112,6 +111,14 @@ class Event(models.Model):
             return f"{self.venue_city}, {self.venue_country.name}"
         return self.venue_city
 
+    @property
+    def has_confirmation_email(self):
+        return bool(self.confirmation_subject and self.confirmation_content)
+
+    @property
+    def has_refused_email(self):
+        return bool(self.refuse_subject and self.refuse_content)
+
     def clean(self):
         if not self.start_date or not self.end_date:
             return
@@ -134,15 +141,6 @@ class Event(models.Model):
                     "attach_priority_pass": msg,
                     "confirmation_subject": msg,
                     "confirmation_content": msg,
-                }
-            )
-
-        if self.attach_priority_pass and self.group:
-            msg = "Cannot automatically attach priority pass to event group"
-            raise ValidationError(
-                {
-                    "attach_priority_pass": msg,
-                    "group": msg,
                 }
             )
 
@@ -435,10 +433,78 @@ class PriorityPass(models.Model):
 
         return None
 
+    @property
+    def main_event(self):
+        registrations = list(self.registrations.all())
+        if not registrations:
+            return None
+
+        for registration in registrations:
+            if registration.event.attach_priority_pass:
+                return registration.event
+
+        return registrations[0].event
+
+    @property
+    def accredited_registrations(self):
+        result = []
+        for registration in self.registrations.all():
+            if registration.status == Registration.Status.ACCREDITED:
+                result.append(registration)
+
+        return result
+
+    @property
+    def revoked_registrations(self):
+        result = []
+        for registration in self.registrations.all():
+            if registration.status == Registration.Status.REVOKED:
+                result.append(registration)
+
+        return result
+
+    def send_confirmation_email(self):
+        if not self.main_event or not self.main_event.has_confirmation_email:
+            return
+        if not self.accredited_registrations:
+            return
+
+        from emails.models import Email
+
+        msg = Email.objects.create(
+            subject=self.main_event.confirmation_subject,
+            content=self.main_event.confirmation_content,
+        )
+        msg.recipients.add(self.contact)
+        if self.main_event.attach_priority_pass:
+            msg.attachments.create(
+                file=File(
+                    print_pdf(
+                        template=self.priority_pass_template,
+                        context=self.priority_pass_context,
+                    ),
+                    name=f"{self.code}.pdf",
+                ),
+            )
+        msg.queue_emails()
+
+    def send_refused_email(self):
+        if not self.main_event or not self.main_event.has_refused_email:
+            return
+        if not self.revoked_registrations:
+            return
+
+        from emails.models import Email
+
+        msg = Email.objects.create(
+            subject=self.main_event.refuse_subject,
+            content=self.main_event.refuse_content,
+        )
+        msg.recipients.add(self.contact)
+        msg.queue_emails()
+
 
 class Registration(models.Model):
-    tracker = FieldTracker()
-
     class Status(models.TextChoices):
         NOMINATED = "Nominated", "Nominated"
         ACCREDITED = "Accredited", "Accredited"
@@ -490,22 +556,13 @@ class Registration(models.Model):
         unique_together = ("contact", "event")
 
     def __str__(self):
-        return f"{self.event.code} - {self.contact.full_name}"
+        return f"{self.event.code} - {self.contact.full_name} ({self.status})"
 
     def save(self, *args, **kwargs):
-        old_status = self.tracker.previous("status_id")
         if not self.priority_pass:
             self.priority_pass = PriorityPass.objects.create()
 
         super().save(*args, **kwargs)
-
-        if old_status == self.status:
-            return
-
-        if self.status == self.Status.ACCREDITED:
-            self.send_confirmation_email()
-        elif self.status == self.Status.REVOKED:
-            self.send_refusal_email()
 
     def clean(self):
         super().clean()
@@ -513,46 +570,6 @@ class Registration(models.Model):
             raise ValidationError(
                 "Priority pass can only be used for one contact at a time"
             )
-
-    def send_confirmation_email(self):
-        if not (self.event.confirmation_subject and self.event.confirmation_content):
-            return
-        if self.status != self.Status.ACCREDITED:
-            return
-
-        from emails.models import Email
-
-        msg = Email.objects.create(
-            subject=self.event.confirmation_subject,
-            content=self.event.confirmation_content,
-        )
-        msg.recipients.add(self.contact)
-        if self.event.attach_priority_pass and self.priority_pass:
-            msg.attachments.create(
-                file=File(
-                    print_pdf(
-                        template=self.priority_pass.priority_pass_template,
-                        context=self.priority_pass.priority_pass_context,
-                    ),
-                    name=f"{self.priority_pass.code}.pdf",
-                ),
-            )
-        msg.queue_emails()
-
-    def send_refusal_email(self):
-        if not (self.event.refuse_subject and self.event.refuse_content):
-            return
-        if self.status != self.Status.REVOKED:
-            return
-
-        from emails.models import Email
-
-        msg = Email.objects.create(
-            subject=self.event.refuse_subject,
-            content=self.event.refuse_content,
-        )
-        msg.recipients.add(self.contact)
-        msg.queue_emails()
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):

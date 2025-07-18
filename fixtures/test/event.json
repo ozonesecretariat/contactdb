@@ -132,9 +132,9 @@
       "venue_city": "Prague",
       "dates": "15-22 April",
       "group": 2,
-      "attach_priority_pass": false,
-      "confirmation_subject": "",
-      "confirmation_content": "",
+      "attach_priority_pass": true,
+      "confirmation_subject": "Congratulations!",
+      "confirmation_content": "<p>Hello&nbsp;[[full_name]]</p>\r\n\r\n<p>Congratulation on getting accepted!&nbsp;</p>\r\n\r\n<p>Ozone&nbsp;</p>",
       "refuse_subject": "",
       "refuse_content": ""
     }
@@ -290,11 +290,11 @@
       "end_date": "2024-10-19T00:00:00Z",
       "venue_country": "KW",
       "venue_city": "Online",
-      "dates": "",
+      "dates": "15-22 April",
       "group": null,
       "attach_priority_pass": false,
-      "confirmation_subject": "",
-      "confirmation_content": "",
+      "confirmation_subject": "Congratulations!",
+      "confirmation_content": "<p>Hello&nbsp;[[full_name]]</p>\r\n\r\n<p>Congratulation on getting accepted!&nbsp;</p>\r\n\r\n<p>Ozone&nbsp;</p>",
       "refuse_subject": "",
       "refuse_content": ""
     }

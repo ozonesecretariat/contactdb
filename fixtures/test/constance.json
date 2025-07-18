@@ -2,7 +2,10 @@
   {
     "model": "constance.constance",
     "pk": 1,
-    "fields": { "key": "REQUIRE_2FA", "value": "{\"__type__\": \"default\", \"__value__\": false}" }
+    "fields": {
+      "key": "REQUIRE_2FA",
+      "value": "{\"__type__\": \"default\", \"__value__\": false}"
+    }
   },
   {
     "model": "constance.constance",
