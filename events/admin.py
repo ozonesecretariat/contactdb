@@ -302,6 +302,9 @@ class PriorityPassAdmin(ModelAdmin):
             "organization", "registrations__contact__organization"
         ),
         AutocompleteFilterFactory(
+            "organization type", "registrations__contact__organization__organization_type"
+        ),
+        AutocompleteFilterFactory(
             "government", "registrations__contact__organization__government"
         ),
         AutocompleteFilterFactory("event", "registrations__event"),
