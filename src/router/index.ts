@@ -39,6 +39,7 @@ function permissionGuard(to: RouteLocationNormalizedGeneric) {
   const userStore = useUserStore();
   const appSettingsStore = useAppSettingsStore();
   const $q = useQuasar();
+  const requireAuth = to.matched.some((route) => route.meta.requireAuthentication);
 
   // Check the matched routes and all of it's parents
   for (const route of to.matched) {
@@ -63,7 +64,7 @@ function permissionGuard(to: RouteLocationNormalizedGeneric) {
     return { name: "home" };
   }
 
-  if (!userStore.twoFactorEnabled && appSettingsStore.require2fa && to.name !== "account-security") {
+  if (requireAuth && !userStore.twoFactorEnabled && appSettingsStore.require2fa && to.name !== "account-security") {
     $q.notify({
       message: "Two factor authentication is required for this account. Please update your settings to continue.",
       type: "info",
