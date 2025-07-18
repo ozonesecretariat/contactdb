@@ -324,6 +324,9 @@ class RegistrationTag(models.Model):
 
 class RegistrationRole(models.Model):
     name = CICharField(max_length=250, unique=True)
+    hide_for_nomination = models.BooleanField(
+        default=False, help_text="Hide this role in the nomination form."
+    )
     kronos_value = KronosEnum()
 
     class Meta:
@@ -456,7 +459,7 @@ class Registration(models.Model):
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.NOMINATED
     )
-    role = models.ForeignKey(RegistrationRole, on_delete=models.CASCADE)
+    role = models.ForeignKey(RegistrationRole, on_delete=models.SET_NULL, null=True)
     priority_pass = models.ForeignKey(
         PriorityPass,
         on_delete=models.SET_NULL,
