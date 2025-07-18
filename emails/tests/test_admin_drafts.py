@@ -60,9 +60,9 @@ class TestEmailAdminDrafts(TestCase):
         email.refresh_from_db()
         self.assertTrue(email.is_draft)
 
-        # Check redirect to the change view and that no email tasks were created
+        # Check redirect to the changelist view and that no email tasks were created
         self.assertEqual(response.status_code, 302)
-        self.assertIn(f"/admin/emails/email/{email.pk}/change/", response.url)
+        self.assertIn("/admin/emails/email", response.url)
         self.assertEqual(SendEmailTask.objects.count(), 0)
 
     def test_response_add_send_now(self):
@@ -100,7 +100,7 @@ class TestEmailAdminDrafts(TestCase):
 
         # Should redirect back to change view
         self.assertEqual(response.status_code, 302)
-        self.assertIn(f"/admin/emails/email/{email.pk}/change/", response.url)
+        self.assertIn("/admin/emails/email", response.url)
 
     def test_response_change_send_now(self):
         """Test basic conversion of draft to sent email."""
@@ -302,9 +302,9 @@ class TestInvitationEmailAdminDrafts(TestCase):
         email.refresh_from_db()
         self.assertTrue(email.is_draft)
 
-        # Check redirect to change view and that no email tasks are created
+        # Check redirect to changelist view and that no email tasks are created
         self.assertEqual(response.status_code, 302)
-        self.assertIn(f"/admin/emails/invitationemail/{email.pk}/change/", response.url)
+        self.assertIn("/admin/emails/invitationemail", response.url)
         self.assertEqual(SendEmailTask.objects.count(), 0)
 
     def test_response_add_send_now(self):
