@@ -197,7 +197,7 @@ class BaseContact(models.Model):
         max_length=30,
         choices=GenderChoices.choices,
         blank=True,
-        help_text="Gender (can choose not to disclose).",
+        help_text="Contact gender.",
     )
 
     honorific = models.CharField(max_length=30, default="", blank=True)
