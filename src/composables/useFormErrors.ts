@@ -1,7 +1,7 @@
 import type { AxiosError } from "axios";
 
 import { useQuasar } from "quasar";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 
 export type DRFErrorMessage = string | string[];
 export type DRFErrorResponse = Record<string, DRFErrorMessage> | { details: Record<string, DRFErrorMessage> };
@@ -9,6 +9,14 @@ export type DRFErrorResponse = Record<string, DRFErrorMessage> | { details: Reco
 export default function useFormErrors() {
   const $q = useQuasar();
   const errors = ref<Record<string, string>>({});
+
+  const scrollToFirstError = () => {
+    document.querySelector(".q-field__messages [role=alert]")?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
+
   return {
     errors,
     setErrors: (axiosError: unknown) => {
@@ -34,6 +42,7 @@ export default function useFormErrors() {
       });
 
       errors.value = result;
+      nextTick(scrollToFirstError);
     },
   };
 }
