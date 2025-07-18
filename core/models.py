@@ -333,6 +333,25 @@ class BaseContact(models.Model):
             if errors:
                 raise ValidationError(errors)
 
+    def clean_for_nomination(self):
+        required_fields = [
+            "first_name",
+            "last_name",
+            "designation",
+            "emails",
+            "organization",
+        ]
+        if not self.is_use_organization_address:
+            required_fields.extend(["country", "city"])
+
+        errors = {}
+        for field in required_fields:
+            if not getattr(self, field):
+                errors[field] = "This field is required."
+
+        if errors:
+            raise ValidationError(errors)
+
 
 class Contact(BaseContact):
     contact_ids = ArrayField(

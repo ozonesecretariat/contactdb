@@ -154,6 +154,8 @@
           label="Country"
           use-input
           input-debounce="0"
+          :error="!!errors.country"
+          :error-message="errors.country"
           @filter="searchCountries"
         >
           <template #no-option>
