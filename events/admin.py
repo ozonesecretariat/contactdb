@@ -420,7 +420,21 @@ class PriorityPassAdmin(ModelAdmin):
 class EventInline(admin.TabularInline):
     max_num = 0
     model = Event
-    fields = readonly_fields = ("code", "title", "start_date", "end_date")
+    fields = readonly_fields = ("code", "event_link", "start_date", "end_date")
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def event_link(self, obj):
+        if not obj:
+            return self.get_empty_value_display()
+
+        url = reverse("admin:events_event_change", args=(obj.pk,))
+        return format_html(
+            '<a href="{url}">{link_text}</a>', url=url, link_text=obj.title or obj
+        )
+
+    event_link.short_description = "Event title"
 
 
 @admin.register(EventGroup)
