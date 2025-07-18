@@ -187,6 +187,19 @@ class BaseContact(models.Model):
         help_text="Localized title in French or Spanish.",
     )
 
+    class GenderChoices(models.TextChoices):
+        MALE = "Male", "Male"
+        FEMALE = "Female", "Female"
+        OTHER = "Other", "Other"
+        NOT_DISCLOSED = "Choose not to disclose", "Choose not to disclose"
+
+    gender = models.CharField(
+        max_length=30,
+        choices=GenderChoices.choices,
+        blank=True,
+        help_text="Gender (can choose not to disclose).",
+    )
+
     honorific = models.CharField(max_length=30, default="", blank=True)
     first_name = models.CharField(max_length=250, default="", blank=True)
     last_name = models.CharField(max_length=250, default="", blank=True)
