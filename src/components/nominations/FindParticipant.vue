@@ -36,7 +36,7 @@
     >
       <template #body-cell-emails="props">
         <q-td :props="props">
-          <ul class="no-list">
+          <ul class="no-list q-pl-none">
             <li v-for="email in props.row.emails" :key="email">
               {{ email }}
             </li>
@@ -90,18 +90,21 @@ const filteredParticipants = computed(() =>
 const columns = computed(() => {
   const result: QTableColumn<Contact>[] = [
     {
+      align: "left",
       field: (row) => row.fullName,
       label: "Full Name",
       name: "fullName",
       sortable: true,
     },
     {
+      align: "left",
       field: (row) => row.emails.join(", "),
       label: "Emails",
       name: "emails",
       sortable: true,
     },
     {
+      align: "left",
       field: (row) => row.organization?.name ?? "-",
       label: "Organization",
       name: "organization",
