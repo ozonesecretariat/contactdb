@@ -103,6 +103,7 @@ class Event(models.Model):
 
     app_store_url = models.CharField(max_length=1024, blank=True)
     play_store_url = models.CharField(max_length=1024, blank=True)
+    # TODO: Allow choosing the badge template for the event
 
     def __str__(self):
         return f"{self.code} {self.title}"

@@ -67,6 +67,12 @@
       height: 7rem;
     }
 
+    .pass-code {
+      margin-top: 0.25rem;
+      font-size: 10px;
+      text-align: center;
+    }
+
     .participant-type {
       color: white;
       font-size: 14px;
@@ -74,7 +80,6 @@
       text-transform: uppercase;
       padding: 0.25rem 0.5rem;
       background-color: #1479ba;
-      margin-top: 1rem;
       text-align: center;
     }
   </style>
@@ -102,11 +107,14 @@
         <div class="country">{{ country.name|default:'' }}</div>
       {% endif %}
     </div>
-    {% if contact.photo %}
-      <div class="participant-photo">
-        <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
-      </div>
-    {% endif %}
+    <div>
+      {% if contact.photo %}
+        <div class="participant-photo">
+          <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
+        </div>
+      {% endif %}
+      <div class="pass-code">{{ priority_pass.code }}</div>
+    </div>
   </div>
   <div class="participant-type {{ organization.organization_type.acronym }}">
     {{ organization.organization_type.title|default:"other" }}
