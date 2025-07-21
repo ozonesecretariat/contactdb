@@ -424,7 +424,7 @@ class PriorityPassAdmin(ModelAdmin):
         priority_pass = self.get_object(request, object_id)
         context = {
             **self.admin_site.each_context(request),
-            **priority_pass.get_priority_pass_context(request),
+            **priority_pass.priority_pass_context,
         }
         if request.GET.get("pdf") == "true":
             return FileResponse(
@@ -444,7 +444,7 @@ class PriorityPassAdmin(ModelAdmin):
         priority_pass = self.get_object(request, object_id)
         context = {
             **self.admin_site.each_context(request),
-            **priority_pass.get_priority_pass_context(request),
+            **priority_pass.priority_pass_context,
         }
         if request.GET.get("pdf") == "true":
             return FileResponse(

@@ -384,7 +384,8 @@ class PriorityPass(models.Model):
     def badge_template(self):
         return "admin/events/prioritypass/badge/badge1.html"
 
-    def get_priority_pass_context(self, request):
+    @property
+    def priority_pass_context(self):
         return {
             "priority_pass": self,
             "qr_url": self.qr_url,
