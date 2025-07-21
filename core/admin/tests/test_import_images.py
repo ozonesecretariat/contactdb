@@ -42,6 +42,7 @@ class TestContactAdminPhotoImport(TestCase):
             contact_ids=["kronos789"],
             photo="existing_photo.jpg",
         )
+        self.all_contacts_ids = list(Contact.objects.values_list("id", flat=True))
 
         self.mock_contact_data = {
             "contactId": "kronos123",
@@ -75,10 +76,6 @@ class TestContactAdminPhotoImport(TestCase):
         self.assertIn(
             "Import Contact Photos from Kronos", response.context_data["title"]
         )
-        self.assertEqual(response.context_data["contact_count"], 1)
-        self.assertEqual(
-            response.context_data["total_contacts"], Contact.objects.count()
-        )
 
     def test_import_photos_selected_contacts_only(self):
         """Test importing photos for selected contacts only."""
@@ -90,7 +87,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "",
             },
         )
@@ -113,13 +109,12 @@ class TestContactAdminPhotoImport(TestCase):
 
     def test_import_photos_all_contacts(self):
         """Test importing photos for all contacts."""
-        queryset = Contact.objects.filter(id=self.contact_with_kronos.id)
+        queryset = Contact.objects.all()
 
         request = self.factory.post(
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "all",
                 "overwrite": "",
             },
         )
@@ -134,7 +129,7 @@ class TestContactAdminPhotoImport(TestCase):
 
         task = ImportContactPhotosTask.objects.first()
         self.assertIsNotNone(task)
-        self.assertIsNone(task.contact_ids)
+        self.assertEqual(task.contact_ids, self.all_contacts_ids)
         self.assertFalse(task.overwrite_existing)
 
     def test_import_photos_with_overwrite_enabled(self):
@@ -145,7 +140,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "on",
             },
         )
@@ -169,7 +163,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "",
             },
         )
@@ -192,7 +185,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "",
             },
         )
@@ -213,13 +205,12 @@ class TestContactAdminPhotoImport(TestCase):
 
     def test_import_photos_all_contacts_message(self):
         """Test success message for all contacts import."""
-        queryset = Contact.objects.filter(id=self.contact_with_kronos.id)
+        queryset = Contact.objects.all()
 
         request = self.factory.post(
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "all",
                 "overwrite": "",
             },
         )
@@ -245,7 +236,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "",
             },
         )
@@ -275,8 +265,6 @@ class TestContactAdminPhotoImport(TestCase):
 
         context = response.context_data
         self.assertEqual(context["title"], "Import Contact Photos from Kronos")
-        self.assertEqual(context["contact_count"], 2)
-        self.assertEqual(context["total_contacts"], Contact.objects.count())
 
     def test_action_requires_change_permission(self):
         """Test that the action requires change permission."""
@@ -314,7 +302,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
             },
         )
         request.user = self.user
@@ -342,7 +329,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "on",
             },
         )
@@ -377,7 +363,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "on",
             },
         )
@@ -437,7 +422,6 @@ class TestContactAdminPhotoImport(TestCase):
             "/fake-url/",
             {
                 "apply": "1",
-                "import_scope": "selected",
                 "overwrite": "on",
             },
         )

@@ -414,28 +414,20 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     @admin.action(description="Import photos from Kronos", permissions=["change"])
     def import_photos_from_kronos(self, request, queryset):
         """Import photos for selected contacts from Kronos API."""
-        contact_count = queryset.count()
-
         if "apply" in request.POST:
-            import_all = request.POST.get("import_scope") == "all"
             overwrite = request.POST.get("overwrite", "on") == "on"
 
-            # If import_all is checked, ignore the queryset selection
-            contact_ids = (
-                None if import_all else list(queryset.values_list("id", flat=True))
-            )
-            contact_count = Contact.objects.count() if import_all else queryset.count()
+            contact_ids = list(queryset.values_list("id", flat=True))
 
             task = ImportContactPhotosTask.objects.create(
                 overwrite_existing=overwrite,
                 contact_ids=contact_ids,
             )
-
             task.run(is_async=True)
 
             self.message_user(
                 request,
-                f"Photo import task {task.id} started for {contact_count} contact(s)",
+                f"Photo import task {task.id} started for {len(contact_ids)} contact(s)",
                 messages.SUCCESS,
             )
             return None
@@ -446,8 +438,6 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             queryset,
             {
                 "title": "Import Contact Photos from Kronos",
-                "contact_count": contact_count,
-                "total_contacts": Contact.objects.count(),
             },
         )
 

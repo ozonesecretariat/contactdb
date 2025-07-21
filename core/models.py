@@ -689,7 +689,7 @@ class ImportContactPhotosTask(TaskRQ):
     LOG_TO_FILE = False
 
     contact_ids = ArrayField(
-        base_field=models.IntegerField(),
+        base_field=models.BigIntegerField(),
         null=True,
         blank=True,
         help_text=(
