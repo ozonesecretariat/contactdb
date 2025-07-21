@@ -5,6 +5,7 @@
     "fields": {
       "title": "",
       "title_localized": "",
+      "gender": "",
       "honorific": "",
       "first_name": "Aurora",
       "last_name": "Phoenix",
@@ -47,6 +48,7 @@
     "fields": {
       "title": "Mr.",
       "title_localized": "",
+      "gender": "",
       "honorific": "",
       "first_name": "Aurora",
       "last_name": "Vortex",
@@ -89,6 +91,7 @@
     "fields": {
       "title": "Mr.",
       "title_localized": "",
+      "gender": "",
       "honorific": "",
       "first_name": "Aurora",
       "last_name": "Xenon",
