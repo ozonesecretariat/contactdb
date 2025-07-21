@@ -1,0 +1,186 @@
+{% load static %}
+{% load qr_code %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Badge for {{ contact.full_name }}</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
+    />
+    <style>
+      @page {
+        size: A6 portrait;
+        margin: 0;
+      }
+
+      @media print {
+        /* The backside will be folded. Rotate it, so it's right side up. */
+        .back {
+          transform: rotate(180deg);
+          transform-origin: center;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family: Arial, sans-serif;
+      }
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        object-position: center;
+      }
+
+      .front,
+      .back {
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        overflow: hidden;
+      }
+
+      .front {
+        top: 0;
+        bottom: 50%;
+      }
+
+      .back {
+        top: 50%;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: nowrap;
+      }
+
+      .wifi {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 18px;
+        font-weight: bold;
+        align-items: center;
+        max-width: 10rem;
+        word-break: break-all;
+        text-align: center;
+      }
+
+      .wifi-logo {
+        width: 4rem;
+      }
+
+      .meeting-app {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .meeting-app > * {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .title {
+        margin-bottom: 0.5rem;
+      }
+
+      .store-logo,
+      .app-qr-code {
+        width: 6rem;
+      }
+
+      .app-qr-code {
+        border-radius: 6px;
+        padding: 0.25rem;
+        background-color: black;
+        color: #d3d3d3;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      .app-qr-code img {
+        margin-bottom: 0.25rem;
+      }
+
+      .participant-type {
+        background-color: #7f97ab;
+      }
+
+      .participant-type.UN {
+        background-color: #007fc2;
+      }
+
+      .participant-type.GOV {
+        background-color: #e85d30;
+      }
+    </style>
+    {% block head %}
+    {% endblock head %}
+  </head>
+  <body>
+    <div class="front">
+      {% block front %}
+      {% endblock front %}
+    </div>
+    <div class="back">
+      {% block back %}
+        <div class="meeting-app">
+          <div class="title">Meeting App</div>
+          <div>
+            {% if main_event.app_store_url %}
+              <div class="store-logo">
+                <img src="{% static 'img/app_store.png' %}" alt="app store logo" />
+              </div>
+            {% endif %}
+            {% if main_event.play_store_url %}
+              <div class="store-logo">
+                <img src="{% static 'img/play_store.png' %}" alt="play store logo" />
+              </div>
+            {% endif %}
+          </div>
+          <div>
+            {% if main_event.app_store_url %}
+              <div class="app-qr-code">
+                {% qr_from_text main_event.app_store_url image_format='png' %}
+                <div>SCAN ME</div>
+              </div>
+            {% endif %}
+            {% if main_event.play_store_url %}
+              <div class="app-qr-code">
+                {% qr_from_text main_event.play_store_url image_format='png' %}
+                <div>SCAN ME</div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        {% if main_event.wifi_name and main_event.wifi_password %}
+          <div class="wifi">
+            <img src="{% static 'img/wifi_logo.png' %}" alt="wifi log" class="wifi-logo" />
+            <div>{{ main_event.wifi_name }}</div>
+            <div>{{ main_event.wifi_password }}</div>
+          </div>
+        {% endif %}
+      {% endblock back %}
+    </div>
+  </body>
+</html>

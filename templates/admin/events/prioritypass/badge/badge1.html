@@ -1,0 +1,114 @@
+{% extends "admin/events/prioritypass/badge/badge_base.html" %}
+{% load static %}
+{% load qr_code %}
+{% load file_base64 %}
+
+{% block head %}
+  <style>
+    .front {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .logos {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .event-logo {
+      width: 10rem;
+    }
+
+    .ozone-logo {
+      width: 5rem;
+    }
+
+    .qr-code {
+      width: 5rem;
+      margin-right: 0.5rem;
+    }
+
+    .participant-info {
+      flex-grow: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      line-height: 1.3;
+    }
+
+    .first-name {
+      font-size: 14px;
+    }
+
+    .last-name {
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .country {
+      margin-top: 0.5rem;
+      font-size: 18px;
+    }
+
+    .participant-photo {
+      width: 7rem;
+      height: 7rem;
+    }
+
+    .participant-type {
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 0.25rem 0.5rem;
+      background-color: #1479ba;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
+{% endblock head %}
+
+{% block front %}
+  <div class="header">
+    <div class="logos">
+      {% if main_event.event_logo %}
+        <div class="event-logo">
+          <img src="{{ main_event.event_logo.url }}" alt="event logo" />
+        </div>
+      {% endif %}
+      <div class="ozone-logo">
+        <img src="{% static 'img/logo.png' %}" alt="ozone logo" />
+      </div>
+    </div>
+    <div class="qr-code">{% qr_from_text qr_url image_format='png' %}</div>
+  </div>
+  <div class="participant-info">
+    <div>
+      <div class="first-name">{{ contact.first_name }}</div>
+      <div class="last-name">{{ contact.last_name }}</div>
+      {% if priority_pass.is_gov %}
+        <div class="country">{{ country.name|default:'' }}</div>
+      {% endif %}
+    </div>
+    {% if contact.photo %}
+      <div class="participant-photo">
+        <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
+      </div>
+    {% endif %}
+  </div>
+  <div class="participant-type {{ organization.organization_type.acronym }}">
+    {{ organization.organization_type.title|default:"other" }}
+  </div>
+{% endblock front %}

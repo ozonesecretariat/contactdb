@@ -92,6 +92,18 @@ class Event(models.Model):
         validators=[validate_placeholders], default="", blank=True
     )
 
+    event_logo = models.ImageField(
+        upload_to="event_logo/",
+        null=True,
+        blank=True,
+        help_text="Event logo displayed on the badge",
+    )
+    wifi_name = models.CharField(max_length=255, blank=True)
+    wifi_password = models.CharField(max_length=255, blank=True)
+
+    app_store_url = models.CharField(max_length=1024, blank=True)
+    play_store_url = models.CharField(max_length=1024, blank=True)
+
     def __str__(self):
         return f"{self.code} {self.title}"
 
@@ -365,10 +377,13 @@ class PriorityPass(models.Model):
 
     @property
     def priority_pass_template(self):
-        return "admin/events/registration/priority_pass.html"
+        return "admin/events/prioritypass/priority_pass.html"
 
     @property
-    def priority_pass_context(self):
+    def badge_template(self):
+        return "admin/events/prioritypass/badge/badge1.html"
+
+    def get_priority_pass_context(self, request):
         return {
             "priority_pass": self,
             "qr_url": self.qr_url,
@@ -377,6 +392,7 @@ class PriorityPass(models.Model):
             "organization_name": self.organization_name,
             "contact": self.contact,
             "country": self.country,
+            "main_event": self.main_event,
         }
 
     @property

@@ -295,7 +295,13 @@ class PriorityPassAdmin(ModelAdmin):
         "registrations__contact__organization__name",
         "registrations__organization__name",
     )
-    list_display = ("code", "registrations_links", "pass_download_link", "created_at")
+    list_display = (
+        "code",
+        "registrations_links",
+        "pass_download_link",
+        "badge_download_link",
+        "created_at",
+    )
     list_filter = (
         "registrations__status",
         AutocompleteFilterFactory("contact", "registrations__contact"),
@@ -315,6 +321,7 @@ class PriorityPassAdmin(ModelAdmin):
     fields = (
         "code",
         "pass_download_link",
+        "badge_download_link",
         "created_at",
         "attach_priority_pass",
         "confirmation_email",
@@ -330,6 +337,7 @@ class PriorityPassAdmin(ModelAdmin):
         "code",
         "registrations_links",
         "pass_download_link",
+        "badge_download_link",
         "created_at",
         "attach_priority_pass",
         "confirmation_email",
@@ -368,6 +376,23 @@ class PriorityPassAdmin(ModelAdmin):
             obj.qr_url,
         )
 
+    @admin.display(description="Badge")
+    def badge_download_link(self, obj):
+        url = reverse("admin:badge_view", args=[obj.id]) + "?pdf=true"
+        url_download = url + "&download=true"
+        return format_html(
+            " | ".join(
+                [
+                    '<a href="{}" target="_blank">View</a>',
+                    '<a href="{}" target="_blank">Download</a>',
+                    '<a href="{}" target="_blank">Scan</a>',
+                ]
+            ),
+            url,
+            url_download,
+            obj.qr_url,
+        )
+
     @admin.display(description="Attach priority pass", boolean=True)
     def attach_priority_pass(self, obj):
         return obj.main_event and obj.main_event.attach_priority_pass
@@ -383,14 +408,14 @@ class PriorityPassAdmin(ModelAdmin):
     def get_urls(self):
         return [
             path(
-                "pass-scan-view/",
-                self.admin_site.admin_view(self.pass_scan_view),
-                name="priority_pass_scan_view",
-            ),
-            path(
                 "<path:object_id>/pass/",
                 self.admin_site.admin_view(self.pass_view),
                 name="priority_pass_view",
+            ),
+            path(
+                "<path:object_id>/badge/",
+                self.admin_site.admin_view(self.badge_view),
+                name="badge_view",
             ),
             *super().get_urls(),
         ]
@@ -399,7 +424,7 @@ class PriorityPassAdmin(ModelAdmin):
         priority_pass = self.get_object(request, object_id)
         context = {
             **self.admin_site.each_context(request),
-            **priority_pass.priority_pass_context,
+            **priority_pass.get_priority_pass_context(request),
         }
         if request.GET.get("pdf") == "true":
             return FileResponse(
@@ -415,22 +440,25 @@ class PriorityPassAdmin(ModelAdmin):
 
         return TemplateResponse(request, priority_pass.priority_pass_template, context)
 
-    def pass_scan_view(self, request):
-        if not (code := request.GET.get("code")):
-            self.message_user(
-                request, "No priority pass code provided", level=messages.ERROR
+    def badge_view(self, request, object_id):
+        priority_pass = self.get_object(request, object_id)
+        context = {
+            **self.admin_site.each_context(request),
+            **priority_pass.get_priority_pass_context(request),
+        }
+        if request.GET.get("pdf") == "true":
+            return FileResponse(
+                print_pdf(
+                    priority_pass.badge_template,
+                    context=context,
+                    request=request,
+                ),
+                content_type="application/pdf",
+                filename=f"badge_{priority_pass.code}.pdf",
+                as_attachment=request.GET.get("download") == "true",
             )
-            return redirect(reverse("admin:events_prioritypass_changelist"))
 
-        if not (priority_pass := self.get_object(request, code, "code")):
-            self.message_user(
-                request, "Priority pass does not exist!", level=messages.ERROR
-            )
-            return redirect(reverse("admin:events_prioritypass_changelist"))
-
-        return redirect(
-            reverse("admin:events_prioritypass_change", args=[priority_pass.id])
-        )
+        return TemplateResponse(request, priority_pass.badge_template, context)
 
     def response_change(self, request, obj):
         resp = super().response_change(request, obj)
@@ -574,6 +602,18 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 "fields": (
                     "refuse_subject",
                     "refuse_content",
+                )
+            },
+        ),
+        (
+            "Badge information",
+            {
+                "fields": (
+                    "event_logo",
+                    "wifi_name",
+                    "wifi_password",
+                    "app_store_url",
+                    "play_store_url",
                 )
             },
         ),
@@ -845,9 +885,12 @@ class EventInvitationAdmin(ModelAdmin):
         Overridden to allow deleting invitations.
         """
         # Get the standard deletion info for invitations
-        deleted_objects, model_count, perms_needed, protected = (
-            super().get_deleted_objects(objs, request)
-        )
+        (
+            deleted_objects,
+            model_count,
+            perms_needed,
+            protected,
+        ) = super().get_deleted_objects(objs, request)
 
         permision_name = SendEmailTask._meta.verbose_name
         perms_needed.discard(permision_name)
