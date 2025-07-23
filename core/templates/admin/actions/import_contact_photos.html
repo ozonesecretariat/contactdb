@@ -1,37 +1,14 @@
 {% extends "admin/actions/base_intermediate_page.html" %}
 
-{% block content %}
-  <form method="post">
-    {% csrf_token %}
-
-    <div class="form-row">
-      <label>
-        <input type="radio" name="import_scope" value="selected" checked />
-        Import photos for {{ contact_count }} selected contact(s)
-      </label>
-    </div>
-
-    <div class="form-row">
-      <label>
-        <input type="radio" name="import_scope" value="all" />
-        Import photos for all contacts ({{ total_contacts }} total)
-      </label>
-      <p class="help">Import photos for all contacts in the database, not just the selected ones</p>
-    </div>
-
-    <div class="form-row">
-      <label>
-        <input type="checkbox" name="overwrite" />
-        Overwrite existing photos
-      </label>
-      <p class="help">Check to replace photos for contacts that already have one</p>
-    </div>
-
-    <input type="hidden" name="action" value="import_photos_from_kronos" />
-    {% for contact in queryset %}
-      <input type="hidden" name="_selected_action" value="{{ contact.pk }}" />
-    {% endfor %}
-
-    <input type="submit" name="apply" value="Start Import" class="default" />
-  </form>
-{% endblock %}
+{% block form %}
+  <div class="help">Import photos for {{ queryset.count }} selected contact(s)</div>
+  <br />
+  <label>
+    <input type="checkbox" name="overwrite" />
+    Overwrite existing photos
+  </label>
+  <br />
+  <div>
+    <input type="submit" name="apply" value="Import photos" class="default" />
+  </div>
+{% endblock form %}
