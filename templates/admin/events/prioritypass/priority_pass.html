@@ -94,6 +94,11 @@
         font-weight: bold;
       }
 
+      .event-title {
+        font-size: 14px;
+        padding-bottom: 8px;
+      }
+
       .country {
         margin-top: 24px;
         text-transform: uppercase;
@@ -176,7 +181,7 @@
             <td>{{ registration.event.dates }}</td>
           </tr>
           <tr>
-            <td colspan="3">{{ registration.event.title }}</td>
+            <td class="event-title" colspan="3">{{ registration.event.title }}</td>
           </tr>
         </tbody>
       {% endfor %}
