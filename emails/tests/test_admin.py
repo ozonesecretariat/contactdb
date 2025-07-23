@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
@@ -7,6 +7,7 @@ from django.contrib.messages import get_messages
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
 from django.test import RequestFactory, TestCase, override_settings
+from django.utils import timezone
 
 from api.tests.factories import (
     ContactFactory,
@@ -22,6 +23,7 @@ from emails.admin import InvitationEmailAdmin
 from emails.jobs import SendEmailJob
 from emails.models import InvitationEmail, SendEmailTask
 from emails.tests.factories import InvitationEmailFactory
+from events.admin import EventAdmin
 from events.models import Event
 
 
@@ -2369,3 +2371,67 @@ class TestInvitationEmailAdminReminders(TestCase):
             {t.organization for t in tasks},
             {org1, org2},
         )
+
+
+class TestInvitationEmailAdminAutocompleteEvents(TestCase):
+    """Test autocomplete querysets for events and event groups."""
+
+    fixtures = ["initial/country"]
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = get_user_model().objects.create_superuser(
+            email="eventful-admin@example.com", password="eventful-password"
+        )
+
+        self.site = AdminSite()
+        self.admin = InvitationEmailAdmin(InvitationEmail, self.site)
+
+        now = timezone.now()
+        self.today_end_datetime = now.replace(hour=23, minute=59, second=59)
+        self.yesterday = now - timedelta(days=1)
+        self.tomorrow = now + timedelta(days=1)
+        self.next_week = now + timedelta(days=7)
+        self.last_week = now - timedelta(days=7)
+
+    def test_events_field_queryset(self):
+        """Test that the events field only shows future events in autocomplete."""
+
+        past_event = EventFactory(
+            code="PAST_TEST_EVENT",
+            title="Nostalgia Event",
+            start_date=self.yesterday - timedelta(days=5),
+            end_date=self.yesterday,
+        )
+
+        ending_today = EventFactory(
+            code="TODAY_TEST_EVENT",
+            title="Carpe Diem - ending today",
+            start_date=self.yesterday,
+            end_date=self.today_end_datetime,
+        )
+
+        future_event = EventFactory(
+            code="FUTURE_TEST_EVENT",
+            title="Futuristic Event",
+            start_date=self.tomorrow,
+            end_date=self.next_week,
+        )
+
+        event_admin = EventAdmin(Event, self.site)
+
+        # Inject needed params in the search request (invitation email as referrer)
+        request = self.factory.get("/admin/events/event/autocomplete/")
+        request.user = self.user
+        request.META["HTTP_REFERER"] = "/admin/emails/invitationemail/add/"
+
+        # Unfortunately I found no good way of testing the returned results via backend
+        all_events = Event.objects.filter(code__contains="TEST_EVENT")
+        filtered_queryset, _ = event_admin.get_search_results(
+            request, all_events, "TEST_EVENT"
+        )
+        event_codes = set(filtered_queryset.values_list("code", flat=True))
+
+        self.assertNotIn(past_event.code, event_codes)
+        self.assertIn(ending_today.code, event_codes)
+        self.assertIn(future_event.code, event_codes)
