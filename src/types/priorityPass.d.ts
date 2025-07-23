@@ -4,6 +4,7 @@ import type { Organization } from "src/types/organization";
 import type { Registration } from "src/types/registration";
 
 export interface PriorityPass {
+  badgeUrl: string;
   code: string;
   contact: Contact;
   country: Country | null;

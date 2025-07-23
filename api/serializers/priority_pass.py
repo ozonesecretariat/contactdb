@@ -1,3 +1,4 @@
+from django.urls import reverse
 from rest_framework import serializers
 
 from api.serializers.contact import (
@@ -14,6 +15,7 @@ class PriorityPassSerializer(serializers.ModelSerializer):
     country = CountrySerializer(read_only=True)
     organization = OrganizationSerializer(read_only=True)
     registrations = RegistrationSerializer(many=True, read_only=True)
+    badge_url = serializers.SerializerMethodField()
 
     class Meta:
         model = PriorityPass
@@ -24,4 +26,8 @@ class PriorityPassSerializer(serializers.ModelSerializer):
             "organization",
             "registrations",
             "created_at",
+            "badge_url",
         )
+
+    def get_badge_url(self, obj):
+        return reverse("admin:badge_view", args=[obj.id]) + "?pdf=true"

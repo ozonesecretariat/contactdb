@@ -16,7 +16,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -36,7 +41,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -56,7 +66,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -76,7 +91,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -96,7 +116,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -116,7 +141,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -136,7 +166,12 @@
       "confirmation_subject": "Congratulations!",
       "confirmation_content": "<p>Hello&nbsp;[[full_name]]</p>\r\n\r\n<p>Congratulation on getting accepted!&nbsp;</p>\r\n\r\n<p>Ozone&nbsp;</p>",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "PDAF",
+      "wifi_password": "PDAF@2025",
+      "app_store_url": "https://example.com?appstore",
+      "play_store_url": "https://example.com?playstore"
     }
   },
   {
@@ -156,7 +191,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -176,7 +216,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -196,7 +241,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -216,7 +266,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -236,7 +291,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -256,7 +316,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -276,7 +341,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -296,7 +366,12 @@
       "confirmation_subject": "Congratulations!",
       "confirmation_content": "<p>Hello&nbsp;[[full_name]]</p>\r\n\r\n<p>Congratulation on getting accepted!&nbsp;</p>\r\n\r\n<p>Ozone&nbsp;</p>",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -316,7 +391,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -336,7 +416,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -356,7 +441,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -376,7 +466,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   },
   {
@@ -396,7 +491,12 @@
       "confirmation_subject": "",
       "confirmation_content": "",
       "refuse_subject": "",
-      "refuse_content": ""
+      "refuse_content": "",
+      "event_logo": "",
+      "wifi_name": "",
+      "wifi_password": "",
+      "app_store_url": "",
+      "play_store_url": ""
     }
   }
 ]

@@ -9,21 +9,36 @@ describe("Check", () => {
   });
   it("Check scan view", () => {
     cy.loginEdit();
-    visitAdmin("/admin/events/prioritypass/pass-scan-view/?code=T6UQZRYW0S");
+    cy.checkSearch({ modelName: "Priority passes", searchValue: "T6UQZRYW0S" });
+    cy.get(".field-pass_download_link a").contains("Scan").goToHref();
     cy.contains("Mr. Lyra-Pulse Solstice");
-    cy.contains("QQ:ASAS Quantum Quest: A Science Adventure Symposium");
-    cy.contains("PDAF Psychedelic Dreamscape Art Fair");
-    cy.contains("SSMF Stéllâr Sérènade Müsïc Fêstivàl");
+    cy.contains("Quantum Quest: A Science Adventure Symposium");
+    cy.contains("Psychedelic Dreamscape Art Fair");
+    cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
   });
-  it("Check scan view wrong code", () => {
+  it("Check view pass as html", () => {
     cy.loginEdit();
-    visitAdmin("/admin/events/prioritypass/pass-scan-view/?code=XXXXXXXXXX");
-    cy.contains("Priority pass does not exist");
+    visitAdmin("/admin/events/prioritypass/372/pass/");
+    cy.contains("T6UQZRYW0S");
+    cy.contains("Guatemala");
+    cy.contains("Mr. Lyra-Pulse Solstice");
+    cy.contains("Quantum Quest: A Science Adventure Symposium");
+    cy.contains("Psychedelic Dreamscape Art Fair");
+    cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
+    cy.contains("Tashkent, Myanmar");
+    cy.contains("THIS PASS DOES NOT GRANT ACCESS TO THE VENUE.");
   });
-  it("Check scan view no code", () => {
+  it("Check view badge as html", () => {
     cy.loginEdit();
-    visitAdmin("/admin/events/prioritypass/pass-scan-view/");
-    cy.contains("No priority pass code provided");
+    visitAdmin("/admin/events/prioritypass/372/badge/");
+    cy.contains("T6UQZRYW0S");
+    cy.contains("Lyra-Pulse");
+    cy.contains("Solstice");
+    cy.contains("Guatemala");
+    cy.contains("Government");
+    cy.contains("PDAF@2025");
+    cy.get('img[alt="https://example.com?appstore"]');
+    cy.get('img[alt="https://example.com?playstore"]');
   });
   it("Check save and send email with priority pass", () => {
     cy.loginAdmin();

@@ -65,7 +65,7 @@
           <q-separator />
 
           <q-card-actions>
-            <q-btn color="positive" icon="picture_as_pdf" @click="printBadge">Print badge</q-btn>
+            <q-btn color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">Print badge</q-btn>
             <q-btn v-if="canEditContact" color="primary" icon="photo_camera" @click="takePhotoRef?.show()">
               Take photo
             </q-btn>
@@ -124,7 +124,7 @@ import type { PriorityPass } from "src/types/priorityPass";
 import type { Registration } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
-import { api } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
 import SearchPass from "components/SearchPass.vue";
 import TakePhoto from "components/TakePhoto.vue";
@@ -147,6 +147,11 @@ const canEditRegistration = computed(() => userStore.permissions.includes("event
 const registrations = computed(() =>
   [...(pass.value?.registrations ?? [])].sort((a, b) => (a.event.code > b.event.code ? 1 : -1)),
 );
+const badgeUrl = computed(() => {
+  if (!pass?.value?.badgeUrl) return "";
+
+  return apiBase + pass.value.badgeUrl;
+});
 const cardColors = {
   Accredited: "bg-primary",
   Nominated: "bg-info",
@@ -189,11 +194,6 @@ async function loadPriorityPass() {
   } finally {
     loading.value = false;
   }
-}
-
-function printBadge() {
-  // eslint-disable-next-line no-alert
-  alert("Not implemented yet!");
 }
 
 function setCode(code: string) {
