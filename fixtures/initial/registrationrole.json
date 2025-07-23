@@ -4,6 +4,7 @@
     "pk": 1,
     "fields": {
       "name": "Delegate",
+      "hide_for_nomination": false,
       "kronos_value": null
     }
   },
@@ -12,6 +13,7 @@
     "pk": 2,
     "fields": {
       "name": "Head",
+      "hide_for_nomination": false,
       "kronos_value": 0
     }
   },
@@ -20,6 +22,7 @@
     "pk": 3,
     "fields": {
       "name": "Alternate Head",
+      "hide_for_nomination": false,
       "kronos_value": 1
     }
   },
@@ -28,6 +31,7 @@
     "pk": 4,
     "fields": {
       "name": "Unofficial Delegate",
+      "hide_for_nomination": true,
       "kronos_value": 2
     }
   }

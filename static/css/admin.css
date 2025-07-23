@@ -167,3 +167,13 @@ ul.m2m-list li {
   line-height: 0.9375rem;
   color: var(--button-fg);
 }
+
+.send-email-btn {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+}
+.send-email-btn:hover {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+}

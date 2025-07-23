@@ -22,6 +22,7 @@
       }"
       :dense="$q.screen.lt.lg"
       :grid="$q.screen.lt.md"
+      wrap-cells
       @row-click="handleRowClick"
     >
       <template #header="props">

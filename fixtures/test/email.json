@@ -18,7 +18,8 @@
       "cc_groups": [],
       "bcc_groups": [],
       "events": [],
-      "organization_types": []
+      "organization_types": [],
+      "organizations": []
     }
   },
   {
@@ -40,7 +41,8 @@
       "cc_groups": [],
       "bcc_groups": [],
       "events": [1, 11, 14, 17],
-      "organization_types": []
+      "organization_types": [],
+      "organizations": []
     }
   },
   {
@@ -62,7 +64,8 @@
       "cc_groups": [["Literary Legends League"], ["Tech Titans Alliance"]],
       "bcc_groups": [["Artistic Avengers Assembly"], ["Wanderers' Circle"]],
       "events": [19, 15],
-      "organization_types": []
+      "organization_types": [],
+      "organizations": []
     }
   }
 ]

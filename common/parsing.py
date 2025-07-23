@@ -1,7 +1,39 @@
 import re
 import string
 
+from core.models import BaseContact
+
 punctuation_translate = {ord(c): " " for c in string.punctuation}
+CONTACT_MAPPING = {
+    "organization": "organization",
+    "title": "title",
+    "firstName": "first_name",
+    "lastName": "last_name",
+    "designation": "designation",
+    "department": "department",
+    "phones": "phones",
+    "mobiles": "mobiles",
+    "faxes": "faxes",
+    "emails": "emails",
+    "emailCcs": "email_ccs",
+    "notes": "notes",
+    "isUseOrganizationAddress": "is_use_organization_address",
+    "address": "address",
+    "city": "city",
+    "state": "state",
+    "country": "country",
+    "postalCode": "postal_code",
+    "dateOfBirth": "birth_date",
+}
+REGISTRATION_MAPPING = {
+    "contactId": "contact_id",
+    "eventId": "event_id",
+    "status": "status",
+    "role": "role",
+    "priorityPassCode": "priority_pass_code",
+    "createdOn": "date",
+    "isFunded": "is_funded",
+}
 
 FIX_TITLE_MAPPING = {
     "Mr": "Mr.",
@@ -44,3 +76,17 @@ def parse_list(email_list):
                 result.add(addr)
 
     return sorted(result)
+
+
+def normalize_title(raw_title):
+    """
+    Normalize and return (english_title, localized_title) tuple.
+    """
+
+    title = FIX_TITLE_MAPPING.get(raw_title, raw_title)
+
+    english_title = LOCALIZED_TITLE_TO_ENGLISH.get(title, title)
+    english_title = english_title if english_title in BaseContact.Title.values else ""
+    localized_title = title if title in BaseContact.LocalizedTitle.values else ""
+
+    return english_title, localized_title

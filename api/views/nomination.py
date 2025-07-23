@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Subquery
 from rest_framework import status
@@ -123,6 +124,18 @@ class EventNominationViewSet(ViewSet):
         Any events not specified will have their nomination removed.
         """
         contact = get_object_or_404(self._get_contacts_qs(token), id=contact_id)
+        try:
+            contact.clean_for_nomination()
+        except DjangoValidationError as e:
+            raise ValidationError(
+                {
+                    "contact": (
+                        "Contact does not have all the required data, "
+                        "please edit in the required details before nominating."
+                    )
+                }
+            ) from e
+
         available_events = set(self._get_event_qs(token))
 
         serializer_class = self.get_serializer_class()
@@ -217,7 +230,11 @@ class EventNominationViewSet(ViewSet):
     @action(detail=True, methods=["get"])
     def roles(self, request, token):
         self.get_invitation(token)
-        return Response(RegistrationRole.objects.all().values_list("name", flat=True))
+        return Response(
+            RegistrationRole.objects.filter(hide_for_nomination=False).values_list(
+                "name", flat=True
+            )
+        )
 
     @action(detail=True, methods=["get"])
     def countries(self, request, token):

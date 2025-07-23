@@ -6,9 +6,12 @@ from functools import cached_property
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 
-from common.parsing import FIX_TITLE_MAPPING, LOCALIZED_TITLE_TO_ENGLISH, parse_list
+from common.parsing import (
+    CONTACT_MAPPING,
+    normalize_title,
+    parse_list,
+)
 from core.models import (
-    BaseContact,
     Contact,
     Country,
     Organization,
@@ -147,27 +150,7 @@ class KronosEventsParser(KronosParser):
 
 
 class KronosParticipantsParser(KronosParser):
-    field_mapping = {
-        "organization": "organization",
-        "title": "title",
-        "firstName": "first_name",
-        "lastName": "last_name",
-        "designation": "designation",
-        "department": "department",
-        "phones": "phones",
-        "mobiles": "mobiles",
-        "faxes": "faxes",
-        "emails": "emails",
-        "emailCcs": "email_ccs",
-        "notes": "notes",
-        "isUseOrganizationAddress": "is_use_organization_address",
-        "address": "address",
-        "city": "city",
-        "state": "state",
-        "country": "country",
-        "postalCode": "postal_code",
-        "dateOfBirth": "birth_date",
-    }
+    field_mapping = CONTACT_MAPPING
 
     def __init__(self, task):
         super().__init__(task=task)
@@ -307,21 +290,6 @@ class KronosParticipantsParser(KronosParser):
             org.primary_contacts.add(*org.filter_contacts_by_emails(org.emails))
             org.secondary_contacts.add(*org.filter_contacts_by_emails(org.email_ccs))
 
-    def normalize_title(self, raw_title):
-        """
-        Normalize and return (english_title, localized_title) tuple.
-        """
-
-        title = FIX_TITLE_MAPPING.get(raw_title, raw_title)
-
-        english_title = LOCALIZED_TITLE_TO_ENGLISH.get(title, title)
-        english_title = (
-            english_title if english_title in BaseContact.Title.values else ""
-        )
-        localized_title = title if title in BaseContact.LocalizedTitle.values else ""
-
-        return english_title, localized_title
-
     def _handle_contact(self, contact_dict):
         contact_id = contact_dict["contactId"]
         contact_dict["dateOfBirth"] = self.parse_date(contact_dict.get("dateOfBirth"))
@@ -341,7 +309,7 @@ class KronosParticipantsParser(KronosParser):
 
         # Update the contact's title
         raw_title = contact_defaults.get("title", "")
-        english_title, localized_title = self.normalize_title(raw_title)
+        english_title, localized_title = normalize_title(raw_title)
         contact_defaults["title"] = english_title
         contact_defaults["title_localized"] = localized_title
 

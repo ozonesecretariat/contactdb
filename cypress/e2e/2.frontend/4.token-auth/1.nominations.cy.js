@@ -43,6 +43,8 @@ describe("Check nominations page", () => {
     cy.get("input[name=emails]").type(email);
     cy.get("input[name=firstName]").type("John");
     cy.get("input[name=lastName]").type(lastName);
+    cy.get("input[name=designation]").type("Corpo");
+    cy.get("[role=checkbox]:has([name=isUseOrganizationAddress])").click();
     cy.get("[aria-label=Organization]").click();
     cy.get("[role=option]").contains("Galactic Research Institute for Advanced Technologies").click();
     // Add passport info
@@ -60,7 +62,6 @@ describe("Check nominations page", () => {
     cy.get('[aria-label="Role of the participant"]').click();
     cy.get("[role=option]").contains("Delegate").click();
     cy.contains("Confirm nomination").click();
-    cy.contains("Close").click();
     // Check that the new nomination was added and the store was reloaded
     cy.get("[role=search]").type(email);
     cy.contains("1-1 of 1");
@@ -69,7 +70,6 @@ describe("Check nominations page", () => {
     // Remove the nomination we just added
     cy.get("[role=switch][aria-checked=true]").click();
     cy.contains("Confirm nomination").click();
-    cy.contains("Close").click();
     // Check it was removed
     cy.get("[role=search]").type(email);
     cy.contains("No data available");

@@ -187,6 +187,19 @@ class BaseContact(models.Model):
         help_text="Localized title in French or Spanish.",
     )
 
+    class GenderChoices(models.TextChoices):
+        MALE = "Male", "Male"
+        FEMALE = "Female", "Female"
+        OTHER = "Other", "Other"
+        NOT_DISCLOSED = "Choose not to disclose", "Choose not to disclose"
+
+    gender = models.CharField(
+        max_length=30,
+        choices=GenderChoices.choices,
+        blank=True,
+        help_text="Contact gender.",
+    )
+
     honorific = models.CharField(max_length=30, default="", blank=True)
     first_name = models.CharField(max_length=250, default="", blank=True)
     last_name = models.CharField(max_length=250, default="", blank=True)
@@ -319,6 +332,25 @@ class BaseContact(models.Model):
                     errors[field] = "This field is required."
             if errors:
                 raise ValidationError(errors)
+
+    def clean_for_nomination(self):
+        required_fields = [
+            "first_name",
+            "last_name",
+            "designation",
+            "emails",
+            "organization",
+        ]
+        if not self.is_use_organization_address:
+            required_fields.extend(["country", "city"])
+
+        errors = {}
+        for field in required_fields:
+            if not getattr(self, field):
+                errors[field] = "This field is required."
+
+        if errors:
+            raise ValidationError(errors)
 
 
 class Contact(BaseContact):
@@ -657,7 +689,7 @@ class ImportContactPhotosTask(TaskRQ):
     LOG_TO_FILE = False
 
     contact_ids = ArrayField(
-        base_field=models.IntegerField(),
+        base_field=models.BigIntegerField(),
         null=True,
         blank=True,
         help_text=(

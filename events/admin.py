@@ -16,7 +16,8 @@ from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
-from events.jobs import resend_confirmation_email
+from emails.models import SendEmailTask
+from events.jobs import send_priority_pass_status_emails
 from events.models import (
     Event,
     EventGroup,
@@ -108,7 +109,7 @@ class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name",)
+    list_display = ("name", "hide_for_nomination")
     list_display_links = ("name",)
 
 
@@ -252,21 +253,6 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     def tags_display(self, obj: Registration):
         return ", ".join(map(str, obj.tags.all()))
 
-    @admin.action(
-        description="Resend confirmation email for selected registrations",
-        permissions=["change"],
-    )
-    def resend_confirmation_emails(self, request, queryset):
-        count = 0
-        for registration in queryset:
-            # Queue instead of doing it instantly or in bulk as it will require
-            # generating the qr or badge.
-            django_rq.enqueue(resend_confirmation_email, registration.id)
-            count += 1
-        self.message_user(
-            request, f"{count} confirmation emails have been queued for sending"
-        )
-
     @admin.action(description="Send email to selected contacts", permissions=["view"])
     def send_email(self, request, queryset):
         ids = ",".join(
@@ -289,7 +275,6 @@ class RegistrationInline(admin.TabularInline):
         "event",
         "role",
         "status",
-        "is_funded",
     )
     readonly_fields = ("contact", "event")
     can_delete = False
@@ -310,15 +295,37 @@ class PriorityPassAdmin(ModelAdmin):
         "registrations__contact__organization__name",
         "registrations__organization__name",
     )
-    list_display = ("code", "registrations_links", "pass_download_link", "created_at")
+    list_display = (
+        "code",
+        "registrations_links",
+        "pass_download_link",
+        "badge_download_link",
+        "created_at",
+    )
     list_filter = (
+        "registrations__status",
         AutocompleteFilterFactory("contact", "registrations__contact"),
+        AutocompleteFilterFactory(
+            "organization", "registrations__contact__organization"
+        ),
+        AutocompleteFilterFactory(
+            "organization type",
+            "registrations__contact__organization__organization_type",
+        ),
+        AutocompleteFilterFactory(
+            "government", "registrations__contact__organization__government"
+        ),
         AutocompleteFilterFactory("event", "registrations__event"),
+        AutocompleteFilterFactory("event group", "registrations__event__group"),
     )
     fields = (
         "code",
         "pass_download_link",
+        "badge_download_link",
         "created_at",
+        "attach_priority_pass",
+        "confirmation_email",
+        "refused_email",
     )
     prefetch_related = (
         "registrations",
@@ -330,12 +337,17 @@ class PriorityPassAdmin(ModelAdmin):
         "code",
         "registrations_links",
         "pass_download_link",
+        "badge_download_link",
         "created_at",
+        "attach_priority_pass",
+        "confirmation_email",
+        "refused_email",
     )
     ordering = ("-created_at",)
     annotate_query = {
         "registration_count": Count("registrations"),
     }
+    actions = ("send_confirmation_emails",)
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -364,17 +376,46 @@ class PriorityPassAdmin(ModelAdmin):
             obj.qr_url,
         )
 
+    @admin.display(description="Badge")
+    def badge_download_link(self, obj):
+        url = reverse("admin:badge_view", args=[obj.id]) + "?pdf=true"
+        url_download = url + "&download=true"
+        return format_html(
+            " | ".join(
+                [
+                    '<a href="{}" target="_blank">View</a>',
+                    '<a href="{}" target="_blank">Download</a>',
+                    '<a href="{}" target="_blank">Scan</a>',
+                ]
+            ),
+            url,
+            url_download,
+            obj.qr_url,
+        )
+
+    @admin.display(description="Attach priority pass", boolean=True)
+    def attach_priority_pass(self, obj):
+        return obj.main_event and obj.main_event.attach_priority_pass
+
+    @admin.display(description="Confirmation email", boolean=True)
+    def confirmation_email(self, obj):
+        return obj.main_event and obj.main_event.has_confirmation_email
+
+    @admin.display(description="Refused email", boolean=True)
+    def refused_email(self, obj):
+        return obj.main_event and obj.main_event.has_refused_email
+
     def get_urls(self):
         return [
-            path(
-                "pass-scan-view/",
-                self.admin_site.admin_view(self.pass_scan_view),
-                name="priority_pass_scan_view",
-            ),
             path(
                 "<path:object_id>/pass/",
                 self.admin_site.admin_view(self.pass_view),
                 name="priority_pass_view",
+            ),
+            path(
+                "<path:object_id>/badge/",
+                self.admin_site.admin_view(self.badge_view),
+                name="badge_view",
             ),
             *super().get_urls(),
         ]
@@ -399,28 +440,66 @@ class PriorityPassAdmin(ModelAdmin):
 
         return TemplateResponse(request, priority_pass.priority_pass_template, context)
 
-    def pass_scan_view(self, request):
-        if not (code := request.GET.get("code")):
-            self.message_user(
-                request, "No priority pass code provided", level=messages.ERROR
+    def badge_view(self, request, object_id):
+        priority_pass = self.get_object(request, object_id)
+        context = {
+            **self.admin_site.each_context(request),
+            **priority_pass.priority_pass_context,
+        }
+        if request.GET.get("pdf") == "true":
+            return FileResponse(
+                print_pdf(
+                    priority_pass.badge_template,
+                    context=context,
+                    request=request,
+                ),
+                content_type="application/pdf",
+                filename=f"badge_{priority_pass.code}.pdf",
+                as_attachment=request.GET.get("download") == "true",
             )
-            return redirect(reverse("admin:events_prioritypass_changelist"))
 
-        if not (priority_pass := self.get_object(request, code, "code")):
-            self.message_user(
-                request, "Priority pass does not exist!", level=messages.ERROR
-            )
-            return redirect(reverse("admin:events_prioritypass_changelist"))
+        return TemplateResponse(request, priority_pass.badge_template, context)
 
-        return redirect(
-            reverse("admin:events_prioritypass_change", args=[priority_pass.id])
+    def response_change(self, request, obj):
+        resp = super().response_change(request, obj)
+        if "_save_without_sending" not in request.POST:
+            self.send_confirmation_emails(request, [obj])
+        return resp
+
+    @admin.action(
+        description="Send confirmation email for selected priority passes",
+        permissions=["change"],
+    )
+    def send_confirmation_emails(self, request, queryset):
+        count = 0
+        for priority_pass in queryset:
+            # Queue instead of doing it instantly or in bulk as it will require
+            # generating the qr or badge.
+            django_rq.enqueue(send_priority_pass_status_emails, priority_pass.id)
+            count += 1
+        self.message_user(
+            request, f"{count} confirmation emails have been queued for sending"
         )
 
 
 class EventInline(admin.TabularInline):
     max_num = 0
     model = Event
-    fields = readonly_fields = ("code", "title", "start_date", "end_date")
+    fields = readonly_fields = ("code", "event_link", "start_date", "end_date")
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def event_link(self, obj):
+        if not obj:
+            return self.get_empty_value_display()
+
+        url = reverse("admin:events_event_change", args=(obj.pk,))
+        return format_html(
+            '<a href="{url}">{link_text}</a>', url=url, link_text=obj.title or obj
+        )
+
+    event_link.short_description = "Event title"
 
 
 @admin.register(EventGroup)
@@ -523,6 +602,18 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 "fields": (
                     "refuse_subject",
                     "refuse_content",
+                )
+            },
+        ),
+        (
+            "Badge information",
+            {
+                "fields": (
+                    "event_logo",
+                    "wifi_name",
+                    "wifi_password",
+                    "app_store_url",
+                    "play_store_url",
                 )
             },
         ),
@@ -788,6 +879,51 @@ class EventInvitationAdmin(ModelAdmin):
                 "event", "event_group", "organization", "country", "email_tasks"
             )
         )
+
+    def get_deleted_objects(self, objs, request):
+        """
+        Overridden to allow deleting invitations.
+        """
+        # Get the standard deletion info for invitations
+        (
+            deleted_objects,
+            model_count,
+            perms_needed,
+            protected,
+        ) = super().get_deleted_objects(objs, request)
+
+        permision_name = SendEmailTask._meta.verbose_name
+        perms_needed.discard(permision_name)
+
+        return deleted_objects, model_count, perms_needed, protected
+
+    def delete_model(self, request, obj):
+        """Overridden to show info on deleted related SendEmailTask objects."""
+        deleted_task_count = obj.email_tasks.count()
+
+        super().delete_model(request, obj)
+
+        if deleted_task_count > 0:
+            self.message_user(
+                request,
+                f"Deleted {deleted_task_count} related email task(s).",
+                messages.SUCCESS,
+            )
+
+    def delete_queryset(self, request, queryset):
+        """Overridden to show info on deleted related SendEmailTask objects."""
+        deleted_task_count = SendEmailTask.objects.filter(
+            invitation__in=queryset
+        ).count()
+
+        super().delete_queryset(request, queryset)
+
+        if deleted_task_count > 0:
+            self.message_user(
+                request,
+                f"Deleted {deleted_task_count} related send email task(s).",
+                messages.SUCCESS,
+            )
 
     @admin.display(description="Target")
     def event_or_group(self, obj):

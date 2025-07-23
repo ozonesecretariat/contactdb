@@ -9,6 +9,11 @@ describe("Check scan pass", () => {
     cy.contains("Accredited");
     cy.contains("Nominated");
   });
+  it("Scan wrong code", () => {
+    cy.loginAdmin(false);
+    cy.visit("/scan-pass?code=XXXXXXXXXX");
+    cy.contains("Invalid code");
+  });
   it("Go to pass via search", () => {
     cy.loginAdmin(false);
     cy.contains("Scan Pass").click();
