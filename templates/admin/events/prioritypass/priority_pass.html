@@ -177,7 +177,9 @@
         <p class="org">
           {{ contact.designation|default:'-' }}
           <br />
-          {{ organization_name|default:'-' }}
+          {{ contact.department|default:'-' }}
+          <br />
+          <b>{{ organization_name|default:'-' }}</b>
         </p>
         <p>
           {{ organization.city|default:'-' }}

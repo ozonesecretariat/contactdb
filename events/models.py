@@ -432,8 +432,6 @@ class PriorityPass(models.Model):
     def organization_name(self):
         if not self.organization:
             return None
-        if self.is_gov:
-            return str(self.organization)
         return self.organization.name
 
     @property
