@@ -1,0 +1,24 @@
+{% extends "admin/change_form.html" %}
+{% load admin_urls %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  {% if original and original.id %}
+    <li>
+      <a
+        href="{% url 'admin:emails_email_add' %}?organizations={{ original.id }}"
+        class="send-email-btn"
+        title="Send an email to this organization"
+      >
+        Send Email
+      </a>
+    </li>
+  {% endif %}
+{% endblock %}
+
+<style>
+  .send-email-btn {
+    background-color: #28a745 !important;
+    color: white !important;
+  }
+</style>
