@@ -3,9 +3,17 @@
 
 {% block object-tools-items %}
   {{ block.super }}
-  <li>
-    <a href="{% url 'admin:emails_email_add' %}?recipients={{ original.id }}">Send Email</a>
-  </li>
+  {% if original and original.id %}
+    <li>
+      <a
+        href="{% url 'admin:emails_email_add' %}?recipients={{ original.id }}"
+        class="send-email-btn"
+        title="Send an email to this contact"
+      >
+        Send Email
+      </a>
+    </li>
+  {% endif %}
 {% endblock %}
 
 {% block after_field_sets %}
@@ -14,3 +22,10 @@
   {% endfor %}
   {{ block.super }}
 {% endblock after_field_sets %}
+
+<style>
+  .send-email-btn {
+    background-color: #28a745 !important;
+    color: white !important;
+  }
+</style>
