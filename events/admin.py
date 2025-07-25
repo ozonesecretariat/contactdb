@@ -511,6 +511,21 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
     prefetch_related = ("events",)
     inlines = [EventInline]
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term
+        )
+
+        referrer = request.META.get("HTTP_REFERER", "")
+
+        if "/admin/emails/invitationemail" in referrer:
+            queryset = queryset.filter(
+                events__isnull=False,
+                events__end_date__gte=timezone.now(),
+            ).distinct()
+
+        return queryset, may_have_duplicates
+
 
 @admin.register(Event)
 class EventAdmin(ExportMixin, CKEditorTemplatesBase):
@@ -689,6 +704,9 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         # that have at least one registration
         if "/admin/emails/email/" in referrer:
             queryset = queryset.filter(~Q(registrations=None))
+
+        if "/admin/emails/invitationemail" in referrer:
+            queryset = queryset.filter(end_date__gte=timezone.now())
 
         return queryset, may_have_duplicates
 
