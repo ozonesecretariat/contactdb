@@ -143,7 +143,7 @@ MIDDLEWARE = [
 
 # https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
 AUDITLOG_INCLUDE_ALL_MODELS = True
-AUDITLOG_EXCLUDE_TRACKING_MODELS = ("sessions",)
+AUDITLOG_EXCLUDE_TRACKING_MODELS = ("sessions", "db")
 
 
 ROOT_URLCONF = "contactdb.urls"
