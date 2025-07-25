@@ -394,6 +394,7 @@ class PriorityPass(models.Model):
             "organization_name": self.organization_name,
             "contact": self.contact,
             "country": self.country,
+            "address_entity": self.address_entity,
             "main_event": self.main_event,
         }
 
@@ -432,8 +433,6 @@ class PriorityPass(models.Model):
     def organization_name(self):
         if not self.organization:
             return None
-        if self.is_gov:
-            return str(self.organization)
         return self.organization.name
 
     @property
@@ -450,6 +449,16 @@ class PriorityPass(models.Model):
 
         if self.contact:
             return self.contact.country
+
+        return None
+
+    @property
+    def address_entity(self):
+        if self.contact and self.contact.is_use_organization_address:
+            return self.organization
+
+        if self.contact:
+            return self.contact
 
         return None
 
