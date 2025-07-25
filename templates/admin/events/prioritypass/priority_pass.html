@@ -172,11 +172,17 @@
       <div>
         <p class="name">{{ contact.display_name }}</p>
         <p class="org">
-          {{ contact.designation|default:'-' }}
-          <br />
-          {{ contact.department|default:'-' }}
-          <br />
-          <b>{{ organization_name|default:'-' }}</b>
+          {% if contact.designation %}
+            {{ contact.designation }}
+          {% endif %}
+          {% if contact.department %}
+            <br />
+            {{ contact.department }}
+          {% endif %}
+          {% if organization_name %}
+            <br />
+            <b>{{ organization_name }}</b>
+          {% endif %}
           {% if priority_pass.is_gov and country.name %}
             <br />
             <b>{{ country.name }}</b>
@@ -184,8 +190,15 @@
         </p>
         <p>
           {% if address_entity.city %}
-            {{ address_entity.city }}
+            {{ address_entity.city }}{% if address_entity.state or address_entity.postal_code %},{% endif %}
           {% endif %}
+          {% if address_entity.state %}
+            {{ address_entity.state }}{% if address_entity.postal_code %},{% endif %}
+          {% endif %}
+          {% if address_entity.postal_code %}
+            {{ address_entity.postal_code }}
+          {% endif %}
+
           {% if address_entity.country %}
             <br />
             {{ address_entity.country.name }}
