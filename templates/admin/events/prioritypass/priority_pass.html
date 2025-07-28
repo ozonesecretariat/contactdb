@@ -114,7 +114,7 @@
       .details {
         margin-top: 2em;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 16px;
         align-items: start;
         justify-content: space-between;
@@ -168,21 +168,41 @@
         </tbody>
       {% endfor %}
     </table>
-    {% if priority_pass.is_gov %}
-      <h1 class="country">{{ country.name|default:'' }}</h1>
-    {% endif %}
     <section class="details">
       <div>
         <p class="name">{{ contact.display_name }}</p>
         <p class="org">
-          {{ contact.designation|default:'-' }}
-          <br />
-          {{ organization_name|default:'-' }}
+          {% if contact.designation %}
+            {{ contact.designation }}
+          {% endif %}
+          {% if contact.department %}
+            <br />
+            {{ contact.department }}
+          {% endif %}
+          {% if organization_name %}
+            <br />
+            <b>{{ organization_name }}</b>
+          {% endif %}
+          {% if priority_pass.is_gov and country.name %}
+            <br />
+            <b>{{ country.name }}</b>
+          {% endif %}
         </p>
         <p>
-          {{ organization.city|default:'-' }}
-          <br />
-          {{ organization.country.name|default:'-' }}
+          {% if address_entity.city %}
+            {{ address_entity.city }}{% if address_entity.state or address_entity.postal_code %},{% endif %}
+          {% endif %}
+          {% if address_entity.state %}
+            {{ address_entity.state }}{% if address_entity.postal_code %},{% endif %}
+          {% endif %}
+          {% if address_entity.postal_code %}
+            {{ address_entity.postal_code }}
+          {% endif %}
+
+          {% if address_entity.country %}
+            <br />
+            {{ address_entity.country.name }}
+          {% endif %}
         </p>
       </div>
     </section>
