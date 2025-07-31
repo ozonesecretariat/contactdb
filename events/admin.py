@@ -579,6 +579,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                     "code",
                     "title",
                     "group",
+                    "hide_for_nomination",
                 )
             },
         ),
