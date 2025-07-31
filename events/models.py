@@ -74,6 +74,10 @@ class Event(models.Model):
         related_name="events",
         help_text="Group linking related events",
     )
+    hide_for_nomination = models.BooleanField(
+        default=False,
+        help_text="Do not allow direct nominations for this event",
+    )
 
     attach_priority_pass = models.BooleanField(
         default=False,
