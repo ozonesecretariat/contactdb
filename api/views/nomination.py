@@ -117,6 +117,74 @@ class EventNominationViewSet(ViewSet):
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(self._get_contacts_qs(token), many=True).data)
 
+    def _create_hidden_event_registrations(self, contact, visible_event, invitation):
+        """
+        Helper method to create placeholder registrations for hidden events
+        belonging to the same EventGroup as the "visible" event being registered to.
+        """
+        if not visible_event.group:
+            return []
+
+        hidden_events = visible_event.group.events.filter(
+            hide_for_nomination=True
+        ).exclude(registrations__contact=contact)
+
+        created_registrations = []
+        for hidden_event in hidden_events:
+            registration, created = Registration.objects.get_or_create(
+                contact=contact,
+                event=hidden_event,
+                defaults={
+                    "status": "",
+                    "role": None,
+                    "organization": contact.organization,
+                    "designation": contact.designation or "",
+                    "department": contact.department or "",
+                },
+            )
+
+            # If the registration already existed, simply update the relevant fields
+            if not created:
+                registration.organization = contact.organization
+                registration.designation = contact.designation or ""
+                registration.department = contact.department or ""
+                registration.save(
+                    update_fields=["organization", "designation", "department"]
+                )
+
+            created_registrations.append(registration)
+
+        return created_registrations
+
+    def _delete_related_hidden_registrations(self, contact, deleted_visible_event):
+        """
+        Helper method to delete all placeholder registrations for this contact
+        to events in the same event group.
+        Deletion should only happen if contact is no longer registered to any
+        "visible" event.
+        """
+        if not deleted_visible_event.group:
+            return
+
+        # Check whether contact has any other visible-event registrations in this group
+        has_other_visible_registrations = (
+            Registration.objects.filter(
+                contact=contact,
+                event__group=deleted_visible_event.group,
+                event__hide_for_nomination=False,
+            )
+            .exclude(event=deleted_visible_event)
+            .exists()
+        )
+
+        if not has_other_visible_registrations:
+            Registration.objects.filter(
+                contact=contact,
+                event__group=deleted_visible_event.group,
+                event__hide_for_nomination=True,
+                status="",
+            ).delete()
+
     @action(
         detail=True,
         methods=["post"],
