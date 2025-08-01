@@ -556,7 +556,7 @@ class Registration(models.Model):
     )
 
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.NOMINATED
+        max_length=20, choices=Status.choices, default=Status.NOMINATED, blank=True
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.SET_NULL, null=True)
     priority_pass = models.ForeignKey(
