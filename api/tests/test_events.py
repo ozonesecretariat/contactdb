@@ -668,3 +668,206 @@ class TestEventNominationsAPI(BaseAPITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 400)
+
+    def test_get_events_excludes_hidden_for_nomination(self):
+        """
+        Test that events with hide_for_nomination=True are excluded from the events list.
+        """
+        visible_event = EventFactory(hide_for_nomination=False)
+        hidden_event = EventFactory(hide_for_nomination=True)
+
+        # Creating invitations for both the hidden event and the visible events.
+        visible_invitation = EventInvitationFactory(
+            event=visible_event, organization=self.organization
+        )
+        hidden_invitation = EventInvitationFactory(
+            event=hidden_event, organization=self.organization
+        )
+
+        # Visible event should show up in the events list
+        visible_url = api_reverse(
+            "events-nominations-events",
+            kwargs={"token": visible_invitation.token},
+        )
+        response = self.client.get(visible_url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["code"], visible_event.code)
+
+        # Hidden event should not show up in the events list
+        hidden_url = api_reverse(
+            "events-nominations-events",
+            kwargs={"token": hidden_invitation.token},
+        )
+        response = self.client.get(hidden_url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 0)
+
+    def test_get_events_event_group_excludes_hidden(self):
+        """Test that hidden events are excluded from event group nominations."""
+        visible_event1 = EventFactory(hide_for_nomination=False)
+        visible_event2 = EventFactory(hide_for_nomination=False)
+        hidden_event = EventFactory(hide_for_nomination=True)
+
+        # This is an event group with both visible and hidden events
+        event_group = EventGroupFactory(
+            name="Mixed Group", events=[visible_event1, visible_event2, hidden_event]
+        )
+
+        invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
+
+        url = api_reverse(
+            "events-nominations-events",
+            kwargs={"token": invitation.token},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        self.assertEqual(len(data), 2)
+        event_codes = {event["code"] for event in data}
+        self.assertIn(visible_event1.code, event_codes)
+        self.assertIn(visible_event2.code, event_codes)
+        self.assertNotIn(hidden_event.code, event_codes)
+
+    def test_nominate_contact_to_hidden_event_fails(self):
+        """Test that nominating a contact to a hidden event fails."""
+        hidden_event = EventFactory(hide_for_nomination=True)
+
+        invitation = EventInvitationFactory(
+            event=hidden_event, organization=self.organization
+        )
+
+        data = [
+            {
+                "event": hidden_event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("event", response.json())
+        self.assertEqual(Registration.objects.count(), 0)
+
+    def test_nominate_contact_event_group_hidden_event_fails(self):
+        """Test that nominating to a hidden event within an event group fails."""
+        visible_event = EventFactory(hide_for_nomination=False)
+        hidden_event = EventFactory(hide_for_nomination=True)
+
+        event_group = EventGroupFactory(
+            name="Mixed Up Group", events=[visible_event, hidden_event]
+        )
+
+        invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
+
+        # Payload to nominate to both the visible and the hidden event
+        data = [
+            {
+                "event": visible_event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+            {
+                "event": hidden_event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("event", response.json())
+        self.assertEqual(Registration.objects.count(), 0)
+
+    def test_nominate_contact_visible_event(self):
+        """Test that nominating to a non-hidden event works normally."""
+        visible_event = EventFactory(hide_for_nomination=False)
+
+        invitation = EventInvitationFactory(
+            event=visible_event, organization=self.organization
+        )
+
+        data = [
+            {
+                "event": visible_event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Registration.objects.count(), 1)
+        registration = Registration.objects.first()
+        self.assertEqual(registration.event, visible_event)
+        self.assertEqual(registration.contact, self.contact1)
+
+    def test_registrations_display_hidden_events(self):
+        """
+        Test that registrations for hidden events don't appear in the registrations list
+        of the nomination page.
+        """
+        # TODO: But is this what we want actually?
+
+        visible_event = EventFactory(hide_for_nomination=False)
+        hidden_event = EventFactory(hide_for_nomination=True)
+
+        RegistrationFactory(
+            contact=self.contact1,
+            event=visible_event,
+            role=self.role,
+        )
+        RegistrationFactory(
+            contact=self.contact1,
+            event=hidden_event,
+            role=self.role,
+        )
+
+        invitation = EventInvitationFactory(event=None, organization=self.organization)
+
+        url = api_reverse(
+            "events-nominations-detail",
+            kwargs={"token": invitation.token},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        event_codes = {reg["event"]["code"] for reg in data}
+        self.assertIn(visible_event.code, event_codes)
+        self.assertNotIn(hidden_event.code, event_codes)

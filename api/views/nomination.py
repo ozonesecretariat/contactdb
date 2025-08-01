@@ -60,7 +60,11 @@ class EventNominationViewSet(ViewSet):
 
     def _get_event_qs(self, token):
         invitation = self.get_invitation(token)
-        qs = Event.objects.all().select_related("venue_country", "group")
+        qs = (
+            Event.objects.all()
+            .filter(hide_for_nomination=False)
+            .select_related("venue_country", "group")
+        )
         if invitation.event_group_id:
             qs = qs.filter(group__id=invitation.event_group_id)
         else:
