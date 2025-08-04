@@ -1,9 +1,11 @@
 import unicodedata
 from datetime import UTC, datetime, timedelta
 from io import BytesIO
+from unittest.mock import Mock
 
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
@@ -27,6 +29,8 @@ from events.admin import (
     FutureEventFilter,
     HasUnregisteredFilter,
     PriorityPassAdmin,
+    RegistrationAdmin,
+    RegistrationInline,
     RegistrationInlineFormSet,
 )
 from events.models import EventInvitation, PriorityPass, Registration
@@ -404,46 +408,250 @@ class TestPriorityPassAdmin(TestCase):
         )
 
         self.assertTrue(protected_formset.is_valid())
-        # The formset's DELETE field should be auto-set to False!
+        # The formset's DELETE field should be auto-set to False due to disabled checkbox
         self.assertFalse(protected_formset.forms[0].cleaned_data["DELETE"])
 
-    # TODO: not good!
-    # def test_status_update_to_blank_not_allowed(self):
-    #     """Test that the status can't be cleared once it's set to a non-blank value."""
 
-    #     # Set status to a real value
-    #     self.registration.status = Registration.Status.ACCREDITED
-    #     self.registration.save()
+class TestRegistrationAdmin(TestCase):
+    fixtures = ["initial/role", "test/user"]
 
-    #     # Try to clear it back to blank
-    #     self.registration.status = ""
-    #     with self.assertRaises(ValidationError):
-    #         self.registration.full_clean()
-    #         self.registration.save()
+    def setUp(self):
+        self.site = AdminSite()
+        self.admin = RegistrationAdmin(Registration, self.site)
+        self.priority_pass_admin = PriorityPassAdmin(PriorityPass, self.site)
+        self.factory = RequestFactory()
+        self.user = get_user_model().objects.create_superuser(
+            email="admin_registration@example.com", password="password"
+        )
 
-    # def test_allow_blank_status_for_new_registrations(self):
-    #     """Test that new registrations can be created with blank status."""
-    #     hidden_event = EventFactory(hide_for_nomination=True)
-    #     registration = RegistrationFactory(
-    #         contact=self.contact,
-    #         event=hidden_event,
-    #         status="",
-    #     )
-    #     registration.full_clean()
-    #     registration.save()
-    #     self.assertEqual(registration.status, "")
+        self.group = EventGroupFactory()
+        self.event = EventFactory(group=self.group)
+        self.contact = ContactFactory()
+        self.priority_pass = PriorityPassFactory()
+        self.registration = RegistrationFactory(
+            contact=self.contact,
+            event=self.event,
+            priority_pass=self.priority_pass,
+            status=Registration.Status.NOMINATED,
+        )
 
-    # def test_allow_placeholder_status_update(self):
-    #     """Test that registrations with blank status can be updated to real status."""
-    #     hidden_event = EventFactory(hide_for_nomination=True)
-    #     reg = RegistrationFactory(
-    #         contact=self.contact,
-    #         event=hidden_event,
-    #         status="",
-    #     )
+    def test_status_update_to_blank_not_allowed(self):
+        """Test that the status can't be blanked once it's set to a non-blank value."""
 
-    #     # Update to real status
-    #     reg.status = Registration.Status.NOMINATED
-    #     reg.full_clean()
-    #     reg.save()
-    #     self.assertEqual(reg.status, Registration.Status.NOMINATED)
+        # Set status to a real value
+        self.registration.status = Registration.Status.ACCREDITED
+        self.registration.save()
+
+        # Try to clear it back to blank
+        self.registration.status = ""
+        with self.assertRaises(ValidationError):
+            self.registration.full_clean()
+            self.registration.save()
+
+    def test_allow_blank_status_for_new_registrations(self):
+        """Test that new registrations can be created with blank status."""
+        hidden_event = EventFactory(hide_for_nomination=True)
+        registration = RegistrationFactory(
+            contact=self.contact,
+            event=hidden_event,
+            status="",
+        )
+        registration.full_clean()
+        registration.save()
+        self.assertEqual(registration.status, "")
+
+    def test_allow_placeholder_status_update(self):
+        """Test that registrations with blank status can be updated to another status."""
+        hidden_event = EventFactory(hide_for_nomination=True)
+        reg = RegistrationFactory(
+            contact=self.contact,
+            event=hidden_event,
+            status="",
+        )
+
+        reg.status = Registration.Status.NOMINATED
+        reg.full_clean()
+        reg.save()
+        self.assertEqual(reg.status, Registration.Status.NOMINATED)
+
+    def test_registration_inline_prevents_status_clearing(self):
+        """Tests that the registration inline formset prevents clearing status"""
+        request = self.factory.post("/fake-admin-url/")
+        request.user = self.user
+        inline = RegistrationInline(PriorityPass, self.site)
+
+        # Form data that tries to set the status to blank - i.e. clear it
+        form_data = {
+            "registrations-TOTAL_FORMS": "1",
+            "registrations-INITIAL_FORMS": "1",
+            "registrations-MIN_NUM_FORMS": "0",
+            "registrations-MAX_NUM_FORMS": "1000",
+            "registrations-0-id": str(self.registration.id),
+            "registrations-0-contact": str(self.registration.contact.id),
+            "registrations-0-event": str(self.registration.event.id),
+            "registrations-0-role": str(self.registration.role.id)
+            if self.registration.role
+            else "",
+            "registrations-0-status": "",
+        }
+
+        formset_class = inline.get_formset(request, self.priority_pass)
+        formset = formset_class(data=form_data, instance=self.priority_pass)
+
+        # Formset should be invalid due to status validation
+        self.assertFalse(formset.is_valid())
+
+        # Check that the error is about status "clearing"
+        has_status_error = any(
+            "status" in form.errors
+            and any(
+                "cannot be cleared" in str(error).lower()
+                for error in form.errors["status"]
+            )
+            for form in formset.forms
+            if form.errors
+        )
+        self.assertTrue(has_status_error)
+
+    def test_registration_inline_save_model_calls_full_clean(self):
+        """Test that save_model in inline calls full_clean."""
+        request = self.factory.post("/fake-admin-url/")
+        request.user = self.user
+
+        inline = RegistrationInline(PriorityPass, self.site)
+
+        # Create a registration with invalid data that's gonna fail full_clean()
+        invalid_registration = Registration(
+            contact=self.contact,
+            event=self.event,
+            priority_pass=self.priority_pass,
+            status="",
+        )
+        invalid_registration.pk = self.registration.pk
+
+        form = Mock()
+        form.errors = {}
+        form.cleaned_data = {
+            "contact": self.contact,
+            "event": self.event,
+            "status": "",
+            "role": self.registration.role,
+            "priority_pass": self.priority_pass,
+            "organization": None,
+            "designation": "",
+            "department": "",
+            "is_funded": False,
+            "date": timezone.now(),
+        }
+        added_errors = []
+
+        def mock_add_error(field, error):
+            """
+            Mock add_error method that will populate the added_errors list instead
+            """
+            added_errors.append((field, error))
+            if field not in form.errors:
+                form.errors[field] = []
+            form.errors[field].append(error)
+
+        form.add_error = mock_add_error
+
+        self.registration.status = Registration.Status.NOMINATED
+        self.registration.save()
+
+        # The call to save_model should add status-related errors to the form
+        inline.save_model(request, invalid_registration, form, change=True)
+
+        self.assertTrue(form.errors)
+        self.assertTrue(added_errors)
+        status_errors = [error for field, error in added_errors if field == "status"]
+        self.assertTrue(
+            any("cannot be cleared" in str(error).lower() for error in status_errors)
+        )
+
+    def test_registration_admin_readonly_fields(self):
+        """Tests that contact and event become read-only after creation."""
+        request = self.factory.get("/fake-admin-url/")
+        request.user = self.user
+
+        # Chack that only model read-only fields are read-only for new Registrations
+        readonly_fields_new = self.admin.get_readonly_fields(request, obj=None)
+        expected_for_new = ("created_at", "updated_at", "priority_pass")
+        self.assertEqual(set(readonly_fields_new), set(expected_for_new))
+
+        # And that for existing Registrations, contact and event become RO
+        readonly_fields_existing = self.admin.get_readonly_fields(
+            request, obj=self.registration
+        )
+        expected_for_existing = (
+            "created_at",
+            "updated_at",
+            "priority_pass",
+            "contact",
+            "event",
+        )
+        self.assertEqual(set(readonly_fields_existing), set(expected_for_existing))
+
+    def test_delete_field_disabled_for_normal_registrations(self):
+        """
+        Tests the DELETE field's disabled for normal (non-placeholder) registrations.
+        """
+        self.registration.status = Registration.Status.NOMINATED
+        self.registration.save()
+
+        request = self.factory.get("/fake-admin-url/")
+        request.user = self.user
+
+        inline = RegistrationInline(PriorityPass, self.site)
+        formset_class = inline.get_formset(request, self.priority_pass)
+        formset = formset_class(instance=self.priority_pass)
+
+        # Find the form for our protected registration
+        protected_form = None
+        for form in formset.forms:
+            if hasattr(form, "instance") and form.instance.pk == self.registration.pk:
+                protected_form = form
+                break
+
+        self.assertIsNotNone(protected_form)
+
+        # Check that the DELETE field is disabled
+        if "DELETE" in protected_form.fields:
+            self.assertTrue(getattr(protected_form.fields["DELETE"], "disabled", False))
+
+    def test_delete_field_enabled_for_placeholder_registrations(self):
+        """
+        Tests the DELETE field is enabled for "placeholder" registrations.
+        """
+
+        hidden_event = EventFactory(hide_for_nomination=True, group=self.group)
+        placeholder_registration = RegistrationFactory(
+            contact=self.contact,
+            event=hidden_event,
+            priority_pass=self.priority_pass,
+            status="",
+        )
+
+        request = self.factory.get("/fake-admin-url/")
+        request.user = self.user
+
+        inline = RegistrationInline(PriorityPass, self.site)
+        formset_class = inline.get_formset(request, self.priority_pass)
+        formset = formset_class(instance=self.priority_pass)
+
+        # Find the form for the created placeholder registration
+        placeholder_form = None
+        for form in formset.forms:
+            if (
+                hasattr(form, "instance")
+                and form.instance.pk == placeholder_registration.pk
+            ):
+                placeholder_form = form
+                break
+        self.assertIsNotNone(placeholder_form)
+
+        # Check the good old DELETE field is not disabled
+        if "DELETE" in placeholder_form.fields:
+            self.assertFalse(
+                getattr(placeholder_form.fields["DELETE"], "disabled", False)
+            )
