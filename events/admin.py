@@ -277,7 +277,14 @@ class RegistrationInline(admin.TabularInline):
         "status",
     )
     readonly_fields = ("contact", "event")
-    can_delete = False
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Only allowing deletion for incomplete "placeholder" registrations.
+        """
+        if obj is None:
+            return True
+        return obj.status == "" and obj.event.hide_for_nomination
 
 
 @admin.register(PriorityPass)

@@ -1,9 +1,15 @@
+from django.contrib.admin.sites import AdminSite
 from django.core import mail
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 
-from api.tests.factories import ContactFactory, EventFactory, RegistrationFactory
+from api.tests.factories import (
+    ContactFactory,
+    EventFactory,
+    RegistrationFactory,
+)
 from emails.models import Email
+from events.admin import RegistrationInline
 from events.jobs import send_priority_pass_status_emails
 from events.models import Registration
 
@@ -53,3 +59,20 @@ class TestRegistrationStatus(TestCase):
 
         self.assertTrue(f"Refuse {self.contact.full_name}" in msg.subject)
         self.assertTrue(msg.body_contains(f"No {self.contact.full_name}"))
+
+    def test_placeholder_registration_deletable(self):
+        """Test that only placeholder registrations can be deleted via admin."""
+
+        hidden_event = EventFactory(hide_for_nomination=True)
+        placeholder_registration = RegistrationFactory(
+            contact=self.contact,
+            event=hidden_event,
+            status="",
+        )
+
+        admin_site = AdminSite()
+        inline = RegistrationInline(Registration, admin_site)
+
+        self.assertTrue(inline.has_delete_permission(None, placeholder_registration))
+
+        self.assertFalse(inline.has_delete_permission(None, self.registration))
