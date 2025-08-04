@@ -266,9 +266,9 @@ class EventNominationViewSet(ViewSet):
             for registration in current_nominations.values():
                 if registration.status != Registration.Status.NOMINATED:
                     raise ValidationError({"status": "Registration cannot be removed."})
-                registration.delete()
                 if registration.event.group:
                     deleted_visible_event_groups.add(registration.event.group)
+                registration.delete()
 
             # Now create hidden registrations for all newly-added "visible" event groups
             for event_group in new_visible_event_groups:

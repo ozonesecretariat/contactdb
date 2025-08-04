@@ -842,7 +842,6 @@ class TestEventNominationsAPI(BaseAPITestCase):
         Test that registrations for hidden events don't appear in the registrations list
         of the nomination page.
         """
-        # TODO: But is this what we want actually?
 
         visible_event = EventFactory(hide_for_nomination=False)
         hidden_event = EventFactory(hide_for_nomination=True)
