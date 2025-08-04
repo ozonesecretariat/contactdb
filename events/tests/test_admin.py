@@ -4,6 +4,7 @@ from io import BytesIO
 
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
+from django.forms.models import inlineformset_factory
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -26,8 +27,9 @@ from events.admin import (
     FutureEventFilter,
     HasUnregisteredFilter,
     PriorityPassAdmin,
+    RegistrationInlineFormSet,
 )
-from events.models import EventInvitation, PriorityPass
+from events.models import EventInvitation, PriorityPass, Registration
 
 
 class TestEventInvitationAdmin(TestCase):
@@ -332,3 +334,116 @@ class TestPriorityPassAdmin(TestCase):
         self.assertIn(self.event1.title, text)
         self.assertIn(self.event2.title, text)
         self.assertIn(self.contact.full_name, text)
+
+    def test_placeholder_registration_deletable_via_formset(self):
+        """Test that only placeholder registrations can be deleted via admin formset."""
+
+        # Create a placeholder registration
+        hidden_event = EventFactory(hide_for_nomination=True, group=self.group)
+        placeholder_registration = RegistrationFactory(
+            contact=self.contact,
+            event=hidden_event,
+            priority_pass=self.priority_pass,
+            status="",
+        )
+
+        formset_class = inlineformset_factory(
+            parent_model=PriorityPass,
+            model=Registration,
+            formset=RegistrationInlineFormSet,
+            fields=("contact", "event", "role", "status"),
+            can_delete=True,
+            extra=0,
+        )
+
+        # Deleting placeholder registration should lead to valid form
+        placeholder_data = {
+            "registrations-TOTAL_FORMS": "1",
+            "registrations-INITIAL_FORMS": "1",
+            "registrations-MIN_NUM_FORMS": "0",
+            "registrations-MAX_NUM_FORMS": "1000",
+            "registrations-0-id": str(placeholder_registration.id),
+            "registrations-0-contact": str(placeholder_registration.contact.id),
+            "registrations-0-event": str(placeholder_registration.event.id),
+            "registrations-0-role": str(placeholder_registration.role.id)
+            if placeholder_registration.role
+            else "",
+            "registrations-0-status": "",
+            # Mark for deletion
+            "registrations-0-DELETE": "on",
+        }
+
+        placeholder_formset = formset_class(
+            data=placeholder_data, instance=self.priority_pass
+        )
+        self.assertTrue(placeholder_formset.is_valid())
+
+        # But deleting "regular" registration should not work due to disabled checkbox
+        self.registration1.status = Registration.Status.NOMINATED
+        self.registration1.save()
+
+        protected_data = {
+            "registrations-TOTAL_FORMS": "1",
+            "registrations-INITIAL_FORMS": "1",
+            "registrations-MIN_NUM_FORMS": "0",
+            "registrations-MAX_NUM_FORMS": "1000",
+            "registrations-0-id": str(self.registration1.id),
+            "registrations-0-contact": str(self.registration1.contact.id),
+            "registrations-0-event": str(self.registration1.event.id),
+            "registrations-0-role": str(self.registration1.role.id)
+            if self.registration1.role
+            else "",
+            "registrations-0-status": Registration.Status.NOMINATED,
+            "registrations-0-DELETE": "on",
+        }
+
+        protected_formset = formset_class(
+            data=protected_data,
+            instance=self.priority_pass,
+            queryset=Registration.objects.filter(id=self.registration1.id),
+        )
+
+        self.assertTrue(protected_formset.is_valid())
+        # The formset's DELETE field should be auto-set to False!
+        self.assertFalse(protected_formset.forms[0].cleaned_data["DELETE"])
+
+    # TODO: not good!
+    # def test_status_update_to_blank_not_allowed(self):
+    #     """Test that the status can't be cleared once it's set to a non-blank value."""
+
+    #     # Set status to a real value
+    #     self.registration.status = Registration.Status.ACCREDITED
+    #     self.registration.save()
+
+    #     # Try to clear it back to blank
+    #     self.registration.status = ""
+    #     with self.assertRaises(ValidationError):
+    #         self.registration.full_clean()
+    #         self.registration.save()
+
+    # def test_allow_blank_status_for_new_registrations(self):
+    #     """Test that new registrations can be created with blank status."""
+    #     hidden_event = EventFactory(hide_for_nomination=True)
+    #     registration = RegistrationFactory(
+    #         contact=self.contact,
+    #         event=hidden_event,
+    #         status="",
+    #     )
+    #     registration.full_clean()
+    #     registration.save()
+    #     self.assertEqual(registration.status, "")
+
+    # def test_allow_placeholder_status_update(self):
+    #     """Test that registrations with blank status can be updated to real status."""
+    #     hidden_event = EventFactory(hide_for_nomination=True)
+    #     reg = RegistrationFactory(
+    #         contact=self.contact,
+    #         event=hidden_event,
+    #         status="",
+    #     )
+
+    #     # Update to real status
+    #     reg.status = Registration.Status.NOMINATED
+    #     reg.full_clean()
+    #     reg.save()
+    #     self.assertEqual(reg.status, Registration.Status.NOMINATED)

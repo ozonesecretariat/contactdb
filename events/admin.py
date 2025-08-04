@@ -1,6 +1,7 @@
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
 from django.forms.models import BaseInlineFormSet
 from django.http import FileResponse
@@ -272,20 +273,20 @@ class RegistrationInlineFormSet(BaseInlineFormSet):
         super().add_fields(form, index)
 
         # Customize the DELETE field behavior for each form
-        if "DELETE" in form.fields and hasattr(form, "instance") and form.instance.pk:
+        if (
+            "DELETE" in form.fields
+            and hasattr(form, "instance")
+            and form.instance
+            and form.instance.pk
+        ):
             registration = form.instance
 
-            # Only allow deletion for placeholder registrations
+            # Only allow deletion for "placeholder" registrations
             can_delete = (
                 registration.status == "" and registration.event.hide_for_nomination
             )
-
             if not can_delete:
-                # Disable the delete checkbox
-                form.fields["DELETE"].widget.attrs["disabled"] = True
-                form.fields[
-                    "DELETE"
-                ].help_text = "Cannot delete: only placeholder registrations for hidden events can be deleted"
+                form.fields["DELETE"].disabled = True
 
     def clean(self):
         """
@@ -297,6 +298,7 @@ class RegistrationInlineFormSet(BaseInlineFormSet):
             if (
                 form.cleaned_data.get("DELETE")
                 and hasattr(form, "instance")
+                and form.instance
                 and form.instance.pk
             ):
                 registration = form.instance
@@ -325,6 +327,24 @@ class RegistrationInline(admin.TabularInline):
         "status",
     )
     readonly_fields = ("contact", "event")
+
+    def save_model(self, request, obj, form, change):
+        """
+        Overridden to call full_clean before saving, which does not happen automatically
+        for inlines.
+        """
+        try:
+            obj.full_clean()
+        except ValidationError as e:
+            # If there are any validation errors, add them to the form
+            for field, errors in e.message_dict.items():
+                for error in errors:
+                    form.add_error(field, error)
+            # And avoid calling super.save()
+            if form.errors:
+                return
+
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(PriorityPass)
