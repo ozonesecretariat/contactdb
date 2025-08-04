@@ -846,6 +846,9 @@ class TestEventNominationsAPI(BaseAPITestCase):
         visible_event = EventFactory(hide_for_nomination=False)
         hidden_event = EventFactory(hide_for_nomination=True)
 
+        event_group = EventGroupFactory(
+            name="Test Group", events=[visible_event, hidden_event]
+        )
         RegistrationFactory(
             contact=self.contact1,
             event=visible_event,
@@ -857,7 +860,9 @@ class TestEventNominationsAPI(BaseAPITestCase):
             role=self.role,
         )
 
-        invitation = EventInvitationFactory(event=None, organization=self.organization)
+        invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
 
         url = api_reverse(
             "events-nominations-detail",
