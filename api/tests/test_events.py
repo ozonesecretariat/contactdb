@@ -810,7 +810,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         visible_event = EventFactory(hide_for_nomination=False)
 
         invitation = EventInvitationFactory(
-            event=visible_event, organization=self.organization
+            event=visible_event, event_group=None, organization=self.organization
         )
 
         data = [
@@ -836,6 +836,51 @@ class TestEventNominationsAPI(BaseAPITestCase):
         registration = Registration.objects.first()
         self.assertEqual(registration.event, visible_event)
         self.assertEqual(registration.contact, self.contact1)
+
+    def test_nominate_contact_for_mixed_events(self):
+        """Test that nominating to a mixed event group creates placeholders."""
+        visible_event = EventFactory(hide_for_nomination=False)
+        hidden_event = EventFactory(hide_for_nomination=True)
+
+        event_group = EventGroupFactory(
+            name="Mixed Up Group", events=[visible_event, hidden_event]
+        )
+        invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
+
+        data = [
+            {
+                "event": visible_event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Registration.objects.count(), 2)
+
+        contact_ids = Registration.objects.values_list("contact_id", flat=True)
+        self.assertSetEqual(set(contact_ids), {self.contact1.id})
+
+        event_ids = Registration.objects.values_list("event_id", flat=True)
+        self.assertSetEqual(set(event_ids), {visible_event.id, hidden_event.id})
+
+        # Two registrations sharing the same priority pass
+        priority_pass_ids = Registration.objects.values_list(
+            "priority_pass_id", flat=True
+        )
+        self.assertEqual(len(set(priority_pass_ids)), 1)
 
     def test_registrations_display_hidden_events(self):
         """

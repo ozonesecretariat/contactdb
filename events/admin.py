@@ -552,7 +552,13 @@ class PriorityPassAdmin(ModelAdmin):
 class EventInline(admin.TabularInline):
     max_num = 0
     model = Event
-    fields = readonly_fields = ("code", "event_link", "start_date", "end_date")
+    fields = readonly_fields = (
+        "code",
+        "event_link",
+        "start_date",
+        "end_date",
+        "hide_for_nomination",
+    )
 
     def has_delete_permission(self, request, obj=None):
         return False

@@ -117,7 +117,7 @@ class EventNominationViewSet(ViewSet):
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(self._get_contacts_qs(token), many=True).data)
 
-    def _create_hidden_event_registrations(self, contact, event_group):
+    def _create_hidden_event_registrations(self, contact, event_group, priority_pass):
         """
         Helper method to create placeholder registrations for all hidden events
         belonging to the supplied EventGroup.
@@ -140,6 +140,7 @@ class EventNominationViewSet(ViewSet):
                     "organization": contact.organization,
                     "designation": contact.designation or "",
                     "department": contact.department or "",
+                    "priority_pass": priority_pass,
                 },
             )
 
@@ -148,8 +149,14 @@ class EventNominationViewSet(ViewSet):
                 registration.organization = contact.organization
                 registration.designation = contact.designation or ""
                 registration.department = contact.department or ""
+                registration.priority_pass = priority_pass
                 registration.save(
-                    update_fields=["organization", "designation", "department"]
+                    update_fields=[
+                        "organization",
+                        "designation",
+                        "department",
+                        "priority_pass",
+                    ]
                 )
 
             created_registrations.append(registration)
@@ -270,9 +277,12 @@ class EventNominationViewSet(ViewSet):
                     deleted_visible_event_groups.add(registration.event.group)
                 registration.delete()
 
-            # Now create hidden registrations for all newly-added "visible" event groups
+            # Now create hidden registrations for all newly-added "visible" event groups,
+            # using the same priority pass.
             for event_group in new_visible_event_groups:
-                self._create_hidden_event_registrations(contact, event_group)
+                self._create_hidden_event_registrations(
+                    contact, event_group, priority_pass
+                )
 
             # And clean up hidden registrations if no "visible" event attended anymore
             for deleted_event_group in deleted_visible_event_groups:
