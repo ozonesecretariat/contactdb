@@ -424,7 +424,10 @@ class PriorityPassAdmin(ModelAdmin):
     actions = ("send_confirmation_emails",)
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        """Only allow deleting priority passes with no related registration"""
+        if obj is None:
+            return False
+        return not obj.registrations.exists()
 
     def has_add_permission(self, request):
         return False
