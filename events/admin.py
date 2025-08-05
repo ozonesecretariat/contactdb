@@ -568,6 +568,7 @@ class EventInline(admin.TabularInline):
         "start_date",
         "end_date",
         "hide_for_nomination",
+        "attach_priority_pass",
     )
 
     def has_delete_permission(self, request, obj=None):
