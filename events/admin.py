@@ -1,7 +1,9 @@
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
+from django.forms.models import BaseInlineFormSet
 from django.http import FileResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -266,8 +268,56 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
 
+class RegistrationInlineFormSet(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+
+        # Customize the DELETE field behavior for each form
+        if (
+            "DELETE" in form.fields
+            and hasattr(form, "instance")
+            and form.instance
+            and form.instance.pk
+        ):
+            registration = form.instance
+
+            # Only allow deletion for "placeholder" registrations
+            can_delete = (
+                registration.status == "" and registration.event.hide_for_nomination
+            )
+            if not can_delete:
+                form.fields["DELETE"].disabled = True
+
+    def clean(self):
+        """
+        Additional validation to prevent deletion of non-placeholder registrations.
+        """
+        super().clean()
+
+        for form in self.forms:
+            if (
+                form.cleaned_data.get("DELETE")
+                and hasattr(form, "instance")
+                and form.instance
+                and form.instance.pk
+            ):
+                registration = form.instance
+                can_delete = (
+                    registration.status == "" and registration.event.hide_for_nomination
+                )
+
+                if not can_delete:
+                    if registration.status != "":
+                        error_msg = f"Cannot delete registration with status '{registration.get_status_display()}'"
+                    else:
+                        error_msg = "Cannot delete registration for visible event"
+
+                    form.add_error("DELETE", error_msg)
+
+
 class RegistrationInline(admin.TabularInline):
     model = Registration
+    formset = RegistrationInlineFormSet
     extra = 0
     max_num = 0
     fields = (
@@ -277,7 +327,24 @@ class RegistrationInline(admin.TabularInline):
         "status",
     )
     readonly_fields = ("contact", "event")
-    can_delete = False
+
+    def save_model(self, request, obj, form, change):
+        """
+        Overridden to call full_clean before saving, which does not happen automatically
+        for inlines.
+        """
+        try:
+            obj.full_clean()
+        except ValidationError as e:
+            # If there are any validation errors, add them to the form
+            for field, errors in e.message_dict.items():
+                for error in errors:
+                    form.add_error(field, error)
+            # And avoid calling super.save()
+            if form.errors:
+                return
+
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(PriorityPass)
@@ -579,6 +646,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                     "code",
                     "title",
                     "group",
+                    "hide_for_nomination",
                 )
             },
         ),

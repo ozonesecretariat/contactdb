@@ -60,7 +60,11 @@ class EventNominationViewSet(ViewSet):
 
     def _get_event_qs(self, token):
         invitation = self.get_invitation(token)
-        qs = Event.objects.all().select_related("venue_country", "group")
+        qs = (
+            Event.objects.all()
+            .filter(hide_for_nomination=False)
+            .select_related("venue_country", "group")
+        )
         if invitation.event_group_id:
             qs = qs.filter(group__id=invitation.event_group_id)
         else:
@@ -113,6 +117,70 @@ class EventNominationViewSet(ViewSet):
         serializer_class = self.get_serializer_class()
         return Response(serializer_class(self._get_contacts_qs(token), many=True).data)
 
+    def _create_hidden_event_registrations(self, contact, event_group):
+        """
+        Helper method to create placeholder registrations for all hidden events
+        belonging to the supplied EventGroup.
+        """
+        if not event_group:
+            return []
+
+        hidden_events = event_group.events.filter(hide_for_nomination=True).exclude(
+            registrations__contact=contact
+        )
+
+        created_registrations = []
+        for hidden_event in hidden_events:
+            registration, created = Registration.objects.get_or_create(
+                contact=contact,
+                event=hidden_event,
+                defaults={
+                    "status": "",
+                    "role": None,
+                    "organization": contact.organization,
+                    "designation": contact.designation or "",
+                    "department": contact.department or "",
+                },
+            )
+
+            # If the registration already existed, simply update the relevant fields
+            if not created:
+                registration.organization = contact.organization
+                registration.designation = contact.designation or ""
+                registration.department = contact.department or ""
+                registration.save(
+                    update_fields=["organization", "designation", "department"]
+                )
+
+            created_registrations.append(registration)
+
+        return created_registrations
+
+    def _delete_related_hidden_registrations(self, contact, deleted_event_group):
+        """
+        Helper method to delete all placeholder registrations for this contact
+        to events in the same event group.
+        Deletion should only happen if contact is no longer registered to any
+        "visible" event.
+        """
+        if not deleted_event_group:
+            return
+
+        # Check whether contact has any other visible-event registrations in this group
+        has_other_visible_registrations = Registration.objects.filter(
+            contact=contact,
+            event__group=deleted_event_group,
+            event__hide_for_nomination=False,
+        ).exists()
+
+        if not has_other_visible_registrations:
+            Registration.objects.filter(
+                contact=contact,
+                event__group=deleted_event_group,
+                event__hide_for_nomination=True,
+                status="",
+            ).delete()
+
     @action(
         detail=True,
         methods=["post"],
@@ -151,6 +219,9 @@ class EventNominationViewSet(ViewSet):
         else:
             priority_pass = list(current_nominations.values())[0].priority_pass
 
+        # This allows us to keep track of all event groups to which contact is nominated
+        new_visible_event_groups = set()
+
         with transaction.atomic():
             for nomination in serializer.validated_data:
                 event = nomination["event"]
@@ -165,11 +236,13 @@ class EventNominationViewSet(ViewSet):
 
                 try:
                     registration = current_nominations.pop(event)
+                    is_new_registration = False
                 except KeyError:
                     registration = Registration(
                         event=event,
                         contact=contact,
                     )
+                    is_new_registration = True
 
                 if (
                     registration.status != Registration.Status.NOMINATED
@@ -184,12 +257,26 @@ class EventNominationViewSet(ViewSet):
                 registration.priority_pass = priority_pass
                 registration.save()
 
+                if is_new_registration and event.group:
+                    new_visible_event_groups.add(event.group)
+
             # Anything left of the current nominations that was not provided
             # needs to be removed.
+            deleted_visible_event_groups = set()
             for registration in current_nominations.values():
                 if registration.status != Registration.Status.NOMINATED:
                     raise ValidationError({"status": "Registration cannot be removed."})
+                if registration.event.group:
+                    deleted_visible_event_groups.add(registration.event.group)
                 registration.delete()
+
+            # Now create hidden registrations for all newly-added "visible" event groups
+            for event_group in new_visible_event_groups:
+                self._create_hidden_event_registrations(contact, event_group)
+
+            # And clean up hidden registrations if no "visible" event attended anymore
+            for deleted_event_group in deleted_visible_event_groups:
+                self._delete_related_hidden_registrations(contact, deleted_event_group)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

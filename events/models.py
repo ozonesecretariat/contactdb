@@ -74,6 +74,10 @@ class Event(models.Model):
         related_name="events",
         help_text="Group linking related events",
     )
+    hide_for_nomination = models.BooleanField(
+        default=False,
+        help_text="Do not allow direct nominations for this event",
+    )
 
     attach_priority_pass = models.BooleanField(
         default=False,
@@ -552,7 +556,7 @@ class Registration(models.Model):
     )
 
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.NOMINATED
+        max_length=20, choices=Status.choices, default=Status.NOMINATED, blank=True
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.SET_NULL, null=True)
     priority_pass = models.ForeignKey(
@@ -599,6 +603,18 @@ class Registration(models.Model):
             raise ValidationError(
                 "Priority pass can only be used for one contact at a time"
             )
+
+        # Do not allow status changes from non-blank to blank for existing Registrations.
+        # This prevents possible future deletions of non-placeholder Registrations.
+        if self.pk:
+            try:
+                original = Registration.objects.get(pk=self.pk)
+                if original.status and original.status != "" and self.status == "":
+                    raise ValidationError(
+                        {"status": "Status cannot be cleared once it has been set."}
+                    )
+            except Registration.DoesNotExist:
+                pass
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):

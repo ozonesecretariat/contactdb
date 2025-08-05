@@ -2,7 +2,11 @@ from django.core import mail
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 
-from api.tests.factories import ContactFactory, EventFactory, RegistrationFactory
+from api.tests.factories import (
+    ContactFactory,
+    EventFactory,
+    RegistrationFactory,
+)
 from emails.models import Email
 from events.jobs import send_priority_pass_status_emails
 from events.models import Registration
