@@ -1,5 +1,6 @@
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
+from django import forms
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
@@ -271,6 +272,12 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
 class RegistrationInlineFormSet(BaseInlineFormSet):
     def add_fields(self, form, index):
         super().add_fields(form, index)
+
+        # Disable showing add/edit/delete buttons for related "role"
+        if "role" in form.fields:
+            form.fields["role"].widget = forms.Select(
+                choices=form.fields["role"].widget.choices
+            )
 
         # Customize the DELETE field behavior for each form
         if (
