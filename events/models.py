@@ -592,6 +592,29 @@ class Registration(models.Model):
         return f"{self.event.code} - {self.contact.full_name} ({self.status})"
 
     def save(self, *args, **kwargs):
+        """
+        Overridden to reuse priority pass for same contact and event in the same group,
+        or create a new priority pass if none can be reused
+        """
+        if not self.pk and not self.priority_pass and self.event and self.event.group:
+            existing_registration = (
+                Registration.objects.filter(
+                    contact=self.contact,
+                    event__group=self.event.group,
+                    priority_pass__isnull=False,
+                )
+                .exclude(
+                    # TODO: not sure of this
+                    status=Registration.Status.REVOKED
+                )
+                .order_by("-created_at")
+                .first()
+            )
+
+            if existing_registration:
+                self.priority_pass = existing_registration.priority_pass
+
+        # If one could not be reused, create a new priority pass
         if not self.priority_pass:
             self.priority_pass = PriorityPass.objects.create()
 
