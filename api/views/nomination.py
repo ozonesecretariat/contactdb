@@ -71,6 +71,16 @@ class EventNominationViewSet(ViewSet):
             qs = qs.filter(id=invitation.event_id)
         return qs
 
+    def _get_complete_event_qs(self, token):
+        """Does not filter by hide_for_nomination; useful in certain scenarios."""
+        invitation = self.get_invitation(token)
+        qs = Event.objects.all().select_related("venue_country", "group")
+        if invitation.event_group_id:
+            qs = qs.filter(group__id=invitation.event_group_id)
+        else:
+            qs = qs.filter(id=invitation.event_id)
+        return qs
+
     def _get_org_qs(self, token):
         invitation = self.get_invitation(token)
         qs = Organization.objects.all().select_related("country", "government")
@@ -217,8 +227,12 @@ class EventNominationViewSet(ViewSet):
         serializer = serializer_class(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
 
+        # Including hidden events so we can find any existing nomination to this group
+        # and reuse its priority pass
+        all_available_events = set(self._get_complete_event_qs(token))
         current_nominations = {
-            n.event: n for n in contact.registrations.filter(event__in=available_events)
+            n.event: n
+            for n in contact.registrations.filter(event__in=all_available_events)
         }
 
         if not current_nominations:
