@@ -1,5 +1,6 @@
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
+from django import forms
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
@@ -272,6 +273,12 @@ class RegistrationInlineFormSet(BaseInlineFormSet):
     def add_fields(self, form, index):
         super().add_fields(form, index)
 
+        # Disable showing add/edit/delete buttons for related "role"
+        if "role" in form.fields:
+            form.fields["role"].widget = forms.Select(
+                choices=form.fields["role"].widget.choices
+            )
+
         # Customize the DELETE field behavior for each form
         if (
             "DELETE" in form.fields
@@ -417,7 +424,10 @@ class PriorityPassAdmin(ModelAdmin):
     actions = ("send_confirmation_emails",)
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        """Only allow deleting priority passes with no related registration"""
+        if obj is None:
+            return False
+        return not obj.registrations.exists()
 
     def has_add_permission(self, request):
         return False
@@ -552,7 +562,13 @@ class PriorityPassAdmin(ModelAdmin):
 class EventInline(admin.TabularInline):
     max_num = 0
     model = Event
-    fields = readonly_fields = ("code", "event_link", "start_date", "end_date")
+    fields = readonly_fields = (
+        "code",
+        "event_link",
+        "start_date",
+        "end_date",
+        "hide_for_nomination",
+    )
 
     def has_delete_permission(self, request, obj=None):
         return False
