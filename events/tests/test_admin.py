@@ -20,6 +20,7 @@ from api.tests.factories import (
     OrganizationFactory,
     PriorityPassFactory,
     RegistrationFactory,
+    RegistrationRoleFactory,
 )
 from core.models import Country, OrganizationType
 from emails.models import SendEmailTask
@@ -655,3 +656,78 @@ class TestRegistrationAdmin(TestCase):
             self.assertFalse(
                 getattr(placeholder_form.fields["DELETE"], "disabled", False)
             )
+
+
+class TestRegistrationAdminPriorityPassReuse(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_superuser(
+            email="admin_reutilizabil@example.com", password="password"
+        )
+        self.site = AdminSite()
+        self.admin = RegistrationAdmin(Registration, self.site)
+
+        self.event_group = EventGroupFactory(name="Test Group")
+        self.event1 = EventFactory(
+            code="EVENT1",
+            title="Event 1",
+            group=self.event_group,
+        )
+        self.event2 = EventFactory(
+            code="EVENT2",
+            title="Event 2",
+            group=self.event_group,
+        )
+        self.event_group.events.add(self.event1)
+        self.event_group.events.add(self.event2)
+        self.contact = ContactFactory(
+            first_name="John", last_name="Snow", emails=["john@thenorth.com"]
+        )
+        self.role = RegistrationRoleFactory(name="Delegate")
+
+    def test_priority_pass_reuse_in_same_event_group(self):
+        """Test that registrations in same event group reuse priority pass."""
+
+        # Create first registration manually (simulating admin creation)
+        registration1 = Registration(
+            contact=self.contact, event=self.event1, role=self.role
+        )
+        registration1.save()
+
+        original_priority_pass = registration1.priority_pass
+        self.assertIsNotNone(original_priority_pass)
+
+        # Create second registration in same event group
+        registration2 = Registration(
+            contact=self.contact, event=self.event2, role=self.role
+        )
+        registration2.save()
+
+        # Should reuse the same priority pass
+        self.assertEqual(registration2.priority_pass, original_priority_pass)
+
+    def test_no_priority_pass_reuse_across_different_groups(self):
+        """Test that registrations in different event groups get separate priority passes."""
+
+        # Create another event group
+        other_group = EventGroupFactory(name="Another one bites the Group")
+        event_other = EventFactory(
+            code="OTHER",
+            title="Other Event",
+        )
+        other_group.events.add(event_other)
+
+        registration1 = Registration(
+            contact=self.contact, event=self.event1, role=self.role
+        )
+        registration1.save()
+
+        # Create a registration in the new/different group
+        registration2 = Registration(
+            contact=self.contact, event=event_other, role=self.role
+        )
+        registration2.save()
+
+        # These should have different priority passes
+        self.assertNotEqual(
+            registration1.priority_pass.id, registration2.priority_pass.id
+        )

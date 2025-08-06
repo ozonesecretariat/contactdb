@@ -10,6 +10,7 @@ from api.tests.factories import (
     EventGroupFactory,
     EventInvitationFactory,
     OrganizationFactory,
+    PriorityPassFactory,
     RegistrationFactory,
     RegistrationRoleFactory,
 )
@@ -535,8 +536,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
         data = response.json()
 
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]["contact"]["id"], self.contact1.id)
-        self.assertEqual(data[1]["contact"]["id"], self.contact2.id)
+        self.assertEqual(data[0]["contact"]["id"], self.contact2.id)
+        self.assertEqual(data[1]["contact"]["id"], self.contact1.id)
 
     def test_list_organizations(self):
         url = api_reverse(
@@ -881,6 +882,63 @@ class TestEventNominationsAPI(BaseAPITestCase):
             "priority_pass_id", flat=True
         )
         self.assertEqual(len(set(priority_pass_ids)), 1)
+
+    def test_nominate_already_hidden_nominated_contact(self):
+        """Test that nominating to a mixed event group creates placeholders."""
+        visible_event = EventFactory(hide_for_nomination=False)
+        hidden_event1 = EventFactory(hide_for_nomination=True)
+        hidden_event2 = EventFactory(hide_for_nomination=True)
+
+        # Create pre-existing registration to hidden event
+        priority_pass = PriorityPassFactory()
+        RegistrationFactory(
+            contact=self.contact1,
+            event=hidden_event1,
+            priority_pass=priority_pass,
+        )
+
+        # And now nominate to event group containing the initial hidden event
+        event_group = EventGroupFactory(
+            name="Mixed Up Group", events=[visible_event, hidden_event1, hidden_event2]
+        )
+        invitation = EventInvitationFactory(
+            event=None, event_group=event_group, organization=self.organization
+        )
+
+        data = [
+            {
+                "event": visible_event.code,
+                "contact": self.contact1.id,
+                "role": self.role.name,
+            },
+        ]
+
+        url = api_reverse(
+            "events-nominations-nominate-contact",
+            kwargs={"token": invitation.token, "contact_id": self.contact1.id},
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Registration.objects.count(), 3)
+
+        contact_ids = Registration.objects.values_list("contact_id", flat=True)
+        self.assertSetEqual(set(contact_ids), {self.contact1.id})
+
+        event_ids = Registration.objects.values_list("event_id", flat=True)
+        self.assertSetEqual(
+            set(event_ids), {visible_event.id, hidden_event1.id, hidden_event2.id}
+        )
+
+        # All registrations are sharing the same priority pass
+        priority_pass_ids = Registration.objects.values_list(
+            "priority_pass_id", flat=True
+        )
+        self.assertSetEqual(set(priority_pass_ids), {priority_pass.id})
 
     def test_registrations_display_hidden_events(self):
         """

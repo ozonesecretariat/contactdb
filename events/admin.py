@@ -3,7 +3,7 @@ from admin_auto_filters.filters import AutocompleteFilterFactory
 from django import forms
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
-from django.db.models import Count, Q
+from django.db.models import Count, Max, Min, Q
 from django.forms.models import BaseInlineFormSet
 from django.http import FileResponse
 from django.shortcuts import redirect
@@ -568,7 +568,9 @@ class EventInline(admin.TabularInline):
         "start_date",
         "end_date",
         "hide_for_nomination",
+        "attach_priority_pass",
     )
+    ordering = ("-start_date",)
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -588,11 +590,23 @@ class EventInline(admin.TabularInline):
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name", "description")
+    list_display = ("name", "description", "date_range")
     list_display_links = ("name",)
-    ordering = ("name",)
+    ordering = ("-created_at",)
     prefetch_related = ("events",)
     inlines = [EventInline]
+
+    def get_queryset(self, request):
+        """Using event dates annotations for the list view"""
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                start_date=Min("events__start_date"), end_date=Max("events__end_date")
+            )
+            .prefetch_related("events")
+            .order_by("-start_date", "name")
+        )
 
     def get_search_results(self, request, queryset, search_term):
         queryset, may_have_duplicates = super().get_search_results(
@@ -608,6 +622,16 @@ class EventGroupAdmin(ExportMixin, ModelAdmin):
             ).distinct()
 
         return queryset, may_have_duplicates
+
+    @admin.display(description="Dates", ordering="start_date")
+    def date_range(self, obj):
+        if hasattr(obj, "start_date") and obj.start_date:
+            start_formatted = obj.start_date.strftime("%d %b %Y")
+            if hasattr(obj, "end_date") and obj.end_date:
+                end_formatted = obj.end_date.strftime("%d %b %Y")
+                return f"{start_formatted} to {end_formatted}"
+            return start_formatted
+        return "-"
 
 
 @admin.register(Event)
