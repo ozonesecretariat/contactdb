@@ -158,7 +158,7 @@ class RegistrationResource(ModelResource):
 @admin.register(Registration)
 class RegistrationAdmin(ExportMixin, ModelAdmin):
     resource_class = RegistrationResource
-    ordering = ("contact__first_name", "contact__last_name", "event__title")
+    ordering = ("-created_at",)
     search_fields = [
         "event__title",
         "contact__first_name",
