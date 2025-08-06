@@ -615,10 +615,6 @@ class Registration(models.Model):
                     event__group=self.event.group,
                     priority_pass__isnull=False,
                 )
-                .exclude(
-                    # TODO: not sure of this
-                    status=Registration.Status.REVOKED
-                )
                 .order_by("-created_at")
                 .first()
             )

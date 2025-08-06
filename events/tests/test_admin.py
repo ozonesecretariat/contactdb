@@ -731,26 +731,3 @@ class TestRegistrationAdminPriorityPassReuse(TestCase):
         self.assertNotEqual(
             registration1.priority_pass.id, registration2.priority_pass.id
         )
-
-    def test_priority_pass_not_reused_from_revoked_registration(self):
-        """Test that revoked registrations' priority passes aren't reused."""
-        # TODO: remove this one if we decide it's not the needed behaviour
-        # Create a registration, but mark it as revoked
-        registration1 = Registration(
-            contact=self.contact,
-            event=self.event1,
-            role=self.role,
-            status=Registration.Status.REVOKED,
-        )
-        registration1.save()
-
-        # Create another "normal" registration
-        registration2 = Registration(
-            contact=self.contact, event=self.event2, role=self.role
-        )
-        registration2.save()
-
-        # The second one should have a different priority pass than the first
-        self.assertNotEqual(
-            registration1.priority_pass.id, registration2.priority_pass.id
-        )
