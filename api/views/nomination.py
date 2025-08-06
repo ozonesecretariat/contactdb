@@ -227,18 +227,21 @@ class EventNominationViewSet(ViewSet):
         serializer = serializer_class(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
 
+        current_nominations = {
+            n.event: n for n in contact.registrations.filter(event__in=available_events)
+        }
         # Including hidden events so we can find any existing nomination to this group
         # and reuse its priority pass
         all_available_events = set(self._get_complete_event_qs(token))
-        current_nominations = {
+        all_current_nominations = {
             n.event: n
             for n in contact.registrations.filter(event__in=all_available_events)
         }
 
-        if not current_nominations:
+        if not all_current_nominations:
             priority_pass = PriorityPass.objects.create()
         else:
-            priority_pass = list(current_nominations.values())[0].priority_pass
+            priority_pass = list(all_current_nominations.values())[0].priority_pass
 
         # This allows us to keep track of all event groups to which contact is nominated
         new_visible_event_groups = set()
@@ -285,7 +288,7 @@ class EventNominationViewSet(ViewSet):
             # needs to be removed.
             deleted_visible_event_groups = set()
             for registration in current_nominations.values():
-                if registration.status != Registration.Status.NOMINATED:
+                if registration.status not in ("", Registration.Status.NOMINATED):
                     raise ValidationError({"status": "Registration cannot be removed."})
                 if registration.event.group:
                     deleted_visible_event_groups.add(registration.event.group)
