@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.db import models
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, Max, Min, OuterRef, Q
 from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
@@ -43,12 +43,20 @@ class EventGroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("-created_at",)
         verbose_name = "event group"
         verbose_name_plural = "event groups"
 
     def __str__(self):
         return self.name
+
+    @property
+    def group_start_date(self):
+        return self.events.aggregate(Min("start_date"))["start_date__min"]
+
+    @property
+    def group_end_date(self):
+        return self.events.aggregate(Max("end_date"))["end_date__max"]
 
 
 class Event(models.Model):
@@ -108,6 +116,9 @@ class Event(models.Model):
     app_store_url = models.CharField(max_length=1024, blank=True)
     play_store_url = models.CharField(max_length=1024, blank=True)
     # TODO: Allow choosing the badge template for the event
+
+    class Meta:
+        ordering = ("-start_date",)
 
     def __str__(self):
         return f"{self.code} {self.title}"
@@ -587,6 +598,7 @@ class Registration(models.Model):
 
     class Meta:
         unique_together = ("contact", "event")
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.event.code} - {self.contact.full_name} ({self.status})"

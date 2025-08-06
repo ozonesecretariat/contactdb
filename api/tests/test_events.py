@@ -536,8 +536,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
         data = response.json()
 
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]["contact"]["id"], self.contact1.id)
-        self.assertEqual(data[1]["contact"]["id"], self.contact2.id)
+        self.assertEqual(data[0]["contact"]["id"], self.contact2.id)
+        self.assertEqual(data[1]["contact"]["id"], self.contact1.id)
 
     def test_list_organizations(self):
         url = api_reverse(
