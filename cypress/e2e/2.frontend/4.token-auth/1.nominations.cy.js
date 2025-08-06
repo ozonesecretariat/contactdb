@@ -67,9 +67,19 @@ describe("Check nominations page", () => {
     cy.contains("1-1 of 1");
     cy.get("[aria-label=Edit]").click();
     cy.contains(email);
-    // Remove the nomination we just added
+    // Remove the nomination we just added; taking dialog into account
     cy.get("[role=switch][aria-checked=true]").click();
     cy.contains("Confirm nomination").click();
+    cy.get("[role=dialog]").contains("Confirm Removal").should("be.visible");
+    cy.contains("Confirm Removal")
+      .closest("[role=dialog]")
+      .within(() => {
+        cy.contains("You are about to remove the nominations");
+        cy.contains("Remove nominations").click();
+      });
+    // Wait for the dialog to close
+    cy.get("[role=dialog]").should("not.exist");
+    cy.url().should("include", "/nominations");
     // Check it was removed
     cy.get("[role=search]").type(email);
     cy.contains("No data available");
