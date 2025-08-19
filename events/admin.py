@@ -128,6 +128,14 @@ class RegistrationResource(ModelResource):
         column_name="organization",
         attribute="contact__organization__name",
     )
+    government = fields.Field(
+        column_name="government",
+        attribute="contact__organization__government__name",
+    )
+    country = fields.Field(
+        column_name="country",
+        attribute="contact__organization__country__name",
+    )
     event = fields.Field(
         column_name="event",
         attribute="event__title",
@@ -144,9 +152,13 @@ class RegistrationResource(ModelResource):
         column_name="priority_pass",
         attribute="priority_pass__code",
     )
+
     prefetch_related = (
         "organization",
         "contact",
+        "contact__organization",
+        "contact__organization__government",
+        "contact__organization__country",
         "role",
     )
 
@@ -182,6 +194,12 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("event", "event"),
         AutocompleteFilterFactory("organization", "contact__organization"),
         AutocompleteFilterFactory("government", "contact__organization__government"),
+        AutocompleteFilterFactory(
+            "subregion", "contact__organization__country__subregion"
+        ),
+        AutocompleteFilterFactory(
+            "organization type", "contact__organization__organization_type"
+        ),
         AutocompleteFilterFactory("contact", "contact"),
         "status",
         AutocompleteFilterFactory("role", "role"),
@@ -198,6 +216,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__organization",
         "contact__organization__government",
         "contact__organization__country",
+        "contact__organization__country__subregion",
+        "contact__organization__organization_type",
         "role",
         "tags",
     )
