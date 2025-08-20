@@ -75,6 +75,10 @@ class Email(models.Model):
         default=EmailTypeChoices.EVENT_NOTIFICATION,
     )
 
+    is_draft = models.BooleanField(
+        default=False, help_text="Is this email saved as draft and not yet sent out."
+    )
+
     is_reminder = models.BooleanField(
         default=False,
         help_text=(
@@ -173,7 +177,8 @@ class Email(models.Model):
     )
 
     def __str__(self):
-        return self.subject
+        prefix = "[DRAFT] " if self.is_draft else ""
+        return f"{prefix}{self.subject}"
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
@@ -186,6 +191,13 @@ class Email(models.Model):
                 raise ValidationError(
                     "Cannot specify both organization types and specific organizations."
                 )
+
+    def clean(self):
+        """
+        For now, disabling draft emails for reminders.
+        """
+        if self.is_reminder and self.is_draft:
+            raise ValidationError("Reminder emails cannot be saved as draft.")
 
     def queue_emails(self):
         tasks = []
