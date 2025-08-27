@@ -42,7 +42,7 @@
         </div>
         <div class="col-2 q-gutter-y-md">
           <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
-          <q-img v-if="participant.photoUrl" :src="apiBase + participant.photoUrl" alt="" />
+          <q-img v-if="participant.hasPhoto" :src="invitation.getPhotoUrl(participant.id)" alt="" />
         </div>
       </div>
     </div>
@@ -130,7 +130,7 @@
 import type { MeetingEvent } from "src/types/event";
 import type { EventNomination } from "src/types/nomination";
 
-import { api, apiBase } from "boot/axios";
+import { api } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";

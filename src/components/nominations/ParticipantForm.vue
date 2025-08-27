@@ -115,10 +115,10 @@
       name="photo"
       outlined
       accept=".jpeg,.jpg,.png"
-      :label="data.photoUrl ? 'Change photo' : 'Add photo'"
+      :label="data.hasPhoto ? 'Change photo' : 'Add photo'"
     >
       <template #append>
-        <q-btn v-if="data.photoUrl" label="View current" @click="currentImageDialog = true" />
+        <q-btn v-if="data.hasPhoto" label="View current" @click="currentImageDialog = true" />
       </template>
     </q-file>
     <q-dialog v-model="currentImageDialog">
@@ -128,8 +128,8 @@
           <q-space />
           <q-btn v-close-popup flat round dense icon="close" />
         </q-card-section>
-        <q-card-section>
-          <q-img :src="apiBase + data.photoUrl" alt="" style="max-height: 80vh" />
+        <q-card-section v-if="data.id">
+          <q-img :src="invitation.getPhotoUrl(data.id)" alt="" style="max-height: 80vh" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -339,7 +339,7 @@
 import type { Contact } from "src/types/nomination";
 import type { QSelectOnFilterUpdate } from "src/types/quasar";
 
-import { api, apiBase } from "boot/axios";
+import { api } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
 import { unaccentSearch } from "src/utils/search";
 import { useInvitationStore } from "stores/invitationStore";
@@ -366,6 +366,8 @@ const data = reactive({
   firstName: "",
   gender: "",
   hasCredentials: false,
+  hasPhoto: false,
+  id: null,
   isUseOrganizationAddress: false,
   lastName: "",
   mobiles: "",
@@ -378,7 +380,6 @@ const data = reactive({
   passportNumber: "",
   phones: "",
   photo: null,
-  photoUrl: "",
   postalCode: "",
   state: "",
   title: "",

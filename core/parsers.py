@@ -1,6 +1,5 @@
 import base64
 import logging
-import uuid
 from itertools import chain
 
 from django.core.files.base import ContentFile
@@ -76,7 +75,6 @@ class ContactPhotosParser:
 
                 filename = f"contact_{contact.id}_{kronos_id}.{ext}"
                 contact.photo.save(filename, ContentFile(image_data), save=True)
-                contact.photo_access_uuid = uuid.uuid4()
                 contact.save()
 
                 self.task.log(
