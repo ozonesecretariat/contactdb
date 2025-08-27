@@ -17,6 +17,7 @@ class CountrySerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     country = CountrySerializer(read_only=True)
     government = CountrySerializer(read_only=True)
+    organization_type = serializers.SlugRelatedField("acronym", read_only=True)
 
     class Meta:
         model = Organization

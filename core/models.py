@@ -52,17 +52,27 @@ class Country(models.Model):
                 ).official_name
 
 
+class OrganizationTypeManager(models.Manager):
+    def get_by_natural_key(self, acronym):
+        return self.get(acronym=acronym)
+
+
 class OrganizationType(models.Model):
     organization_type_id = KronosId()
-    acronym = CICharField(max_length=50, primary_key=True)
+    acronym = CICharField(max_length=50, unique=True)
     title = CICharField(max_length=250, blank=True)
     description = models.TextField(blank=True)
+
+    objects = OrganizationTypeManager()
 
     class Meta:
         ordering = ("title",)
 
     def __str__(self):
         return f"{self.title} ({self.acronym})"
+
+    def natural_key(self):
+        return (self.acronym,)
 
 
 class Organization(models.Model):
