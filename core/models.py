@@ -1,6 +1,5 @@
 import contextlib
 import textwrap
-from uuid import uuid4
 
 import pycountry
 from django.core.exceptions import ValidationError
@@ -376,22 +375,12 @@ class Contact(BaseContact):
         help_text="Contact photo; initially imported from Kronos",
         storage=get_protected_storage,
     )
-    photo_access_uuid = models.UUIDField(default=uuid4, null=True, editable=False)
 
     groups = models.ManyToManyField(
         "ContactGroup",
         blank=True,
         related_name="contacts",
     )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["photo_access_uuid"],
-                name="unique_photo_access_uuid_not_null",
-                condition=models.Q(photo_access_uuid__isnull=False),
-            )
-        ]
 
     def add_to_group(self, name):
         return self.groups.add(ContactGroup.objects.get(name=name))

@@ -1,5 +1,3 @@
-import uuid
-
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
@@ -116,10 +114,6 @@ class ContactSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             instance = super().update(instance, validated_data)
-            if validated_data.get("photo"):
-                # Regenerate the UUID so the photo isn't cached
-                instance.photo_access_uuid = uuid.uuid4()
-                instance.save()
             try:
                 instance.clean_for_nomination()
                 instance.clean()
