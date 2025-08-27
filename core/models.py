@@ -55,7 +55,7 @@ class Country(models.Model):
 
 class OrganizationTypeManager(models.Manager):
     def get_by_natural_key(self, acronym):
-        return (self.get(acronym=acronym),)
+        return self.get(acronym=acronym)
 
 
 class OrganizationType(models.Model):
@@ -71,6 +71,9 @@ class OrganizationType(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.acronym})"
+
+    def natural_key(self):
+        return (self.acronym,)
 
 
 class Organization(models.Model):
