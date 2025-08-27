@@ -7,7 +7,7 @@ from drf_spectacular.views import (
 from rest_framework import routers
 
 import api.views.user
-from api.views.contact import ContactViewSet, PhotoUploadView, SecurePhotoView
+from api.views.contact import ContactViewSet
 from api.views.event import EventViewSet
 from api.views.misc import AppSettingsView
 from api.views.nomination import EventNominationViewSet
@@ -64,15 +64,5 @@ urlpatterns = [
         "app-settings/",
         AppSettingsView.as_view(),
         name="app-settings",
-    ),
-    path(
-        "contacts/<uuid:photo_token>/photo/",
-        SecurePhotoView.as_view(),
-        name="secure-photo",
-    ),
-    path(
-        "contacts/photo-upload/",
-        PhotoUploadView.as_view(),
-        name="photo-upload",
     ),
 ] + router.urls

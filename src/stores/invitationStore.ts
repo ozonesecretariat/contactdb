@@ -4,7 +4,7 @@ import type { MeetingEvent } from "src/types/event";
 import type { Contact, EventNomination } from "src/types/nomination";
 import type { Organization } from "src/types/organization";
 
-import { api } from "boot/axios";
+import { api, apiURL } from "boot/axios";
 import { defineStore } from "pinia";
 import { useQuasar } from "quasar";
 import { computed, ref } from "vue";
@@ -25,6 +25,9 @@ export const useInvitationStore = defineStore("invitation", () => {
   const participant = computed(() => contacts.value.find((c) => c.id === Number(participantId.value)));
 
   const actions = {
+    getPhotoUrl(contactId: number) {
+      return `${apiURL}/events-nominations/${token.value}/contact-photo/${contactId}/`;
+    },
     async load() {
       try {
         await Promise.all([

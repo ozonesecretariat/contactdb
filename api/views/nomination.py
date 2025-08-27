@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Subquery
+from django.http import FileResponse
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -329,6 +330,15 @@ class EventNominationViewSet(ViewSet):
             raise ValidationError({"organization": "Invalid organization"})
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True, methods=["get"], url_path="contact-photo/(?P<contact_id>[^/.]+)"
+    )
+    def contact_photo(self, request, token, contact_id):
+        contact = get_object_or_404(
+            self._get_contacts_qs(token), id=contact_id, photo__isnull=False
+        )
+        return FileResponse(contact.photo.open("rb"))
 
     @action(detail=True, methods=["get"])
     def events(self, request, token):

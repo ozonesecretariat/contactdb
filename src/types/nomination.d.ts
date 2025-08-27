@@ -13,6 +13,7 @@ export interface Contact {
   fullName: string;
   gender: string;
   hasCredentials: boolean;
+  hasPhoto: boolean;
   id: number;
   isUseOrganizationAddress: boolean;
   lastName: string;
@@ -20,7 +21,6 @@ export interface Contact {
   needsVisaLetter: boolean;
   organization?: Organization;
   phones: string[];
-  photoUrl: null | string;
   postalCode: string;
   state: string;
   title: string;

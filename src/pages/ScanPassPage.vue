@@ -11,7 +11,7 @@
         <q-btn color="primary" label="Search for pass" icon="search" @click="searchPassRef?.show()" />
       </div>
       <div class="flex q-gutter-md items-center">
-        <q-input v-model="passCode" label="Code" filled autofocus dense />
+        <q-input v-model="passCode" label="Code" filled autofocus dense name="code" />
         <q-btn
           label="Verify"
           color="positive"
@@ -57,7 +57,7 @@
             </q-card-section>
 
             <q-card-section class="col-5 flex flex-center contact-photo">
-              <q-img v-if="pass.contact?.photoUrl" :src="pass.contact?.photoUrl" alt="" />
+              <q-img v-if="photoUrl" :src="photoUrl" alt="" />
               <p v-else class="text-grey">No photo uploaded</p>
             </q-card-section>
           </div>
@@ -124,7 +124,7 @@ import type { PriorityPass } from "src/types/priorityPass";
 import type { Registration } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
-import { api, apiBase } from "boot/axios";
+import { api, apiBase, apiURL } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
 import SearchPass from "components/SearchPass.vue";
 import TakePhoto from "components/TakePhoto.vue";
@@ -152,6 +152,12 @@ const badgeUrl = computed(() => {
 
   return apiBase + pass.value.badgeUrl;
 });
+const photoUrl = computed(() => {
+  if (!pass?.value?.contact?.hasPhoto) return "";
+
+  return `${apiURL}/contacts/${pass.value?.contact.id}/photo/`;
+});
+
 const cardColors = {
   Accredited: "bg-primary",
   Nominated: "bg-info",
