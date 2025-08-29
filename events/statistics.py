@@ -130,11 +130,14 @@ class PreMeetingStatistics:
 
         for section in self.doc.sections:
             header = section.header.paragraphs[0]
-            header.text = str(self.event) + timezone.now().strftime(
-                " (%Y-%m-%d %H:%M %Z)"
-            )
+            header.text = str(self.event)
             header.style.font.size = Pt(9)
             header.style.font.color.rgb = RGBColor(45, 45, 45)
+
+            footer = section.footer.paragraphs[0]
+            footer.text = "Date: " + timezone.now().strftime(" %Y-%m-%d %H:%M %Z")
+            footer.style.font.size = Pt(9)
+            footer.style.font.color.rgb = RGBColor(45, 45, 45)
 
             section.top_margin = Cm(0)
             section.bottom_margin = Cm(0)
@@ -163,6 +166,7 @@ class PreMeetingStatistics:
             col=col,
             text=str(text),
             style="Table Data",
+            align=WD_PARAGRAPH_ALIGNMENT.RIGHT if col != 0 else None,
         )
 
     def tf(self, table, row, col, text):
@@ -172,6 +176,7 @@ class PreMeetingStatistics:
             col=col,
             text=str(text),
             style="Table Footer",
+            align=WD_PARAGRAPH_ALIGNMENT.RIGHT if col != 0 else None,
         )
 
     def get_content(self):
