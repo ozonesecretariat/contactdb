@@ -489,23 +489,39 @@ class PriorityPass(models.Model):
 
         return registrations[0].event
 
+    def _filter_registrations(self, status: "Registration.Status"):
+        # Filter here instead of SQL to take advantage of prefetching.
+        return [
+            registration
+            for registration in self.registrations.all()
+            if registration.status == status
+        ]
+
     @property
     def accredited_registrations(self):
-        result = []
-        for registration in self.registrations.all():
-            if registration.status == Registration.Status.ACCREDITED:
-                result.append(registration)
-
-        return result
+        return self._filter_registrations(Registration.Status.ACCREDITED)
 
     @property
     def revoked_registrations(self):
-        result = []
-        for registration in self.registrations.all():
-            if registration.status == Registration.Status.REVOKED:
-                result.append(registration)
+        return self._filter_registrations(Registration.Status.REVOKED)
 
-        return result
+    @property
+    def registered_registrations(self):
+        return self._filter_registrations(Registration.Status.REGISTERED)
+
+    @property
+    def valid_from(self):
+        try:
+            return min(reg.event.start_date for reg in self.registered_registrations)
+        except ValueError:
+            return None
+
+    @property
+    def valid_to(self):
+        try:
+            return max(reg.event.end_date for reg in self.registered_registrations)
+        except ValueError:
+            return None
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:

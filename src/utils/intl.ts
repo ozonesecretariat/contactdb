@@ -23,7 +23,10 @@ export function formatDateTime(dateString: string) {
 
   return dateTimeFormat.format(date);
 }
-export function parseDate(date: string) {
+
+export function parseDate(date: string | undefined) {
+  if (!date) return null;
+
   const stamp = Date.parse(date);
   if (isNaN(stamp)) {
     return null;

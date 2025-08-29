@@ -11,4 +11,5 @@ export interface PriorityPass {
   createdAt: string;
   organization: null | Organization;
   registrations: Registration[];
+  validDateRange: string;
 }
