@@ -655,6 +655,13 @@ class Registration(models.Model):
     def usable_organization(self) -> Organization | None:
         return self.organization or self.contact.organization
 
+    @property
+    def is_gov(self):
+        try:
+            return self.usable_organization.is_gov
+        except AttributeError:
+            return False
+
 
 class LoadParticipantsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2

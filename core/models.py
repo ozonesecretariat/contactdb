@@ -168,6 +168,13 @@ class Organization(models.Model):
             government=self.government, include_in_invitation=True
         )
 
+    @property
+    def is_gov(self):
+        try:
+            return self.government and self.organization_type.acronym == "GOV"
+        except AttributeError:
+            return False
+
 
 class BaseContact(models.Model):
     organization = None

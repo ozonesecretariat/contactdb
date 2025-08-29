@@ -72,6 +72,11 @@ class PreMeetingStatistics:
     def __init__(self, event: Event):
         self.doc = Document()
         self.event = event
+        self.regions = list(
+            Region.objects.all()
+            .prefetch_related("countries", "countries__subregion")
+            .order_by("-name")
+        )
         self.accredited_registrations = list(
             event.registrations.filter(
                 status=Registration.Status.ACCREDITED
@@ -81,38 +86,23 @@ class PreMeetingStatistics:
                 "organization__government",
                 "organization__government__region",
                 "organization__government__subregion",
-                "organization__contact",
-                "organization__contact__organization",
-                "organization__contact__organization__organization_type",
-                "organization__contact__organization__government",
-                "organization__contact__organization__government__region",
-                "organization__contact__organization__government__subregion",
+                "contact",
+                "contact__organization",
+                "contact__organization__organization_type",
+                "contact__organization__government",
+                "contact__organization__government__region",
+                "contact__organization__government__subregion",
             )
         )
         self.accredited_gov_registrations = [
             registration
             for registration in self.accredited_registrations
-            if (
-                registration.usable_organization
-                and registration.usable_government
-                and registration.usable_organization.organization_type.acronym == "GOV"
-            )
+            if registration.is_gov
         ]
-        self.accredited_orgs = {
-            registration.usable_organization
-            for registration in self.accredited_registrations
-            if registration.usable_organization
-        }
         self.accredited_gov_parties = {
-            org.government
-            for org in self.accredited_orgs
-            if org.organization_type.acronym == "GOV"
+            registration.usable_government
+            for registration in self.accredited_gov_registrations
         }
-        self.regions = list(
-            Region.objects.all()
-            .prefetch_related("countries", "countries__subregion")
-            .order_by("-name")
-        )
 
     def export_docx(self):
         self.init_docx()
@@ -200,6 +190,8 @@ class PreMeetingStatistics:
             self.doc.add_paragraph()
 
     def _format_percent(self, value, total):
+        if total == 0:
+            return "-"
         value = Decimal(value) / Decimal(total) * 100
         return str(value.quantize(Decimal("0.01"))) + "%"
 
@@ -212,8 +204,14 @@ class PreMeetingStatistics:
             0,
         )
         for registration in self.accredited_registrations:
-            if org := (registration.organization or registration.contact.organization):
-                counts[org.organization_type.statistics_display_name] += 1
+            try:
+                org = registration.usable_organization
+                name = org.organization_type.statistics_display_name
+            except AttributeError:
+                name = "Unknown"
+            if name not in counts:
+                counts[name] = 0
+            counts[name] += 1
 
         table = self.table(len(counts) + 2, 2)
         self.th(table, 0, 0, "Category")
