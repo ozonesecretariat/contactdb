@@ -200,5 +200,26 @@
         ["view_event", "events", "event"]
       ]
     }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Security Staff",
+      "permissions": [
+        ["view_contact", "core", "contact"],
+        ["view_prioritypass", "events", "prioritypass"]
+      ]
+    }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "Support Staff",
+      "permissions": [
+        ["view_contact", "core", "contact"],
+        ["view_prioritypass", "events", "prioritypass"],
+        ["view_registration", "events", "registration"]
+      ]
+    }
   }
 ]
