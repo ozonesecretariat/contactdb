@@ -117,6 +117,6 @@
     </div>
   </div>
   <div class="participant-type {{ organization.organization_type.acronym }}">
-    {{ organization.organization_type.title|default:"other" }}
+    {{ organization.organization_type.badge_display_name|default:"other" }}
   </div>
 {% endblock front %}

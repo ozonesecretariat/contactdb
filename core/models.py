@@ -61,6 +61,14 @@ class OrganizationType(models.Model):
     organization_type_id = KronosId()
     acronym = CICharField(max_length=50, unique=True)
     title = CICharField(max_length=250, blank=True)
+    badge_title = CICharField(
+        max_length=250, blank=True, help_text="Used on badges instead of the title."
+    )
+    statistics_title = CICharField(
+        max_length=250,
+        blank=True,
+        help_text="Used for event statistics instead of the title.",
+    )
     description = models.TextField(blank=True)
 
     objects = OrganizationTypeManager()
@@ -73,6 +81,14 @@ class OrganizationType(models.Model):
 
     def natural_key(self):
         return (self.acronym,)
+
+    @property
+    def badge_display_name(self):
+        return self.badge_title or self.title
+
+    @property
+    def statistics_display_name(self):
+        return self.statistics_title or self.title
 
 
 class Organization(models.Model):
