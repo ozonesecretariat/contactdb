@@ -2,6 +2,7 @@ import contextlib
 import textwrap
 
 import pycountry
+from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_db_views.db_view import DBView
@@ -69,6 +70,7 @@ class OrganizationType(models.Model):
         blank=True,
         help_text="Used for event statistics instead of the title.",
     )
+    badge_color = ColorField(default="#7f97ab")
     description = models.TextField(blank=True)
 
     objects = OrganizationTypeManager()

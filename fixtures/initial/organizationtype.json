@@ -5,8 +5,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff5",
       "acronym": "ACC-EXPERT",
       "title": "Academia/Expert",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "Academia/Expert"
     }
   },
@@ -18,6 +19,7 @@
       "title": "Assessment Panels",
       "badge_title": "",
       "statistics_title": "",
+      "badge_color": "#7f97ab",
       "description": "Assessment Panels"
     }
   },
@@ -27,8 +29,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff7",
       "acronym": "EXHIBITOR",
       "title": "Exhibitors",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "Exhibitors"
     }
   },
@@ -38,8 +41,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5fef",
       "acronym": "GOV",
       "title": "Government",
-      "badge_title": "",
+      "badge_title": "Parties",
       "statistics_title": "Parties",
+      "badge_color": "#df3e24",
       "description": "Government"
     }
   },
@@ -49,8 +53,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5fee",
       "acronym": "IGO",
       "title": "IGOs",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "IGOs"
     }
   },
@@ -60,8 +65,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff4",
       "acronym": "BIZ",
       "title": "Industry",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "Industry"
     }
   },
@@ -73,6 +79,7 @@
       "title": "Interpreters",
       "badge_title": "",
       "statistics_title": "",
+      "badge_color": "#7f97ab",
       "description": "Interpreters"
     }
   },
@@ -84,6 +91,7 @@
       "title": "Local Support",
       "badge_title": "",
       "statistics_title": "",
+      "badge_color": "#7f97ab",
       "description": "Local Support"
     }
   },
@@ -95,6 +103,7 @@
       "title": "Media",
       "badge_title": "",
       "statistics_title": "",
+      "badge_color": "#7f97ab",
       "description": "Media"
     }
   },
@@ -104,8 +113,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff1",
       "acronym": "NGO",
       "title": "NGOs",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "NGOs"
     }
   },
@@ -115,8 +125,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff0",
       "acronym": "OBS",
       "title": "Observers",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "Observers"
     }
   },
@@ -126,8 +137,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff9",
       "acronym": "OTHER",
       "title": "Others",
-      "badge_title": "",
+      "badge_title": "Observers",
       "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
       "description": "Others"
     }
   },
@@ -137,8 +149,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff6",
       "acronym": "SECRETARIAT",
       "title": "Secretariat",
-      "badge_title": "",
+      "badge_title": "Ozone Secretariat",
       "statistics_title": "Ozone Secretariat",
+      "badge_color": "#06aef0",
       "description": "Secretariat"
     }
   },
@@ -148,8 +161,9 @@
       "organization_type_id": "594bce8cf939e087ce7d5ff3",
       "acronym": "UN",
       "title": "UN Agencies",
-      "badge_title": "",
+      "badge_title": "United Nations",
       "statistics_title": "United Nations",
+      "badge_color": "#5b92e5",
       "description": "UN Agencies"
     }
   }

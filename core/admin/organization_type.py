@@ -17,6 +17,7 @@ class OrganizationTypeAdmin(ExportMixin, ModelAdmin):
     list_display = (
         "acronym",
         "title",
+        "badge_color",
         "badge_title",
         "statistics_title",
         "description",
