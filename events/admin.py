@@ -33,6 +33,7 @@ from events.models import (
     RegistrationRole,
     RegistrationTag,
 )
+from events.statistics import PreMeetingStatistics
 
 
 @admin.register(LoadEventsFromKronosTask)
@@ -676,6 +677,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "dates",
         "registrations_count",
         "group",
+        "statistics",
     )
     autocomplete_fields = ("venue_country", "group")
     list_filter = (
@@ -684,7 +686,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "start_date",
         "end_date",
     )
-    readonly_fields = ("event_id",)
+    readonly_fields = ("event_id", "statistics")
     ordering = (
         "-start_date",
         "-end_date",
@@ -763,7 +765,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         (
             "Metadata",
             {
-                "fields": ("event_id",),
+                "fields": ("event_id", "statistics"),
             },
         ),
     )
@@ -775,6 +777,31 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "registrations",
             "event",
             f"{obj.registration_count} participants",
+        )
+
+    @admin.display(description="Statistics")
+    def statistics(self, obj):
+        url = reverse("admin:pre_meeting_statistics", args=(obj.id,))
+        return format_html(
+            '<a href="{url}">Statistics</a>',
+            url=url,
+            link_text="View statistics",
+        )
+
+    def get_urls(self):
+        return [
+            path(
+                "<path:object_id>/statistics/",
+                self.admin_site.admin_view(self.get_statistics),
+                name="pre_meeting_statistics",
+            ),
+            *super().get_urls(),
+        ]
+
+    def get_statistics(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(
+            PreMeetingStatistics(event).export_docx(), as_attachment=True
         )
 
     def has_load_contacts_from_kronos_permission(self, request):

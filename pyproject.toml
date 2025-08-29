@@ -10,6 +10,7 @@ dependencies = [
     "django-admin-env-notice>=1.0.1",
     "django-auditlog>=3.1.2",
     "django-ckeditor>=6.7.2",
+    "django-colorfield>=0.14.0",
     "django-constance>=4.3.2",
     "django-cors-headers>=4.7.0",
     "django-db-views>=0.1.11",

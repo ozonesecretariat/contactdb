@@ -35,7 +35,7 @@ describe("Check", () => {
     cy.contains("Lyra-Pulse");
     cy.contains("Solstice");
     cy.contains("Guatemala");
-    cy.contains("Government");
+    cy.contains("Parties");
     cy.contains("PDAF@2025");
     cy.get('img[alt="https://example.com?appstore"]');
     cy.get('img[alt="https://example.com?playstore"]');

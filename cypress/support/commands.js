@@ -74,7 +74,7 @@ Cypress.Commands.addAll({
     cy.get("[type=submit]").contains("Submit").click();
     cy.checkFile({ expected, filePattern, lineLength: expected.length + 1 });
   },
-  checkFile({ expected, filePattern, lineLength = null }) {
+  checkFile({ expected = [], filePattern, lineLength = null }) {
     cy.verifyDownload(filePattern, { contains: true });
     cy.task("downloads").then((files) => {
       const downloadsFolder = Cypress.config("downloadsFolder");
@@ -82,6 +82,10 @@ Cypress.Commands.addAll({
         downloadsFolder,
         files.find((fn) => fn.includes(filePattern)),
       );
+
+      if (!lineLength && expected.length === 0) {
+        return;
+      }
 
       cy.readFile(fullPath, "utf-8").then((content) => {
         if (lineLength) {

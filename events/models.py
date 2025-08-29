@@ -647,6 +647,21 @@ class Registration(models.Model):
             except Registration.DoesNotExist:
                 pass
 
+    @property
+    def usable_government(self) -> Country | None:
+        return self.usable_organization and self.usable_organization.government
+
+    @property
+    def usable_organization(self) -> Organization | None:
+        return self.organization or self.contact.organization
+
+    @property
+    def is_gov(self):
+        try:
+            return self.usable_organization.is_gov
+        except AttributeError:
+            return False
+
 
 class LoadParticipantsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2

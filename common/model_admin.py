@@ -1,5 +1,6 @@
 from functools import wraps
 
+from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.admin.options import get_content_type_for_model
 from django.shortcuts import redirect
@@ -180,6 +181,41 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
                 },
             )
         )
+
+    def get_list_display(self, request):
+        list_display = list(super().get_list_display(request))
+
+        for field in self.model._meta.get_fields():
+            if not isinstance(field, ColorField):
+                continue
+
+            try:
+                index = list_display.index(field.name)
+            except ValueError:
+                continue
+
+            preview_name = f"{field.name}_preview"
+
+            if not hasattr(self, preview_name):
+                # Dynamically create a preview method
+                def _preview(self, obj, fname=field.name):
+                    color = getattr(obj, fname)
+                    return format_html(
+                        """
+                            <div class="color-field">
+                                <div class="color-preview" style="background-color: {color}"></div> 
+                                <div>{color}<div>
+                            </div>
+                        """,
+                        color=color,
+                    )
+
+                _preview.short_description = field.name.replace("_", " ")
+                _preview.admin_order_field = field.name
+                setattr(self.__class__, preview_name, _preview)
+            list_display[index] = preview_name
+
+        return tuple(list_display)
 
 
 class ModelAdmin(_CustomModelAdminMixIn, admin.ModelAdmin):
