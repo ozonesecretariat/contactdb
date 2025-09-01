@@ -133,7 +133,9 @@
     <div class="back">
       {% block back %}
         <div class="meeting-app">
-          <div class="title">Meeting App</div>
+          {% if main_event.app_store_url or main_event.play_store_url %}
+            <div class="title">Meeting App</div>
+          {% endif %}
           <div>
             {% if main_event.app_store_url %}
               <div class="store-logo">
@@ -163,7 +165,7 @@
         </div>
         {% if main_event.wifi_name and main_event.wifi_password %}
           <div class="wifi">
-            <img src="{% static 'img/wifi_logo.png' %}" alt="wifi log" class="wifi-logo" />
+            <img src="{% static 'img/wifi_logo.png' %}" alt="wifi logo" class="wifi-logo" />
             <div>{{ main_event.wifi_name }}</div>
             <div>{{ main_event.wifi_password }}</div>
           </div>

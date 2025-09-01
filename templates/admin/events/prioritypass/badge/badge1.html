@@ -18,19 +18,8 @@
       gap: 0.5rem;
     }
 
-    .logos {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-
-    .event-logo {
+    .badge-logo {
       width: 10rem;
-    }
-
-    .ozone-logo {
-      width: 5rem;
     }
 
     .qr-code {
@@ -86,15 +75,12 @@
 
 {% block front %}
   <div class="header">
-    <div class="logos">
+    <div class="badge-logo">
       {% if main_event.event_logo %}
-        <div class="event-logo">
-          <img src="{{ main_event.event_logo.url }}" alt="event logo" />
-        </div>
-      {% endif %}
-      <div class="ozone-logo">
+        <img src="{{ main_event.event_logo.url }}" alt="event logo" />
+      {% else %}
         <img src="{% static 'img/logo.png' %}" alt="ozone logo" />
-      </div>
+      {% endif %}
     </div>
     <div class="qr-code">{% qr_from_text qr_url image_format='png' %}</div>
   </div>
