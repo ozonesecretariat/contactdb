@@ -525,7 +525,7 @@ class PriorityPass(models.Model):
 
     @property
     def valid_date_range(self):
-        date_fmt = "%b %e, %Y"
+        date_fmt = "%-d %b %Y"
         start, end = self.valid_from, self.valid_to
 
         if not start and not end:
@@ -541,7 +541,7 @@ class PriorityPass(models.Model):
         same_month = start.month == end.month
 
         if same_year and same_month:
-            return "{month} {start_day}-{end_day}, {year} ".format(
+            return "{start_day}-{end_day} {month} {year}".format(
                 month=start.strftime("%b"),
                 start_day=start.day,
                 end_day=end.day,
@@ -549,7 +549,7 @@ class PriorityPass(models.Model):
             )
 
         if same_year:
-            return "{start_month} {start_day} - {end_month} {end_day}, {year} ".format(
+            return "{start_day} {start_month} - {end_day} {end_month} {year}".format(
                 start_month=start.strftime("%b"),
                 start_day=start.day,
                 end_month=end.strftime("%b"),
