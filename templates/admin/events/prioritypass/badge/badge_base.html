@@ -37,6 +37,27 @@
         font-family: Arial, sans-serif;
       }
 
+      @media screen {
+        /* Useful for debugging the badge layout*/
+        body {
+          position: relative;
+          width: 105mm;
+          height: 148mm;
+          margin: auto;
+          border: 1px solid black;
+        }
+
+        body::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 0;
+          background-color: black;
+          width: 100%;
+          height: 1px;
+        }
+      }
+
       img {
         max-width: 100%;
         max-height: 100%;
@@ -49,7 +70,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        padding: 1rem;
+        padding: 0.5rem 1rem;
         overflow: hidden;
       }
 

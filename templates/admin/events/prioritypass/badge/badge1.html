@@ -36,14 +36,26 @@
       line-height: 1.3;
     }
 
+    .first-name,
+    .last-name,
+    .country,
+    .organization {
+      max-width: 16rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
     .first-name {
       font-size: 14px;
+      max-height: 34px;
     }
 
     .last-name {
       font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
+      max-height: 38px;
     }
 
     .country {
@@ -51,12 +63,17 @@
       font-size: 18px;
     }
 
-    .participant-photo {
-      width: 7rem;
-      height: 7rem;
+    .organization {
+      font-size: 12px;
+      max-height: 58px;
     }
 
-    .pass-code {
+    .participant-photo {
+      width: 6rem;
+      height: 6rem;
+    }
+
+    .valid-date-range {
       margin-top: 0.25rem;
       font-size: 10px;
       text-align: center;
@@ -85,11 +102,13 @@
     <div class="qr-code">{% qr_from_text qr_url image_format='png' %}</div>
   </div>
   <div class="participant-info">
-    <div>
+    <div class="participant-details">
       <div class="first-name">{{ contact.first_name }}</div>
       <div class="last-name">{{ contact.last_name }}</div>
       {% if priority_pass.is_gov %}
         <div class="country">{{ country.name|default:'' }}</div>
+      {% else %}
+        <div class="organization">{{ organization_name }}</div>
       {% endif %}
     </div>
     <div>
@@ -98,7 +117,7 @@
           <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
         </div>
       {% endif %}
-      <div class="pass-code">{{ priority_pass.code }}</div>
+      <div class="valid-date-range">{{ priority_pass.valid_date_range }}</div>
     </div>
   </div>
   <div class="participant-type" style="background-color: {{ organization.organization_type.badge_color }}">
