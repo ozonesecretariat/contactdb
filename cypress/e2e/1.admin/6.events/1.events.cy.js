@@ -60,4 +60,16 @@ describe("Check", () => {
     cy.get(".select2-selection__choice").contains("TT:VRAQ");
     cy.get(".select2-selection__choice").contains("TTTE");
   });
+  it("Check download statistics", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.get("a").contains("Statistics").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-statistics.docx",
+    });
+  });
 });

@@ -79,7 +79,6 @@
       font-weight: bold;
       text-transform: uppercase;
       padding: 0.25rem 0.5rem;
-      background-color: #1479ba;
       text-align: center;
     }
   </style>
@@ -116,7 +115,7 @@
       <div class="pass-code">{{ priority_pass.code }}</div>
     </div>
   </div>
-  <div class="participant-type {{ organization.organization_type.acronym }}">
-    {{ organization.organization_type.title|default:"other" }}
+  <div class="participant-type" style="background-color: {{ organization.organization_type.badge_color }}">
+    {{ organization.organization_type.badge_display_name|default:"other" }}
   </div>
 {% endblock front %}

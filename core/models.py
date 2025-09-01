@@ -2,6 +2,7 @@ import contextlib
 import textwrap
 
 import pycountry
+from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_db_views.db_view import DBView
@@ -61,6 +62,15 @@ class OrganizationType(models.Model):
     organization_type_id = KronosId()
     acronym = CICharField(max_length=50, unique=True)
     title = CICharField(max_length=250, blank=True)
+    badge_title = CICharField(
+        max_length=250, blank=True, help_text="Used on badges instead of the title."
+    )
+    statistics_title = CICharField(
+        max_length=250,
+        blank=True,
+        help_text="Used for event statistics instead of the title.",
+    )
+    badge_color = ColorField(default="#7f97ab")
     description = models.TextField(blank=True)
 
     objects = OrganizationTypeManager()
@@ -73,6 +83,14 @@ class OrganizationType(models.Model):
 
     def natural_key(self):
         return (self.acronym,)
+
+    @property
+    def badge_display_name(self):
+        return self.badge_title or self.title
+
+    @property
+    def statistics_display_name(self):
+        return self.statistics_title or self.title
 
 
 class Organization(models.Model):
@@ -151,6 +169,13 @@ class Organization(models.Model):
         return self.__class__.objects.filter(
             government=self.government, include_in_invitation=True
         )
+
+    @property
+    def is_gov(self):
+        try:
+            return self.government and self.organization_type.acronym == "GOV"
+        except AttributeError:
+            return False
 
 
 class BaseContact(models.Model):
