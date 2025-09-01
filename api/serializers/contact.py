@@ -63,6 +63,9 @@ class ContactSerializer(serializers.ModelSerializer):
     )
     photo = Base64ImageField(write_only=True, required=False, allow_null=True)
     has_photo = serializers.SerializerMethodField()
+    country_name = serializers.SlugRelatedField(
+        "name", source="country", read_only=True
+    )
 
     class Meta:
         model = Contact
@@ -91,6 +94,7 @@ class ContactSerializer(serializers.ModelSerializer):
             "department",
             "designation",
             # Address
+            "country_name",
             "country",
             "city",
             "state",

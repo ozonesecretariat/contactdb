@@ -25,42 +25,7 @@
     <div v-if="pass" class="pass-container">
       <section class="contact-section q-mt-lg">
         <q-card flat bordered class="contact-card">
-          <div class="row wrap">
-            <q-card-section class="q-pt-xs col-grow">
-              <div class="text-overline">{{ pass.code }} | {{ pass.country?.name }}</div>
-              <div class="text-h5 q-mt-sm q-mb-xs">
-                {{ pass.contact?.fullName }}
-              </div>
-              <div class="text-caption text-grey">
-                {{ pass.contact?.designation ?? "-" }}
-                <br />
-                <b>
-                  {{ pass.organization?.name ?? "-" }}
-                </b>
-              </div>
-              <div v-if="canViewRegistration" class="text-body1">
-                <ul>
-                  <li>
-                    <b>Emails:</b>
-                    {{ pass.contact?.emails?.join(", ") || "-" }}
-                  </li>
-                  <li>
-                    <b>Phones:</b>
-                    {{ pass.contact?.phones?.join(", ") || "-" }}
-                  </li>
-                  <li>
-                    <b>Department:</b>
-                    {{ pass.contact?.department || "-" }}
-                  </li>
-                </ul>
-              </div>
-            </q-card-section>
-
-            <q-card-section class="col-5 flex flex-center contact-photo">
-              <q-img v-if="photoUrl" :src="photoUrl" alt="" />
-              <p v-else class="text-grey">No photo uploaded</p>
-            </q-card-section>
-          </div>
+          <participant-card v-if="pass.contact" :participant="pass.contact" :photo-url="photoUrl" />
 
           <q-separator />
 
@@ -132,6 +97,7 @@ import type { Registration } from "src/types/registration";
 import { useRouteQuery } from "@vueuse/router";
 import { api, apiBase, apiURL } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
+import ParticipantCard from "components/ParticipantCard.vue";
 import SearchPass from "components/SearchPass.vue";
 import TakePhoto from "components/TakePhoto.vue";
 import { useQuasar } from "quasar";
