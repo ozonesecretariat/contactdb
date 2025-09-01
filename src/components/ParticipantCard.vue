@@ -27,14 +27,14 @@
           <br v-if="addressEntity.city || addressEntity.state || addressEntity.postalCode" />
           {{ country }}
         </div>
-        <div>
+        <div v-if="!hideContactInfo">
           Email: {{ participant.emails?.[0] ?? "-" }}
           <br />
           Mobile: {{ participant.mobiles?.[0] ?? "-" }}
         </div>
       </div>
     </div>
-    <div class="col-2 q-gutter-y-md">
+    <div class="col-3 q-gutter-y-md">
       <slot name="buttons"></slot>
       <q-img v-if="participant.hasPhoto" :src="photoUrl" alt="" />
     </div>
@@ -47,6 +47,7 @@ import type { Contact } from "src/types/nomination";
 import { computed } from "vue";
 
 const props = defineProps<{
+  hideContactInfo?: boolean;
   participant: Contact;
   photoUrl: string;
 }>();

@@ -307,6 +307,12 @@ Cypress.Commands.addAll({
   loginNonStaffView(goToAdmin = true) {
     cy.login("test-non-staff-view@example.com", "test", true, goToAdmin);
   },
+  loginSecurity(goToAdmin = true) {
+    cy.login("test-security@example.com", "test", true, goToAdmin);
+  },
+  loginSupport(goToAdmin = true) {
+    cy.login("test-support@example.com", "test", true, goToAdmin);
+  },
   loginView(goToAdmin = true) {
     cy.login("test-view@example.com", "test", true, goToAdmin);
   },

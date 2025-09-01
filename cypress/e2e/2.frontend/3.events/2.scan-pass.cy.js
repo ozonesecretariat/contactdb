@@ -9,6 +9,30 @@ describe("Check scan pass", () => {
     cy.contains("Accredited");
     cy.contains("Nominated");
   });
+  it("Check support staff view", () => {
+    cy.loginAdmin(false);
+    cy.visit("/scan-pass?code=T6UQZRYW0S");
+    cy.contains("Mr. Lyra-Pulse Solstice");
+    cy.contains("lyra-pulse@example.com");
+    cy.contains("Registered Jul 11, 2020 to Jun 7, 2023");
+    cy.contains("Psychedelic Dreamscape Art Fair");
+    cy.contains("Quantum Quest: A Science Adventure Symposium");
+    cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
+    cy.contains("Accredited");
+    cy.contains("Registered");
+  });
+  it("Check security staff view", () => {
+    cy.loginSecurity(false);
+    cy.visit("/scan-pass?code=T6UQZRYW0S");
+    cy.contains("Mr. Lyra-Pulse Solstice");
+    cy.contains("Registered Jul 11, 2020 to Jun 7, 2023");
+    cy.should("not.contain", "lyra-pulse@example.com");
+    cy.should("not.contain", "Psychedelic Dreamscape Art Fair");
+    cy.should("not.contain", "Quantum Quest: A Science Adventure Symposium");
+    cy.should("not.contain", "Stéllâr Sérènade Müsïc Fêstivàl");
+    cy.should("not.contain", "Accredited");
+    cy.should("not.contain", "Nominated");
+  });
   it("Scan wrong code", () => {
     cy.loginAdmin(false);
     cy.visit("/scan-pass?code=XXXXXXXXXX");

@@ -4,7 +4,6 @@
     <take-photo ref="takePhotoRef" @capture="setPicture" />
     <search-pass ref="searchPassRef" @code="setCode" />
 
-    <p class="text-grey">Scan QR or enter code</p>
     <section class="flex items-center justify-between q-col-gutter-md">
       <div class="flex q-gutter-md items-center">
         <q-btn label="Scan code" color="secondary" icon="qr_code_scanner" @click="codeScannerRef?.show()" />
@@ -25,7 +24,12 @@
     <div v-if="pass" class="pass-container">
       <section class="contact-section q-mt-lg">
         <q-card flat bordered class="contact-card">
-          <participant-card v-if="pass.contact" :participant="pass.contact" :photo-url="photoUrl" />
+          <participant-card
+            v-if="pass.contact"
+            :participant="pass.contact"
+            :photo-url="photoUrl"
+            :hide-contact-info="!canViewRegistration"
+          />
 
           <q-separator />
 
