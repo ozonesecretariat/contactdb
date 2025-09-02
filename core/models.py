@@ -177,6 +177,20 @@ class Organization(models.Model):
         except AttributeError:
             return False
 
+    @property
+    def is_ass_panel(self):
+        try:
+            return self.organization_type.acronym == "ASS-PANEL"
+        except AttributeError:
+            return False
+
+    @property
+    def is_secretariat(self):
+        try:
+            return self.organization_type.acronym == "SECRETARIAT"
+        except AttributeError:
+            return False
+
 
 class BaseContact(models.Model):
     organization = None

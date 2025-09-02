@@ -7,65 +7,11 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.oxml import OxmlElement
-from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
-from docx.table import Table
 
 from core.models import OrganizationType, Region
+from events.exports.docx_utils import set_cell, set_table_border
 from events.models import Event, Registration
-
-
-def set_cell(
-    table: Table,
-    row: int,
-    col: int,
-    text: str,
-    style: str = None,
-    align: WD_PARAGRAPH_ALIGNMENT = None,
-    v_align: WD_CELL_VERTICAL_ALIGNMENT = None,
-    bg_color: str = None,
-):
-    cell = table.cell(row, col)
-    cell.text = ""
-
-    p = cell.paragraphs[0]
-    p.add_run(text)
-
-    p.style = style
-    p.alignment = align
-    if bg_color:
-        shd = OxmlElement("w:shd")
-        shd.set(qn("w:fill"), bg_color)
-        cell._tc.get_or_add_tcPr().append(shd)
-    cell.vertical_alignment = v_align
-    return cell
-
-
-def set_table_border(
-    table: Table, color="000000", size=4, space=0, border_type="single"
-):
-    tbl = table._tbl
-    tbl_pr = tbl.tblPr
-
-    # Remove existing borders if present
-    borders = tbl_pr.xpath("w:tblBorders")
-    if borders:
-        for b in borders:
-            tbl_pr.remove(b)
-
-    tbl_borders = OxmlElement("w:tblBorders")
-
-    for border_name in ["top", "left", "bottom", "right", "insideH", "insideV"]:
-        border = OxmlElement(f"w:{border_name}")
-        border.set(qn("w:val"), border_type)  # border style
-        border.set(qn("w:sz"), str(size))  # width
-        border.set(qn("w:space"), str(space))  # spacing
-        border.set(qn("w:color"), color)  # color
-        tbl_borders.append(border)
-
-    tbl_pr.append(tbl_borders)
-    return table
 
 
 class PreMeetingStatistics:

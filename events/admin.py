@@ -20,6 +20,7 @@ from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
+from events.exports.statistics import PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
 from events.models import (
     Event,
@@ -33,7 +34,6 @@ from events.models import (
     RegistrationRole,
     RegistrationTag,
 )
-from events.statistics import PreMeetingStatistics
 
 
 @admin.register(LoadEventsFromKronosTask)

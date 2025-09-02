@@ -656,9 +656,37 @@ class Registration(models.Model):
         return self.organization or self.contact.organization
 
     @property
+    def usable_organization_name(self) -> str | None:
+        try:
+            return self.organization.name
+        except AttributeError:
+            return None
+
+    @property
+    def usable_organization_type_description(self) -> str | None:
+        try:
+            return self.usable_organization.organization_type.description
+        except AttributeError:
+            return None
+
+    @property
     def is_gov(self):
         try:
             return self.usable_organization.is_gov
+        except AttributeError:
+            return False
+
+    @property
+    def is_ass_panel(self):
+        try:
+            return self.usable_organization.is_ass_panel
+        except AttributeError:
+            return False
+
+    @property
+    def is_secretariat(self):
+        try:
+            return self.usable_organization.is_secretariat
         except AttributeError:
             return False
 
