@@ -111,9 +111,13 @@
       <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
     {% endif %}
     <div class="valid-date-range">
-      Valid from
-      <br />
-      {{ priority_pass.valid_date_range }}
+      {% if priority_pass.valid_date_range %}
+        Valid from
+        <br />
+        {{ priority_pass.valid_date_range }}
+      {% else %}
+        NOT REGISTERED
+      {% endif %}
     </div>
   </div>
   <div class="participant-type" style="background-color: {{ organization.organization_type.badge_color }}">
