@@ -31,6 +31,10 @@ class Section(Enum):
     SECRETARIAT = "Ozone Secretariat"
 
 
+# In order to preserve the layout, use a placeholder if no symbols are provided
+# in the event settings.
+SYMBOL_PLACEHOLDER = ["UNEP/"]
+
 ZERO = Inches(0)
 USABLE_WIDTH = Inches(8)
 INDEX_COL_WIDTH = Inches(0.5)
@@ -243,7 +247,7 @@ class ListOfParticipants:
         p.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
         is_first = True
-        for doc_symbol in self.event.lop_doc_symbols:
+        for doc_symbol in self.event.lop_doc_symbols or SYMBOL_PLACEHOLDER:
             if is_first:
                 is_first = False
             else:
@@ -392,7 +396,7 @@ class ListOfParticipants:
         p = header.paragraphs[0]
         p.alignment = alignment
         p.style = "LOP Header"
-        p.text = "\n".join(self.event.lop_doc_symbols)
+        p.text = "\n".join(self.event.lop_doc_symbols or SYMBOL_PLACEHOLDER)
 
         insert_hr(p)
 
@@ -417,6 +421,9 @@ class ListOfParticipants:
         key_l1: Optional[Callable[[Registration], str]],
         key_l2: Callable[[Registration], str],
     ):
+        if not self.sections[section]:
+            return
+
         self.configure_section(self.doc.add_section(), section.value)
 
         registrations = sorted(self.sections[section], key=sort)

@@ -22,6 +22,7 @@ from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
 from events.exports.statistics import PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
+from events.list_of_participants import ListOfParticipants
 from events.models import (
     Event,
     EventGroup,
@@ -689,7 +690,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "dates",
         "registrations_count",
         "group",
-        "statistics",
+        "documents",
     )
     autocomplete_fields = ("venue_country", "group")
     list_filter = (
@@ -698,7 +699,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "start_date",
         "end_date",
     )
-    readonly_fields = ("event_id", "statistics")
+    readonly_fields = ("event_id", "documents")
     ordering = (
         "-start_date",
         "-end_date",
@@ -779,7 +780,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             {
                 "fields": (
                     "event_id",
-                    "statistics",
+                    "documents",
                     "lop_doc_symbols",
                 ),
             },
@@ -795,13 +796,17 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             f"{obj.registration_count} participants",
         )
 
-    @admin.display(description="Statistics")
-    def statistics(self, obj):
-        url = reverse("admin:pre_meeting_statistics", args=(obj.id,))
+    @admin.display(description="Documents")
+    def documents(self, obj):
         return format_html(
-            '<a href="{url}">Statistics</a>',
-            url=url,
-            link_text="View statistics",
+            " | ".join(
+                [
+                    '<a href="{}" target="_blank">Statistics</a>',
+                    '<a href="{}" target="_blank">LoP</a>',
+                ]
+            ),
+            reverse("admin:pre_meeting_statistics", args=(obj.id,)),
+            reverse("admin:lop", args=(obj.id,)),
         )
 
     def get_urls(self):
@@ -811,6 +816,11 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 self.admin_site.admin_view(self.get_statistics),
                 name="pre_meeting_statistics",
             ),
+            path(
+                "<path:object_id>/lop/",
+                self.admin_site.admin_view(self.get_lop),
+                name="lop",
+            ),
             *super().get_urls(),
         ]
 
@@ -819,6 +829,10 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         return FileResponse(
             PreMeetingStatistics(event).export_docx(), as_attachment=True
         )
+
+    def get_lop(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(ListOfParticipants(event).export_docx(), as_attachment=True)
 
     def has_load_contacts_from_kronos_permission(self, request):
         return self.has_add_permission(request) and has_model_permission(
