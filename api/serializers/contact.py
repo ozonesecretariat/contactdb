@@ -120,7 +120,8 @@ class ContactSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             instance = super().update(instance, validated_data)
             try:
-                instance.clean_for_nomination()
+                if not self.partial:
+                    instance.clean_for_nomination()
                 instance.clean()
             except DjangoValidationError as e:
                 raise ValidationError(e.message_dict) from e
