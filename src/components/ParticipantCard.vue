@@ -11,10 +11,10 @@
           {{ participant.department }}
         </div>
         <div class="text-h6">
-          {{ participant.organization?.name }}
+          {{ organization?.name }}
         </div>
-        <div v-if="participant.organization?.government" class="text-h6">
-          {{ participant.organization?.government?.name }}
+        <div v-if="organization?.government" class="text-h6">
+          {{ organization?.government?.name }}
         </div>
       </div>
       <div class="row items-start justify-left q-mt-md q-col-gutter-sm">
@@ -43,22 +43,26 @@
 
 <script setup lang="ts">
 import type { Contact } from "src/types/nomination";
+import type { Organization } from "src/types/organization";
 
 import { computed } from "vue";
 
 const props = defineProps<{
   hideContactInfo?: boolean;
+  organization?: null | Organization;
   participant: Contact;
   photoUrl: string;
 }>();
+
+const organization = computed(() => props.organization ?? props.participant?.organization);
 const country = computed(() => {
   if (props.participant?.isUseOrganizationAddress) {
-    return props.participant.organization?.country?.name ?? props.participant.organization?.government?.name;
+    return organization.value?.country?.name ?? organization.value?.government?.name;
   }
   return props.participant?.countryName;
 });
 const addressEntity = computed(() =>
-  props.participant?.isUseOrganizationAddress ? props.participant?.organization : props.participant,
+  props.participant?.isUseOrganizationAddress ? organization.value : props.participant,
 );
 </script>
 

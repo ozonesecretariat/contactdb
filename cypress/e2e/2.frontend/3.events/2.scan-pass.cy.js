@@ -3,6 +3,8 @@ describe("Check scan pass", () => {
     cy.loginAdmin(false);
     cy.visit("/scan-pass?code=69EFWLUG49");
     cy.contains("Luna-Nova Vortex");
+    cy.contains("Intergalactic Defense Coalition");
+    cy.contains("Spain");
     cy.contains("Psychedelic Dreamscape Art Fair");
     cy.contains("Quantum Quest: A Science Adventure Symposium");
     cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");

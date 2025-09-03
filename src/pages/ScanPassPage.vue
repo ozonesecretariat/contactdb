@@ -27,6 +27,7 @@
           <participant-card
             v-if="pass.contact"
             :participant="pass.contact"
+            :organization="pass.organization"
             :photo-url="photoUrl"
             :hide-contact-info="!canViewRegistration"
           />
