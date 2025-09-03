@@ -77,6 +77,13 @@ describe("Check scan pass", () => {
       cy.contains("Register").click();
       cy.contains("Registration status updated.");
       cy.contains("Registered");
+
+      // Check taking a photo
+      cy.get('img[alt="contact photo"]').should("not.exist");
+      cy.contains("Take photo").click();
+      cy.contains("Capture").click();
+      cy.get('img[alt="contact photo"]').should("be.visible");
+
       cy.contains("Admin").click();
       cy.deleteContactGroup(group);
     });
