@@ -777,7 +777,11 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         (
             "Metadata",
             {
-                "fields": ("event_id", "statistics"),
+                "fields": (
+                    "event_id",
+                    "statistics",
+                    "lop_doc_symbols",
+                ),
             },
         ),
     )

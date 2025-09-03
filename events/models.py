@@ -12,6 +12,7 @@ from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 
+from common.array_field import ArrayField
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
 from common.pdf import print_pdf
@@ -117,6 +118,13 @@ class Event(models.Model):
     app_store_url = models.CharField(max_length=1024, blank=True)
     play_store_url = models.CharField(max_length=1024, blank=True)
     # TODO: Allow choosing the badge template for the event
+
+    lop_doc_symbols = ArrayField(
+        null=True,
+        base_field=models.TextField(),
+        blank=True,
+        help_text="Document symbols for the List of Participants document",
+    )
 
     class Meta:
         ordering = ("-start_date",)

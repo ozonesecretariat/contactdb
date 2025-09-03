@@ -241,9 +241,22 @@ class ListOfParticipants:
 
         p = self.doc.add_paragraph()
         p.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        r = p.add_run("UNEP/")
-        r.font.size = Pt(16)
-        r.font.bold = True
+
+        is_first = True
+        for doc_symbol in self.event.lop_doc_symbols:
+            if is_first:
+                is_first = False
+            else:
+                p.add_run("\n")
+
+            start, end = doc_symbol.split("/", 1)
+
+            r = p.add_run(start + "/")
+            r.font.size = Pt(16)
+            r.font.bold = True
+
+            r = p.add_run(end)
+            r.font.size = Pt(14)
         insert_hr(p)
 
     def cover_page_logos(self):
@@ -379,7 +392,8 @@ class ListOfParticipants:
         p = header.paragraphs[0]
         p.alignment = alignment
         p.style = "LOP Header"
-        p.text = "UNEP///"
+        p.text = "\n".join(self.event.lop_doc_symbols)
+
         insert_hr(p)
 
         table = header.add_table(1, 1, USABLE_WIDTH)
