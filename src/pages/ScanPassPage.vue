@@ -35,7 +35,7 @@
           <q-separator />
 
           <q-card-actions v-if="canViewRegistration || canEditContact">
-            <q-btn v-if="canViewRegistration" color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">
+            <q-btn v-if="canPrintBadge" color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">
               Print badge
             </q-btn>
             <q-btn v-if="canEditContact" color="primary" icon="photo_camera" @click="takePhotoRef?.show()">
@@ -43,7 +43,7 @@
             </q-btn>
           </q-card-actions>
         </q-card>
-        <div class="registrations-section q-pt-lg text-subtitle1 text-white">
+        <div class="registration-date-range q-pt-lg text-subtitle1 text-white">
           <q-card v-if="validRange" flat bordered class="valid-card bg-positive">Registered {{ validRange }}</q-card>
           <q-card v-else flat bordered class="valid-card bg-negative">Not registered</q-card>
         </div>
@@ -128,6 +128,12 @@ const canEditRegistration = computed(() => userStore.permissions.includes("event
 const registrations = computed(() =>
   [...(pass.value?.registrations ?? [])].sort((a, b) => (a.event.code > b.event.code ? 1 : -1)),
 );
+const canPrintBadge = computed(
+  () =>
+    userStore.permissions.includes("events.view_registration") &&
+    registrations.value.find((r) => r.status === "Registered"),
+);
+
 const validRange = computed(() => pass?.value?.validDateRange);
 
 const badgeUrl = computed(() => {
@@ -242,6 +248,7 @@ async function updateRegistrationStatus(registration: Registration, newStatus: R
   max-width: 125rem;
 }
 
+.registration-date-range,
 .registrations-section,
 .contact-section {
   flex-grow: 1;

@@ -10,9 +10,12 @@ describe("Check scan pass", () => {
     cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
     cy.contains("Accredited");
     cy.contains("Nominated");
+    cy.contains("Take photo");
+    // Can't print badge because participant isn't registered yet
+    cy.should("not.contain", "Print badge");
   });
   it("Check support staff view", () => {
-    cy.loginAdmin(false);
+    cy.loginSupport(false);
     cy.visit("/scan-pass?code=T6UQZRYW0S");
     cy.contains("Mr. Lyra-Pulse Solstice");
     cy.contains("lyra-pulse@example.com");
@@ -22,6 +25,8 @@ describe("Check scan pass", () => {
     cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
     cy.contains("Accredited");
     cy.contains("Registered");
+    cy.contains("Print badge");
+    cy.should("not.contain", "Take photo");
   });
   it("Check security staff view", () => {
     cy.loginSecurity(false);
@@ -32,8 +37,9 @@ describe("Check scan pass", () => {
     cy.should("not.contain", "Psychedelic Dreamscape Art Fair");
     cy.should("not.contain", "Quantum Quest: A Science Adventure Symposium");
     cy.should("not.contain", "Stéllâr Sérènade Müsïc Fêstivàl");
-    cy.should("not.contain", "Accredited");
-    cy.should("not.contain", "Nominated");
+    cy.should("not.contain", "Print badge");
+    cy.should("not.contain", "Take photo");
+    cy.get(".registrations-section").should("not.exist");
   });
   it("Scan wrong code", () => {
     cy.loginAdmin(false);
@@ -71,6 +77,13 @@ describe("Check scan pass", () => {
       cy.contains("Register").click();
       cy.contains("Registration status updated.");
       cy.contains("Registered");
+
+      // Check taking a photo
+      cy.get('img[alt="contact photo"]').should("not.exist");
+      cy.contains("Take photo").click();
+      cy.contains("Capture").click();
+      cy.get('img[alt="contact photo"]').should("be.visible");
+
       cy.contains("Admin").click();
       cy.deleteContactGroup(group);
     });
