@@ -353,10 +353,11 @@ class RegistrationRole(models.Model):
     hide_for_nomination = models.BooleanField(
         default=False, help_text="Hide this role in the nomination form."
     )
+    sort_order = models.PositiveIntegerField(default=0)
     kronos_value = KronosEnum()
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("sort_order", "name")
 
     def __str__(self):
         return self.name
@@ -579,6 +580,12 @@ class Registration(models.Model):
     date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField(default=False)
+    sort_order = models.PositiveIntegerField(
+        default=None,
+        null=True,
+        blank=True,
+        help_text="Override the role sort order for this registration.",
+    )
 
     # Save the state of organization, designation, and department as it
     # was when the contact registered

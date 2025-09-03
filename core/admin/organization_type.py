@@ -21,5 +21,6 @@ class OrganizationTypeAdmin(ExportMixin, ModelAdmin):
         "badge_title",
         "statistics_title",
         "description",
+        "sort_order",
     )
     readonly_fields = ("organization_type_id",)

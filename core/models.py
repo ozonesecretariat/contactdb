@@ -72,11 +72,12 @@ class OrganizationType(models.Model):
     )
     badge_color = ColorField(default="#7f97ab")
     description = models.TextField(blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     objects = OrganizationTypeManager()
 
     class Meta:
-        ordering = ("title",)
+        ordering = ("sort_order", "title")
 
     def __str__(self):
         return f"{self.title} ({self.acronym})"
@@ -141,9 +142,10 @@ class Organization(models.Model):
         "Contact", related_name="secondary_for_orgs"
     )
     include_in_invitation = models.BooleanField(default=True)
+    sort_order = models.PositiveIntegerField(default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ["name", "country__name"]
+        ordering = ("sort_order", "name", "country__name")
 
     def __str__(self):
         if self.government:

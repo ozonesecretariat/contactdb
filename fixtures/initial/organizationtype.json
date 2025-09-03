@@ -8,7 +8,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "Academia/Expert"
+      "description": "Academia/Expert",
+      "sort_order": 20
     }
   },
   {
@@ -20,7 +21,8 @@
       "badge_title": "",
       "statistics_title": "",
       "badge_color": "#7f97ab",
-      "description": "Assessment Panels"
+      "description": "Assessment Panels",
+      "sort_order": 30
     }
   },
   {
@@ -32,7 +34,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "Exhibitors"
+      "description": "Exhibitors",
+      "sort_order": 20
     }
   },
   {
@@ -44,7 +47,8 @@
       "badge_title": "Parties",
       "statistics_title": "Parties",
       "badge_color": "#df3e24",
-      "description": "Government"
+      "description": "Government",
+      "sort_order": 10
     }
   },
   {
@@ -56,7 +60,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "IGOs"
+      "description": "IGOs",
+      "sort_order": 20
     }
   },
   {
@@ -68,7 +73,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "Industry"
+      "description": "Industry",
+      "sort_order": 20
     }
   },
   {
@@ -80,7 +86,8 @@
       "badge_title": "",
       "statistics_title": "",
       "badge_color": "#7f97ab",
-      "description": "Interpreters"
+      "description": "Interpreters",
+      "sort_order": 60
     }
   },
   {
@@ -92,7 +99,8 @@
       "badge_title": "",
       "statistics_title": "",
       "badge_color": "#7f97ab",
-      "description": "Local Support"
+      "description": "Local Support",
+      "sort_order": 60
     }
   },
   {
@@ -104,7 +112,8 @@
       "badge_title": "",
       "statistics_title": "",
       "badge_color": "#7f97ab",
-      "description": "Media"
+      "description": "Media",
+      "sort_order": 60
     }
   },
   {
@@ -116,7 +125,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "NGOs"
+      "description": "NGOs",
+      "sort_order": 20
     }
   },
   {
@@ -128,7 +138,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "Observers"
+      "description": "Observers",
+      "sort_order": 20
     }
   },
   {
@@ -140,7 +151,8 @@
       "badge_title": "Observers",
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
-      "description": "Others"
+      "description": "Others",
+      "sort_order": 20
     }
   },
   {
@@ -152,7 +164,8 @@
       "badge_title": "Ozone Secretariat",
       "statistics_title": "Ozone Secretariat",
       "badge_color": "#06aef0",
-      "description": "Secretariat"
+      "description": "Secretariat",
+      "sort_order": 40
     }
   },
   {
@@ -164,7 +177,8 @@
       "badge_title": "United Nations",
       "statistics_title": "United Nations",
       "badge_color": "#5b92e5",
-      "description": "UN Agencies"
+      "description": "UN Agencies",
+      "sort_order": 50
     }
   }
 ]

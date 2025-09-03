@@ -113,7 +113,7 @@ class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name", "hide_for_nomination")
+    list_display = ("name", "sort_order", "hide_for_nomination")
     list_display_links = ("name",)
 
 
@@ -171,7 +171,14 @@ class RegistrationResource(ModelResource):
 @admin.register(Registration)
 class RegistrationAdmin(ExportMixin, ModelAdmin):
     resource_class = RegistrationResource
-    ordering = ("-created_at",)
+    ordering = (
+        "event",
+        "organization__government",
+        "sort_order",
+        "role__sort_order",
+        "contact__last_name",
+        "contact__first_name",
+    )
     search_fields = [
         "event__title",
         "contact__first_name",
@@ -182,12 +189,16 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "role__name",
         "priority_pass__code",
     ]
-    list_display_links = ("contact", "event")
+    list_display_links = ("contact__last_name", "contact__first_name", "event")
     list_display = (
-        "contact",
+        "contact__first_name",
+        "contact__last_name",
         "event",
+        "organization__government",
         "status",
         "role",
+        "sort_order",
+        "role__sort_order",
         "is_funded",
         "tags_display",
     )
@@ -252,6 +263,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             "Metadata",
             {
                 "fields": (
+                    "sort_order",
                     "tags",
                     "created_at",
                     "updated_at",

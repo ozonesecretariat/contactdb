@@ -42,6 +42,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         "include_in_invitation",
         "contacts_count",
         "id",
+        "sort_order",
     )
     readonly_fields = (
         "organization_id",
@@ -115,7 +116,7 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         (
             "Metadata",
             {
-                "fields": ("organization_id",),
+                "fields": ("organization_id", "sort_order"),
             },
         ),
         (
