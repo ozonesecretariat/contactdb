@@ -1,8 +1,11 @@
+from django.contrib.staticfiles import finders
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml import OxmlElement, ns
 from docx.oxml.ns import qn
+from docx.shared import Length
 from docx.table import Table
+from docx.text.paragraph import Paragraph
 
 
 def set_repeat_table_header(row):
@@ -18,20 +21,40 @@ def set_cell(
     table: Table,
     row: int,
     col: int,
-    text: str,
+    text: str = "",
+    image: str = None,
+    image_width: Length = None,
+    image_height: Length = None,
     style: str = None,
     align: WD_PARAGRAPH_ALIGNMENT = None,
     v_align: WD_CELL_VERTICAL_ALIGNMENT = None,
     bg_color: str = None,
+    font_size: Length = None,
+    bold: bool = None,  # noqa: FBT001
+    space_after: Length = None,
+    cell_width: Length = None,
 ):
     cell = table.cell(row, col)
     cell.text = ""
 
+    if cell_width:
+        cell.width = cell_width
+
     p = cell.paragraphs[0]
-    p.add_run(text)
+    run = p.add_run(text)
+    if image:
+        run.add_picture(finders.find(image), width=image_width, height=image_height)
 
     p.style = style
     p.alignment = align
+
+    if font_size:
+        run.font.size = font_size
+    if bold is not None:
+        run.font.bold = bold
+    if space_after is not None:
+        p.paragraph_format.space_after = space_after
+
     if bg_color:
         shd = OxmlElement("w:shd")
         shd.set(qn("w:fill"), bg_color)
@@ -66,7 +89,7 @@ def set_table_border(
     return table
 
 
-def insert_hr(paragraph):
+def insert_hr(paragraph: Paragraph, size=6):
     p = paragraph._p  #
     p_pr = p.get_or_add_pPr()
     p_bdr = OxmlElement("w:pBdr")
@@ -102,7 +125,7 @@ def insert_hr(paragraph):
     )
     bottom = OxmlElement("w:bottom")
     bottom.set(qn("w:val"), "single")
-    bottom.set(qn("w:sz"), "6")
+    bottom.set(qn("w:sz"), str(size))
     bottom.set(qn("w:space"), "1")
     bottom.set(qn("w:color"), "auto")
     p_bdr.append(bottom)

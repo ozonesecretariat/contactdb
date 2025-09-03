@@ -139,7 +139,6 @@ class ListOfParticipants:
         insert_hr(footer.paragraphs[0])
         table = footer.add_table(1, 2, USABLE_WIDTH)
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
-        table.left_indent = ZERO
         set_table_border(table, size=0, border_type="none")
 
         p = table.cell(0, 0).paragraphs[0]
@@ -194,6 +193,168 @@ class ListOfParticipants:
             key_l2=lambda r: r.usable_organization_name,
         )
 
+    def cover_page(self):
+        section = self.doc.sections[0]
+        section.top_margin = Inches(0.5)
+        section.bottom_margin = Inches(0.5)
+        section.left_margin = Inches(0.8)
+        section.right_margin = Inches(0.8)
+
+        self.cover_page_header()
+        self.cover_page_logos()
+        self.cover_page_event()
+
+        p = self.doc.add_paragraph()
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        r = p.add_run("\n\n\nList of Participants")
+        r.font.size = Pt(32)
+        r.font.bold = True
+
+    def cover_page_header(self):
+        table = self.doc.add_table(1, 2)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        table.style.font.name = "Arial"
+        table.style.paragraph_format.space_after = ZERO
+
+        set_table_border(table, size=0, border_type="none")
+
+        set_cell(
+            table=table,
+            row=0,
+            col=0,
+            text="UNITED\nNATIONS",
+            align=WD_PARAGRAPH_ALIGNMENT.LEFT,
+            font_size=Pt(16),
+            bold=True,
+            space_after=ZERO,
+        )
+        set_cell(
+            table=table,
+            row=0,
+            col=1,
+            text="EP",
+            align=WD_PARAGRAPH_ALIGNMENT.RIGHT,
+            font_size=Pt(32),
+            bold=True,
+            space_after=ZERO,
+        )
+
+        p = self.doc.add_paragraph()
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        r = p.add_run("UNEP/")
+        r.font.size = Pt(16)
+        r.font.bold = True
+        insert_hr(p)
+
+    def cover_page_logos(self):
+        logo_size = Inches(1)
+        col1_width = Inches(1.4)
+        col2_width = Inches(5.5)
+
+        table = self.doc.add_table(2, 2)
+        table.allow_autofit = False
+        table.columns[0].width = col1_width
+        table.columns[1].width = col2_width
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        set_table_border(table, size=0, border_type="none")
+
+        set_cell(
+            table=table,
+            row=0,
+            col=0,
+            image="img/UN-logo.png",
+            image_width=logo_size,
+            image_height=logo_size,
+            align=WD_PARAGRAPH_ALIGNMENT.CENTER,
+            v_align=WD_CELL_VERTICAL_ALIGNMENT.CENTER,
+            space_after=ZERO,
+            cell_width=col1_width,
+        )
+        set_cell(
+            table=table,
+            row=0,
+            col=1,
+            text="\n".join(
+                [
+                    "Distr.: General",
+                    self.event.end_date.strftime("%-d %b %Y"),
+                    "",
+                    "English only",
+                ]
+            ),
+            align=WD_PARAGRAPH_ALIGNMENT.RIGHT,
+            font_size=Pt(12),
+            space_after=ZERO,
+            cell_width=col2_width,
+        )
+
+        set_cell(
+            table=table,
+            row=1,
+            col=0,
+            image="img/UNEP-logo.png",
+            image_width=logo_size,
+            image_height=logo_size,
+            align=WD_PARAGRAPH_ALIGNMENT.CENTER,
+            v_align=WD_CELL_VERTICAL_ALIGNMENT.CENTER,
+            space_after=ZERO,
+            cell_width=col1_width,
+        )
+        set_cell(
+            table=table,
+            row=1,
+            col=1,
+            text="\n".join(
+                [
+                    "United Nations",
+                    "Environment",
+                    "Programme",
+                ]
+            ),
+            align=WD_PARAGRAPH_ALIGNMENT.LEFT,
+            v_align=WD_CELL_VERTICAL_ALIGNMENT.CENTER,
+            font_size=Pt(16),
+            space_after=ZERO,
+            bold=True,
+            cell_width=col2_width,
+        )
+
+        p = self.doc.add_paragraph()
+        insert_hr(p, 32)
+
+    def cover_page_event(self):
+        table = self.doc.add_table(2, 2)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        set_table_border(table, size=0, border_type="none")
+        set_cell(
+            table=table,
+            row=0,
+            col=0,
+            text="\n".join(
+                [
+                    self.event.title,
+                    self.event.code,
+                ]
+            ),
+            font_size=Pt(12),
+            space_after=ZERO,
+            bold=True,
+        )
+
+        set_cell(
+            table=table,
+            row=1,
+            col=0,
+            text=", ".join(
+                [
+                    self.event.venue_city,
+                    self.event.dates,
+                ]
+            ),
+            font_size=Pt(12),
+            space_after=ZERO,
+        )
+
     def configure_section(self, section, header_text):
         section.different_first_page_header_footer = False
         section.top_margin = TOP_MARGIN
@@ -223,7 +384,6 @@ class ListOfParticipants:
 
         table = header.add_table(1, 1, USABLE_WIDTH)
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
-        table.left_indent = ZERO
         set_cell(
             table=table,
             row=0,
@@ -235,11 +395,6 @@ class ListOfParticipants:
             bg_color="#e0e0e0",
         )
         header.add_paragraph("", style="LOP Table Space")
-
-    def cover_page(self):
-        self.doc.add_heading("List of Participants", level=1)
-        self.doc.add_paragraph("")
-        self.doc.add_heading(self.event.title, level=2)
 
     def grouped_participants(
         self,
@@ -267,8 +422,7 @@ class ListOfParticipants:
                 items = list(l2_group_items)
 
                 table = self.doc.add_table(len(items) + 1, 2, style="LOP Table")
-                table.alignment = WD_TABLE_ALIGNMENT.LEFT
-                table.left_indent = ZERO
+                table.alignment = WD_TABLE_ALIGNMENT.CENTER
                 table.allow_autofit = False
                 # Set the column widths here but also for individual cells later.
                 # Required since Word doesn't understand column width, unlike other
