@@ -1,7 +1,8 @@
 import io
 import itertools
+import math
 from enum import Enum
-from typing import Callable, Iterable
+from typing import Callable, Optional
 
 from django.utils import timezone
 from docx import Document
@@ -45,6 +46,7 @@ class ListOfParticipants:
     def __init__(self, event):
         self.doc = Document()
         self.event = event
+        self.global_index = 0
         self.all_registrations = list(
             self.event.registrations.filter(status=Registration.Status.REGISTERED)
             .prefetch_related(
@@ -56,9 +58,19 @@ class ListOfParticipants:
                 "organization__government__region",
                 "organization__government__subregion",
             )
-            .order_by("organization__government__name", "organization__name")
+            .order_by("contact__last_name", "contact__first_name")
         )
-        self.global_index = 0
+        self.sections = {s: [] for s in Section}
+
+        for r in self.all_registrations:
+            if r.is_gov and r.usable_government:
+                self.sections[Section.PARTIES].append(r)
+            elif r.is_ass_panel:
+                self.sections[Section.ASS_PANELS].append(r)
+            elif r.is_secretariat:
+                self.sections[Section.SECRETARIAT].append(r)
+            else:
+                self.sections[Section.OBSERVERS].append(r)
 
     def export_docx(self):
         self.init_docx()
@@ -143,46 +155,43 @@ class ListOfParticipants:
     def get_content(self):
         self.cover_page()
 
-        sections = {
-            Section.PARTIES: [],
-            Section.ASS_PANELS: [],
-            Section.OBSERVERS: [],
-            Section.SECRETARIAT: [],
-        }
-
-        for r in self.all_registrations:
-            if r.is_gov and r.usable_government:
-                sections[Section.PARTIES].append(r)
-            elif r.is_ass_panel:
-                sections[Section.ASS_PANELS].append(r)
-            elif r.is_secretariat:
-                sections[Section.SECRETARIAT].append(r)
-            else:
-                sections[Section.OBSERVERS].append(r)
-
-        self.configure_section(self.doc.add_section(), Section.PARTIES.value)
         self.grouped_participants(
-            sections[Section.PARTIES],
-            lambda r: r.usable_government.name,
+            section=Section.PARTIES,
+            sort=lambda r: (
+                r.usable_government.name,
+                r.sort_order or r.role.sort_order,
+            ),
+            key_l1=None,
+            key_l2=lambda r: r.usable_government.name,
         )
-
-        self.configure_section(self.doc.add_section(), Section.ASS_PANELS.value)
         self.grouped_participants(
-            sections[Section.ASS_PANELS],
-            lambda r: r.usable_organization_name,
+            section=Section.ASS_PANELS,
+            sort=lambda r: (
+                r.organization.sort_order or math.inf,
+                r.usable_organization_name,
+            ),
+            key_l1=None,
+            key_l2=lambda r: r.usable_organization_name,
         )
-
-        self.configure_section(self.doc.add_section(), Section.OBSERVERS.value)
         self.grouped_participants(
-            sections[Section.OBSERVERS],
-            lambda r: r.usable_organization_name or "Unknown",
-            lambda r: r.usable_organization_type_description or "Unknown",
+            section=Section.OBSERVERS,
+            sort=lambda r: (
+                r.usable_organization_type_sort_order,
+                r.usable_organization_type_description or "Unknown",
+                r.usable_organization_sort_order,
+                r.usable_organization_name or "Unknown",
+            ),
+            key_l1=lambda r: r.usable_organization_type_description or "Unknown",
+            key_l2=lambda r: r.usable_organization_name,
         )
-
-        self.configure_section(self.doc.add_section(), Section.SECRETARIAT.value)
         self.grouped_participants(
-            sections[Section.SECRETARIAT],
-            lambda r: r.usable_organization_name,
+            section=Section.SECRETARIAT,
+            sort=lambda r: (
+                r.organization.sort_order or math.inf,
+                r.usable_organization_name,
+            ),
+            key_l1=None,
+            key_l2=lambda r: r.usable_organization_name,
         )
 
     def configure_section(self, section, header_text):
@@ -234,23 +243,26 @@ class ListOfParticipants:
 
     def grouped_participants(
         self,
-        registrations: Iterable[Registration],
-        key1: Callable[[Registration], str],
-        key2: Callable[[Registration], str] = None,
+        section: Section,
+        sort: Callable[[Registration], tuple],
+        key_l1: Optional[Callable[[Registration], str]],
+        key_l2: Callable[[Registration], str],
     ):
-        registrations = sorted(registrations, key=lambda r: r.contact.full_name)
-        registrations = sorted(registrations, key=key1)
-        if key2:
-            registrations = sorted(registrations, key=key2)
-        else:
-            key2 = lambda x: ""  # noqa: E731
+        self.configure_section(self.doc.add_section(), section.value)
 
-        for l1_group_name, l1_group_items in itertools.groupby(registrations, key=key2):
+        registrations = sorted(self.sections[section], key=sort)
+
+        if not key_l1:
+            key_l1 = lambda x: ""  # noqa: E731
+
+        for l1_group_name, l1_group_items in itertools.groupby(
+            registrations, key=key_l1
+        ):
             if l1_group_name:
                 self.doc.add_paragraph(l1_group_name, style="LOP L1 Group")
 
             for l2_group_name, l2_group_items in itertools.groupby(
-                l1_group_items, key=key1
+                l1_group_items, key=key_l2
             ):
                 items = list(l2_group_items)
 
@@ -258,6 +270,9 @@ class ListOfParticipants:
                 table.alignment = WD_TABLE_ALIGNMENT.LEFT
                 table.left_indent = ZERO
                 table.allow_autofit = False
+                # Set the column widths here but also for individual cells later.
+                # Required since Word doesn't understand column width, unlike other
+                # engines like LibreOffice.
                 table.columns[0].width = INDEX_COL_WIDTH
                 table.columns[1].width = CONTACT_COL_WIDTH
                 set_table_border(table, size=0, border_type="none")

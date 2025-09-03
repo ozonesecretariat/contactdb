@@ -1,3 +1,4 @@
+import math
 import uuid
 from urllib.parse import urljoin
 
@@ -668,6 +669,20 @@ class Registration(models.Model):
             return self.organization.name
         except AttributeError:
             return None
+
+    @property
+    def usable_organization_sort_order(self) -> int | float:
+        try:
+            return self.usable_organization.sort_order
+        except AttributeError:
+            return math.inf
+
+    @property
+    def usable_organization_type_sort_order(self) -> int | float:
+        try:
+            return self.usable_organization.organization_type.sort_order
+        except AttributeError:
+            return math.inf
 
     @property
     def usable_organization_type_description(self) -> str | None:
