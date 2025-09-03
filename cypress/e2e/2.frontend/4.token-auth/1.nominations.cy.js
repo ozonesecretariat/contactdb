@@ -25,6 +25,11 @@ describe("Check nominations page", () => {
     cy.contains("Guatemala");
     cy.visit("/token/123e4567-e89b-12d3-a456-426614174000/nominations");
     cy.contains("Galactic Research Institute for Advanced Technologies");
+    cy.contains("1-1 of 1");
+    // Check the information appears in the nominate participant dialog as well
+    cy.get("[aria-label=Edit]").click();
+    cy.get("[role=dialog]").contains("Uzbekistan");
+    cy.get("[role=dialog]").contains("Galactic Research Institute for Advanced Technologies");
   });
   it("Find existing contact", () => {
     cy.visit("/token/123e4567-e89b-12d3-a456-426614174000/nominations");

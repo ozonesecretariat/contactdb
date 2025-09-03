@@ -4,47 +4,16 @@
     <div v-if="errors.contact" class="text-negative">
       {{ errors.contact }}
     </div>
-    <div class="bg-grey-2 q-pa-md rounded-borders">
-      <div class="row items-start justify-between">
-        <div class="col">
-          <div class="col-10 q-gutter-x-lg">
-            <p class="text-h6 text-secondary">
-              {{ participant?.fullName }}
-            </p>
-            <div class="text-subtitle1">
-              {{ participant.designation }}
-              <br v-if="participant.designation && participant.department" />
-              {{ participant.department }}
-            </div>
-            <div class="text-h6">
-              {{ participant.organization?.name }}
-            </div>
-            <div v-if="participant.organization?.government" class="text-h6">
-              {{ participant.organization?.government?.name }}
-            </div>
-          </div>
-          <div class="row items-start justify-left q-mt-md q-col-gutter-sm">
-            <div v-if="addressEntity" class="col-6">
-              {{ addressEntity.address }}
-              <br v-if="addressEntity.address" />
-              {{ addressEntity.city }}
-              {{ addressEntity.state }}
-              {{ addressEntity.postalCode }}
-              <br v-if="addressEntity.city || addressEntity.state || addressEntity.postalCode" />
-              {{ country }}
-            </div>
-            <div>
-              Email: {{ participant.emails?.[0] ?? "-" }}
-              <br />
-              Mobile: {{ participant.mobiles?.[0] ?? "-" }}
-            </div>
-          </div>
-        </div>
-        <div class="col-2 q-gutter-y-md">
+    <div class="bg-grey-2 rounded-borders">
+      <participant-card
+        v-if="invitation.participant"
+        :participant="invitation.participant"
+        :photo-url="invitation.getPhotoUrl(participant.id)"
+      >
+        <template #buttons>
           <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
-          <q-img v-if="participant.hasPhoto" :src="invitation.getPhotoUrl(participant.id)" alt="" />
-        </div>
-      </div>
+        </template>
+      </participant-card>
     </div>
   </q-card-section>
   <q-card-section v-if="participant" class="col-grow">
@@ -131,6 +100,7 @@ import type { MeetingEvent } from "src/types/event";
 import type { EventNomination } from "src/types/nomination";
 
 import { api } from "boot/axios";
+import ParticipantCard from "components/ParticipantCard.vue";
 import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
@@ -140,15 +110,6 @@ const router = useRouter();
 const loading = ref(false);
 const invitation = useInvitationStore();
 const participant = computed(() => invitation.participant);
-const country = computed(() => {
-  if (invitation.participant?.isUseOrganizationAddress) {
-    return invitation.participant.organization?.country?.name ?? invitation.participant.organization?.government?.name;
-  }
-  return invitation.countries.find((_country) => _country.code === invitation.participant?.country)?.name;
-});
-const addressEntity = computed(() =>
-  invitation.participant?.isUseOrganizationAddress ? invitation.participant?.organization : invitation.participant,
-);
 
 const { errors, setErrors } = useFormErrors();
 const nominations = reactive<Record<string, string>>({});

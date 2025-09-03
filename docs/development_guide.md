@@ -76,3 +76,5 @@ the following credentials:
 - test-non-staff@example.com / test
 - test-non-staff-view@example.com / test
 - test-non-staff-no-access@example.com / test
+- test-security@example.com / test
+- test-support@example.com / test

@@ -5,6 +5,7 @@ export interface Contact {
   address: string;
   city: string;
   country: string;
+  countryName: string;
   department: string;
   designation: string;
   emailCcs: string[];

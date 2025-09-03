@@ -6,55 +6,49 @@
 {% block head %}
   <style>
     .front {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      display: grid;
+      grid-template-columns: 270px 90px;
+      grid-template-rows: 60px auto min-content;
+      overflow: hidden;
     }
 
-    .header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.5rem;
+    .logo {
+      justify-self: start;
     }
 
-    .logos {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
+    .badge-qr {
+      justify-self: center;
     }
 
-    .event-logo {
-      width: 10rem;
+    .photo {
+      align-self: center;
     }
 
-    .ozone-logo {
-      width: 5rem;
+    .participant-details {
+      justify-self: start;
+      align-self: center;
     }
 
-    .qr-code {
-      width: 5rem;
-      margin-right: 0.5rem;
-    }
-
-    .participant-info {
-      flex-grow: 1;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      line-height: 1.3;
+    .first-name,
+    .last-name,
+    .country,
+    .organization {
+      max-width: 16rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
     }
 
     .first-name {
       font-size: 14px;
+      max-height: 34px;
     }
 
     .last-name {
       font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
+      max-height: 38px;
     }
 
     .country {
@@ -62,15 +56,22 @@
       font-size: 18px;
     }
 
-    .participant-photo {
-      width: 7rem;
-      height: 7rem;
+    .organization {
+      font-size: 12px;
+      max-height: 58px;
     }
 
     .pass-code {
-      margin-top: 0.25rem;
       font-size: 10px;
       text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .valid-date-range {
+      font-size: 10px;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 0.25rem;
     }
 
     .participant-type {
@@ -80,39 +81,43 @@
       text-transform: uppercase;
       padding: 0.25rem 0.5rem;
       text-align: center;
+      height: 1.5rem;
+
+      grid-column: span 2;
+      align-self: end;
     }
   </style>
 {% endblock head %}
 
 {% block front %}
-  <div class="header">
-    <div class="logos">
-      {% if main_event.event_logo %}
-        <div class="event-logo">
-          <img src="{{ main_event.event_logo.url }}" alt="event logo" />
-        </div>
-      {% endif %}
-      <div class="ozone-logo">
-        <img src="{% static 'img/logo.png' %}" alt="ozone logo" />
-      </div>
-    </div>
-    <div class="qr-code">{% qr_from_text qr_url image_format='png' %}</div>
+  {% if main_event.event_logo %}
+    <img src="{{ main_event.event_logo.url }}" alt="event logo" class="logo" />
+  {% else %}
+    <img src="{% static 'img/logo.png' %}" alt="ozone logo" class="logo" />
+  {% endif %}
+  {% qr_from_text qr_url image_format='png' class_names="badge-qr" %}
+  <div class="participant-details">
+    <div class="first-name">{{ contact.first_name }}</div>
+    <div class="last-name">{{ contact.last_name }}</div>
+    {% if priority_pass.is_gov %}
+      <div class="country">{{ country.name|default:'' }}</div>
+    {% else %}
+      <div class="organization">{{ organization_name }}</div>
+    {% endif %}
   </div>
-  <div class="participant-info">
-    <div>
-      <div class="first-name">{{ contact.first_name }}</div>
-      <div class="last-name">{{ contact.last_name }}</div>
-      {% if priority_pass.is_gov %}
-        <div class="country">{{ country.name|default:'' }}</div>
+  <div class="photo">
+    <div class="pass-code">{{ priority_pass.code }}</div>
+    {% if contact.photo %}
+      <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
+    {% endif %}
+    <div class="valid-date-range">
+      {% if priority_pass.valid_date_range %}
+        Valid from
+        <br />
+        {{ priority_pass.valid_date_range }}
+      {% else %}
+        NOT REGISTERED
       {% endif %}
-    </div>
-    <div>
-      {% if contact.photo %}
-        <div class="participant-photo">
-          <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
-        </div>
-      {% endif %}
-      <div class="pass-code">{{ priority_pass.code }}</div>
     </div>
   </div>
   <div class="participant-type" style="background-color: {{ organization.organization_type.badge_color }}">

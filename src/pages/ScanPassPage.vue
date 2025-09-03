@@ -4,7 +4,6 @@
     <take-photo ref="takePhotoRef" @capture="setPicture" />
     <search-pass ref="searchPassRef" @code="setCode" />
 
-    <p class="text-grey">Scan QR or enter code</p>
     <section class="flex items-center justify-between q-col-gutter-md">
       <div class="flex q-gutter-md items-center">
         <q-btn label="Scan code" color="secondary" icon="qr_code_scanner" @click="codeScannerRef?.show()" />
@@ -25,54 +24,31 @@
     <div v-if="pass" class="pass-container">
       <section class="contact-section q-mt-lg">
         <q-card flat bordered class="contact-card">
-          <div class="row wrap">
-            <q-card-section class="q-pt-xs col-grow">
-              <div class="text-overline">{{ pass.code }} | {{ pass.country?.name }}</div>
-              <div class="text-h5 q-mt-sm q-mb-xs">
-                {{ pass.contact?.fullName }}
-              </div>
-              <div class="text-caption text-grey">
-                {{ pass.contact?.designation ?? "-" }}
-                <br />
-                <b>
-                  {{ pass.organization?.name ?? "-" }}
-                </b>
-              </div>
-              <div class="text-body1">
-                <ul>
-                  <li>
-                    <b>Emails:</b>
-                    {{ pass.contact?.emails?.join(", ") || "-" }}
-                  </li>
-                  <li>
-                    <b>Phones:</b>
-                    {{ pass.contact?.phones?.join(", ") || "-" }}
-                  </li>
-                  <li>
-                    <b>Department:</b>
-                    {{ pass.contact?.department || "-" }}
-                  </li>
-                </ul>
-              </div>
-            </q-card-section>
-
-            <q-card-section class="col-5 flex flex-center contact-photo">
-              <q-img v-if="photoUrl" :src="photoUrl" alt="" />
-              <p v-else class="text-grey">No photo uploaded</p>
-            </q-card-section>
-          </div>
+          <participant-card
+            v-if="pass.contact"
+            :participant="pass.contact"
+            :organization="pass.organization"
+            :photo-url="photoUrl"
+            :hide-contact-info="!canViewRegistration"
+          />
 
           <q-separator />
 
-          <q-card-actions>
-            <q-btn color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">Print badge</q-btn>
+          <q-card-actions v-if="canViewRegistration || canEditContact">
+            <q-btn v-if="canViewRegistration" color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">
+              Print badge
+            </q-btn>
             <q-btn v-if="canEditContact" color="primary" icon="photo_camera" @click="takePhotoRef?.show()">
               Take photo
             </q-btn>
           </q-card-actions>
         </q-card>
+        <div class="registrations-section q-pt-lg text-subtitle1 text-white">
+          <q-card v-if="validRange" flat bordered class="valid-card bg-positive">Registered {{ validRange }}</q-card>
+          <q-card v-else flat bordered class="valid-card bg-negative">Not registered</q-card>
+        </div>
       </section>
-      <div class="registrations-section">
+      <div v-if="canViewRegistration" class="registrations-section">
         <section v-for="registration in registrations" :key="registration.id" class="q-mt-lg">
           <q-card flat bordered class="event-card" :class="cardColors[registration.status]">
             <q-card-section>
@@ -126,6 +102,7 @@ import type { Registration } from "src/types/registration";
 import { useRouteQuery } from "@vueuse/router";
 import { api, apiBase, apiURL } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
+import ParticipantCard from "components/ParticipantCard.vue";
 import SearchPass from "components/SearchPass.vue";
 import TakePhoto from "components/TakePhoto.vue";
 import { useQuasar } from "quasar";
@@ -142,11 +119,17 @@ const searchPassRef = useTemplateRef("searchPassRef");
 const passCode = useRouteQuery<string>("code", "");
 const pass = ref<null | PriorityPass>(null);
 const loading = ref(false);
+// Not really here for security reasons, just to decide when to show a more compact view.
+// Only users that can view the priority pass can get to this page anyway.
+const canViewRegistration = computed(() => userStore.permissions.includes("events.view_registration"));
+// Check who has edit permissions
 const canEditContact = computed(() => userStore.permissions.includes("core.change_contact"));
 const canEditRegistration = computed(() => userStore.permissions.includes("events.change_registration"));
 const registrations = computed(() =>
   [...(pass.value?.registrations ?? [])].sort((a, b) => (a.event.code > b.event.code ? 1 : -1)),
 );
+const validRange = computed(() => pass?.value?.validDateRange);
+
 const badgeUrl = computed(() => {
   if (!pass?.value?.badgeUrl) return "";
 
@@ -265,13 +248,19 @@ async function updateRegistrationStatus(registration: Registration, newStatus: R
 }
 
 .contact-card,
-.event-card {
+.event-card,
+.valid-card {
   max-width: 40rem;
+}
+
+.valid-card {
+  padding: 0.25rem 1rem;
 }
 
 @media (min-width: 2000px) {
   .contact-card,
-  .event-card {
+  .event-card,
+  .valid-card {
     max-width: 50rem;
   }
 }

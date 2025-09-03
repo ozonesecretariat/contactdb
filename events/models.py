@@ -489,23 +489,78 @@ class PriorityPass(models.Model):
 
         return registrations[0].event
 
+    def _filter_registrations(self, status: "Registration.Status"):
+        # Filter here instead of SQL to take advantage of prefetching.
+        return [
+            registration
+            for registration in self.registrations.all()
+            if registration.status == status
+        ]
+
     @property
     def accredited_registrations(self):
-        result = []
-        for registration in self.registrations.all():
-            if registration.status == Registration.Status.ACCREDITED:
-                result.append(registration)
-
-        return result
+        return self._filter_registrations(Registration.Status.ACCREDITED)
 
     @property
     def revoked_registrations(self):
-        result = []
-        for registration in self.registrations.all():
-            if registration.status == Registration.Status.REVOKED:
-                result.append(registration)
+        return self._filter_registrations(Registration.Status.REVOKED)
 
-        return result
+    @property
+    def registered_registrations(self):
+        return self._filter_registrations(Registration.Status.REGISTERED)
+
+    @property
+    def valid_from(self):
+        try:
+            return min(reg.event.start_date for reg in self.registered_registrations)
+        except ValueError:
+            return None
+
+    @property
+    def valid_to(self):
+        try:
+            return max(reg.event.end_date for reg in self.registered_registrations)
+        except ValueError:
+            return None
+
+    @property
+    def valid_date_range(self):
+        date_fmt = "%-d %b %Y"
+        start, end = self.valid_from, self.valid_to
+
+        if not start and not end:
+            return ""
+
+        if start == end or (bool(start) ^ bool(end)):
+            return (start or end).strftime(date_fmt)
+
+        if end < start:
+            start, end = end, start
+
+        same_year = start.year == end.year
+        same_month = start.month == end.month
+
+        if same_year and same_month:
+            return "{start_day}-{end_day} {month} {year}".format(
+                month=start.strftime("%b"),
+                start_day=start.day,
+                end_day=end.day,
+                year=start.year,
+            )
+
+        if same_year:
+            return "{start_day} {start_month} - {end_day} {end_month} {year}".format(
+                start_month=start.strftime("%b"),
+                start_day=start.day,
+                end_month=end.strftime("%b"),
+                end_day=end.day,
+                year=start.year,
+            )
+
+        return "{start_date} to {end_date}".format(
+            start_date=start.strftime(date_fmt),
+            end_date=end.strftime(date_fmt),
+        )
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:
