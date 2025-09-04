@@ -283,7 +283,7 @@ requires-dist = [
     { name = "django-health-check", specifier = ">=3.19.0" },
     { name = "django-import-export", extras = ["xlsx"], specifier = ">=4.3.7" },
     { name = "django-model-utils", specifier = ">=5.0.0" },
-    { name = "django-more-admin-filters", specifier = ">=1.12" },
+    { name = "django-more-admin-filters", specifier = ">=1.13" },
     { name = "django-object-actions", specifier = ">=5.0.0" },
     { name = "django-qr-code", specifier = ">=4.2.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
@@ -698,14 +698,14 @@ wheels = [
 
 [[package]]
 name = "django-more-admin-filters"
-version = "1.12"
+version = "1.13"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2d/2c/0332ae4d2e2b668b6f736423efa11c63f59fa85b264da58e70ff22b738e0/django_more_admin_filters-1.12.tar.gz", hash = "sha256:7ee9bff0e644ff4021ac17e7e20152a0eeabe5185f7a827cce38faa9d4d1248a", size = 15797, upload-time = "2025-03-16T16:04:44.204Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/1d/be47d51784da6dddabddb163daefe6d8ffbd754063060535ff135b62a4ee/django_more_admin_filters-1.13.tar.gz", hash = "sha256:5707dbb28a252e624d207929af2f11a05b4d7224d6f17b4a13ca202188d8786d", size = 16013, upload-time = "2025-06-06T11:26:50.017Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/b4/5f3dba20a6a88f6d545361330d020f67167f63151bc2a9cfac2123aec428/django_more_admin_filters-1.12-py3-none-any.whl", hash = "sha256:012800bae780f973a3d88140873786d0cd9c03ef1155e148c022351b0aa226b0", size = 112598, upload-time = "2025-03-16T16:04:37.044Z" },
+    { url = "https://files.pythonhosted.org/packages/87/7c/4b261b96b357d94ef267f39856ef0bb72a33f078a38bd22ee96d168fe272/django_more_admin_filters-1.13-py3-none-any.whl", hash = "sha256:df4d46e4b589566b85f149ea5b7558c6cc4ae22b0d264973f8d4a2d478ef5120", size = 147360, upload-time = "2025-06-06T11:26:42.964Z" },
 ]
 
 [[package]]
