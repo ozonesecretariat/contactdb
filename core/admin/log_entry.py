@@ -13,15 +13,20 @@ admin.site.unregister(LogEntry)
 class CustomLogEntryAdmin(LogEntryAdmin):
     list_per_page = 20
     show_facets = ShowFacets.NEVER
-
     search_fields = [
         "object_repr",
         "object_id",
     ]
-
     list_filter = [
         "action",
         ResourceTypeFilter,
         AutocompleteFilterFactory("user", "actor"),
         ("timestamp", DateRangeFilterBuilder()),
+    ]
+    list_display = [
+        "created",
+        "resource_url",
+        "action",
+        "msg_short",
+        "user_url",
     ]
