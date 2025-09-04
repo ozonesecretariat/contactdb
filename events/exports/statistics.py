@@ -198,9 +198,7 @@ class PreMeetingStatistics:
         self.doc.add_paragraph()
 
         for region in self.regions:
-            self.table_parties_by_subregion(
-                region, with_funding=region.code.lower() == "a5"
-            )
+            self.table_parties_by_subregion(region)
             self.doc.add_paragraph()
 
     def table_pax_by_category(self):
@@ -259,7 +257,7 @@ class PreMeetingStatistics:
             ],
         )
 
-    def table_parties_by_subregion(self, region, with_funding=False):
+    def table_parties_by_subregion(self, region):
         all_parties = Counter(
             (
                 country.subregion
@@ -280,28 +278,22 @@ class PreMeetingStatistics:
                 if registration.usable_government.region == region
             )
         )
-
-        header1 = [
-            "Region",
-            "Parties per region",
-            "Parties registered",
-            "Parties to register",
-            "Participants registered",
-        ]
-        header2 = [
-            None,
-            "(a)",
-            "(b)",
-            "(a - b)",
-            None,
-        ]
-        if with_funding:
-            header1.extend(["Funding Requested", None, "Reserved Slots", "Remarks"])
-            header2.extend(["Received", "Approved"])
-
         table = self.table(
             f"Table 3: {region} Parties",
-            [header1, header2],
+            [
+                (
+                    "Region",
+                    "Parties per region",
+                    "Parties registered",
+                    "Parties to register",
+                    "Participants registered",
+                    "Funding Requested",
+                    None,
+                    "Reserved Slots",
+                    "Remarks",
+                ),
+                (None, "(a)", "(b)", "(a - b)", None, "Received", "Approved"),
+            ],
             [
                 (
                     subregion.name,
@@ -325,10 +317,9 @@ class PreMeetingStatistics:
 
         table.cell(1, 0).merge(table.cell(2, 0))
         table.cell(1, 4).merge(table.cell(2, 4))
-        if with_funding:
-            table.cell(1, 5).merge(table.cell(1, 6))
-            table.cell(1, 7).merge(table.cell(2, 7))
-            table.cell(1, 8).merge(table.cell(2, 8))
+        table.cell(1, 5).merge(table.cell(1, 6))
+        table.cell(1, 7).merge(table.cell(2, 7))
+        table.cell(1, 8).merge(table.cell(2, 8))
 
     def save_docx(self):
         doc_file = io.BytesIO()
