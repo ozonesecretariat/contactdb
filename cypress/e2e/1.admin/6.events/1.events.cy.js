@@ -72,4 +72,16 @@ describe("Check", () => {
       filePattern: "NN_FDP-statistics.docx",
     });
   });
+  it("Check download list of participants", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.get("a").contains("LoP").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-LoP.docx",
+    });
+  });
 });
