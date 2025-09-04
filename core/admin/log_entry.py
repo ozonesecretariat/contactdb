@@ -4,6 +4,7 @@ from auditlog.filters import ResourceTypeFilter
 from auditlog.models import LogEntry
 from django.contrib import admin
 from django.contrib.admin import ShowFacets
+from rangefilter.filters import DateRangeFilterBuilder
 
 admin.site.unregister(LogEntry)
 
@@ -22,4 +23,5 @@ class CustomLogEntryAdmin(LogEntryAdmin):
         "action",
         ResourceTypeFilter,
         AutocompleteFilterFactory("user", "actor"),
+        ("timestamp", DateRangeFilterBuilder()),
     ]

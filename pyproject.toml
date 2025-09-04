@@ -8,6 +8,7 @@ dependencies = [
     "django==5.2.*",
     "django-admin-autocomplete-filter>=0.7.1",
     "django-admin-env-notice>=1.0.1",
+    "django-admin-rangefilter>=0.13.3",
     "django-auditlog>=3.1.2",
     "django-ckeditor>=6.7.2",
     "django-colorfield>=0.14.0",
