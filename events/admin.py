@@ -194,7 +194,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     list_display = (
         "contact__first_name",
         "contact__last_name",
-        "event",
+        "event__code",
         "organization__government",
         "status",
         "role",
@@ -411,6 +411,8 @@ class PriorityPassAdmin(ModelAdmin):
         "created_at",
     )
     list_filter = (
+        AutocompleteFilterFactory("event", "registrations__event"),
+        AutocompleteFilterFactory("event group", "registrations__event__group"),
         "registrations__status",
         AutocompleteFilterFactory("contact", "registrations__contact"),
         AutocompleteFilterFactory(
@@ -423,8 +425,6 @@ class PriorityPassAdmin(ModelAdmin):
         AutocompleteFilterFactory(
             "government", "registrations__contact__organization__government"
         ),
-        AutocompleteFilterFactory("event", "registrations__event"),
-        AutocompleteFilterFactory("event group", "registrations__event__group"),
     )
     fields = (
         "code",
