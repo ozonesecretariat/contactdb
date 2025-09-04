@@ -10,7 +10,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Cm, Pt, RGBColor
 
 from core.models import OrganizationType, Region
-from events.exports.docx_utils import set_cell, set_table_border
+from events.exports.docx_utils import set_cell, set_table_border, set_table_caption
 from events.models import Event, Registration
 
 
@@ -30,6 +30,7 @@ class PreMeetingStatistics:
                     continue
             except AttributeError:
                 pass
+            self.accredited_registrations.append(r)
 
         self.accredited_gov_registrations = [
             registration
@@ -98,8 +99,9 @@ class PreMeetingStatistics:
             section.left_margin = Cm(1.5)
             section.right_margin = Cm(1.5)
 
-    def table(self, rows, cols):
+    def table(self, rows, cols, name):
         table = self.doc.add_table(rows, cols, style="Stat Table")
+        set_table_caption(table, name)
         return set_table_border(table)
 
     def th(self, table, row, col, text):
@@ -158,7 +160,9 @@ class PreMeetingStatistics:
         counts = dict.fromkeys(
             (
                 org_type.statistics_display_name
-                for org_type in OrganizationType.objects.all()
+                for org_type in OrganizationType.objects.filter(
+                    hide_in_statistics=False
+                )
             ),
             0,
         )
@@ -172,7 +176,7 @@ class PreMeetingStatistics:
                 counts[name] = 0
             counts[name] += 1
 
-        table = self.table(len(counts) + 2, 2)
+        table = self.table(len(counts) + 2, 2, "Table 1: Registered participants")
         self.th(table, 0, 0, "Category")
         self.th(table, 0, 1, "Pax registered")
 
@@ -191,7 +195,7 @@ class PreMeetingStatistics:
         for party in self.accredited_gov_parties:
             counts[party.region] += 1
 
-        table = self.table(len(counts) + 2, 4)
+        table = self.table(len(counts) + 2, 4, "Table 2: Registered Parties")
 
         table.cell(0, 0).merge(table.cell(0, 1))
         self.th(table, 0, 0, "Parties registered")
@@ -231,7 +235,9 @@ class PreMeetingStatistics:
             )
         )
 
-        table = self.table(len(all_parties) + 3, 8 if with_funding else 5)
+        table = self.table(
+            len(all_parties) + 3, 8 if with_funding else 5, f"Table 3: {region} Parties"
+        )
 
         table.cell(0, 0).merge(table.cell(1, 0))
         self.th(table, 0, 0, f"Region - {region}")

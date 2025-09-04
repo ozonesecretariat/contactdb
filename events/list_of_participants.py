@@ -1,9 +1,9 @@
 import io
 import itertools
-import math
 from enum import Enum
 from typing import Callable, Optional
 
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
@@ -20,6 +20,7 @@ from events.exports.docx_utils import (
     set_cell,
     set_repeat_table_header,
     set_table_border,
+    set_table_caption,
 )
 from events.models import Registration
 
@@ -77,6 +78,7 @@ class ListOfParticipants:
     def get_query(self):
         return (
             self.event.registrations.filter(status=Registration.Status.REGISTERED)
+            .annotate(actual_sort_order=Coalesce("sort_order", "role__sort_order"))
             .prefetch_related(
                 "contact",
                 "contact__country",
@@ -88,7 +90,7 @@ class ListOfParticipants:
                 "organization__government__region",
                 "organization__government__subregion",
             )
-            .order_by("contact__last_name", "contact__first_name")
+            .order_by("actual_sort_order", "contact__last_name", "contact__first_name")
         )
 
     def export_docx(self):
@@ -175,10 +177,7 @@ class ListOfParticipants:
 
         self.grouped_participants(
             section=Section.PARTIES,
-            sort=lambda r: (
-                r.usable_government.name,
-                r.sort_order if r.sort_order is not None else r.role.sort_order,
-            ),
+            sort=lambda r: (r.usable_government.name,),
             key_l1=None,
             key_l2=lambda r: r.usable_government.name,
         )
@@ -205,7 +204,7 @@ class ListOfParticipants:
         self.grouped_participants(
             section=Section.SECRETARIAT,
             sort=lambda r: (
-                r.organization.sort_order or math.inf,
+                r.usable_organization_sort_order,
                 r.usable_organization_name,
             ),
             key_l1=None,
@@ -466,6 +465,7 @@ class ListOfParticipants:
                 table.columns[0].width = INDEX_COL_WIDTH
                 table.columns[1].width = CONTACT_COL_WIDTH
                 set_table_border(table, size=0, border_type="none")
+                set_table_caption(table, l2_group_name)
 
                 header_row = table.rows[0]
                 header_row.cells[0].merge(header_row.cells[1])
@@ -541,7 +541,7 @@ class ListOfParticipants:
 
     def save_docx(self):
         doc_file = io.BytesIO()
-        doc_file.name = f"{self.event.code}-LOP.docx"
+        doc_file.name = f"{self.event.code}-LoP.docx"
         self.doc.save(doc_file)
         doc_file.seek(0)
         return doc_file

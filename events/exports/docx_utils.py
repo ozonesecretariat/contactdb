@@ -89,6 +89,15 @@ def set_table_border(
     return table
 
 
+def set_table_caption(table: Table, name: str):
+    tbl_pr = table._tbl.tblPr
+
+    tbl_name = OxmlElement("w:tblCaption")
+    tbl_name.set(qn("w:val"), name)
+    tbl_pr.append(tbl_name)
+    return table
+
+
 def insert_hr(paragraph: Paragraph, size=6):
     p = paragraph._p  #
     p_pr = p.get_or_add_pPr()
