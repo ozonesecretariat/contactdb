@@ -80,15 +80,17 @@ class ListOfParticipants:
             self.event.registrations.filter(status=Registration.Status.REGISTERED)
             .annotate(actual_sort_order=Coalesce("sort_order", "role__sort_order"))
             .prefetch_related(
+                "role",
                 "contact",
                 "contact__country",
                 "contact__organization",
+                "contact__organization__organization_type",
+                "contact__organization__country",
+                "contact__organization__government",
                 "organization",
                 "organization__organization_type",
                 "organization__country",
                 "organization__government",
-                "organization__government__region",
-                "organization__government__subregion",
             )
             .order_by("actual_sort_order", "contact__last_name", "contact__first_name")
         )
