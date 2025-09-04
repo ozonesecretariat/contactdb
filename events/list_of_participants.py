@@ -177,7 +177,7 @@ class ListOfParticipants:
             section=Section.PARTIES,
             sort=lambda r: (
                 r.usable_government.name,
-                r.sort_order or r.role.sort_order,
+                r.sort_order if r.sort_order is not None else r.role.sort_order,
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_government.name,
@@ -185,8 +185,8 @@ class ListOfParticipants:
         self.grouped_participants(
             section=Section.ASS_PANELS,
             sort=lambda r: (
-                r.organization.sort_order or math.inf,
-                r.usable_organization_name,
+                r.usable_organization_sort_order,
+                r.usable_organization_name or "Unknown",
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
@@ -200,7 +200,7 @@ class ListOfParticipants:
                 r.usable_organization_name or "Unknown",
             ),
             key_l1=lambda r: r.usable_organization_type_description or "Unknown",
-            key_l2=lambda r: r.usable_organization_name,
+            key_l2=lambda r: r.usable_organization_name or "Unknown",
         )
         self.grouped_participants(
             section=Section.SECRETARIAT,
