@@ -321,7 +321,7 @@ Cypress.Commands.addAll({
     cy.fillInputs(filters);
     if (searchValue) {
       cy.get("#searchbar").type(searchValue);
-      cy.get("input[value=Search]").click();
+      cy.get("[role=search] input[value=Search]").click();
     }
   },
   triggerAction({ action, filters = {}, modelName, searchValue = "" }) {

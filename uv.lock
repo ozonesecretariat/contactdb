@@ -209,6 +209,7 @@ dependencies = [
     { name = "django" },
     { name = "django-admin-autocomplete-filter" },
     { name = "django-admin-env-notice" },
+    { name = "django-admin-rangefilter" },
     { name = "django-auditlog" },
     { name = "django-ckeditor" },
     { name = "django-colorfield" },
@@ -269,6 +270,7 @@ requires-dist = [
     { name = "django", specifier = "==5.2.*" },
     { name = "django-admin-autocomplete-filter", specifier = ">=0.7.1" },
     { name = "django-admin-env-notice", specifier = ">=1.0.1" },
+    { name = "django-admin-rangefilter", specifier = ">=0.13.3" },
     { name = "django-auditlog", specifier = ">=3.1.2" },
     { name = "django-ckeditor", specifier = ">=6.7.2" },
     { name = "django-colorfield", specifier = ">=0.14.0" },
@@ -486,6 +488,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/51/d9/38724a1196c2e42431ff3cb6d08ff2e790ff3d236d4065ccb59df141b419/django-admin-env-notice-1.0.1.tar.gz", hash = "sha256:1fc8da895b034f24a0c49d8170397aa8fd00db9eed63d3856cbbc2add6ed4d58", size = 4984, upload-time = "2024-10-19T12:10:04.624Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9f/ab/7cbc300a966ecd3b272448a50952340038294b938ff67a0fb3dacfecc68a/django_admin_env_notice-1.0.1-py2.py3-none-any.whl", hash = "sha256:353903ff22b6a483313b6f12fa94a77dca397861729ed1ba257e3ec0659ecb45", size = 5759, upload-time = "2024-10-19T12:10:03.286Z" },
+]
+
+[[package]]
+name = "django-admin-rangefilter"
+version = "0.13.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/bd/e05a9356f1ed15d1496ff901c33f9b9f354d154941d2366f961cd1530820/django_admin_rangefilter-0.13.3.tar.gz", hash = "sha256:8151b840753ea2c4de9963b1904cbbe7e786b7bc04de5dbd64567c86d287bbe8", size = 23588, upload-time = "2025-07-05T06:09:56.731Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6a/a5/fec346d1b793001c3a57947f643bfa174da667f0a8375ac59c8127243c8a/django_admin_rangefilter-0.13.3-py2.py3-none-any.whl", hash = "sha256:a776b1de5c5c153ed167e11fe757f138380207b2295a44d29d939c6ded76463a", size = 48396, upload-time = "2025-07-05T06:09:55.36Z" },
 ]
 
 [[package]]

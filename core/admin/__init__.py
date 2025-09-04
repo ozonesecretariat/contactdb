@@ -4,6 +4,7 @@ from .country import *  # noqa: F403
 from .import_contact_photos_task import *  # noqa: F403
 from .import_focal_points_task import *  # noqa: F403
 from .import_legacy_contacts_tasks import *  # noqa: F403
+from .log_entry import *  # noqa: F403
 from .organization import *  # noqa: F403
 from .organization_type import *  # noqa: F403
 from .possible_duplicate import *  # noqa: F403
