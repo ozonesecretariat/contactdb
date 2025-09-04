@@ -1,3 +1,4 @@
+import math
 import uuid
 from urllib.parse import urljoin
 
@@ -11,6 +12,7 @@ from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 
+from common.array_field import ArrayField
 from common.citext import CICharField
 from common.model import KronosEnum, KronosId
 from common.pdf import print_pdf
@@ -116,6 +118,13 @@ class Event(models.Model):
     app_store_url = models.CharField(max_length=1024, blank=True)
     play_store_url = models.CharField(max_length=1024, blank=True)
     # TODO: Allow choosing the badge template for the event
+
+    lop_doc_symbols = ArrayField(
+        null=True,
+        base_field=models.TextField(),
+        blank=True,
+        help_text="Document symbols for the List of Participants document",
+    )
 
     class Meta:
         ordering = ("-start_date",)
@@ -353,10 +362,14 @@ class RegistrationRole(models.Model):
     hide_for_nomination = models.BooleanField(
         default=False, help_text="Hide this role in the nomination form."
     )
+    hide_in_lop = models.BooleanField(
+        default=False, help_text="Hide in the List of Participants document"
+    )
+    sort_order = models.PositiveIntegerField(default=0)
     kronos_value = KronosEnum()
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("sort_order", "name")
 
     def __str__(self):
         return self.name
@@ -634,6 +647,12 @@ class Registration(models.Model):
     date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField(default=False)
+    sort_order = models.PositiveIntegerField(
+        default=None,
+        null=True,
+        blank=True,
+        help_text="Override the role sort order for this registration.",
+    )
 
     # Save the state of organization, designation, and department as it
     # was when the contact registered
@@ -711,9 +730,51 @@ class Registration(models.Model):
         return self.organization or self.contact.organization
 
     @property
+    def usable_organization_name(self) -> str | None:
+        try:
+            return self.organization.name
+        except AttributeError:
+            return None
+
+    @property
+    def usable_organization_sort_order(self) -> int | float:
+        try:
+            return self.usable_organization.sort_order
+        except AttributeError:
+            return math.inf
+
+    @property
+    def usable_organization_type_sort_order(self) -> int | float:
+        try:
+            return self.usable_organization.organization_type.sort_order
+        except AttributeError:
+            return math.inf
+
+    @property
+    def usable_organization_type_description(self) -> str | None:
+        try:
+            return self.usable_organization.organization_type.description
+        except AttributeError:
+            return None
+
+    @property
     def is_gov(self):
         try:
             return self.usable_organization.is_gov
+        except AttributeError:
+            return False
+
+    @property
+    def is_ass_panel(self):
+        try:
+            return self.usable_organization.is_ass_panel
+        except AttributeError:
+            return False
+
+    @property
+    def is_secretariat(self):
+        try:
+            return self.usable_organization.is_secretariat
         except AttributeError:
             return False
 

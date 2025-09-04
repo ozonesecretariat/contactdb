@@ -35,6 +35,7 @@ class TestInvitationEmailAdmin(TestCase):
     ]
 
     def setUp(self):
+        self.country = Country.objects.get(pk="RO")
         self.site = AdminSite()
         self.admin = InvitationEmailAdmin(InvitationEmail, self.site)
         self.factory = RequestFactory()
@@ -43,13 +44,13 @@ class TestInvitationEmailAdmin(TestCase):
         )
 
         # Create test data using fixture data
-        self.org_type = OrganizationType.objects.first()
+        self.org_type = OrganizationType.objects.get(acronym="ACC-EXPERT")
         self.organization = OrganizationFactory(
             name="Test Org",
             organization_type=self.org_type,
             emails=["org@example.com"],
             email_ccs=["org-cc@example.com"],
-            country=Country.objects.first(),
+            country=self.country,
         )
 
         self.event = Event.objects.create(
@@ -57,7 +58,7 @@ class TestInvitationEmailAdmin(TestCase):
             title="Test Event",
             start_date=datetime(2025, 1, 1, tzinfo=UTC),
             end_date=datetime(2025, 1, 2, tzinfo=UTC),
-            venue_country=Country.objects.first(),
+            venue_country=self.country,
         )
 
         # Create contacts with emails
@@ -67,7 +68,7 @@ class TestInvitationEmailAdmin(TestCase):
             organization=self.organization,
             emails=["primary@example.com"],
             email_ccs=["primary-cc@example.com"],
-            country=self.organization.country,
+            country=self.country,
         )
 
         self.secondary_contact = Contact.objects.create(
@@ -76,7 +77,7 @@ class TestInvitationEmailAdmin(TestCase):
             organization=self.organization,
             emails=["secondary@example.com"],
             email_ccs=["secondary-cc@example.com"],
-            country=self.organization.country,
+            country=self.country,
         )
 
         # Set up organization contacts
@@ -180,7 +181,7 @@ class TestInvitationEmailAdmin(TestCase):
             organization_type=self.org_type,
             emails=["org2-main@example.com"],
             email_ccs=["org2-cc@example.com"],
-            country=Country.objects.first(),
+            country=self.country,
         )
 
         primary2 = ContactFactory(
@@ -227,7 +228,7 @@ class TestInvitationEmailAdmin(TestCase):
             organization_type=self.org_type,
             emails=["org2-main@example.com"],
             email_ccs=["org2-cc@example.com"],
-            country=Country.objects.first(),
+            country=self.country,
         )
 
         primary2 = ContactFactory(
@@ -455,7 +456,7 @@ class TestInvitationEmailAdmin(TestCase):
     @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
     def test_invitation_email_placeholders(self):
         """Test placeholder expansion in invitation emails."""
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create organization with contacts
@@ -498,7 +499,7 @@ class TestInvitationEmailAdmin(TestCase):
 
         mail.outbox = []
         self.admin.response_post_save_add(request, invitation_email)
-        task = SendEmailTask.objects.first()
+        task = SendEmailTask.objects.get()
         # Need to explicitly execute the job non-async
         SendEmailJob.execute(None, task)
 
@@ -563,6 +564,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
     ]
 
     def setUp(self):
+        self.country = Country.objects.get(pk="RO")
         self.site = AdminSite()
         self.admin = InvitationEmailAdmin(InvitationEmail, self.site)
         self.factory = RequestFactory()
@@ -570,13 +572,13 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
             email="admin@example.com", password="password"
         )
 
-        self.org_type = OrganizationType.objects.first()
+        self.org_type = OrganizationType.objects.get(acronym="ACC-EXPERT")
         self.event = Event.objects.create(
             code="TEST01",
             title="Test Event",
             start_date=datetime(2025, 1, 1, tzinfo=UTC),
             end_date=datetime(2025, 1, 2, tzinfo=UTC),
-            venue_country=Country.objects.first(),
+            venue_country=self.country,
         )
 
     def test_response_post_save_add_with_gov_organization(self):
@@ -584,7 +586,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         Test that inviting GOV organizations results in proper handling of
         all related organizations.
         """
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create a GOV organization
@@ -685,7 +687,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         Test that inviting both "normal" and countryless GOV organizations results in
         proper handling of all related organizations.
         """
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create a GOV organization
@@ -763,7 +765,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         Test that invitations are correctly created for GOV and regular orgs,
         from the same country.
         """
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create a GOV organization and its contacts
@@ -859,7 +861,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
     def test_response_post_save_add_with_mixed_organizations(self):
         """Test handling of GOV and non-GOV orgs from different countries."""
         # Create two governments
-        government1 = Country.objects.first()
+        government1 = self.country
         government2 = Country.objects.create(code="XX", name="Test Country")
 
         gov_type = OrganizationType.objects.get(acronym="GOV")
@@ -922,7 +924,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
     def test_response_post_save_add_multiple_gov_organizations(self):
         """Test handling of multiple GOV organizations from same country."""
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # GOV orgs
@@ -1003,7 +1005,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
 
     def test_response_post_save_add_no_gov_involved(self):
         """Test that everything works OK when there is no GOV invitation"""
-        government = Country.objects.first()
+        government = self.country
         OrganizationFactory(
             organization_type=self.org_type,
             government=government,
@@ -1117,7 +1119,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         Test that GOV orgs in specified orgs list "expands" (adds related orgs contacts)
         if GOV org's include_in_invitation is True.
         """
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         gov_org = OrganizationFactory(
@@ -1175,7 +1177,7 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
         Test that GOV orgs in specified orgs list "expands" (adds related orgs contacts)
         if GOV org's include_in_invitation is False.
         """
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         gov_org = OrganizationFactory(
@@ -1376,13 +1378,14 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def setUp(self):
         self.site = AdminSite()
+        self.country = Country.objects.get(pk="RO")
         self.admin = InvitationEmailAdmin(InvitationEmail, self.site)
         self.factory = RequestFactory()
         self.user = get_user_model().objects.create_superuser(
             email="admin@example.com", password="password"
         )
 
-        self.org_type = OrganizationType.objects.first()
+        self.org_type = OrganizationType.objects.get(acronym="ACC-EXPERT")
         self.organization = OrganizationFactory(organization_type=self.org_type)
         self.event = EventFactory()
 
@@ -1526,7 +1529,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         from that country, not just GOV organizations.
         """
 
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create GOV organization
@@ -1611,7 +1614,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def test_reminder_respects_include_in_invitation_flag(self):
         """Test that only organizations with include_in_invitation=True are included."""
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create organization with include_in_invitation=False
@@ -1653,7 +1656,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         Test that only the orgs with the invitation email org types receive a reminder
         when there are multiple invitation emails (with mutually-exclusive org types)
         """
-        government = Country.objects.first()
+        government = self.country
         ass_panel_type = OrganizationType.objects.get(acronym="ASS-PANEL")
 
         # Create organizations for each invitation email to be sent
@@ -1722,7 +1725,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def test_reminder_with_no_unregistered_organizations(self):
         """Test reminder creation when all organizations have registered."""
-        government = Country.objects.first()
+        government = self.country
         org = OrganizationFactory(
             name="The Crystal Globe global readers",
             organization_type=self.org_type,
@@ -1770,7 +1773,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         event2 = EventFactory(title="Day 2")
         event_group.events.add(event1, event2)
 
-        government = Country.objects.first()
+        government = self.country
         org = OrganizationFactory(
             organization_type=self.org_type,
             government=government,
@@ -1816,7 +1819,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def test_reminder_mixed_registration_scenarios(self):
         """Test scenarios with multiple registered & unregistered orgs."""
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         test_event = EventFactory(title="That one blender-mixed registration event")
@@ -1914,7 +1917,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         event2 = EventFactory(title="Day 2")
         event_group.events.add(event1, event2)
 
-        government = Country.objects.first()
+        government = self.country
         org = OrganizationFactory(
             organization_type=self.org_type,
             government=government,
@@ -1939,7 +1942,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def test_reminder_multiple_invitations_same_org(self):
         """Test that org invited both directly and via GOV will only get one reminder."""
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
         org = OrganizationFactory(
             organization_type=self.org_type,
@@ -1964,7 +1967,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def test_reminder_with_additional_cc_bcc(self):
         """Test that reminders correctly use extra CC/BCC contacts."""
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
         # gov_org, but ruff don't like it
         OrganizationFactory(
@@ -2010,7 +2013,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         Test scenario where different orgs' contacts have the same email address.
         Multiple reminder-related emails tasks should be generated for each org.
         """
-        government = Country.objects.first()
+        government = self.country
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         org1 = OrganizationFactory(
@@ -2080,7 +2083,7 @@ class TestInvitationEmailAdminReminders(TestCase):
 
     def test_reminder_org_with_no_contacts(self):
         """Test that reminders are still created for orgs with no contacts."""
-        government = Country.objects.first()
+        government = self.country
         # Creating an org but adding no contacts to it.
         org = OrganizationFactory(
             organization_type=self.org_type,
@@ -2117,7 +2120,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         Test that orgs with include_in_invitation=False are not included in reminders.
         This should happen regardless of the flag setting time.
         """
-        government = Country.objects.first()
+        government = self.country
         org = OrganizationFactory(
             organization_type=self.org_type,
             government=government,
@@ -2150,7 +2153,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         Test scenario where org only has CC/BCC contacts and no 'to' emails.
         No task should (hopefully) be created in this case.
         """
-        government = Country.objects.first()
+        government = self.country
         org = OrganizationFactory(
             organization_type=self.org_type,
             government=government,
@@ -2194,7 +2197,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         Test that reminding both "normal" and countryless GOV organizations results in
         proper handling of all related organizations.
         """
-        government = Country.objects.first()
+        government = Country.objects.get(pk="FR")
         gov_type = OrganizationType.objects.get(acronym="GOV")
 
         # Create a GOV organization

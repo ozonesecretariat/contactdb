@@ -72,11 +72,18 @@ class OrganizationType(models.Model):
     )
     badge_color = ColorField(default="#7f97ab")
     description = models.TextField(blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+    hide_in_lop = models.BooleanField(
+        default=False, help_text="Hide in the List of Participants document"
+    )
+    hide_in_statistics = models.BooleanField(
+        default=False, help_text="Hide in the statistics document"
+    )
 
     objects = OrganizationTypeManager()
 
     class Meta:
-        ordering = ("title",)
+        ordering = ("sort_order", "title")
 
     def __str__(self):
         return f"{self.title} ({self.acronym})"
@@ -141,9 +148,10 @@ class Organization(models.Model):
         "Contact", related_name="secondary_for_orgs"
     )
     include_in_invitation = models.BooleanField(default=True)
+    sort_order = models.PositiveIntegerField(default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ["name", "country__name"]
+        ordering = ("sort_order", "name", "country__name")
 
     def __str__(self):
         if self.government:
@@ -174,6 +182,20 @@ class Organization(models.Model):
     def is_gov(self):
         try:
             return self.government and self.organization_type.acronym == "GOV"
+        except AttributeError:
+            return False
+
+    @property
+    def is_ass_panel(self):
+        try:
+            return self.organization_type.acronym == "ASS-PANEL"
+        except AttributeError:
+            return False
+
+    @property
+    def is_secretariat(self):
+        try:
+            return self.organization_type.acronym == "SECRETARIAT"
         except AttributeError:
             return False
 

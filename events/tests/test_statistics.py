@@ -12,17 +12,7 @@ from api.tests.factories import (
 )
 from core.models import Country, OrganizationType
 from events.models import Registration
-
-
-def get_table_data(doc: docx.document.Document) -> list[list[str]]:
-    tables_data = []
-    for table in doc.tables:
-        rows = []
-        for row in table.rows:
-            row_data = [cell.text.strip() for cell in row.cells]
-            rows.append(row_data)
-        tables_data.append(rows)
-    return tables_data
+from events.tests.utils import get_table_data
 
 
 class TestsPreMeetingStatistics(TestCase):
@@ -58,7 +48,7 @@ class TestsPreMeetingStatistics(TestCase):
     def parse_doc(self, resp, pax=0, gov=0, a5=0, a2=0):
         f = io.BytesIO(b"".join(resp.streaming_content))
         doc = docx.Document(f)
-        result = get_table_data(doc)
+        result = list(get_table_data(doc).values())
         self.assertEqual(result[0][-1], ["Total", str(pax)])
         self.assertEqual(result[1][-1], ["Total", str(gov), "", ""])
         self.assertEqual(

@@ -7,65 +7,11 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.oxml import OxmlElement
-from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
-from docx.table import Table
 
 from core.models import OrganizationType, Region
+from events.exports.docx_utils import set_cell, set_table_border, set_table_caption
 from events.models import Event, Registration
-
-
-def set_cell(
-    table: Table,
-    row: int,
-    col: int,
-    text: str,
-    style: str = None,
-    align: WD_PARAGRAPH_ALIGNMENT = None,
-    v_align: WD_CELL_VERTICAL_ALIGNMENT = None,
-    bg_color: str = None,
-):
-    cell = table.cell(row, col)
-    cell.text = ""
-
-    p = cell.paragraphs[0]
-    p.add_run(text)
-
-    p.style = style
-    p.alignment = align
-    if bg_color:
-        shd = OxmlElement("w:shd")
-        shd.set(qn("w:fill"), bg_color)
-        cell._tc.get_or_add_tcPr().append(shd)
-    cell.vertical_alignment = v_align
-    return cell
-
-
-def set_table_border(
-    table: Table, color="000000", size=4, space=0, border_type="single"
-):
-    tbl = table._tbl
-    tbl_pr = tbl.tblPr
-
-    # Remove existing borders if present
-    borders = tbl_pr.xpath("w:tblBorders")
-    if borders:
-        for b in borders:
-            tbl_pr.remove(b)
-
-    tbl_borders = OxmlElement("w:tblBorders")
-
-    for border_name in ["top", "left", "bottom", "right", "insideH", "insideV"]:
-        border = OxmlElement(f"w:{border_name}")
-        border.set(qn("w:val"), border_type)  # border style
-        border.set(qn("w:sz"), str(size))  # width
-        border.set(qn("w:space"), str(space))  # spacing
-        border.set(qn("w:color"), color)  # color
-        tbl_borders.append(border)
-
-    tbl_pr.append(tbl_borders)
-    return table
 
 
 class PreMeetingStatistics:
@@ -77,23 +23,15 @@ class PreMeetingStatistics:
             .prefetch_related("countries", "countries__subregion")
             .order_by("-name")
         )
-        self.accredited_registrations = list(
-            event.registrations.filter(
-                status=Registration.Status.ACCREDITED
-            ).prefetch_related(
-                "organization",
-                "organization__organization_type",
-                "organization__government",
-                "organization__government__region",
-                "organization__government__subregion",
-                "contact",
-                "contact__organization",
-                "contact__organization__organization_type",
-                "contact__organization__government",
-                "contact__organization__government__region",
-                "contact__organization__government__subregion",
-            )
-        )
+        self.accredited_registrations = []
+        for r in self.get_query():
+            try:
+                if r.usable_organization.organization_type.hide_in_statistics:
+                    continue
+            except AttributeError:
+                pass
+            self.accredited_registrations.append(r)
+
         self.accredited_gov_registrations = [
             registration
             for registration in self.accredited_registrations
@@ -103,6 +41,23 @@ class PreMeetingStatistics:
             registration.usable_government
             for registration in self.accredited_gov_registrations
         }
+
+    def get_query(self):
+        return self.event.registrations.filter(
+            status=Registration.Status.ACCREDITED
+        ).prefetch_related(
+            "organization",
+            "organization__organization_type",
+            "organization__government",
+            "organization__government__region",
+            "organization__government__subregion",
+            "contact",
+            "contact__organization",
+            "contact__organization__organization_type",
+            "contact__organization__government",
+            "contact__organization__government__region",
+            "contact__organization__government__subregion",
+        )
 
     def export_docx(self):
         self.init_docx()
@@ -144,8 +99,9 @@ class PreMeetingStatistics:
             section.left_margin = Cm(1.5)
             section.right_margin = Cm(1.5)
 
-    def table(self, rows, cols):
+    def table(self, rows, cols, name):
         table = self.doc.add_table(rows, cols, style="Stat Table")
+        set_table_caption(table, name)
         return set_table_border(table)
 
     def th(self, table, row, col, text):
@@ -204,7 +160,9 @@ class PreMeetingStatistics:
         counts = dict.fromkeys(
             (
                 org_type.statistics_display_name
-                for org_type in OrganizationType.objects.all()
+                for org_type in OrganizationType.objects.filter(
+                    hide_in_statistics=False
+                )
             ),
             0,
         )
@@ -218,7 +176,7 @@ class PreMeetingStatistics:
                 counts[name] = 0
             counts[name] += 1
 
-        table = self.table(len(counts) + 2, 2)
+        table = self.table(len(counts) + 2, 2, "Table 1: Registered participants")
         self.th(table, 0, 0, "Category")
         self.th(table, 0, 1, "Pax registered")
 
@@ -237,7 +195,7 @@ class PreMeetingStatistics:
         for party in self.accredited_gov_parties:
             counts[party.region] += 1
 
-        table = self.table(len(counts) + 2, 4)
+        table = self.table(len(counts) + 2, 4, "Table 2: Registered Parties")
 
         table.cell(0, 0).merge(table.cell(0, 1))
         self.th(table, 0, 0, "Parties registered")
@@ -277,7 +235,9 @@ class PreMeetingStatistics:
             )
         )
 
-        table = self.table(len(all_parties) + 3, 8 if with_funding else 5)
+        table = self.table(
+            len(all_parties) + 3, 8 if with_funding else 5, f"Table 3: {region} Parties"
+        )
 
         table.cell(0, 0).merge(table.cell(1, 0))
         self.th(table, 0, 0, f"Region - {region}")
