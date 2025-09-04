@@ -23,23 +23,14 @@ class PreMeetingStatistics:
             .prefetch_related("countries", "countries__subregion")
             .order_by("-name")
         )
-        self.accredited_registrations = [
-            event.registrations.filter(status=Registration.Status.ACCREDITED)
-            .exclude(organization__organization_type__hide_in_statistics=True)
-            .prefetch_related(
-                "organization",
-                "organization__organization_type",
-                "organization__government",
-                "organization__government__region",
-                "organization__government__subregion",
-                "contact",
-                "contact__organization",
-                "contact__organization__organization_type",
-                "contact__organization__government",
-                "contact__organization__government__region",
-                "contact__organization__government__subregion",
-            )
-        ]
+        self.accredited_registrations = []
+        for r in self.get_query():
+            try:
+                if r.usable_organization.organization_type.hide_in_statistics:
+                    continue
+            except AttributeError:
+                pass
+
         self.accredited_gov_registrations = [
             registration
             for registration in self.accredited_registrations
@@ -49,6 +40,23 @@ class PreMeetingStatistics:
             registration.usable_government
             for registration in self.accredited_gov_registrations
         }
+
+    def get_query(self):
+        return self.event.registrations.filter(
+            status=Registration.Status.ACCREDITED
+        ).prefetch_related(
+            "organization",
+            "organization__organization_type",
+            "organization__government",
+            "organization__government__region",
+            "organization__government__subregion",
+            "contact",
+            "contact__organization",
+            "contact__organization__organization_type",
+            "contact__organization__government",
+            "contact__organization__government__region",
+            "contact__organization__government__subregion",
+        )
 
     def export_docx(self):
         self.init_docx()
