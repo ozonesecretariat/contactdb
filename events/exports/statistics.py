@@ -1,11 +1,12 @@
 import io
 from collections import Counter
 from decimal import Decimal
+from typing import Collection
 
 from django.utils import timezone
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Cm, Pt, RGBColor
 
@@ -66,16 +67,20 @@ class PreMeetingStatistics:
 
     def init_docx(self):
         styles = self.doc.styles
+
+        styles["Normal"].font.name = "Times New Roman"
+
         table_style = styles.add_style("Stat Table", WD_STYLE_TYPE.TABLE)
         table_style.font.size = Pt(11)
-        table_style.font.name = "Arial"
+        table_style.font.name = "Times New Roman"
         table_style.paragraph_format.keep_together = True
         table_style.paragraph_format.keep_with_next = True
-        table_style.paragraph_format.space_after = Pt(0)
+        table_style.paragraph_format.space_after = Pt(5)
+        table_style.paragraph_format.space_before = Pt(5)
 
         th_style = styles.add_style("Table Header", WD_STYLE_TYPE.PARAGRAPH)
         th_style.font.bold = True
-        th_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        th_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
 
         td_style = styles.add_style("Table Data", WD_STYLE_TYPE.PARAGRAPH)
         td_style.font.bold = False
@@ -88,6 +93,7 @@ class PreMeetingStatistics:
             header.text = str(self.event)
             header.style.font.size = Pt(9)
             header.style.font.color.rgb = RGBColor(45, 45, 45)
+            header.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
             footer = section.footer.paragraphs[0]
             footer.text = "Date: " + timezone.now().strftime(" %Y-%m-%d %H:%M %Z")
@@ -96,13 +102,45 @@ class PreMeetingStatistics:
 
             section.top_margin = Cm(0)
             section.bottom_margin = Cm(0)
-            section.left_margin = Cm(1.5)
-            section.right_margin = Cm(1.5)
+            section.left_margin = Cm(1)
+            section.right_margin = Cm(1)
 
-    def table(self, rows, cols, name):
+    def _max_cols(self, obj: Collection[Collection]):
+        return max(map(len, obj), default=0)
+
+    def table(
+        self,
+        name: str,
+        head: Collection[Collection],
+        body: Collection[Collection],
+        footer: Collection[Collection],
+    ):
+        # Add one extra row for the heading with the name
+        rows = len(head) + len(body) + len(footer) + 1
+        cols = max(map(self._max_cols, (head, body, footer)), default=0)
+        if not cols:
+            raise RuntimeError("No columns found in head, body or footer")
+
         table = self.doc.add_table(rows, cols, style="Stat Table")
+        set_table_border(table)
         set_table_caption(table, name)
-        return set_table_border(table)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+        cell = table.cell(0, 0)
+        for col in range(1, cols):
+            cell.merge(table.cell(0, col))
+
+        self.th(table, 0, 0, name)
+
+        row_index = 1
+        for part, func in (head, self.th), (body, self.td), (footer, self.tf):
+            for row in part:
+                for col_index, data in enumerate(row):
+                    if data is not None:
+                        func(table, row_index, col_index, str(data))
+                row_index += 1
+
+        return table
 
     def th(self, table, row, col, text):
         return set_cell(
@@ -111,6 +149,7 @@ class PreMeetingStatistics:
             col=col,
             text=text,
             style="Table Header",
+            align=WD_PARAGRAPH_ALIGNMENT.CENTER,
             v_align=WD_CELL_VERTICAL_ALIGNMENT.CENTER,
             bg_color="#a5c9eb",
         )
@@ -135,8 +174,22 @@ class PreMeetingStatistics:
             align=WD_PARAGRAPH_ALIGNMENT.RIGHT if col != 0 else None,
         )
 
+    def _format_percent(self, value, total):
+        if total == 0:
+            return "-"
+        value = Decimal(value) / Decimal(total) * 100
+        return str(value.quantize(Decimal("0.01"))) + "%"
+
     def get_content(self):
         self.doc.add_paragraph()
+
+        p = self.doc.add_paragraph()
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        p.add_run(timezone.now().date().strftime("%-d %B %Y"))
+
+        p = self.doc.add_paragraph()
+        r = p.add_run("Meeting Participants statistics: Registration and A5 funding")
+        r.font.bold = True
 
         self.table_pax_by_category()
         self.doc.add_paragraph()
@@ -145,16 +198,8 @@ class PreMeetingStatistics:
         self.doc.add_paragraph()
 
         for region in self.regions:
-            self.table_parties_by_subregion(
-                region, with_funding=region.code.lower() == "a5"
-            )
+            self.table_parties_by_subregion(region)
             self.doc.add_paragraph()
-
-    def _format_percent(self, value, total):
-        if total == 0:
-            return "-"
-        value = Decimal(value) / Decimal(total) * 100
-        return str(value.quantize(Decimal("0.01"))) + "%"
 
     def table_pax_by_category(self):
         counts = dict.fromkeys(
@@ -162,7 +207,7 @@ class PreMeetingStatistics:
                 org_type.statistics_display_name
                 for org_type in OrganizationType.objects.filter(
                     hide_in_statistics=False
-                )
+                ).order_by("sort_order", "statistics_title", "title")
             ),
             0,
         )
@@ -176,18 +221,16 @@ class PreMeetingStatistics:
                 counts[name] = 0
             counts[name] += 1
 
-        table = self.table(len(counts) + 2, 2, "Table 1: Registered participants")
-        self.th(table, 0, 0, "Category")
-        self.th(table, 0, 1, "Pax registered")
-
-        for row, (category, count) in enumerate(
-            sorted(counts.items(), key=lambda t: t[0]), start=1
-        ):
-            self.td(table, row, 0, category)
-            self.td(table, row, 1, count)
-
-        self.tf(table, len(counts) + 1, 0, "Total")
-        self.tf(table, len(counts) + 1, 1, str(len(self.accredited_registrations)))
+        self.table(
+            "Table 1: Registered participants",
+            [
+                ("Category", "Registered"),
+            ],
+            [(category, count) for category, count in counts.items()],
+            [
+                ("Total", str(len(self.accredited_registrations))),
+            ],
+        )
 
     def table_parties_by_region(self):
         total = len(self.accredited_gov_parties)
@@ -195,25 +238,26 @@ class PreMeetingStatistics:
         for party in self.accredited_gov_parties:
             counts[party.region] += 1
 
-        table = self.table(len(counts) + 2, 4, "Table 2: Registered Parties")
+        self.table(
+            "Table 2: Registered Parties",
+            [
+                ("Category", "Registered", "% of total", "% in category"),
+            ],
+            [
+                (
+                    f"{region} Parties",
+                    count,
+                    self._format_percent(count, total),
+                    self._format_percent(count, region.countries.count()),
+                )
+                for region, count in counts.items()
+            ],
+            [
+                ("Total", str(total), "", ""),
+            ],
+        )
 
-        table.cell(0, 0).merge(table.cell(0, 1))
-        self.th(table, 0, 0, "Parties registered")
-        self.th(table, 0, 2, "% of total")
-        self.th(table, 0, 3, "% in category")
-
-        for row, (region, count) in enumerate(counts.items(), start=1):
-            self.td(table, row, 0, f"{region} Parties")
-            self.td(table, row, 1, count)
-            self.td(table, row, 2, self._format_percent(count, total))
-            self.td(
-                table, row, 3, self._format_percent(count, region.countries.count())
-            )
-
-        self.tf(table, len(counts) + 1, 0, "Total")
-        self.tf(table, len(counts) + 1, 1, total)
-
-    def table_parties_by_subregion(self, region, with_funding=False):
+    def table_parties_by_subregion(self, region):
         all_parties = Counter(
             (
                 country.subregion
@@ -234,47 +278,48 @@ class PreMeetingStatistics:
                 if registration.usable_government.region == region
             )
         )
-
         table = self.table(
-            len(all_parties) + 3, 8 if with_funding else 5, f"Table 3: {region} Parties"
+            f"Table 3: {region} Parties",
+            [
+                (
+                    "Region",
+                    "Parties per region",
+                    "Parties registered",
+                    "Parties to register",
+                    "Participants registered",
+                    "Funding Requested",
+                    None,
+                    "Reserved Slots",
+                    "Remarks",
+                ),
+                (None, "(a)", "(b)", "(a - b)", None, "Received", "Approved"),
+            ],
+            [
+                (
+                    subregion.name,
+                    count,
+                    accredited_parties[subregion],
+                    count - accredited_parties[subregion],
+                    accredited_registrations[subregion],
+                )
+                for subregion, count in all_parties.items()
+            ],
+            [
+                (
+                    "Total",
+                    sum(all_parties.values()),
+                    sum(accredited_parties.values()),
+                    sum(all_parties.values()) - sum(accredited_parties.values()),
+                    sum(accredited_registrations.values()),
+                )
+            ],
         )
 
-        table.cell(0, 0).merge(table.cell(1, 0))
-        self.th(table, 0, 0, f"Region - {region}")
-        self.th(table, 0, 1, "Parties/region")
-        self.th(table, 1, 1, "(a)")
-        self.th(table, 0, 2, "Parties registered")
-        self.th(table, 1, 2, "(b)")
-        self.th(table, 0, 3, "Parties to register")
-        self.th(table, 1, 3, "(a - b)")
-        table.cell(0, 4).merge(table.cell(1, 4))
-        self.th(table, 0, 4, "Pax registered")
-        if with_funding:
-            table.cell(0, 5).merge(table.cell(0, 6))
-            self.th(table, 0, 5, "Funding Requested")
-            self.th(table, 1, 5, "Received")
-            self.th(table, 1, 6, "Approved")
-            table.cell(0, 7).merge(table.cell(1, 7))
-            self.th(table, 0, 7, "Reserved Slots")
-
-        for row, (subregion, count) in enumerate(all_parties.items(), start=2):
-            self.td(table, row, 0, subregion.name)
-            self.td(table, row, 1, count)
-            self.td(table, row, 2, accredited_parties[subregion])
-            self.td(table, row, 3, count - accredited_parties[subregion])
-            self.td(table, row, 4, accredited_registrations[subregion])
-
-        row = len(all_parties) + 2
-        self.tf(table, row, 0, "Total")
-        self.tf(table, row, 1, sum(all_parties.values()))
-        self.tf(table, row, 2, sum(accredited_parties.values()))
-        self.tf(
-            table,
-            row,
-            3,
-            sum(all_parties.values()) - sum(accredited_parties.values()),
-        )
-        self.tf(table, row, 4, sum(accredited_registrations.values()))
+        table.cell(1, 0).merge(table.cell(2, 0))
+        table.cell(1, 4).merge(table.cell(2, 4))
+        table.cell(1, 5).merge(table.cell(1, 6))
+        table.cell(1, 7).merge(table.cell(2, 7))
+        table.cell(1, 8).merge(table.cell(2, 8))
 
     def save_docx(self):
         doc_file = io.BytesIO()
