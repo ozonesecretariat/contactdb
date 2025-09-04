@@ -5,7 +5,7 @@ from auditlog.models import LogEntry
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import AutocompleteSelect
-from django.db.models import BooleanField, Case, Count, Value, When
+from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
@@ -189,6 +189,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "org_head",
         BooleanAnnotationFilter.init("primary"),
         BooleanAnnotationFilter.init("secondary"),
+        BooleanAnnotationFilter.init("primary_or_secondary"),
+        "organization__include_in_invitation",
     )
     fieldsets = (
         (
@@ -322,6 +324,14 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         ),
         "secondary": Case(
             When(secondary_for_orgs__isnull=False, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        ),
+        "primary_or_secondary": Case(
+            When(
+                Q(primary_for_orgs__isnull=False) | Q(secondary_for_orgs__isnull=False),
+                then=Value(True),
+            ),
             default=Value(False),
             output_field=BooleanField(),
         ),
