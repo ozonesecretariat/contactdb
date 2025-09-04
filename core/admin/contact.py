@@ -190,6 +190,7 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         BooleanAnnotationFilter.init("primary"),
         BooleanAnnotationFilter.init("secondary"),
         BooleanAnnotationFilter.init("primary_or_secondary"),
+        "organization__include_in_invitation",
     )
     fieldsets = (
         (
