@@ -114,7 +114,7 @@ class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name", "sort_order", "hide_for_nomination")
+    list_display = ("name", "sort_order", "hide_for_nomination", "hide_in_lop")
     list_display_links = ("name",)
 
 

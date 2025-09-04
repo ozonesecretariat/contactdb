@@ -23,10 +23,10 @@ class PreMeetingStatistics:
             .prefetch_related("countries", "countries__subregion")
             .order_by("-name")
         )
-        self.accredited_registrations = list(
-            event.registrations.filter(
-                status=Registration.Status.ACCREDITED
-            ).prefetch_related(
+        self.accredited_registrations = [
+            event.registrations.filter(status=Registration.Status.ACCREDITED)
+            .exclude(organization__organization_type__hide_in_statistics=True)
+            .prefetch_related(
                 "organization",
                 "organization__organization_type",
                 "organization__government",
@@ -39,7 +39,7 @@ class PreMeetingStatistics:
                 "contact__organization__government__region",
                 "contact__organization__government__subregion",
             )
-        )
+        ]
         self.accredited_gov_registrations = [
             registration
             for registration in self.accredited_registrations

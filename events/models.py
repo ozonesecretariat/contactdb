@@ -362,6 +362,9 @@ class RegistrationRole(models.Model):
     hide_for_nomination = models.BooleanField(
         default=False, help_text="Hide this role in the nomination form."
     )
+    hide_in_lop = models.BooleanField(
+        default=False, help_text="Hide in the List of Participants document"
+    )
     sort_order = models.PositiveIntegerField(default=0)
     kronos_value = KronosEnum()
 

@@ -73,6 +73,12 @@ class OrganizationType(models.Model):
     badge_color = ColorField(default="#7f97ab")
     description = models.TextField(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
+    hide_in_lop = models.BooleanField(
+        default=False, help_text="Hide in the List of Participants document"
+    )
+    hide_in_statistics = models.BooleanField(
+        default=False, help_text="Hide in the statistics document"
+    )
 
     objects = OrganizationTypeManager()
 

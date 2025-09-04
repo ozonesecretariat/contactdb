@@ -51,10 +51,36 @@ class ListOfParticipants:
         self.doc = Document()
         self.event = event
         self.global_index = 0
-        self.all_registrations = list(
+        self.sections = {s: [] for s in Section}
+        self.get_all_registrations()
+
+    def get_all_registrations(self):
+        for r in self.get_query():
+            try:
+                if r.usable_organization.organization_type.hide_in_lop:
+                    continue
+            except AttributeError:
+                pass
+
+            if r.role.hide_in_lop:
+                continue
+
+            if r.is_gov and r.usable_government:
+                self.sections[Section.PARTIES].append(r)
+            elif r.is_ass_panel:
+                self.sections[Section.ASS_PANELS].append(r)
+            elif r.is_secretariat:
+                self.sections[Section.SECRETARIAT].append(r)
+            else:
+                self.sections[Section.OBSERVERS].append(r)
+
+    def get_query(self):
+        return (
             self.event.registrations.filter(status=Registration.Status.REGISTERED)
             .prefetch_related(
                 "contact",
+                "contact__country",
+                "contact__organization",
                 "organization",
                 "organization__organization_type",
                 "organization__country",
@@ -64,17 +90,6 @@ class ListOfParticipants:
             )
             .order_by("contact__last_name", "contact__first_name")
         )
-        self.sections = {s: [] for s in Section}
-
-        for r in self.all_registrations:
-            if r.is_gov and r.usable_government:
-                self.sections[Section.PARTIES].append(r)
-            elif r.is_ass_panel:
-                self.sections[Section.ASS_PANELS].append(r)
-            elif r.is_secretariat:
-                self.sections[Section.SECRETARIAT].append(r)
-            else:
-                self.sections[Section.OBSERVERS].append(r)
 
     def export_docx(self):
         self.init_docx()
