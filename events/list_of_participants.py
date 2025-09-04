@@ -411,7 +411,7 @@ class ListOfParticipants:
         p = header.paragraphs[0]
         p.alignment = alignment
         p.style = "LOP Header"
-        p.text = "\n".join(self.event.lop_doc_symbols or SYMBOL_PLACEHOLDER)
+        p.text = "-".join(self.event.lop_doc_symbols or SYMBOL_PLACEHOLDER)
 
         insert_hr(p)
 
