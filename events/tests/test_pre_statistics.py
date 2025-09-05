@@ -10,7 +10,7 @@ from api.tests.factories import (
     OrganizationFactory,
     RegistrationFactory,
 )
-from core.models import Country, OrganizationType
+from core.models import Country, OrganizationType, Subregion
 from events.models import Registration
 from events.tests.utils import get_table_data
 
@@ -162,3 +162,13 @@ class TestsPreMeetingStatistics(TestCase):
         self.assertEqual(resp.status_code, 200)
 
         self.parse_doc(resp, pax=1, gov=0, a5=0, a2=0)
+
+    def test_subregion_sort_order(self):
+        Subregion.objects.filter(code="AUS").update(sort_order=20)
+
+        self.client.login(email="admin@example.com", password="admin")
+        resp = self.client.get(self.url_no_data)
+        self.assertEqual(resp.status_code, 200)
+
+        result = self.parse_doc(resp)
+        self.assertEqual(result[2][-2][0], "Australia")

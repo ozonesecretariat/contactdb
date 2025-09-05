@@ -759,9 +759,13 @@ class ImportContactPhotosTask(TaskRQ):
 class Region(models.Model):
     code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("name",)
+        ordering = (
+            "sort_order",
+            "name",
+        )
         verbose_name_plural = "regions"
 
     def __str__(self):
@@ -771,9 +775,10 @@ class Region(models.Model):
 class Subregion(models.Model):
     code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("sort_order", "name")
         verbose_name_plural = "subregions"
 
     def __str__(self):

@@ -10,7 +10,7 @@ from api.tests.factories import (
     OrganizationFactory,
     RegistrationFactory,
 )
-from core.models import BaseContact, Country, OrganizationType
+from core.models import BaseContact, Country, OrganizationType, Subregion
 from events.models import Registration
 from events.tests.utils import get_table_data
 
@@ -253,3 +253,18 @@ class TestsPostMeetingStatistics(TestCase):
 
         row = result["Table 8: A5 Parties Registered"][2]
         self.assertEqual(row, ["Anglophone Africa", "1"])
+
+    def test_subregion_sort_order(self):
+        Subregion.objects.filter(code="EUN").update(sort_order=20)
+        Subregion.objects.filter(code="AFE").update(sort_order=20)
+        result = self.check_doc()
+
+        row = result["Table 5: A2 Participants Registered"][-2]
+        self.assertEqual(row[:2], ["European Union", "1"])
+        row = result["Table 6: A2 Parties Registered"][-2]
+        self.assertEqual(row[:2], ["European Union", "1"])
+
+        row = result["Table 7: A5 Participants Registered"][-2]
+        self.assertEqual(row[:2], ["Anglophone Africa", "1"])
+        row = result["Table 8: A5 Parties Registered"][-2]
+        self.assertEqual(row[:2], ["Anglophone Africa", "1"])

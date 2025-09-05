@@ -27,7 +27,7 @@ class StatisticsBase:
         self.regions = list(
             Region.objects.all()
             .prefetch_related("countries", "countries__subregion")
-            .order_by("name")
+            .order_by("sort_order", "name")
         )
         self.registrations = []
         for r in self.get_query():
@@ -303,7 +303,9 @@ class PreMeetingStatistics(StatisticsBase):
         all_parties = Counter(
             (
                 country.subregion
-                for country in region.countries.all().order_by("subregion__name")
+                for country in region.countries.all().order_by(
+                    "subregion__sort_order", "subregion__name"
+                )
             )
         )
         accredited_parties = Counter(
@@ -381,7 +383,7 @@ class PostMeetingStatistics(StatisticsBase):
         self.table_participants_by_gender()
         self.table_hl()
 
-        regions = list(Region.objects.values_list("name", flat=True).order_by("name"))
+        regions = [r.name for r in self.regions]
         self.table_gov_participants_by_discriminator(
             "Participants Registered",
             "Parties",
@@ -406,7 +408,7 @@ class PostMeetingStatistics(StatisticsBase):
             subregions = list(
                 Country.objects.filter(region=region)
                 .values_list("subregion__name", flat=True)
-                .order_by("subregion__name")
+                .order_by("subregion__sort_order", "subregion__name")
             )
 
             self.table_gov_participants_by_discriminator(
@@ -492,7 +494,7 @@ class PostMeetingStatistics(StatisticsBase):
         all_values: Collection[str],
         registrations: Collection[Registration],
     ):
-        grouped = {v: [] for v in sorted(all_values)}
+        grouped = {v: [] for v in all_values}
         for r in registrations:
             grouped[key_func(r)].append(r)
 
@@ -541,7 +543,7 @@ class PostMeetingStatistics(StatisticsBase):
         self.table(
             name,
             [(header, "Parties")],
-            [(name, value) for name, value in sorted(counts.items())],
+            [(name, value) for name, value in counts.items()],
             [
                 ("Total", len(parties)),
             ],
