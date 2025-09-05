@@ -53,11 +53,11 @@ class TestsPreMeetingStatistics(TestCase):
         self.assertEqual(result[1][-1], ["Total", str(gov), "", ""])
         self.assertEqual(
             result[2][-1],
-            ["Total", "155", str(a5), str(155 - a5), str(a5), "", "", "", ""],
+            ["Total", "43", str(a2), str(43 - a2), str(a2), "", "", "", ""],
         )
         self.assertEqual(
             result[3][-1],
-            ["Total", "43", str(a2), str(43 - a2), str(a2), "", "", "", ""],
+            ["Total", "155", str(a5), str(155 - a5), str(a5), "", "", "", ""],
         )
 
         return result
@@ -82,9 +82,9 @@ class TestsPreMeetingStatistics(TestCase):
         result = self.parse_doc(resp, pax=1, gov=1, a5=0, a2=1)
 
         self.assertEqual(result[0][2], ["Parties", "1"])
-        self.assertEqual(result[1][3], ["A2 Parties", "1", "100.00%", "2.33%"])
+        self.assertEqual(result[1][2], ["A2 Parties", "1", "100.00%", "2.33%"])
         self.assertEqual(
-            result[3][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
+            result[2][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
         )
 
     def test_no_org_type(self):
@@ -122,9 +122,9 @@ class TestsPreMeetingStatistics(TestCase):
         result = self.parse_doc(resp, pax=1, gov=1, a5=0, a2=1)
 
         self.assertEqual(result[0][2], ["Parties", "1"])
-        self.assertEqual(result[1][3], ["A2 Parties", "1", "100.00%", "2.33%"])
+        self.assertEqual(result[1][2], ["A2 Parties", "1", "100.00%", "2.33%"])
         self.assertEqual(
-            result[3][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
+            result[2][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
         )
 
     def test_no_org_contact(self):
@@ -138,9 +138,9 @@ class TestsPreMeetingStatistics(TestCase):
         result = self.parse_doc(resp, pax=1, gov=1, a5=0, a2=1)
 
         self.assertEqual(result[0][2], ["Parties", "1"])
-        self.assertEqual(result[1][3], ["A2 Parties", "1", "100.00%", "2.33%"])
+        self.assertEqual(result[1][2], ["A2 Parties", "1", "100.00%", "2.33%"])
         self.assertEqual(
-            result[3][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
+            result[2][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
         )
 
     def test_no_gov(self):
