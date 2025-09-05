@@ -60,16 +60,28 @@ describe("Check", () => {
     cy.get(".select2-selection__choice").contains("TT:VRAQ");
     cy.get(".select2-selection__choice").contains("TTTE");
   });
-  it("Check download statistics", () => {
+  it("Check download pre-statistics", () => {
     cy.loginAdmin();
     cy.performSearch({
       modelName: "Events",
       searchValue: "NN:FDP",
     });
     cy.contains("1 result");
-    cy.get("a").contains("Statistics").click();
+    cy.get("a").contains("Pre Statistics").click();
     cy.checkFile({
-      filePattern: "NN_FDP-statistics.docx",
+      filePattern: "NN_FDP-pre-meeting-statistics.docx",
+    });
+  });
+  it("Check download post-statistics", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.get("a").contains("Post Statistics").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-post-meeting-statistics.docx",
     });
   });
   it("Check download list of participants", () => {

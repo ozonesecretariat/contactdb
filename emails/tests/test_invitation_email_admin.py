@@ -29,6 +29,8 @@ from events.models import Event
 
 class TestInvitationEmailAdmin(TestCase):
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
@@ -558,6 +560,8 @@ class TestInvitationEmailAdminGovBehaviour(TestCase):
     """Test class for GOV-related behaviour in InvitationEmails."""
 
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
@@ -1371,6 +1375,8 @@ class TestInvitationEmailAdminReminders(TestCase):
     """Test reminder functionality in InvitationEmailAdmin."""
 
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
@@ -2379,7 +2385,11 @@ class TestInvitationEmailAdminReminders(TestCase):
 class TestInvitationEmailAdminAutocompleteEvents(TestCase):
     """Test autocomplete querysets for events and event groups."""
 
-    fixtures = ["initial/country"]
+    fixtures = [
+        "initial/region",
+        "initial/subregion",
+        "initial/country",
+    ]
 
     def setUp(self):
         self.factory = RequestFactory()

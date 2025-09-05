@@ -2,20 +2,9 @@
 
 import logging
 
-from django.core.management import call_command
 from django.db import migrations
 
 logger = logging.getLogger(__name__)
-
-
-def load_region_subregion_country(apps, schema_editor):
-    call_command("loaddata", "initial/region.json")
-    call_command("loaddata", "initial/subregion.json")
-    call_command("loaddata", "initial/country.json")
-
-
-def load_region_subregion_country_backward(apps, schema_editor):
-    pass
 
 
 class Migration(migrations.Migration):
@@ -23,9 +12,4 @@ class Migration(migrations.Migration):
         ("core", "0013_region_subregion_and_more"),
     ]
 
-    operations = [
-        migrations.RunPython(
-            load_region_subregion_country,
-            reverse_code=load_region_subregion_country_backward,
-        ),
-    ]
+    operations = []

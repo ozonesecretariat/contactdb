@@ -7,13 +7,13 @@ from core.models import Region, Subregion
 
 @admin.register(Region)
 class RegionAdmin(ExportMixin, ModelAdmin):
-    list_display = ("code", "name")
+    list_display = ("code", "name", "sort_order")
     search_fields = ("code", "name__unaccent")
     list_display_links = ("code", "name")
 
 
 @admin.register(Subregion)
 class SubregionAdmin(ExportMixin, ModelAdmin):
-    list_display = ("code", "name")
+    list_display = ("code", "name", "sort_order")
     search_fields = ("code", "name__unaccent")
     list_display_links = ("code", "name")

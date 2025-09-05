@@ -3,112 +3,128 @@
     "model": "core.subregion",
     "pk": "AFE",
     "fields": {
-      "name": "Anglophone Africa"
+      "name": "Anglophone Africa",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "AFF",
     "fields": {
-      "name": "Francophone Africa"
+      "name": "Francophone Africa",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "AUS",
     "fields": {
-      "name": "Australia"
+      "name": "Australia",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "CAR",
     "fields": {
-      "name": "Caribbean"
+      "name": "Caribbean",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "CCA",
     "fields": {
-      "name": "CEITs and Central Asia"
+      "name": "CEITs and Central Asia",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "CTA",
     "fields": {
-      "name": "Central America"
+      "name": "Central America",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "EUN",
     "fields": {
-      "name": "European Union"
+      "name": "European Union",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "JPN",
     "fields": {
-      "name": "Japan"
+      "name": "Japan",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "NOA",
     "fields": {
-      "name": "North America"
+      "name": "North America",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "NWZ",
     "fields": {
-      "name": "New Zealand"
+      "name": "New Zealand",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "OTH",
     "fields": {
-      "name": "Other A2"
+      "name": "Other A2",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "PCF",
     "fields": {
-      "name": "Pacific Islands"
+      "name": "Pacific Islands",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "SEA",
     "fields": {
-      "name": "South East Asia"
+      "name": "South East Asia",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "SHA",
     "fields": {
-      "name": "South Asia"
+      "name": "South Asia",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "SOA",
     "fields": {
-      "name": "South America"
+      "name": "South America",
+      "sort_order": 0
     }
   },
   {
     "model": "core.subregion",
     "pk": "WSA",
     "fields": {
-      "name": "West Asia"
+      "name": "West Asia",
+      "sort_order": 0
     }
   }
 ]

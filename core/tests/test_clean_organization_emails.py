@@ -6,6 +6,8 @@ from core.models import Contact, Country, Organization, OrganizationType
 
 class TestCleanOrganizationEmails(TestCase):
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
     ]

@@ -12,6 +12,8 @@ class TestMergeContacts(TestCase):
         "initial/contactgroup",
         "test/eventgroup",
         "test/event",
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "test/organization",

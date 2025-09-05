@@ -6,6 +6,9 @@ from core.models import Contact, Organization, PossibleDuplicateContact
 
 class TestPossibleDuplicate(TestCase):
     fixtures = [
+        "initial/region",
+        "initial/subregion",
+        "initial/country",
         "initial/organizationtype",
         "test/organization",
     ]

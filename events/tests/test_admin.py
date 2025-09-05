@@ -39,6 +39,8 @@ from events.models import EventInvitation, PriorityPass, Registration
 
 class TestEventInvitationAdmin(TestCase):
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",

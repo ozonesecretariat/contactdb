@@ -3,14 +3,16 @@
     "model": "core.region",
     "pk": "A2",
     "fields": {
-      "name": "A2"
+      "name": "A2",
+      "sort_order": 0
     }
   },
   {
     "model": "core.region",
     "pk": "A5",
     "fields": {
-      "name": "A5"
+      "name": "A5",
+      "sort_order": 0
     }
   }
 ]

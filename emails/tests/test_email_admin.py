@@ -19,6 +19,8 @@ class TestEmailAdminOrganizations(TestCase):
     """Test organizations functionality in regular Email admin."""
 
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
