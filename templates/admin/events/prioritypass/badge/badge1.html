@@ -8,8 +8,9 @@
     .front {
       display: grid;
       grid-template-columns: 270px 90px;
-      grid-template-rows: 60px auto min-content;
+      grid-template-rows: 80px auto min-content;
       overflow: hidden;
+      padding-top: 3rem;
     }
 
     .logo {
@@ -40,8 +41,9 @@
     }
 
     .first-name {
-      font-size: 14px;
-      max-height: 34px;
+      font-size: 12px;
+      max-height: 14px;
+      margin-bottom: 0.25rem;
     }
 
     .last-name {
@@ -49,6 +51,7 @@
       font-weight: bold;
       text-transform: uppercase;
       max-height: 38px;
+      margin-bottom: 0.25rem;
     }
 
     .country {
@@ -58,30 +61,29 @@
 
     .organization {
       font-size: 12px;
-      max-height: 58px;
+      max-height: 45px;
     }
 
     .pass-code {
-      font-size: 10px;
+      font-size: 8px;
       text-align: center;
       margin-bottom: 0.25rem;
     }
 
     .valid-date-range {
-      font-size: 10px;
+      font-size: 8px;
       text-align: center;
-      font-weight: bold;
-      margin-top: 0.25rem;
+      margin-top: 0.1rem;
+      line-height: 1;
     }
 
     .participant-type {
       color: white;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       text-transform: uppercase;
       padding: 0.25rem 0.5rem;
       text-align: center;
-      height: 1.5rem;
 
       grid-column: span 2;
       align-self: end;
@@ -112,8 +114,6 @@
     {% endif %}
     <div class="valid-date-range">
       {% if priority_pass.valid_date_range %}
-        Valid from
-        <br />
         {{ priority_pass.valid_date_range }}
       {% else %}
         NOT REGISTERED
