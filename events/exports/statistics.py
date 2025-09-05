@@ -8,7 +8,7 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.shared import Cm, Pt, RGBColor
+from docx.shared import Cm, Inches, Pt, RGBColor
 
 from core.models import BaseContact, Country, OrganizationType, Region
 from events.exports.docx_utils import set_cell, set_table_border, set_table_caption
@@ -91,6 +91,8 @@ class StatisticsBase:
         table_style.paragraph_format.keep_with_next = True
         table_style.paragraph_format.space_after = Pt(5)
         table_style.paragraph_format.space_before = Pt(5)
+        table_style.paragraph_format.left_indent = Inches(0.1)
+        table_style.paragraph_format.right_indent = Inches(0.1)
 
         th_style = styles.add_style("Table Header", WD_STYLE_TYPE.PARAGRAPH)
         th_style.font.bold = True
