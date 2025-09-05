@@ -211,6 +211,8 @@ class BaseContact(models.Model):
         HON_MR = "Hon. Mr.", "Hon. Mr."
         HON_MS = "Hon. Ms.", "Hon. Ms."
 
+    HL_TITLES = (Title.HE_MR, Title.HE_MS, Title.HON_MR, Title.HON_MS)
+
     title = models.CharField(max_length=30, choices=Title.choices, blank=True)
 
     class LocalizedTitle(models.TextChoices):
