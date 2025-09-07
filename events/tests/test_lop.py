@@ -56,7 +56,7 @@ class TestListOfParticipants(TestCase):
             government=self.country1, organization_type=self.org_type
         )
         self.org2 = OrganizationFactory(
-            government=self.country1, organization_type=self.org_type
+            government=self.country2, organization_type=self.org_type
         )
 
         self.contact1 = ContactFactory(organization=self.org1, last_name="XXX")
@@ -226,6 +226,9 @@ class TestLoPParties(TestListOfParticipants):
     ORG_TYPE = "GOV"
 
     def test_party_role_order(self):
+        self.org2.government = self.country1
+        self.org2.save()
+
         self.check_doc(
             {
                 "Romania": [self.contact1, self.contact2],
@@ -233,6 +236,9 @@ class TestLoPParties(TestListOfParticipants):
         )
 
     def test_party_role_order_override(self):
+        self.org2.government = self.country1
+        self.org2.save()
+
         self.reg2.sort_order = 1
         self.reg2.save()
 
@@ -246,7 +252,16 @@ class TestLoPParties(TestListOfParticipants):
         self.alt_head.hide_in_lop = True
         self.alt_head.save()
 
+        self.check_doc(
+            {
+                "Romania": [self.contact1],
+            }
+        )
+
     def test_party_same_role_order(self):
+        self.org2.government = self.country1
+        self.org2.save()
+
         self.reg2.role = self.head
         self.reg2.save()
 
@@ -263,9 +278,6 @@ class TestLoPParties(TestListOfParticipants):
         )
 
     def test_multiple_parties(self):
-        self.org2.government = self.country2
-        self.org2.save()
-
         self.check_doc(
             {
                 "Romania": [self.contact1],

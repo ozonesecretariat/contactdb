@@ -20,7 +20,7 @@ from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
-from events.exports.statistics import PreMeetingStatistics
+from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
 from events.list_of_participants import ListOfParticipants
 from events.models import (
@@ -801,20 +801,27 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         return format_html(
             " | ".join(
                 [
-                    '<a href="{}" target="_blank">Statistics</a>',
+                    '<a href="{}" target="_blank">Pre Statistics</a>',
                     '<a href="{}" target="_blank">LoP</a>',
+                    '<a href="{}" target="_blank">Post Statistics</a>',
                 ]
             ),
             reverse("admin:pre_meeting_statistics", args=(obj.id,)),
             reverse("admin:lop", args=(obj.id,)),
+            reverse("admin:post_meeting_statistics", args=(obj.id,)),
         )
 
     def get_urls(self):
         return [
             path(
-                "<path:object_id>/statistics/",
-                self.admin_site.admin_view(self.get_statistics),
+                "<path:object_id>/pre-statistics/",
+                self.admin_site.admin_view(self.get_pre_meeting_statistics),
                 name="pre_meeting_statistics",
+            ),
+            path(
+                "<path:object_id>/post-statistics/",
+                self.admin_site.admin_view(self.get_post_meeting_statistics),
+                name="post_meeting_statistics",
             ),
             path(
                 "<path:object_id>/lop/",
@@ -824,10 +831,16 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             *super().get_urls(),
         ]
 
-    def get_statistics(self, request, object_id):
+    def get_pre_meeting_statistics(self, request, object_id):
         event = self.get_object(request, object_id)
         return FileResponse(
             PreMeetingStatistics(event).export_docx(), as_attachment=True
+        )
+
+    def get_post_meeting_statistics(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(
+            PostMeetingStatistics(event).export_docx(), as_attachment=True
         )
 
     def get_lop(self, request, object_id):

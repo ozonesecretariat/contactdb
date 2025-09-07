@@ -211,6 +211,8 @@ class BaseContact(models.Model):
         HON_MR = "Hon. Mr.", "Hon. Mr."
         HON_MS = "Hon. Ms.", "Hon. Ms."
 
+    HL_TITLES = (Title.HE_MR, Title.HE_MS, Title.HON_MR, Title.HON_MS)
+
     title = models.CharField(max_length=30, choices=Title.choices, blank=True)
 
     class LocalizedTitle(models.TextChoices):
@@ -757,9 +759,13 @@ class ImportContactPhotosTask(TaskRQ):
 class Region(models.Model):
     code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("name",)
+        ordering = (
+            "sort_order",
+            "name",
+        )
         verbose_name_plural = "regions"
 
     def __str__(self):
@@ -769,9 +775,10 @@ class Region(models.Model):
 class Subregion(models.Model):
     code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("sort_order", "name")
         verbose_name_plural = "subregions"
 
     def __str__(self):
