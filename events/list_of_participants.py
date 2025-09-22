@@ -32,6 +32,9 @@ class Section(Enum):
     SECRETARIAT = "Ozone Secretariat"
 
 
+# Some sections require page breaks before certain sub-sections
+PAGE_BREAK_SUBSECTIONS = {Section.OBSERVERS: {"NGOs and IGOs", "Others"}}
+
 # In order to preserve the layout, use a placeholder if no symbols are provided
 # in the event settings.
 SYMBOL_PLACEHOLDER = ["UNEP/"]
@@ -442,9 +445,16 @@ class ListOfParticipants:
         if not key_l1:
             key_l1 = lambda x: ""  # noqa: E731
 
+        page_break_subsections = PAGE_BREAK_SUBSECTIONS.get(section, set())
+
         for l1_group_name, l1_group_items in itertools.groupby(
             registrations, key=key_l1
         ):
+            # Add page break before specific subsections if needed
+            # (e.g. "NGOs and IGOs" and "Others")
+            if l1_group_name in page_break_subsections:
+                self.doc.add_page_break()
+
             if l1_group_name:
                 self.doc.add_paragraph(l1_group_name, style="LOP L1 Group")
 
