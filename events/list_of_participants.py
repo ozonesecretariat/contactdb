@@ -510,8 +510,7 @@ class ListOfParticipants:
             reg.designation or reg.contact.designation,
             reg.department or reg.contact.department,
             organization and organization.name,
-            address_obj.address,
-            ", ".join(
+            " ".join(
                 filter(
                     lambda x: x,
                     [
