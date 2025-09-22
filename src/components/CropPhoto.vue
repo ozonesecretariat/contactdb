@@ -25,7 +25,7 @@
           />
         </div>
         <div class="row justify-center q-mt-md">
-          <q-btn color="primary" icon="crop" label="Crop" @click="cropPicture" />
+          <q-btn color="primary" icon="crop" label="Crop" :disable="isLoading" @click="cropPicture" />
         </div>
       </q-card-section>
     </q-card>
