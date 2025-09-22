@@ -187,7 +187,7 @@ class ListOfParticipants:
             section=Section.ASS_PANELS,
             sort=lambda r: (
                 r.usable_organization_sort_order,
-                r.usable_organization_name or "Unknown",
+                (r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
@@ -198,7 +198,7 @@ class ListOfParticipants:
                 r.usable_organization_type_sort_order,
                 r.usable_organization_type_description or "Unknown",
                 r.usable_organization_sort_order,
-                r.usable_organization_name or "Unknown",
+                (r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=lambda r: r.usable_organization_type_description or "Unknown",
             key_l2=lambda r: r.usable_organization_name or "Unknown",
@@ -207,7 +207,7 @@ class ListOfParticipants:
             section=Section.SECRETARIAT,
             sort=lambda r: (
                 r.usable_organization_sort_order,
-                r.usable_organization_name,
+                r.usable_organization_name.lower(),
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
