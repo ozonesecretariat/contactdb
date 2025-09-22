@@ -493,11 +493,11 @@ class ListOfParticipants:
                     p = row.cells[1].paragraphs[0]
                     p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                     p.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
-                    self.contact_list_item(p, item)
+                    self.contact_list_item(p, item, section)
 
                 self.doc.add_paragraph("", style="LOP Table Space")
 
-    def contact_list_item(self, p: Paragraph, reg: Registration):
+    def contact_list_item(self, p: Paragraph, reg: Registration, section: Section):
         p.paragraph_format.keep_together = True
         p.add_run(reg.contact.full_name.strip() or "-").bold = True
 
@@ -509,7 +509,9 @@ class ListOfParticipants:
         possible_values = [
             reg.designation or reg.contact.designation,
             reg.department or reg.contact.department,
-            organization and organization.name,
+            organization and organization.name
+            if section != Section.ASS_PANELS
+            else None,
             " ".join(
                 filter(
                     lambda x: x,
