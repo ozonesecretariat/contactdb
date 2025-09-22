@@ -133,7 +133,7 @@ class ListOfParticipants:
         space_style = styles.add_style("LOP Table Space", WD_STYLE_TYPE.PARAGRAPH)
         space_style.paragraph_format.space_after = Pt(0)
         space_style.paragraph_format.space_before = Pt(0)
-        space_style.font.size = Pt(4)
+        space_style.font.size = Pt(12)
 
         group_style = styles.add_style("LOP L1 Group", WD_STYLE_TYPE.PARAGRAPH)
         group_style.font.name = "Arial"
