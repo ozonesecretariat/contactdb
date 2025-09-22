@@ -81,7 +81,13 @@ describe("Check scan pass", () => {
       // Check taking a photo
       cy.get('img[alt="contact photo"]').should("not.exist");
       cy.contains("Take photo").click();
-      cy.contains("Capture").click();
+      cy.get("[role=dialog] video").should("be.visible");
+      cy.get("[role=dialog] button").contains("Capture").click();
+      cy.get('img[alt="contact photo"]').should("be.visible");
+
+      // Check cropping the photo
+      cy.contains("Crop photo").click();
+      cy.get("[role=dialog] button").contains("Crop").click();
       cy.get('img[alt="contact photo"]').should("be.visible");
 
       cy.contains("Admin").click();
