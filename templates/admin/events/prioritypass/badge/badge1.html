@@ -25,6 +25,11 @@
       align-self: center;
     }
 
+    .photo img {
+      width: 90px;
+      height: 90px;
+    }
+
     .participant-details {
       justify-self: start;
       align-self: center;
@@ -110,7 +115,7 @@
   <div class="photo">
     <div class="pass-code">{{ priority_pass.code }}</div>
     {% if contact.photo %}
-      <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" />
+      <img src="{{ contact.photo|file_to_base64 }}" alt="participant photo" width="90" height="90" />
     {% endif %}
     <div class="valid-date-range">
       {% if priority_pass.valid_date_range %}
