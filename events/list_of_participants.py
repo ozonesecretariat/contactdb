@@ -363,12 +363,7 @@ class ListOfParticipants:
             table=table,
             row=0,
             col=0,
-            text="\n".join(
-                [
-                    self.event.title,
-                    self.event.code,
-                ]
-            ),
+            text=self.event.title,
             font_size=Pt(12),
             space_after=ZERO,
             bold=True,
