@@ -109,7 +109,7 @@ import type { PriorityPass } from "src/types/priorityPass";
 import type { Registration } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
-import { api, apiBase, apiURL } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
 import CropPhoto from "components/CropPhoto.vue";
 import ParticipantCard from "components/ParticipantCard.vue";
@@ -152,11 +152,7 @@ const badgeUrl = computed(() => {
 
   return apiBase + pass.value.badgeUrl;
 });
-const photoUrl = computed(() => {
-  if (!pass?.value?.contact?.hasPhoto) return "";
-
-  return `${apiURL}/contacts/${pass.value?.contact.id}/photo/`;
-});
+const photoUrl = computed(() => pass?.value?.contact?.photo ?? "");
 
 const cardColors = {
   Accredited: "bg-primary",

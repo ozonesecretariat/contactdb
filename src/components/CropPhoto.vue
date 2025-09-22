@@ -14,10 +14,10 @@
 
         <div class="crop-container">
           <cropper
-            v-if="imgSrc"
+            v-if="photoUrl"
             ref="cropperComponent"
             class="cropper"
-            :src="imgSrc"
+            :src="photoUrl"
             :stencil-props="{
               aspectRatio: 1,
             }"
@@ -33,17 +33,15 @@
 </template>
 
 <script setup lang="ts">
-import { api } from "boot/axios";
 import "vue-advanced-cropper/dist/style.css";
 import { useQuasar } from "quasar";
-import { onMounted, ref, useTemplateRef } from "vue";
+import { ref, useTemplateRef } from "vue";
 import { Cropper } from "vue-advanced-cropper";
 
 const $q = useQuasar();
 
 const isLoading = ref(true);
-const imgSrc = ref("");
-const props = defineProps<{
+defineProps<{
   photoUrl: string;
 }>();
 
@@ -70,17 +68,11 @@ function cropPicture() {
   }
 }
 
-async function initCropper() {
-  const response = await api.get(props.photoUrl, { responseType: "blob" });
-  imgSrc.value = URL.createObjectURL(response.data);
-}
-
 function show() {
   showDialog.value = true;
 }
 
 defineExpose({ show });
-onMounted(initCropper);
 </script>
 
 <style scoped lang="scss">
