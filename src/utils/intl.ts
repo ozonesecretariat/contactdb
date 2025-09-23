@@ -6,7 +6,7 @@ const dateTimeFormat = new Intl.DateTimeFormat([], {
   timeStyle: "short",
 });
 
-export function formatDate(dateString: string) {
+export function formatDate(dateString: string | undefined) {
   const date = parseDate(dateString);
   if (!date) {
     return "";
@@ -15,7 +15,7 @@ export function formatDate(dateString: string) {
   return dateFormat.format(date);
 }
 
-export function formatDateTime(dateString: string) {
+export function formatDateTime(dateString: string | undefined) {
   const date = parseDate(dateString);
   if (!date) {
     return "";

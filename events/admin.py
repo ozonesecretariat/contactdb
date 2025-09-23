@@ -24,7 +24,7 @@ from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistic
 from events.jobs import send_priority_pass_status_emails
 from events.list_of_participants import ListOfParticipants
 from events.models import (
-    DailySubsistenceAllowance,
+    DSA,
     Event,
     EventGroup,
     EventInvitation,
@@ -1182,11 +1182,10 @@ class EventInvitationAdmin(ModelAdmin):
         )
 
 
-@admin.register(DailySubsistenceAllowance)
+@admin.register(DSA)
 class DSAAdmin(ModelAdmin):
     list_display = (
         "registration",
-        "country",
         "umoja_travel",
         "bp",
         "arrival_date",
@@ -1197,6 +1196,7 @@ class DSAAdmin(ModelAdmin):
     )
     list_filter = (
         AutocompleteFilterFactory("event", "registration__event"),
+        "registration__status",
         "paid_dsa",
     )
     autocomplete_fields = ("registration",)
@@ -1241,7 +1241,6 @@ class DSAAdmin(ModelAdmin):
         "get_boarding_pass_display",
         "get_passport_display",
         "get_signature_display",
-        "country",
         "number_of_days",
         "dsa_on_arrival",
         "total_dsa",

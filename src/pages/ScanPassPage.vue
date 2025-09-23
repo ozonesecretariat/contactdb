@@ -1,13 +1,9 @@
 <template>
   <q-page class="q-pa-md">
-    <code-scanner ref="codeScannerRef" @code="setCode" />
-    <take-photo ref="takePhotoRef" @capture="setPicture" />
-    <search-pass ref="searchPassRef" @code="setCode" />
-
     <section class="flex items-center justify-between q-col-gutter-md">
       <div class="flex q-gutter-md items-center">
-        <q-btn label="Scan code" color="secondary" icon="qr_code_scanner" @click="codeScannerRef?.show()" />
-        <q-btn color="primary" label="Search for pass" icon="search" @click="searchPassRef?.show()" />
+        <code-scanner @code="setCode" />
+        <search-pass @code="setCode" />
       </div>
       <div class="flex q-gutter-md items-center">
         <q-input v-model="passCode" label="Code" filled autofocus dense name="code" />
@@ -38,9 +34,7 @@
             <q-btn v-if="canPrintBadge" color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">
               Print badge
             </q-btn>
-            <q-btn v-if="canEditContact" color="primary" icon="photo_camera" @click="takePhotoRef?.show()">
-              Take photo
-            </q-btn>
+            <take-photo v-if="canEditContact" @capture="setPicture" />
           </q-card-actions>
         </q-card>
         <div class="registration-date-range q-pt-lg text-subtitle1 text-white">
@@ -101,20 +95,16 @@ import type { Registration } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
 import { api, apiBase, apiURL } from "boot/axios";
-import CodeScanner from "components/CodeScanner.vue";
+import CodeScanner from "components/dialogs/CodeScanner.vue";
+import SearchPass from "components/dialogs/SearchPass.vue";
+import TakePhoto from "components/dialogs/TakePhoto.vue";
 import ParticipantCard from "components/ParticipantCard.vue";
-import SearchPass from "components/SearchPass.vue";
-import TakePhoto from "components/TakePhoto.vue";
 import { useQuasar } from "quasar";
 import { useUserStore } from "stores/userStore";
-import { computed, onMounted, ref, useTemplateRef } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const $q = useQuasar();
 const userStore = useUserStore();
-
-const takePhotoRef = useTemplateRef("takePhotoRef");
-const codeScannerRef = useTemplateRef("codeScannerRef");
-const searchPassRef = useTemplateRef("searchPassRef");
 
 const passCode = useRouteQuery<string>("code", "");
 const pass = ref<null | PriorityPass>(null);
@@ -219,7 +209,7 @@ async function setPicture(photo: string) {
 async function updateRegistrationStatus(registration: Registration, newStatus: Registration["status"]) {
   loading.value = true;
   try {
-    await api.patch(`/registration-status/${registration.id}/`, {
+    await api.patch(`/registrations/${registration.id}/`, {
       status: newStatus,
     });
     $q.notify({

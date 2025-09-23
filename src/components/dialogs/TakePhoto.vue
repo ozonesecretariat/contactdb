@@ -1,4 +1,5 @@
 <template>
+  <q-btn color="primary" icon="photo_camera" @click="show()">Take photo</q-btn>
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">
@@ -116,8 +117,6 @@ watch(showDialog, () => {
 onUnmounted(() => {
   stopCamera();
 });
-
-defineExpose({ show });
 </script>
 
 <style scoped lang="scss">

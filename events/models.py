@@ -133,7 +133,6 @@ class Event(models.Model):
         max_digits=10, decimal_places=2, blank=True, null=True
     )
     event_id_number = models.CharField(max_length=255, blank=True, default="")
-    # TODO: config_block
 
     class Meta:
         ordering = ("-start_date",)
@@ -787,6 +786,14 @@ class Registration(models.Model):
         except AttributeError:
             return False
 
+    @property
+    def dsa_country(self):
+        if self.is_gov:
+            return self.usable_government
+        if self.usable_organization:
+            return self.usable_organization.country
+        return None
+
 
 class LoadParticipantsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2
@@ -867,8 +874,10 @@ class LoadOrganizationsFromKronosTask(TaskRQ):
         return LoadOrganizationsFromKronos
 
 
-class DailySubsistenceAllowance(models.Model):
-    registration = models.OneToOneField(Registration, on_delete=models.CASCADE)
+class DSA(models.Model):
+    registration = models.OneToOneField(
+        Registration, on_delete=models.CASCADE, related_name="dsa"
+    )
     umoja_travel = models.CharField(max_length=255, blank=True)
     bp = models.CharField(max_length=255, blank=True)
     arrival_date = models.DateField(blank=True)
@@ -880,16 +889,12 @@ class DailySubsistenceAllowance(models.Model):
     passport = EncryptedJSONField(blank=True, null=True)
     signature = EncryptedJSONField(blank=True, null=True)
 
+    class Meta:
+        verbose_name = "DSA"
+        verbose_name_plural = "DSAs"
+
     def __str__(self):
         return f"DSA - {self.registration}"
-
-    @property
-    def country(self):
-        if self.registration.is_gov:
-            return self.registration.usable_government
-        if self.registration.usable_organization:
-            return self.registration.usable_organization.country
-        return None
 
     @property
     def number_of_days(self):

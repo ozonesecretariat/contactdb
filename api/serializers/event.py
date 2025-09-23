@@ -5,12 +5,14 @@ from api.serializers.contact import (
     OrganizationSerializer,
 )
 from api.serializers.country import CountrySerializer
+from api.serializers.dsa import DSASerializer
 from core.models import Contact
 from events.models import (
     Event,
     EventGroup,
     Registration,
     RegistrationRole,
+    RegistrationTag,
 )
 
 
@@ -35,6 +37,9 @@ class EventSerializer(serializers.ModelSerializer):
             "venue_city",
             "dates",
             "group",
+            # DSA
+            "dsa",
+            "term_exp",
         )
 
 
@@ -62,11 +67,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created_at", "status")
 
 
-class RegistrationStatusSerializer(serializers.ModelSerializer):
+class RegistrationDSASerializer(RegistrationSerializer):
+    dsa = DSASerializer()
+    dsa_country = CountrySerializer(read_only=True)
+    tags = serializers.SlugRelatedField("name", many=True, read_only=True)
+
+    class Meta(RegistrationSerializer.Meta):
+        fields = RegistrationSerializer.Meta.fields + ("dsa", "dsa_country", "tags")
+
+
+class RegistrationTagSerializer(RegistrationSerializer):
     class Meta:
-        model = Registration
-        fields = ("status", "id")
-        read_only_fields = ("id",)
+        model = RegistrationTag
+        fields = ("name",)
 
 
 class NominationSerializer(serializers.ModelSerializer):

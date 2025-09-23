@@ -103,6 +103,11 @@ const drawerItems = computed(() => [
     to: { name: "events" },
   },
   {
+    icon: "payments",
+    label: "DSA",
+    to: { name: "dsa" },
+  },
+  {
     icon: "qr_code_scanner",
     label: "Scan Pass",
     to: { name: "scan-pass" },
