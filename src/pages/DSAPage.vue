@@ -52,10 +52,10 @@
             @update:model-value="fetchData"
           />
           <q-select
-            v-model="paidDSA"
+            v-model="paidDsa"
             dense
             filled
-            name="paidDSA"
+            name="paidDsa"
             :options="BooleanFilterChoices"
             label="Paid DSA"
             map-options
@@ -136,7 +136,7 @@ const { isLoading: isLoadingTags, state: tags } = useAsyncState(
 const tag = useRouteQuery<string>("tag", "");
 const status = useRouteQuery<string>("status", "");
 const search = useRouteQuery<string>("search", "");
-const paidDSA = useRouteQuery<string>("paidDSA", "");
+const paidDsa = useRouteQuery<string>("paidDsa", "");
 const eventCode = useRouteQuery<string>("eventCode", "");
 const priorityPassCode = useRouteQuery<string>("priorityPassCode", "");
 
@@ -214,7 +214,7 @@ const columns: QTableColumn<Registration>[] = [
     name: "cashCard",
   },
   {
-    field: (row) => row.dsa?.paidDsa,
+    field: (row) => (row.dsa?.paidDsa ? "Yes" : "No"),
     label: "Paid DSA",
     name: "paidDsa",
   },
@@ -230,7 +230,12 @@ const columns: QTableColumn<Registration>[] = [
   },
 ];
 const filteredColumns = computed(() =>
-  columns.filter((c) => (c.name !== "status" || !status.value) && (c.name !== "tags" || !tag.value)),
+  columns.filter(
+    (c) =>
+      (c.name !== "status" || !status.value) &&
+      (c.name !== "tags" || !tag.value) &&
+      (c.name !== "paidDsa" || !paidDsa.value),
+  ),
 );
 
 function fetchData() {
@@ -247,6 +252,7 @@ async function onRequest(props: QTableRequestProps) {
         eventCode: eventCode.value,
         page,
         pageSize,
+        paidDsa: paidDsa.value,
         priorityPassCode: priorityPassCode.value,
         search: search.value,
         status: status.value,

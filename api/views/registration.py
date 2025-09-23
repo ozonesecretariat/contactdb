@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import filters, viewsets
 
@@ -13,7 +14,9 @@ class RegistrationDSAFilter(FilterSet):
     event_code = django_filters.CharFilter(
         field_name="event__code", lookup_expr="iexact"
     )
-    paid_dsa = django_filters.BooleanFilter(field_name="dsa__paid_dsa")
+    paid_dsa = django_filters.BooleanFilter(
+        field_name="dsa__paid_dsa", method="filter_paid_dsa"
+    )
     priority_pass_code = django_filters.CharFilter(
         field_name="priority_pass__code", lookup_expr="iexact"
     )
@@ -27,6 +30,14 @@ class RegistrationDSAFilter(FilterSet):
             "paid_dsa",
             "tag",
         )
+
+    def filter_paid_dsa(self, queryset, name, value):
+        if value is True:
+            return queryset.filter(**{name: True})
+        if value is False:
+            # Match both False and None
+            return queryset.filter(Q(**{name: False}) | Q(**{f"{name}__isnull": True}))
+        return queryset
 
 
 class RegistrationViewSet(viewsets.ModelViewSet):
