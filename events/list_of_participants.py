@@ -516,22 +516,21 @@ class ListOfParticipants:
             organization if reg.contact.is_use_organization_address else reg.contact
         )
 
+        city = address_obj.city.strip()
+        state = address_obj.state.strip()
+        postal = address_obj.postal_code.strip()
+
+        city_state = f"{city}, {state}" if city and state else city or state
+        address_parts = filter(None, [city_state, postal])
+        address_string = " ".join(address_parts)
+
         possible_values = [
             reg.designation or reg.contact.designation,
             reg.department or reg.contact.department,
             organization and organization.name
             if section != Section.ASS_PANELS
             else None,
-            " ".join(
-                filter(
-                    lambda x: x,
-                    [
-                        address_obj.city.strip(),
-                        address_obj.state.strip(),
-                        address_obj.postal_code.strip(),
-                    ],
-                )
-            ),
+            address_string,
             address_obj.country and address_obj.country.name,
         ]
 
