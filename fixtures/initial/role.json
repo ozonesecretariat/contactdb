@@ -223,5 +223,18 @@
         ["change_contact", "core", "contact"]
       ]
     }
+  },
+  {
+    "model": "accounts.role",
+    "fields": {
+      "name": "DSA Staff",
+      "permissions": [
+        ["view_dsa", "events", "dsa"],
+        ["change_dsa", "events", "dsa"],
+        ["view_event", "events", "event"],
+        ["view_registration", "events", "registration"],
+        ["view_registrationtag", "events", "registrationtag"]
+      ]
+    }
   }
 ]
