@@ -85,6 +85,18 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     def response_post_save_change(self, request, obj):
         return super().response_post_save_change(request, obj)
 
+    def get_encrypted_file_display(self, obj, field):
+        if not (file := getattr(obj, field)):
+            return "-"
+
+        try:
+            b64data = file["data"]
+            filename = file["filename"]
+        except KeyError:
+            return "-"
+
+        return mark_safe(f'<a href="data:{b64data}" download="{filename}">Download</a>')
+
     def get_admin_list_link(self, model, query=None):
         opts = model._meta
         return reverse(

@@ -11,6 +11,7 @@ from django.db.models import Exists, Max, Min, OuterRef, Q
 from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
+from encrypted_fields import EncryptedJSONField
 
 from common.array_field import ArrayField
 from common.citext import CICharField
@@ -125,6 +126,14 @@ class Event(models.Model):
         blank=True,
         help_text="Document symbols for the List of Participants document",
     )
+
+    # DSA
+    dsa = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    term_exp = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True
+    )
+    event_id_number = models.CharField(max_length=255, blank=True, default="")
+    # TODO: config_block
 
     class Meta:
         ordering = ("-start_date",)
@@ -856,3 +865,43 @@ class LoadOrganizationsFromKronosTask(TaskRQ):
         from .jobs import LoadOrganizationsFromKronos
 
         return LoadOrganizationsFromKronos
+
+
+class DailySubsistenceAllowance(models.Model):
+    registration = models.OneToOneField(Registration, on_delete=models.CASCADE)
+    umoja_travel = models.CharField(max_length=255, blank=True)
+    bp = models.CharField(max_length=255, blank=True)
+    arrival_date = models.DateField(blank=True)
+    departure_date = models.DateField(blank=True)
+    cash_card = models.CharField(max_length=255, blank=True)
+    paid_dsa = models.BooleanField(default=False)
+
+    boarding_pass = EncryptedJSONField(blank=True, null=True)
+    passport = EncryptedJSONField(blank=True, null=True)
+    signature = EncryptedJSONField(blank=True, null=True)
+
+    def __str__(self):
+        return f"DSA - {self.registration}"
+
+    @property
+    def country(self):
+        if self.registration.is_gov:
+            return self.registration.usable_government
+        if self.registration.usable_organization:
+            return self.registration.usable_organization.country
+        return None
+
+    @property
+    def number_of_days(self):
+        if not self.arrival_date or not self.departure_date:
+            return 0
+
+        return (self.departure_date - self.arrival_date).days
+
+    @property
+    def dsa_on_arrival(self):
+        return self.number_of_days * (self.registration.event.dsa or 0)
+
+    @property
+    def total_dsa(self):
+        return self.dsa_on_arrival + (self.registration.event.term_exp or 0)

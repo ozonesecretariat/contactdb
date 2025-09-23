@@ -472,22 +472,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     def organization_link(self, obj):
         return self.get_object_display_link(obj.organization)
 
-    def _get_file_display(self, obj, field):
-        if not (file := getattr(obj, field)):
-            return "-"
-
-        try:
-            b64data = file["data"]
-            filename = file["filename"]
-        except KeyError:
-            return "-"
-
-        return mark_safe(f'<a href="data:{b64data}" download="{filename}">Download</a>')
-
     @admin.display(description="Credentials")
     def credentials_display(self, obj):
-        return self._get_file_display(obj, "credentials")
+        return self.get_encrypted_file_display(obj, "credentials")
 
     @admin.display(description="Passport")
     def passport_display(self, obj):
-        return self._get_file_display(obj, "passport")
+        return self.get_encrypted_file_display(obj, "passport")

@@ -24,6 +24,7 @@ from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistic
 from events.jobs import send_priority_pass_status_emails
 from events.list_of_participants import ListOfParticipants
 from events.models import (
+    DailySubsistenceAllowance,
     Event,
     EventGroup,
     EventInvitation,
@@ -745,6 +746,16 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             },
         ),
         (
+            "DSA",
+            {
+                "fields": (
+                    "dsa",
+                    "term_exp",
+                    "event_id_number",
+                )
+            },
+        ),
+        (
             "Confirmation email",
             {
                 "fields": (
@@ -1169,3 +1180,81 @@ class EventInvitationAdmin(ModelAdmin):
             obj.id,
             tasks.count(),
         )
+
+
+@admin.register(DailySubsistenceAllowance)
+class DSAAdmin(ModelAdmin):
+    list_display = (
+        "registration",
+        "country",
+        "umoja_travel",
+        "bp",
+        "arrival_date",
+        "departure_date",
+        "number_of_days",
+        "cash_card",
+        "paid_dsa",
+    )
+    list_filter = (
+        AutocompleteFilterFactory("event", "registration__event"),
+        "paid_dsa",
+    )
+    autocomplete_fields = ("registration",)
+    prefetch_related = (
+        "registration__contact",
+        "registration__event",
+        "registration__organization",
+        "registration__organization__government",
+        "registration__organization__country",
+        "registration__organization__organization_type",
+        "registration__contact__organization",
+        "registration__contact__organization__government",
+        "registration__contact__organization__country",
+        "registration__contact__organization__organization_type",
+    )
+    search_fields = (
+        "registration__contact__title",
+        "registration__contact__first_name",
+        "registration__contact__last_name",
+        "registration__organization__name",
+        "registration__event__title",
+    )
+
+    fields = (
+        "registration",
+        "umoja_travel",
+        "bp",
+        "arrival_date",
+        "departure_date",
+        "cash_card",
+        "paid_dsa",
+        "get_boarding_pass_display",
+        "get_passport_display",
+        "get_signature_display",
+        "country",
+        "number_of_days",
+        "dsa_on_arrival",
+        "total_dsa",
+    )
+
+    readonly_fields = (
+        "get_boarding_pass_display",
+        "get_passport_display",
+        "get_signature_display",
+        "country",
+        "number_of_days",
+        "dsa_on_arrival",
+        "total_dsa",
+    )
+
+    @admin.display(description="Boarding pass")
+    def get_boarding_pass_display(self, obj):
+        return self.get_encrypted_file_display(obj, "boarding_pass")
+
+    @admin.display(description="Passport")
+    def get_passport_display(self, obj):
+        return self.get_encrypted_file_display(obj, "passport")
+
+    @admin.display(description="Signature")
+    def get_signature_display(self, obj):
+        return self.get_encrypted_file_display(obj, "signature")
