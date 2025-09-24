@@ -7,6 +7,7 @@ from api.serializers.event import (
     RegistrationDSASerializer,
     RegistrationTagSerializer,
 )
+from common.filters import CamelCaseOrderingFilter
 from events.models import Registration, RegistrationTag
 
 
@@ -45,23 +46,27 @@ class RegistrationViewSet(viewsets.ModelViewSet):
         Registration.objects.all()
         .select_related("dsa")
         .prefetch_related(
+            "role",
             "tags",
             "event",
+            "event__venue_country",
             "organization",
             "organization__government",
             "organization__country",
             "organization__organization_type",
             "contact",
+            "contact__country",
             "contact__organization",
             "contact__organization__government",
             "contact__organization__country",
             "contact__organization__organization_type",
         )
+        .order_by("contact__last_name", "contact__first_name")
     )
     serializer_class = RegistrationDSASerializer
     filter_backends = (
         filters.SearchFilter,
-        filters.OrderingFilter,
+        CamelCaseOrderingFilter,
         DjangoFilterBackend,
     )
     filterset_class = RegistrationDSAFilter

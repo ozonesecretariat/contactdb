@@ -1,5 +1,5 @@
 <template>
-  <q-btn color="primary" icon="photo_camera" @click="show()">Take photo</q-btn>
+  <q-btn color="primary" icon="photo_camera" @click="show()">{{ label }}</q-btn>
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">
@@ -46,6 +46,12 @@ const selectedCamera = ref<MediaDeviceInfo | null>(null);
 const emit = defineEmits<{
   capture: [imageData: string];
 }>();
+defineProps({
+  label: {
+    default: "Take photo",
+    type: String,
+  },
+});
 
 function capturePicture() {
   if (!videoElement.value || !canvasElement.value) return;

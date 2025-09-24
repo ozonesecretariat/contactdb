@@ -4,6 +4,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from api.serializers.event import (
     EventSerializer,
 )
+from common.filters import CamelCaseOrderingFilter
 from events.models import (
     Event,
 )
@@ -13,7 +14,7 @@ class EventViewSet(ReadOnlyModelViewSet):
     queryset = Event.objects.all().select_related("venue_country")
     serializer_class = EventSerializer
     lookup_field = "code"
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [filters.SearchFilter, CamelCaseOrderingFilter]
     search_fields = [
         "code",
         "title",

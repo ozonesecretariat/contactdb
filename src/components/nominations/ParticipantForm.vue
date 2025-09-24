@@ -341,6 +341,7 @@ import type { QSelectOnFilterUpdate } from "src/types/quasar";
 
 import { api } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
+import { fileToBase64, fileToBase64Dict } from "src/utils/file";
 import { unaccentSearch } from "src/utils/search";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
@@ -404,30 +405,6 @@ if (invitation.participant) {
 // Auto-select the org if there is only one
 if (invitation.organizations.length === 1 && invitation.organizations?.[0]?.id) {
   Object.assign(data, { organization: data.organization || invitation.organizations?.[0]?.id });
-}
-
-async function fileToBase64(file: File | null) {
-  const result = await fileToBase64Dict(file);
-  return result ? result.data : null;
-}
-
-function fileToBase64Dict(file: File | null): Promise<null | { data: string; filename: string }> {
-  return new Promise((resolve, reject) => {
-    if (!file) {
-      resolve(null);
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      resolve({
-        data: reader.result as string,
-        filename: file.name,
-      });
-    };
-    reader.onerror = () => reject(new Error(`Error while reading file.`));
-  });
 }
 
 async function saveForm() {

@@ -1,3 +1,5 @@
+type DateInput = null | string | undefined;
+
 const dateFormat = new Intl.DateTimeFormat([], {
   dateStyle: "medium",
 });
@@ -6,7 +8,7 @@ const dateTimeFormat = new Intl.DateTimeFormat([], {
   timeStyle: "short",
 });
 
-export function formatDate(dateString: string | undefined) {
+export function formatDate(dateString: DateInput) {
   const date = parseDate(dateString);
   if (!date) {
     return "";
@@ -15,7 +17,7 @@ export function formatDate(dateString: string | undefined) {
   return dateFormat.format(date);
 }
 
-export function formatDateTime(dateString: string | undefined) {
+export function formatDateTime(dateString: DateInput) {
   const date = parseDate(dateString);
   if (!date) {
     return "";
@@ -24,7 +26,7 @@ export function formatDateTime(dateString: string | undefined) {
   return dateTimeFormat.format(date);
 }
 
-export function parseDate(date: string | undefined) {
+export function parseDate(date: DateInput) {
   if (!date) return null;
 
   const stamp = Date.parse(date);

@@ -880,8 +880,8 @@ class DSA(models.Model):
     )
     umoja_travel = models.CharField(max_length=255, blank=True)
     bp = models.CharField(max_length=255, blank=True)
-    arrival_date = models.DateField(blank=True)
-    departure_date = models.DateField(blank=True)
+    arrival_date = models.DateField(blank=True, null=True)
+    departure_date = models.DateField(blank=True, null=True)
     cash_card = models.CharField(max_length=255, blank=True)
     paid_dsa = models.BooleanField(default=False)
 
@@ -896,12 +896,31 @@ class DSA(models.Model):
     def __str__(self):
         return f"DSA - {self.registration}"
 
+    def clean(self):
+        if self.departure_date and not self.arrival_date:
+            raise ValidationError(
+                {"arrival_date": "Cannot specify departure date without arrival date."}
+            )
+
+        if (
+            self.departure_date
+            and self.arrival_date
+            and self.departure_date < self.arrival_date
+        ):
+            msg = "Departure date cannot be before arrival date."
+            raise ValidationError(
+                {
+                    "arrival_date": msg,
+                    "departure_date": msg,
+                }
+            )
+
     @property
     def number_of_days(self):
         if not self.arrival_date or not self.departure_date:
             return 0
 
-        return (self.departure_date - self.arrival_date).days
+        return (self.departure_date - self.arrival_date).days + 1
 
     @property
     def dsa_on_arrival(self):

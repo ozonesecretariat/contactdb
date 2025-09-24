@@ -1,5 +1,12 @@
 <template>
   <q-page class="q-pa-lg">
+    <dsa-form
+      v-if="selected"
+      :model-value="true"
+      :registration="selected"
+      @hide="selected = null"
+      @update="fetchData(false)"
+    />
     <q-table
       ref="tableRef"
       v-model:pagination="pagination"
@@ -13,94 +20,138 @@
       wrap-cells
       :rows-per-page-options="[5, 10, 20, 50]"
       @request="onRequest"
+      @row-click="onRowClick"
     >
-      <template #top-left>
-        <div class="q-gutter-md filter-list">
-          <q-input
-            v-model="search"
-            dense
-            filled
-            debounce="300"
-            placeholder="Search"
-            name="search"
-            autofocus
-            role="search"
-            label="Search"
-            @update:model-value="fetchData"
-          >
-            <template #append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-          <code-scanner @code="setCode" />
+      <template #top>
+        <div class="row justify-between full-width q-gutter-md">
+          <div class="q-gutter-md filter-list">
+            <q-input
+              v-model="search"
+              dense
+              filled
+              debounce="300"
+              placeholder="Search"
+              name="search"
+              autofocus
+              role="search"
+              label="Search"
+              @update:model-value="fetchData()"
+            >
+              <template #append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+            <code-scanner @code="setCode" />
+          </div>
+          <div class="q-gutter-md filter-list">
+            <q-select
+              v-model="eventCode"
+              dense
+              filled
+              name="eventCode"
+              :options="events"
+              option-value="code"
+              option-label="title"
+              map-options
+              emit-value
+              label="Event"
+              :loading="isLoadingEvent"
+              @update:model-value="fetchData()"
+            />
+            <q-select
+              v-model="paidDsa"
+              dense
+              filled
+              name="paidDsa"
+              :options="BooleanFilterChoices"
+              label="Paid DSA"
+              map-options
+              emit-value
+              clearable
+              @update:model-value="fetchData()"
+            />
+            <q-input
+              v-model="priorityPassCode"
+              dense
+              filled
+              debounce="300"
+              placeholder="Code"
+              name="priorityPassCode"
+              label="Code"
+              clearable
+              @update:model-value="fetchData()"
+            />
+            <q-select
+              v-model="status"
+              dense
+              filled
+              name="status"
+              :options="RegistrationStatusChoices"
+              label="Status"
+              clearable
+              @update:model-value="fetchData()"
+            />
+            <q-select
+              v-model="tag"
+              dense
+              filled
+              name="tag"
+              :options="tags"
+              option-value="name"
+              option-label="name"
+              map-options
+              emit-value
+              label="Tag"
+              clearable
+              placeholder="Tag"
+              :loading="isLoadingTags"
+              @update:model-value="fetchData()"
+            />
+          </div>
         </div>
       </template>
-      <template #top-right>
-        <div class="q-gutter-md filter-list">
-          <q-select
-            v-model="eventCode"
+
+      <template #body-cell-passport="props">
+        <q-td :props="props">
+          <q-btn
+            v-if="props.value"
+            color="primary"
             dense
-            filled
-            name="eventCode"
-            :options="events"
-            option-value="code"
-            option-label="title"
-            map-options
-            emit-value
-            label="Event"
-            :loading="isLoadingEvent"
-            @update:model-value="fetchData"
-          />
-          <q-select
-            v-model="paidDsa"
+            flat
+            :href="props.value.data"
+            :download="props.value.filename"
+          >
+            Passport
+          </q-btn>
+        </q-td>
+      </template>
+      <template #body-cell-boardingPass="props">
+        <q-td :props="props">
+          <q-btn
+            v-if="props.value"
+            color="primary"
             dense
-            filled
-            name="paidDsa"
-            :options="BooleanFilterChoices"
-            label="Paid DSA"
-            map-options
-            emit-value
-            clearable
-            @update:model-value="fetchData"
-          />
-          <q-input
-            v-model="priorityPassCode"
+            flat
+            :href="props.value.data"
+            :download="props.value.filename"
+          >
+            Boarding
+          </q-btn>
+        </q-td>
+      </template>
+      <template #body-cell-signature="props">
+        <q-td :props="props">
+          <q-btn
+            v-if="props.value"
+            color="primary"
             dense
-            filled
-            debounce="300"
-            placeholder="Code"
-            name="priorityPassCode"
-            label="Code"
-            clearable
-            @update:model-value="fetchData"
-          />
-          <q-select
-            v-model="status"
-            dense
-            filled
-            name="status"
-            :options="RegistrationStatusChoices"
-            label="Status"
-            clearable
-            @update:model-value="fetchData"
-          />
-          <q-select
-            v-model="tag"
-            dense
-            filled
-            name="tag"
-            :options="tags"
-            option-value="name"
-            option-label="name"
-            map-options
-            emit-value
-            label="Tag"
-            clearable
-            placeholder="Tag"
-            :loading="isLoadingTags"
-            @update:model-value="fetchData"
-          />
-        </div>
+            flat
+            :href="props.value.data"
+            :download="props.value.filename"
+          >
+            Signature
+          </q-btn>
+        </q-td>
       </template>
     </q-table>
   </q-page>
@@ -116,6 +167,7 @@ import { useAsyncState } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
 import { api } from "boot/axios";
 import CodeScanner from "components/dialogs/CodeScanner.vue";
+import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
 import { formatDate } from "src/utils/intl";
 import { computed, ref, watch } from "vue";
@@ -124,21 +176,14 @@ type QTableRequestProps = Parameters<NonNullable<QTableProps["onRequest"]>>[0];
 
 const tableRef = ref();
 
-const { isLoading: isLoadingEvent, state: events } = useAsyncState(
-  async () => (await api.get<MeetingEvent[]>("/events/?order_by=-start_date")).data,
-  [],
-);
-const { isLoading: isLoadingTags, state: tags } = useAsyncState(
-  async () => (await api.get<RegistrationTag[]>("/registration-tags/")).data,
-  [],
-);
-
 const tag = useRouteQuery<string>("tag", "");
 const status = useRouteQuery<string>("status", "");
 const search = useRouteQuery<string>("search", "");
 const paidDsa = useRouteQuery<string>("paidDsa", "");
 const eventCode = useRouteQuery<string>("eventCode", "");
 const priorityPassCode = useRouteQuery<string>("priorityPassCode", "");
+
+const selected = ref<null | Registration>(null);
 
 const isLoading = ref(true);
 const rows = ref<Registration[]>([]);
@@ -214,6 +259,21 @@ const columns: QTableColumn<Registration>[] = [
     name: "cashCard",
   },
   {
+    field: (row) => row.dsa?.passport,
+    label: "Passport",
+    name: "passport",
+  },
+  {
+    field: (row) => row.dsa?.boardingPass,
+    label: "Boarding Pass",
+    name: "boardingPass",
+  },
+  {
+    field: (row) => row.dsa?.signature,
+    label: "Signature",
+    name: "signature",
+  },
+  {
     field: (row) => (row.dsa?.paidDsa ? "Yes" : "No"),
     label: "Paid DSA",
     name: "paidDsa",
@@ -232,13 +292,31 @@ const columns: QTableColumn<Registration>[] = [
 const filteredColumns = computed(() =>
   columns.filter(
     (c) =>
-      (c.name !== "status" || !status.value) &&
       (c.name !== "tags" || !tag.value) &&
+      (c.name !== "status" || !status.value) &&
       (c.name !== "paidDsa" || !paidDsa.value),
   ),
 );
 
-function fetchData() {
+const { isLoading: isLoadingEvent, state: events } = useAsyncState(
+  async () => (await api.get<MeetingEvent[]>("/events/?ordering=-startDate")).data,
+  [],
+);
+const { isLoading: isLoadingTags, state: tags } = useAsyncState(
+  async () => (await api.get<RegistrationTag[]>("/registration-tags/")).data,
+  [],
+);
+
+watch(isLoadingEvent, () => {
+  eventCode.value ||= events.value[0]?.code ?? "";
+  fetchData();
+});
+
+function fetchData(resetPagination = true) {
+  if (resetPagination) {
+    pagination.value.page = 1;
+  }
+  selected.value = null;
   tableRef.value.requestServerInteraction();
 }
 
@@ -250,6 +328,7 @@ async function onRequest(props: QTableRequestProps) {
     const resp = await api.get<Paginated<Registration>>("/registrations/", {
       params: {
         eventCode: eventCode.value,
+        ordering: "lastName,firstName",
         page,
         pageSize,
         paidDsa: paidDsa.value,
@@ -270,15 +349,14 @@ async function onRequest(props: QTableRequestProps) {
   }
 }
 
+function onRowClick(event: Event, row: Registration) {
+  selected.value = row;
+}
+
 function setCode(code: string) {
   priorityPassCode.value = code;
   fetchData();
 }
-
-watch(isLoadingEvent, () => {
-  eventCode.value ||= events.value[0]?.code ?? "";
-  fetchData();
-});
 </script>
 
 <style scoped lang="scss">

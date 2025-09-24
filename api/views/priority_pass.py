@@ -1,6 +1,7 @@
 from rest_framework import filters, viewsets
 
 from api.serializers.priority_pass import PriorityPassSerializer
+from common.filters import CamelCaseOrderingFilter
 from events.models import PriorityPass
 
 
@@ -24,7 +25,7 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
     )
     filter_backends = (
         filters.SearchFilter,
-        filters.OrderingFilter,
+        CamelCaseOrderingFilter,
     )
     search_fields = (
         "registrations__event__code",

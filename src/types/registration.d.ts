@@ -5,16 +5,17 @@ import type { Contact } from "src/types/nomination";
 import type { Organization } from "src/types/organization";
 
 export interface DSA {
-  arrivalDate: string;
+  arrivalDate: null | string;
   boardingPass: EncryptedFile | null;
   bp: string;
   cashCard: string;
-  departureDate: string;
+  departureDate: null | string;
   dsaOnArrival: number;
   id: number;
   numberOfDays: number;
   paidDsa: boolean;
   passport: EncryptedFile | null;
+  registration: number;
   signature: EncryptedFile | null;
   totalDsa: string;
   umojaTravel: string;

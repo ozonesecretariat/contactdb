@@ -1231,7 +1231,6 @@ class DSAAdmin(ModelAdmin):
         "get_boarding_pass_display",
         "get_passport_display",
         "get_signature_display",
-        "country",
         "number_of_days",
         "dsa_on_arrival",
         "total_dsa",
