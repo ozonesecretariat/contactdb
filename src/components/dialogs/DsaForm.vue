@@ -1,6 +1,6 @@
 <template>
-  <q-dialog v-bind="$attrs" style="width: 30rem">
-    <q-card>
+  <q-dialog v-bind="$attrs">
+    <q-card style="width: 40rem">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">Edit DSA for {{ registration.contact.fullName }} - {{ registration.event.code }}</div>
         <q-space />

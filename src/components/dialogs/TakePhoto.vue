@@ -75,6 +75,8 @@ function capturePicture() {
 }
 
 async function initCamera() {
+  if (!selectedCamera.value) return;
+
   isLoading.value = true;
 
   try {
