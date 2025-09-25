@@ -132,7 +132,6 @@ class Event(models.Model):
     term_exp = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True
     )
-    event_id_number = models.CharField(max_length=255, blank=True, default="")
 
     class Meta:
         ordering = ("-start_date",)

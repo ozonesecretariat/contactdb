@@ -751,7 +751,6 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 "fields": (
                     "dsa",
                     "term_exp",
-                    "event_id_number",
                 )
             },
         ),
