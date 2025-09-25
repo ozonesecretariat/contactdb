@@ -50,8 +50,7 @@ describe("Check nominations page", () => {
     cy.get("input[name=lastName]").type(lastName);
     cy.get("input[name=designation]").type("Corpo");
     cy.get("[role=checkbox]:has([name=isUseOrganizationAddress])").click();
-    cy.get("[aria-label=Organization]").click();
-    cy.get("[role=option]").contains("Galactic Research Institute for Advanced Technologies").click();
+    cy.chooseQSelect("Organization", "Galactic Research Institute for Advanced Technologies");
     // Add passport info
     cy.get("[role=checkbox]:has([name=needsVisaLetter])").click();
     cy.get("[name=nationality]").type("klingon");
@@ -64,8 +63,7 @@ describe("Check nominations page", () => {
     cy.contains("Save").click();
     cy.contains("Nominate participant");
     // Add a nomination for the participant
-    cy.get('[aria-label="Role of the participant"]').click();
-    cy.get("[role=option]").contains("Delegate").click();
+    cy.chooseQSelect("Role of the participant", "Delegate");
     cy.contains("Confirm nomination").click();
     // Check that the new nomination was added and the store was reloaded
     cy.get("[role=search]").type(email);

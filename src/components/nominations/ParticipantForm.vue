@@ -273,7 +273,6 @@
           name="passportDateOfIssue"
           outlined
           mask="####-##-##"
-          :rules="['date']"
           label="Date of Issue"
           class="col"
         >
@@ -296,7 +295,6 @@
           name="passportDateOfExpiry"
           outlined
           mask="####-##-##"
-          :rules="['date']"
           label="Date of Expiry"
           class="col q-ml-md"
         >

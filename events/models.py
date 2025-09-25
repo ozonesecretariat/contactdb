@@ -920,7 +920,7 @@ class DSA(models.Model):
         if not self.arrival_date or not self.departure_date:
             return 0
 
-        return (self.departure_date - self.arrival_date).days + 1
+        return (self.departure_date - self.arrival_date).days
 
     @property
     def dsa_on_arrival(self):

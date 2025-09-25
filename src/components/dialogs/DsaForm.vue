@@ -18,10 +18,19 @@
             label="Umoja Travel #"
             :error="!!errors.umojaTravel"
             :error-message="errors.umojaTravel"
+            name="umojaTravel"
             outlined
             dense
           />
-          <q-input v-model="data.bp" label="BP #" :error="!!errors.bp" :error-message="errors.bp" outlined dense />
+          <q-input
+            v-model="data.bp"
+            label="BP #"
+            :error="!!errors.bp"
+            :error-message="errors.bp"
+            name="bp"
+            outlined
+            dense
+          />
           <q-input
             v-model="data.arrivalDate"
             :error="!!errors.arrivalDate"
@@ -73,6 +82,7 @@
             label="Cash Card"
             :error="!!errors.cashCard"
             :error-message="errors.cashCard"
+            name="cashCard"
             outlined
             dense
           />
@@ -80,34 +90,34 @@
             v-model="data.passport"
             :error="!!errors.passport"
             :error-message="errors.passport"
+            name="passport"
             clearable
             label="Passport"
             outlined
             dense
             :accept="fileAccept"
-            name="passport"
           />
           <encrypted-file-input
             v-model="data.boardingPass"
             :error="!!errors.boardingPass"
             :error-message="errors.boardingPass"
+            name="boardingPass"
             clearable
             label="Boarding Pass"
             outlined
             dense
             :accept="fileAccept"
-            name="boardingPass"
           />
           <encrypted-file-input
             v-model="data.signature"
             :error="!!errors.signature"
             :error-message="errors.signature"
+            name="signature"
             clearable
             label="Signature"
             outlined
             dense
             :accept="fileAccept"
-            name="signature"
           />
           <q-checkbox
             v-model="data.paidDsa"

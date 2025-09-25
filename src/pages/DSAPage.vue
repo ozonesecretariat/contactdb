@@ -120,6 +120,7 @@
             flat
             :href="props.value.data"
             :download="props.value.filename"
+            @click.stop
           >
             Passport
           </q-btn>
@@ -134,6 +135,7 @@
             flat
             :href="props.value.data"
             :download="props.value.filename"
+            @click.stop
           >
             Boarding
           </q-btn>
@@ -148,6 +150,7 @@
             flat
             :href="props.value.data"
             :download="props.value.filename"
+            @click.stop
           >
             Signature
           </q-btn>

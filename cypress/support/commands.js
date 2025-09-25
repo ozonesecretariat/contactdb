@@ -131,6 +131,9 @@ Cypress.Commands.addAll({
     cy.performSearch({ filters, modelName, searchValue });
     cy.contains("0 results");
   },
+  checkQInputError(name, error) {
+    cy.get(`label:has([name="${name}"]) [role=alert]`).contains(error);
+  },
   checkSearch({ expectedValue = null, filters = {}, modelName, searchValue = "" }) {
     const checkedValue = expectedValue ?? searchValue;
 
@@ -138,6 +141,10 @@ Cypress.Commands.addAll({
     cy.contains("1 result");
     cy.get("#result_list a").contains(checkedValue).click();
     cy.contains(checkedValue);
+  },
+  chooseQSelect(name, value) {
+    cy.get(`[role=combobox][aria-label="${name}"]`).click();
+    cy.get("[role=option]").contains(value).click();
   },
   chooseSelect2(name, values) {
     cy.get(`[name=${name}]`).then(($el) => {
@@ -285,6 +292,9 @@ Cypress.Commands.addAll({
   },
   loginAdmin(goToAdmin = true) {
     cy.login("admin@example.com", "admin", true, goToAdmin);
+  },
+  loginDSA(goToAdmin = true) {
+    cy.login("test-dsa@example.com", "test", true, goToAdmin);
   },
   loginEdit(goToAdmin = true) {
     cy.login("test-edit@example.com", "test", true, goToAdmin);

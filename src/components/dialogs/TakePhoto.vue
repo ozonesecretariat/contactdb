@@ -1,5 +1,5 @@
 <template>
-  <q-btn color="primary" icon="photo_camera" @click="show()">{{ label }}</q-btn>
+  <q-btn color="primary" icon="photo_camera" aria-label="Take photo" @click="show()">{{ label }}</q-btn>
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">
