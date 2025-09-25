@@ -328,7 +328,6 @@ async function onRequest(props: QTableRequestProps) {
     const resp = await api.get<Paginated<Registration>>("/registrations/", {
       params: {
         eventCode: eventCode.value,
-        ordering: "lastName,firstName",
         page,
         pageSize,
         paidDsa: paidDsa.value,

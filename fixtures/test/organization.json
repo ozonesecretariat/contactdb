@@ -20,6 +20,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -45,6 +46,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -70,6 +72,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -95,6 +98,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -120,6 +124,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -145,6 +150,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -170,6 +176,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -195,6 +202,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -220,6 +228,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -245,6 +254,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -270,6 +280,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -295,6 +306,7 @@
       "emails": "[]",
       "email_ccs": "[]",
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -320,6 +332,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -345,6 +358,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -370,6 +384,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -395,6 +410,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -420,6 +436,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -445,6 +462,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -470,6 +488,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -495,6 +514,7 @@
       "emails": "[]",
       "email_ccs": "[]",
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -520,6 +540,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -545,6 +566,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -570,6 +592,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -595,6 +618,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -620,6 +644,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -645,6 +670,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -670,6 +696,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
