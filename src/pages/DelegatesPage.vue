@@ -177,6 +177,7 @@ import CodeScanner from "components/dialogs/CodeScanner.vue";
 import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
 import { formatDate } from "src/utils/intl";
+import { useUserStore } from "stores/userStore";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -184,6 +185,7 @@ type QTableRequestProps = Parameters<NonNullable<QTableProps["onRequest"]>>[0];
 
 const tableRef = ref();
 const route = useRoute();
+const userStore = useUserStore();
 
 defineProps({
   disableEvent: {
@@ -203,6 +205,8 @@ defineProps({
     type: Boolean,
   },
 });
+
+const canEditDsa = computed(() => userStore.permissions.includes("events.change_dsa"));
 
 const tag = useRouteQuery<string>("tag", "");
 const status = useRouteQuery<string>("status", "");
@@ -379,7 +383,9 @@ async function onRequest(props: QTableRequestProps) {
 }
 
 function onRowClick(event: Event, row: Registration) {
-  selected.value = row;
+  if (canEditDsa.value) {
+    selected.value = row;
+  }
 }
 
 function setCode(code: string) {
