@@ -3,7 +3,7 @@
     <section class="flex items-center justify-between q-col-gutter-md">
       <div class="flex q-gutter-md items-center">
         <code-scanner @code="setCode" />
-        <search-pass @code="setCode" />
+        <search-pass v-if="canViewRegistration" @code="setCode" />
       </div>
       <div class="flex q-gutter-md items-center">
         <q-input v-model="passCode" label="Code" filled autofocus dense name="code" />
