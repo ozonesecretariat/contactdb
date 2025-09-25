@@ -71,12 +71,12 @@ export const useUserStore = defineStore("user", {
             {
               icon: "payments",
               label: "DSA",
-              to: { name: "dsa", query: { paidDsa: "false", status: "Registered", tag: "is funded" } },
+              to: { name: "dsa", query: { paidDsa: "false", status: "Registered", tag: "Is funded" } },
             },
             {
               icon: "paid",
               label: "Paid DSA",
-              to: { name: "paid", query: { paidDsa: "true", status: "Registered", tag: "is funded" } },
+              to: { name: "paid", query: { paidDsa: "true", status: "Registered", tag: "Is funded" } },
             },
           ],
           label: "DSA",
