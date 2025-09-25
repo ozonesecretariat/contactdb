@@ -1,14 +1,14 @@
 <template>
-  <q-list>
-    <template v-for="item in filteredItems" :key="item.label">
-      <q-separator v-if="item.type === 'separator'" />
-      <q-item v-else v-close-popup clickable :to="item.to" :href="item.href" exact @click="item.click">
+  <q-list v-for="section in filteredSections" :key="section.name">
+    <template v-for="item in section.items" :key="item.label">
+      <q-item v-close-popup clickable :to="item.to" :href="item.href" exact @click="item.click">
         <q-item-section v-if="item.icon" avatar>
           <q-icon :name="item.icon" />
         </q-item-section>
         <q-item-section>{{ item.label }}</q-item-section>
       </q-item>
     </template>
+    <q-separator />
   </q-list>
 </template>
 
@@ -24,18 +24,20 @@ export interface MenuItem {
   label: string;
   show?: boolean;
   to?: RouteLocationRaw;
-  type?: "item" | "separator";
 }
 
-export interface MenuListProps {
+export interface MenuSection {
   items: MenuItem[];
+  name: string;
 }
 
+const { items } = defineProps<{
+  items: MenuSection[];
+}>();
 const router = useRouter();
-const { items } = defineProps<MenuListProps>();
 
-const filteredItems = computed(() =>
-  items.filter((item) => {
+function filterItems(menuItems: MenuItem[]) {
+  return menuItems.filter((item) => {
     if (item.to) {
       const resolvedRoute = router.resolve(item.to);
       if (!hasRoutePermission(resolvedRoute.matched)) {
@@ -43,8 +45,17 @@ const filteredItems = computed(() =>
       }
     }
     return item.show ?? true;
-  }),
-);
+  });
+}
+
+const filteredSections = computed(() => {
+  const result: MenuSection[] = items.map((section) => ({
+    items: filterItems(section.items),
+    name: section.name,
+  }));
+
+  return result.filter((section) => section.items.length > 0);
+});
 </script>
 
 <style scoped lang="scss"></style>

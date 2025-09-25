@@ -919,6 +919,9 @@ class DSA(models.Model):
         if not self.arrival_date or not self.departure_date:
             return 0
 
+        # This is essentially the "number of nights" and not the number of days.
+        # If the arrival and departure dates are the same, the number of days is 0.
+        # This is intentional, even though it seems incorrect.
         return (self.departure_date - self.arrival_date).days
 
     @property
