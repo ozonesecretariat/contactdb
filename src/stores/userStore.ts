@@ -49,6 +49,7 @@ export const useUserStore = defineStore("user", {
             {
               icon: "event",
               label: "Events",
+              show: state.isStaff,
               to: { name: "events" },
             },
             {
@@ -56,13 +57,30 @@ export const useUserStore = defineStore("user", {
               label: "Scan Pass",
               to: { name: "scan-pass" },
             },
+          ],
+          label: "Events",
+          name: "pages",
+        },
+        {
+          items: [
+            {
+              icon: "person_search",
+              label: "Delegates",
+              to: { name: "delegates" },
+            },
             {
               icon: "payments",
               label: "DSA",
-              to: { name: "dsa" },
+              to: { name: "dsa", query: { paidDsa: "false", status: "Registered", tag: "is funded" } },
+            },
+            {
+              icon: "paid",
+              label: "Paid DSA",
+              to: { name: "paid", query: { paidDsa: "true", status: "Registered", tag: "is funded" } },
             },
           ],
-          name: "pages",
+          label: "DSA",
+          name: "dsa",
         },
         {
           items: [
@@ -73,12 +91,14 @@ export const useUserStore = defineStore("user", {
               show: state.isStaff,
             },
           ],
+          label: "Admin",
           name: "admin",
         },
       ];
     },
     availablePages(): MenuSection[] {
       const result: MenuSection[] = this.allPages.map((section) => ({
+        ...section,
         items: section.items.filter((item) => {
           if (item.to) {
             const resolvedRoute = this.router.resolve(item.to);
@@ -88,7 +108,6 @@ export const useUserStore = defineStore("user", {
           }
           return item.show ?? true;
         }),
-        name: section.name,
       }));
 
       return result.filter((section) => section.items.length > 0);

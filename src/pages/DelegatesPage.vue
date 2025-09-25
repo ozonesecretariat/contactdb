@@ -56,18 +56,7 @@
               emit-value
               label="Event"
               :loading="isLoadingEvent"
-              @update:model-value="fetchData()"
-            />
-            <q-select
-              v-model="paidDsa"
-              dense
-              filled
-              name="paidDsa"
-              :options="BooleanFilterChoices"
-              label="Paid DSA"
-              map-options
-              emit-value
-              clearable
+              :disable="disableEvent"
               @update:model-value="fetchData()"
             />
             <q-input
@@ -82,6 +71,19 @@
               @update:model-value="fetchData()"
             />
             <q-select
+              v-model="paidDsa"
+              dense
+              filled
+              name="paidDsa"
+              :options="BooleanFilterChoices"
+              label="Paid DSA"
+              map-options
+              emit-value
+              clearable
+              :disable="disablePaidDsa"
+              @update:model-value="fetchData()"
+            />
+            <q-select
               v-model="status"
               dense
               filled
@@ -89,6 +91,7 @@
               :options="RegistrationStatusChoices"
               label="Status"
               clearable
+              :disable="disableStatus"
               @update:model-value="fetchData()"
             />
             <q-select
@@ -105,6 +108,7 @@
               clearable
               placeholder="Tag"
               :loading="isLoadingTags"
+              :disable="disableTag"
               @update:model-value="fetchData()"
             />
           </div>
@@ -174,10 +178,31 @@ import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
 import { formatDate } from "src/utils/intl";
 import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 type QTableRequestProps = Parameters<NonNullable<QTableProps["onRequest"]>>[0];
 
 const tableRef = ref();
+const route = useRoute();
+
+defineProps({
+  disableEvent: {
+    default: false,
+    type: Boolean,
+  },
+  disablePaidDsa: {
+    default: false,
+    type: Boolean,
+  },
+  disableStatus: {
+    default: false,
+    type: Boolean,
+  },
+  disableTag: {
+    default: false,
+    type: Boolean,
+  },
+});
 
 const tag = useRouteQuery<string>("tag", "");
 const status = useRouteQuery<string>("status", "");
@@ -310,9 +335,11 @@ const { isLoading: isLoadingTags, state: tags } = useAsyncState(
   [],
 );
 
-watch(isLoadingEvent, () => {
+watch([isLoadingEvent, route], () => {
   eventCode.value ||= events.value[0]?.code ?? "";
-  fetchData();
+  if (eventCode.value) {
+    fetchData();
+  }
 });
 
 function fetchData(resetPagination = true) {

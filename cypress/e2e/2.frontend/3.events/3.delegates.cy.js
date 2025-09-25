@@ -1,7 +1,7 @@
 describe("Check DSA", () => {
   it("Go to DSA via url", () => {
     cy.loginDSA(false);
-    cy.visit("/dsa?eventCode=SS:CCC&paidDsa=false&tag=online&status=Nominated");
+    cy.visit("/delegates?eventCode=SS:CCC&paidDsa=false&tag=online&status=Nominated");
     cy.contains("1-1 of 1");
     cy.contains("Orion-Spectrum");
     cy.contains("Nova");
@@ -9,7 +9,7 @@ describe("Check DSA", () => {
   });
   it("Check filtering records", () => {
     cy.loginDSA(false);
-    cy.contains("DSA").click();
+    cy.contains("Delegates").click();
     cy.contains("Records per page");
 
     cy.chooseQSelect("Event", "Spectrum Symposium: Colorful Conference on Creativity");
@@ -23,7 +23,7 @@ describe("Check DSA", () => {
   });
   it("Check filtering by code", () => {
     cy.loginDSA(false);
-    cy.contains("DSA").click();
+    cy.contains("Delegates").click();
     cy.contains("Records per page");
 
     cy.chooseQSelect("Event", "Spectrum Symposium: Colorful Conference on Creativity");
@@ -45,7 +45,7 @@ describe("Check DSA", () => {
       });
       // Go to DSA page
       cy.contains("View site").click();
-      cy.contains("DSA").click();
+      cy.contains("Delegates").click();
       cy.contains("Records per page");
       // Find our contact
       cy.chooseQSelect("Event", "Yoga Experience");
@@ -102,7 +102,7 @@ describe("Check DSA", () => {
       });
       // Go to DSA page
       cy.contains("View site").click();
-      cy.contains("DSA").click();
+      cy.contains("Delegates").click();
       cy.contains("Records per page");
       // Find our contact
       cy.chooseQSelect("Event", "Yoga Experience");
