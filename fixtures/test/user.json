@@ -111,7 +111,7 @@
       "first_name": null,
       "last_name": null,
       "is_active": true,
-      "is_staff": true,
+      "is_staff": false,
       "created_at": "2024-04-16T06:31:08.960Z",
       "updated_at": "2024-04-16T06:33:46.448Z",
       "user_permissions": [],

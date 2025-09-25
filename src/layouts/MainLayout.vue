@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
-import { apiBase } from "boot/axios";
 import MenuList from "components/MenuList.vue";
 import OzoneLogo from "components/OzoneLogo.vue";
 import { useQuasar } from "quasar";
@@ -98,34 +97,9 @@ const menuItems = computed(() => [
 ]);
 
 const drawerItems = computed(() => [
+  ...userStore.availablePages,
   {
     items: [
-      {
-        icon: "event",
-        label: "Events",
-        to: { name: "events" },
-      },
-      {
-        icon: "qr_code_scanner",
-        label: "Scan Pass",
-        to: { name: "scan-pass" },
-      },
-      {
-        icon: "payments",
-        label: "DSA",
-        to: { name: "dsa" },
-      },
-    ],
-    name: "pages",
-  },
-  {
-    items: [
-      {
-        href: `${apiBase}/admin/`,
-        icon: "admin_panel_settings",
-        label: "Admin",
-        show: userStore.isStaff,
-      },
       {
         click: logout,
         icon: "logout",
