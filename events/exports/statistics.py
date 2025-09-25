@@ -483,6 +483,7 @@ class PostMeetingStatistics(StatisticsBase):
             for r in self.registrations_reg
             if r.contact.title in BaseContact.HL_TITLES
         ]
+        body.sort(key=lambda x: x[0] or "")
 
         table = self.table(
             "HL Participants Registered",
