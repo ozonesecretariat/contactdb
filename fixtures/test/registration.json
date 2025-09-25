@@ -36,7 +36,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.508Z",
-      "tags": ["online", "viewer", "visa"]
+      "tags": ["is funded", "online", "viewer", "visa"]
     }
   },
   {
@@ -136,7 +136,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.520Z",
-      "tags": ["viewer", "visa"]
+      "tags": ["is funded", "viewer", "visa"]
     }
   },
   {
@@ -196,7 +196,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.527Z",
-      "tags": ["credential", "online"]
+      "tags": ["credential", "is funded", "online"]
     }
   },
   {
@@ -376,7 +376,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.547Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -536,7 +536,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.567Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -716,7 +716,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.587Z",
-      "tags": ["credential", "viewer", "visa"]
+      "tags": ["credential", "is funded", "viewer", "visa"]
     }
   },
   {
@@ -856,7 +856,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.602Z",
-      "tags": ["viewer"]
+      "tags": ["is funded", "viewer"]
     }
   },
   {
@@ -956,7 +956,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:35:37.918Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -1276,7 +1276,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.655Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -1516,7 +1516,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.682Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -1536,7 +1536,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.684Z",
-      "tags": ["visa"]
+      "tags": ["is funded", "visa"]
     }
   },
   {
@@ -1696,7 +1696,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.702Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -2036,7 +2036,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.741Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -2276,7 +2276,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.769Z",
-      "tags": ["credential", "viewer"]
+      "tags": ["credential", "is funded", "viewer"]
     }
   },
   {
@@ -2316,7 +2316,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.774Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -2336,7 +2336,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.777Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -2436,7 +2436,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.788Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -2496,7 +2496,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.796Z",
-      "tags": ["online", "viewer"]
+      "tags": ["is funded", "online", "viewer"]
     }
   },
   {
@@ -2536,7 +2536,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.801Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -2776,7 +2776,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.829Z",
-      "tags": ["viewer", "visa"]
+      "tags": ["is funded", "viewer", "visa"]
     }
   },
   {
@@ -2956,7 +2956,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.849Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -2996,7 +2996,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.854Z",
-      "tags": ["credential", "online"]
+      "tags": ["credential", "is funded", "online"]
     }
   },
   {
@@ -3016,7 +3016,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.856Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -3056,7 +3056,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:35:37.991Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -3156,7 +3156,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.872Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -3416,7 +3416,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.900Z",
-      "tags": ["credential", "viewer"]
+      "tags": ["credential", "is funded", "viewer"]
     }
   },
   {
@@ -3436,7 +3436,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.902Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -3476,7 +3476,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.907Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -3616,7 +3616,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.925Z",
-      "tags": ["viewer", "visa"]
+      "tags": ["is funded", "viewer", "visa"]
     }
   },
   {
@@ -3676,7 +3676,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.932Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -3756,7 +3756,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.940Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -3916,7 +3916,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:35:37.930Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -4036,7 +4036,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:35:37.997Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -4096,7 +4096,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.979Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -4136,7 +4136,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.984Z",
-      "tags": ["credential", "visa"]
+      "tags": ["credential", "is funded", "visa"]
     }
   },
   {
@@ -4176,7 +4176,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.988Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -4236,7 +4236,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:07.994Z",
-      "tags": ["online", "viewer"]
+      "tags": ["is funded", "online", "viewer"]
     }
   },
   {
@@ -4436,7 +4436,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.017Z",
-      "tags": ["credential", "viewer", "visa"]
+      "tags": ["credential", "is funded", "viewer", "visa"]
     }
   },
   {
@@ -4616,7 +4616,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.037Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -4656,7 +4656,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.042Z",
-      "tags": ["viewer"]
+      "tags": ["is funded", "viewer"]
     }
   },
   {
@@ -4716,7 +4716,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.048Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -4856,7 +4856,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.064Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -4976,7 +4976,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.078Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -5056,7 +5056,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.087Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -5556,7 +5556,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.145Z",
-      "tags": ["visa"]
+      "tags": ["is funded", "visa"]
     }
   },
   {
@@ -5636,7 +5636,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.154Z",
-      "tags": ["credential", "viewer"]
+      "tags": ["credential", "is funded", "viewer"]
     }
   },
   {
@@ -5756,7 +5756,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.167Z",
-      "tags": ["visa"]
+      "tags": ["is funded", "visa"]
     }
   },
   {
@@ -5796,7 +5796,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.172Z",
-      "tags": ["viewer"]
+      "tags": ["is funded", "viewer"]
     }
   },
   {
@@ -5836,7 +5836,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.177Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -5876,7 +5876,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.181Z",
-      "tags": ["credential", "visa"]
+      "tags": ["credential", "is funded", "visa"]
     }
   },
   {
@@ -6036,7 +6036,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.198Z",
-      "tags": ["credential", "visa"]
+      "tags": ["credential", "is funded", "visa"]
     }
   },
   {
@@ -6056,7 +6056,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.201Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -6156,7 +6156,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.212Z",
-      "tags": ["online", "viewer", "visa"]
+      "tags": ["is funded", "online", "viewer", "visa"]
     }
   },
   {
@@ -6256,7 +6256,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.224Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -6356,7 +6356,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.236Z",
-      "tags": ["online", "visa"]
+      "tags": ["is funded", "online", "visa"]
     }
   },
   {
@@ -6556,7 +6556,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.259Z",
-      "tags": ["online", "visa"]
+      "tags": ["is funded", "online", "visa"]
     }
   },
   {
@@ -7056,7 +7056,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.315Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -7336,7 +7336,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.348Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -7396,7 +7396,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:35:37.951Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -7636,7 +7636,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.382Z",
-      "tags": ["online", "visa"]
+      "tags": ["is funded", "online", "visa"]
     }
   },
   {
@@ -7656,7 +7656,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.385Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -7696,7 +7696,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.389Z",
-      "tags": ["credential", "viewer", "visa"]
+      "tags": ["credential", "is funded", "viewer", "visa"]
     }
   },
   {
@@ -7796,7 +7796,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.401Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -7916,7 +7916,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.415Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -8156,7 +8156,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.443Z",
-      "tags": ["credential", "online"]
+      "tags": ["credential", "is funded", "online"]
     }
   },
   {
@@ -8216,7 +8216,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.451Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -8276,7 +8276,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.457Z",
-      "tags": ["viewer"]
+      "tags": ["is funded", "viewer"]
     }
   },
   {
@@ -8616,7 +8616,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.496Z",
-      "tags": ["online", "visa"]
+      "tags": ["is funded", "online", "visa"]
     }
   },
   {
@@ -8776,7 +8776,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:35:37.975Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -8856,7 +8856,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.524Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -8876,7 +8876,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.526Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -9236,7 +9236,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.569Z",
-      "tags": ["viewer", "visa"]
+      "tags": ["is funded", "viewer", "visa"]
     }
   },
   {
@@ -9356,7 +9356,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.583Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -9796,7 +9796,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.633Z",
-      "tags": ["credential", "visa"]
+      "tags": ["credential", "is funded", "visa"]
     }
   },
   {
@@ -10096,7 +10096,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.667Z",
-      "tags": ["credential", "viewer", "visa"]
+      "tags": ["credential", "is funded", "viewer", "visa"]
     }
   },
   {
@@ -10196,7 +10196,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.678Z",
-      "tags": ["credential", "online"]
+      "tags": ["credential", "is funded", "online"]
     }
   },
   {
@@ -10356,7 +10356,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.695Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -10376,7 +10376,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.698Z",
-      "tags": ["credential", "online", "visa"]
+      "tags": ["credential", "is funded", "online", "visa"]
     }
   },
   {
@@ -10456,7 +10456,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.707Z",
-      "tags": []
+      "tags": ["is funded"]
     }
   },
   {
@@ -10496,7 +10496,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.712Z",
-      "tags": ["viewer"]
+      "tags": ["is funded", "viewer"]
     }
   },
   {
@@ -10576,7 +10576,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.722Z",
-      "tags": ["online", "viewer"]
+      "tags": ["is funded", "online", "viewer"]
     }
   },
   {
@@ -10596,7 +10596,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.724Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {
@@ -10616,7 +10616,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.726Z",
-      "tags": ["credential", "online", "viewer"]
+      "tags": ["credential", "is funded", "online", "viewer"]
     }
   },
   {
@@ -10696,7 +10696,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.735Z",
-      "tags": ["credential", "viewer", "visa"]
+      "tags": ["credential", "is funded", "viewer", "visa"]
     }
   },
   {
@@ -10716,7 +10716,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.737Z",
-      "tags": ["viewer"]
+      "tags": ["is funded", "viewer"]
     }
   },
   {
@@ -10736,7 +10736,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.739Z",
-      "tags": ["credential", "online"]
+      "tags": ["credential", "is funded", "online"]
     }
   },
   {
@@ -10776,7 +10776,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.744Z",
-      "tags": ["online"]
+      "tags": ["is funded", "online"]
     }
   },
   {
@@ -10816,7 +10816,7 @@
       "department": "",
       "created_at": null,
       "updated_at": "2025-07-01T09:26:08.749Z",
-      "tags": ["credential"]
+      "tags": ["credential", "is funded"]
     }
   },
   {

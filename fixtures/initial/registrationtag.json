@@ -18,5 +18,10 @@
     "model": "events.registrationtag",
     "pk": "visa",
     "fields": {}
+  },
+  {
+    "model": "events.registrationtag",
+    "pk": "is funded",
+    "fields": {}
   }
 ]
