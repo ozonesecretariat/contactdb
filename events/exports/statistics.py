@@ -381,6 +381,13 @@ class PostMeetingStatistics(StatisticsBase):
             r for r in self.gov_registrations if r.status == r.Status.REGISTERED
         ]
 
+    def init_docx(self):
+        """Overridden to remove document header for post-meeting statistics."""
+        super().init_docx()
+        for section in self.doc.sections:
+            header = section.header.paragraphs[0]
+            header.clear()
+
     def get_content(self):
         self.table_participants_by_gender()
         self.table_hl()
