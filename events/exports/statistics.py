@@ -473,7 +473,7 @@ class PostMeetingStatistics(StatisticsBase):
                 r.usable_organization_name,
                 r.usable_government and r.usable_government.name,
             )
-            for r in self.registrations
+            for r in self.registrations_reg
             if r.contact.title in BaseContact.HL_TITLES
         ]
 
