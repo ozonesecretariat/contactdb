@@ -476,9 +476,9 @@ class PostMeetingStatistics(StatisticsBase):
     def table_hl(self):
         body = [
             (
-                r.contact.full_name,
-                r.usable_organization_name,
                 r.usable_government and r.usable_government.name,
+                r.usable_organization_name,
+                r.contact.full_name,
             )
             for r in self.registrations_reg
             if r.contact.title in BaseContact.HL_TITLES
@@ -487,7 +487,7 @@ class PostMeetingStatistics(StatisticsBase):
         table = self.table(
             "HL Participants Registered",
             [
-                ("Name", "Organization", "Party"),
+                ("Party", "Organization", "Name"),
             ],
             body,
             [[f"Total: {len(body)}"]],
