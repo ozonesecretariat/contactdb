@@ -32,6 +32,9 @@ class Section(Enum):
     SECRETARIAT = "Ozone Secretariat"
 
 
+# Some sections require page breaks before certain sub-sections
+PAGE_BREAK_SUBSECTIONS = {Section.OBSERVERS: {"NGOs and IGOs", "Others"}}
+
 # In order to preserve the layout, use a placeholder if no symbols are provided
 # in the event settings.
 SYMBOL_PLACEHOLDER = ["UNEP/"]
@@ -130,7 +133,7 @@ class ListOfParticipants:
         space_style = styles.add_style("LOP Table Space", WD_STYLE_TYPE.PARAGRAPH)
         space_style.paragraph_format.space_after = Pt(0)
         space_style.paragraph_format.space_before = Pt(0)
-        space_style.font.size = Pt(4)
+        space_style.font.size = Pt(12)
 
         group_style = styles.add_style("LOP L1 Group", WD_STYLE_TYPE.PARAGRAPH)
         group_style.font.name = "Arial"
@@ -187,7 +190,7 @@ class ListOfParticipants:
             section=Section.ASS_PANELS,
             sort=lambda r: (
                 r.usable_organization_sort_order,
-                r.usable_organization_name or "Unknown",
+                (r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
@@ -198,7 +201,7 @@ class ListOfParticipants:
                 r.usable_organization_type_sort_order,
                 r.usable_organization_type_description or "Unknown",
                 r.usable_organization_sort_order,
-                r.usable_organization_name or "Unknown",
+                (r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=lambda r: r.usable_organization_type_description or "Unknown",
             key_l2=lambda r: r.usable_organization_name or "Unknown",
@@ -207,7 +210,7 @@ class ListOfParticipants:
             section=Section.SECRETARIAT,
             sort=lambda r: (
                 r.usable_organization_sort_order,
-                r.usable_organization_name,
+                r.usable_organization_name.lower(),
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
@@ -363,12 +366,7 @@ class ListOfParticipants:
             table=table,
             row=0,
             col=0,
-            text="\n".join(
-                [
-                    self.event.title,
-                    self.event.code,
-                ]
-            ),
+            text=self.event.title,
             font_size=Pt(12),
             space_after=ZERO,
             bold=True,
@@ -447,9 +445,16 @@ class ListOfParticipants:
         if not key_l1:
             key_l1 = lambda x: ""  # noqa: E731
 
+        page_break_subsections = PAGE_BREAK_SUBSECTIONS.get(section, set())
+
         for l1_group_name, l1_group_items in itertools.groupby(
             registrations, key=key_l1
         ):
+            # Add page break before specific subsections if needed
+            # (e.g. "NGOs and IGOs" and "Others")
+            if l1_group_name in page_break_subsections:
+                self.doc.add_page_break()
+
             if l1_group_name:
                 self.doc.add_paragraph(l1_group_name, style="LOP L1 Group")
 
@@ -498,11 +503,11 @@ class ListOfParticipants:
                     p = row.cells[1].paragraphs[0]
                     p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                     p.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
-                    self.contact_list_item(p, item)
+                    self.contact_list_item(p, item, section)
 
                 self.doc.add_paragraph("", style="LOP Table Space")
 
-    def contact_list_item(self, p: Paragraph, reg: Registration):
+    def contact_list_item(self, p: Paragraph, reg: Registration, section: Section):
         p.paragraph_format.keep_together = True
         p.add_run(reg.contact.full_name.strip() or "-").bold = True
 
@@ -511,21 +516,21 @@ class ListOfParticipants:
             organization if reg.contact.is_use_organization_address else reg.contact
         )
 
+        city = address_obj.city.strip()
+        state = address_obj.state.strip()
+        postal = address_obj.postal_code.strip()
+
+        city_state = f"{city}, {state}" if city and state else city or state
+        address_parts = filter(None, [city_state, postal])
+        address_string = " ".join(address_parts)
+
         possible_values = [
             reg.designation or reg.contact.designation,
             reg.department or reg.contact.department,
-            organization and organization.name,
-            address_obj.address,
-            ", ".join(
-                filter(
-                    lambda x: x,
-                    [
-                        address_obj.city.strip(),
-                        address_obj.state.strip(),
-                        address_obj.postal_code.strip(),
-                    ],
-                )
-            ),
+            organization and organization.name
+            if section != Section.ASS_PANELS
+            else None,
+            address_string,
             address_obj.country and address_obj.country.name,
         ]
 
