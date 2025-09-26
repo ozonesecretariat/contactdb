@@ -10,6 +10,7 @@ from core.models import (
     ResolveConflict,
 )
 from events.models import (
+    DSA,
     Event,
     EventGroup,
     EventInvitation,
@@ -153,6 +154,15 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
     date = factory.LazyFunction(timezone.now)
     is_funded = False
     priority_pass = factory.SubFactory(PriorityPassFactory)
+
+
+class DSAFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = DSA
+
+    registration = factory.SubFactory(RegistrationFactory)
+    umoja_travel = factory.Faker("random_number")
+    bp = factory.Faker("random_number")
 
 
 class ResolveConflictFactory(factory.django.DjangoModelFactory):

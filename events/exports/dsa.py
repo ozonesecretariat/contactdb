@@ -86,7 +86,8 @@ class DSAReport:
                             [
                                 self.event.dates,
                                 self.event.venue_city,
-                                self.event.venue_country.name,
+                                self.event.venue_country
+                                and self.event.venue_country.name,
                             ]
                         ),
                         "colspan": 14,
