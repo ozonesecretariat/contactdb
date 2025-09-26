@@ -64,7 +64,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "designation",
             "department",
         )
-        read_only_fields = ("id", "created_at", "status")
+        read_only_fields = ("id", "created_at")
 
 
 class RegistrationDSASerializer(RegistrationSerializer):
