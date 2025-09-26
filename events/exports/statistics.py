@@ -276,6 +276,28 @@ class PreMeetingStatistics(StatisticsBase):
             ],
         )
 
+    def table_hl(self):
+        body = [
+            (
+                r.usable_government and r.usable_government.name,
+                r.usable_organization_name,
+                r.contact.full_name,
+            )
+            for r in self.registrations
+            if r.contact.title in BaseContact.HL_TITLES
+        ]
+        body.sort(key=lambda x: x[0] or "")
+
+        table = self.table(
+            "HL Participants Accredited",
+            [
+                ("Party", "Organization", "Name"),
+            ],
+            body,
+            [[f"Total: {len(body)}"]],
+        )
+        self.col_span(table, len(body) + 2, 0, 3)
+
     def table_parties_by_region(self):
         total = len(self.gov_parties)
         counts = dict.fromkeys(self.regions, 0)
@@ -381,6 +403,13 @@ class PostMeetingStatistics(StatisticsBase):
             r for r in self.gov_registrations if r.status == r.Status.REGISTERED
         ]
 
+    def init_docx(self):
+        """Overridden to remove document header for post-meeting statistics."""
+        super().init_docx()
+        for section in self.doc.sections:
+            header = section.header.paragraphs[0]
+            header.clear()
+
     def get_content(self):
         self.table_participants_by_gender()
         self.table_hl()
@@ -469,18 +498,19 @@ class PostMeetingStatistics(StatisticsBase):
     def table_hl(self):
         body = [
             (
-                r.contact.full_name,
-                r.usable_organization_name,
                 r.usable_government and r.usable_government.name,
+                r.usable_organization_name,
+                r.contact.full_name,
             )
-            for r in self.registrations
+            for r in self.registrations_reg
             if r.contact.title in BaseContact.HL_TITLES
         ]
+        body.sort(key=lambda x: x[0] or "")
 
         table = self.table(
             "HL Participants Registered",
             [
-                ("Name", "Organization", "Party"),
+                ("Party", "Organization", "Name"),
             ],
             body,
             [[f"Total: {len(body)}"]],

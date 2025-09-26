@@ -187,17 +187,17 @@ class TestsPostMeetingStatistics(TestCase):
         self.assertEqual(
             result["Table 2: HL Participants Registered"][2],
             [
-                self.contact1.full_name,
-                self.org1.name,
-                self.country1.name,
+                self.country2.name,
+                self.org2.name,
+                self.contact2.full_name,
             ],
         )
         self.assertEqual(
             result["Table 2: HL Participants Registered"][3],
             [
-                self.contact2.full_name,
-                self.org2.name,
-                self.country2.name,
+                self.country1.name,
+                self.org1.name,
+                self.contact1.full_name,
             ],
         )
 
