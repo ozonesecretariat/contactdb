@@ -1,10 +1,9 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from common.serializers import DateField
+from common.serializers import DataURIImageField, DateField
 from core.models import Contact, Country, Organization
 
 
@@ -61,7 +60,7 @@ class ContactSerializer(serializers.ModelSerializer):
     passport_date_of_expiry = DateField(
         write_only=True, required=False, allow_blank=True
     )
-    photo = Base64ImageField(write_only=True, required=False, allow_null=True)
+    photo = DataURIImageField(required=False, allow_null=True)
     has_photo = serializers.SerializerMethodField()
     country_name = serializers.SlugRelatedField(
         "name", source="country", read_only=True

@@ -2,6 +2,7 @@
   <q-page class="q-pa-md">
     <code-scanner ref="codeScannerRef" @code="setCode" />
     <take-photo ref="takePhotoRef" @capture="setPicture" />
+    <crop-photo v-if="photoUrl" ref="cropPhotoRef" :photo-url="photoUrl" @crop="setPicture" />
     <search-pass ref="searchPassRef" @code="setCode" />
 
     <section class="flex items-center justify-between q-col-gutter-md">
@@ -40,6 +41,14 @@
             </q-btn>
             <q-btn v-if="canEditContact" color="primary" icon="photo_camera" @click="takePhotoRef?.show()">
               Take photo
+            </q-btn>
+            <q-btn
+              v-if="canEditContact && pass?.contact?.hasPhoto"
+              color="primary"
+              icon="crop"
+              @click="cropPhotoRef?.show()"
+            >
+              Crop photo
             </q-btn>
           </q-card-actions>
         </q-card>
@@ -100,8 +109,9 @@ import type { PriorityPass } from "src/types/priorityPass";
 import type { Registration } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
-import { api, apiBase, apiURL } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import CodeScanner from "components/CodeScanner.vue";
+import CropPhoto from "components/CropPhoto.vue";
 import ParticipantCard from "components/ParticipantCard.vue";
 import SearchPass from "components/SearchPass.vue";
 import TakePhoto from "components/TakePhoto.vue";
@@ -112,6 +122,7 @@ import { computed, onMounted, ref, useTemplateRef } from "vue";
 const $q = useQuasar();
 const userStore = useUserStore();
 
+const cropPhotoRef = useTemplateRef("cropPhotoRef");
 const takePhotoRef = useTemplateRef("takePhotoRef");
 const codeScannerRef = useTemplateRef("codeScannerRef");
 const searchPassRef = useTemplateRef("searchPassRef");
@@ -141,11 +152,7 @@ const badgeUrl = computed(() => {
 
   return apiBase + pass.value.badgeUrl;
 });
-const photoUrl = computed(() => {
-  if (!pass?.value?.contact?.hasPhoto) return "";
-
-  return `${apiURL}/contacts/${pass.value?.contact.id}/photo/`;
-});
+const photoUrl = computed(() => pass?.value?.contact?.photo ?? "");
 
 const cardColors = {
   Accredited: "bg-primary",
