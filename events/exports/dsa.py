@@ -29,7 +29,7 @@ COL_WIDTHS = {
 
 
 class DSAReport:
-    SUFFIX = "-DSA-report"
+    SUFFIX = "-DSA"
 
     def __init__(self, event: Event):
         self.event = event

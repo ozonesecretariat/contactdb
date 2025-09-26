@@ -96,4 +96,16 @@ describe("Check", () => {
       filePattern: "NN_FDP-LoP.docx",
     });
   });
+  it("Check download DSA", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.get("main a").contains("DSA").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-DSA.xlsx",
+    });
+  });
 });
