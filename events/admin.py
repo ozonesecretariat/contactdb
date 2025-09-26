@@ -20,10 +20,12 @@ from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
+from events.exports.dsa import DSAReport
 from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
 from events.list_of_participants import ListOfParticipants
 from events.models import (
+    DSA,
     Event,
     EventGroup,
     EventInvitation,
@@ -745,6 +747,15 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             },
         ),
         (
+            "DSA",
+            {
+                "fields": (
+                    "dsa",
+                    "term_exp",
+                )
+            },
+        ),
+        (
             "Confirmation email",
             {
                 "fields": (
@@ -804,11 +815,13 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                     '<a href="{}" target="_blank">Pre Statistics</a>',
                     '<a href="{}" target="_blank">LoP</a>',
                     '<a href="{}" target="_blank">Post Statistics</a>',
+                    '<a href="{}" target="_blank">DSA</a>',
                 ]
             ),
             reverse("admin:pre_meeting_statistics", args=(obj.id,)),
             reverse("admin:lop", args=(obj.id,)),
             reverse("admin:post_meeting_statistics", args=(obj.id,)),
+            reverse("admin:dsa", args=(obj.id,)),
         )
 
     def get_urls(self):
@@ -828,6 +841,11 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 self.admin_site.admin_view(self.get_lop),
                 name="lop",
             ),
+            path(
+                "<path:object_id>/dsa/",
+                self.admin_site.admin_view(self.get_dsa),
+                name="dsa",
+            ),
             *super().get_urls(),
         ]
 
@@ -846,6 +864,10 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     def get_lop(self, request, object_id):
         event = self.get_object(request, object_id)
         return FileResponse(ListOfParticipants(event).export_docx(), as_attachment=True)
+
+    def get_dsa(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(DSAReport(event).export_xlsx(), as_attachment=True)
 
     def has_load_contacts_from_kronos_permission(self, request):
         return self.has_add_permission(request) and has_model_permission(
@@ -1169,3 +1191,79 @@ class EventInvitationAdmin(ModelAdmin):
             obj.id,
             tasks.count(),
         )
+
+
+@admin.register(DSA)
+class DSAAdmin(ModelAdmin):
+    list_display = (
+        "registration",
+        "umoja_travel",
+        "bp",
+        "arrival_date",
+        "departure_date",
+        "number_of_days",
+        "cash_card",
+        "paid_dsa",
+    )
+    list_filter = (
+        AutocompleteFilterFactory("event", "registration__event"),
+        "registration__status",
+        "paid_dsa",
+    )
+    autocomplete_fields = ("registration",)
+    prefetch_related = (
+        "registration__contact",
+        "registration__event",
+        "registration__organization",
+        "registration__organization__government",
+        "registration__organization__country",
+        "registration__organization__organization_type",
+        "registration__contact__organization",
+        "registration__contact__organization__government",
+        "registration__contact__organization__country",
+        "registration__contact__organization__organization_type",
+    )
+    search_fields = (
+        "registration__contact__title",
+        "registration__contact__first_name",
+        "registration__contact__last_name",
+        "registration__organization__name",
+        "registration__event__title",
+    )
+
+    fields = (
+        "registration",
+        "umoja_travel",
+        "bp",
+        "arrival_date",
+        "departure_date",
+        "cash_card",
+        "paid_dsa",
+        "get_boarding_pass_display",
+        "get_passport_display",
+        "get_signature_display",
+        "number_of_days",
+        "dsa_on_arrival",
+        "total_dsa",
+    )
+
+    readonly_fields = (
+        "get_boarding_pass_display",
+        "get_passport_display",
+        "get_signature_display",
+        "number_of_days",
+        "dsa_on_arrival",
+        "total_dsa",
+    )
+
+    @admin.display(description="Boarding pass")
+    def get_boarding_pass_display(self, obj):
+        return self.get_encrypted_file_display(obj, "boarding_pass")
+
+    @admin.display(description="Passport")
+    def get_passport_display(self, obj):
+        return self.get_encrypted_file_display(obj, "passport")
+
+    @admin.display(description="Signature")
+    def get_signature_display(self, obj):
+        return self.get_encrypted_file_display(obj, "signature")

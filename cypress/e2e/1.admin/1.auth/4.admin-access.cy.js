@@ -34,6 +34,7 @@ describe("Check user permissions", () => {
         sendemailtask: { view: true },
       },
       events: {
+        dsa: true,
         event: true,
         eventgroup: true,
         eventinvitation: true,

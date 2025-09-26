@@ -12,16 +12,37 @@ describe("Check menu items", () => {
   it("Check non staff user", () => {
     cy.loginNonStaff(false);
     cy.checkNav("Admin").should("not.exist");
-    cy.checkNav("Events");
+    cy.checkNav("Events").should("not.exist");
   });
   it("Check non staff user view", () => {
     cy.loginNonStaffView(false);
     cy.checkNav("Admin").should("not.exist");
-    cy.checkNav("Events");
+    cy.checkNav("Events").should("not.exist");
   });
   it("Check non staff user no access", () => {
     cy.loginNonStaffNoAccess(false);
     cy.checkNav("Admin").should("not.exist");
     cy.checkNav("Events").should("not.exist");
+  });
+  it("Check security", () => {
+    cy.loginSecurity(false);
+    cy.checkNav("Admin").should("not.exist");
+    cy.checkNav("Events").should("not.exist");
+    cy.checkNav("Scan Pass");
+  });
+  it("Check support", () => {
+    cy.loginSupport(false);
+    cy.checkNav("Admin").should("not.exist");
+    cy.checkNav("Events").should("not.exist");
+    cy.checkNav("Scan Pass");
+  });
+  it("Check DSA", () => {
+    cy.loginDSA(false);
+    cy.checkNav("Admin").should("not.exist");
+    cy.checkNav("Events").should("not.exist");
+    cy.checkNav("Scan Pass").should("not.exist");
+    cy.checkNav("Delegates");
+    cy.checkNav("DSA");
+    cy.checkNav("Paid DSA");
   });
 });

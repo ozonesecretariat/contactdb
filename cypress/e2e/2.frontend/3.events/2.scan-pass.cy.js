@@ -92,7 +92,7 @@ describe("Check scan pass", () => {
       cy.get("[role=dialog] button").contains("Crop").click();
       cy.get('img[alt="contact photo"]').should("be.visible");
 
-      cy.contains("Admin").click();
+      cy.get("a").contains("Admin").click();
       cy.deleteContactGroup(group);
     });
   });
@@ -116,7 +116,7 @@ describe("Check scan pass", () => {
       cy.contains("Revoke").click();
       cy.contains("Registration status updated.");
       cy.contains("Revoked");
-      cy.contains("Admin").click();
+      cy.get("a").contains("Admin").click();
       cy.deleteContactGroup(group);
     });
   });

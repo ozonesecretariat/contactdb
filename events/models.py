@@ -11,6 +11,7 @@ from django.db.models import Exists, Max, Min, OuterRef, Q
 from django.utils import timezone
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
+from encrypted_fields import EncryptedJSONField
 
 from common.array_field import ArrayField
 from common.citext import CICharField
@@ -124,6 +125,12 @@ class Event(models.Model):
         base_field=models.TextField(),
         blank=True,
         help_text="Document symbols for the List of Participants document",
+    )
+
+    # DSA
+    dsa = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    term_exp = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True
     )
 
     class Meta:
@@ -778,6 +785,14 @@ class Registration(models.Model):
         except AttributeError:
             return False
 
+    @property
+    def dsa_country(self):
+        if self.is_gov:
+            return self.usable_government
+        if self.usable_organization:
+            return self.usable_organization.country
+        return None
+
 
 class LoadParticipantsFromKronosTask(TaskRQ):
     DEFAULT_VERBOSITY = 2
@@ -856,3 +871,63 @@ class LoadOrganizationsFromKronosTask(TaskRQ):
         from .jobs import LoadOrganizationsFromKronos
 
         return LoadOrganizationsFromKronos
+
+
+class DSA(models.Model):
+    registration = models.OneToOneField(
+        Registration, on_delete=models.CASCADE, related_name="dsa"
+    )
+    umoja_travel = models.CharField(max_length=255, blank=True)
+    bp = models.CharField(max_length=255, blank=True)
+    arrival_date = models.DateField(blank=True, null=True)
+    departure_date = models.DateField(blank=True, null=True)
+    cash_card = models.CharField(max_length=255, blank=True)
+    paid_dsa = models.BooleanField(default=False)
+
+    boarding_pass = EncryptedJSONField(blank=True, null=True)
+    passport = EncryptedJSONField(blank=True, null=True)
+    signature = EncryptedJSONField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "DSA"
+        verbose_name_plural = "DSAs"
+
+    def __str__(self):
+        return f"DSA - {self.registration}"
+
+    def clean(self):
+        if self.departure_date and not self.arrival_date:
+            raise ValidationError(
+                {"arrival_date": "Cannot specify departure date without arrival date."}
+            )
+
+        if (
+            self.departure_date
+            and self.arrival_date
+            and self.departure_date < self.arrival_date
+        ):
+            msg = "Departure date cannot be before arrival date."
+            raise ValidationError(
+                {
+                    "arrival_date": msg,
+                    "departure_date": msg,
+                }
+            )
+
+    @property
+    def number_of_days(self):
+        if not self.arrival_date or not self.departure_date:
+            return 0
+
+        # This is essentially the "number of nights" and not the number of days.
+        # If the arrival and departure dates are the same, the number of days is 0.
+        # This is intentional, even though it seems incorrect.
+        return (self.departure_date - self.arrival_date).days
+
+    @property
+    def dsa_on_arrival(self):
+        return self.number_of_days * (self.registration.event.dsa or 0)
+
+    @property
+    def total_dsa(self):
+        return self.dsa_on_arrival + (self.registration.event.term_exp or 0)

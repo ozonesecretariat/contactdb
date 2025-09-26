@@ -1,4 +1,5 @@
 <template>
+  <q-btn color="primary" icon="crop" @click="show()">Crop photo</q-btn>
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">

@@ -1,5 +1,12 @@
 import type { RouteRecordRaw } from "vue-router";
 
+const dsaPermissions = [
+  "events.view_registration",
+  "events.view_dsa",
+  "events.view_registrationtag",
+  "events.view_event",
+];
+
 const routes: RouteRecordRaw[] = [
   {
     children: [
@@ -132,6 +139,43 @@ const routes: RouteRecordRaw[] = [
         },
         name: "events",
         path: "events",
+      },
+      {
+        component: () => import("pages/DelegatesPage.vue"),
+        meta: {
+          header: "Delegates",
+          requirePermissions: dsaPermissions,
+        },
+        name: "delegates",
+        path: "delegates",
+      },
+      {
+        component: () => import("pages/DelegatesPage.vue"),
+        meta: {
+          header: "DSA",
+          requirePermissions: dsaPermissions,
+        },
+        name: "dsa",
+        path: "dsa",
+        props: {
+          disablePaidDsa: true,
+          disableStatus: true,
+          disableTag: true,
+        },
+      },
+      {
+        component: () => import("pages/DelegatesPage.vue"),
+        meta: {
+          header: "Paid",
+          requirePermissions: dsaPermissions,
+        },
+        name: "paid",
+        path: "paid",
+        props: {
+          disablePaidDsa: true,
+          disableStatus: true,
+          disableTag: true,
+        },
       },
       {
         component: () => import("pages/ScanPassPage.vue"),

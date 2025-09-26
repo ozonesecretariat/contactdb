@@ -1,4 +1,5 @@
 <template>
+  <q-btn color="primary" label="Search for pass" icon="search" @click="show()" />
   <q-dialog v-model="showDialog">
     <q-card style="min-width: 400px; min-height: 400px">
       <q-card-section class="row items-center q-pb-none">
@@ -10,6 +11,7 @@
       <q-card-section>
         <q-input
           v-model="searchQuery"
+          name="searchForPass"
           label="Search by event, contact, email or organization"
           filled
           dense

@@ -1,4 +1,5 @@
 <template>
+  <q-btn label="Scan code" color="secondary" icon="qr_code_scanner" @click="show()" />
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">
@@ -92,8 +93,6 @@ function show() {
   isLoading.value = true;
   showDialog.value = true;
 }
-
-defineExpose({ show });
 </script>
 
 <style scoped lang="scss"></style>

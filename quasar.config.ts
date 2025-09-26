@@ -122,6 +122,17 @@ export default defineConfig((/* ctx */) => ({
     // https: true,
     open: false, // opens browser window automatically
     port: 8080,
+    watch: {
+      ignored: [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/.git/**",
+        "**/venv/**",
+        "**/.venv/**",
+        "**/.fs/**",
+        "**/.idea/**",
+      ],
+    },
   },
 
   // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron

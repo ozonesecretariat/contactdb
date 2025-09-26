@@ -1,7 +1,9 @@
 import type { AxiosError } from "axios";
+import type { MenuSection } from "src/types/menu";
 
-import { api } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import { defineStore } from "pinia";
+import { hasRoutePermission } from "src/router";
 
 const initialState = {
   email: "",
@@ -40,6 +42,76 @@ export const useUserStore = defineStore("user", {
     },
   },
   getters: {
+    allPages(state): MenuSection[] {
+      return [
+        {
+          items: [
+            {
+              icon: "event",
+              label: "Events",
+              show: state.isStaff,
+              to: { name: "events" },
+            },
+            {
+              icon: "qr_code_scanner",
+              label: "Scan Pass",
+              to: { name: "scan-pass" },
+            },
+          ],
+          label: "Events",
+          name: "pages",
+        },
+        {
+          items: [
+            {
+              icon: "person_search",
+              label: "Delegates",
+              to: { name: "delegates" },
+            },
+            {
+              icon: "payments",
+              label: "DSA",
+              to: { name: "dsa", query: { paidDsa: "false", status: "Registered", tag: "Is funded" } },
+            },
+            {
+              icon: "paid",
+              label: "Paid DSA",
+              to: { name: "paid", query: { paidDsa: "true", status: "Registered", tag: "Is funded" } },
+            },
+          ],
+          label: "DSA",
+          name: "dsa",
+        },
+        {
+          items: [
+            {
+              href: `${apiBase}/admin/`,
+              icon: "admin_panel_settings",
+              label: "Admin",
+              show: state.isStaff,
+            },
+          ],
+          label: "Admin",
+          name: "admin",
+        },
+      ];
+    },
+    availablePages(): MenuSection[] {
+      const result: MenuSection[] = this.allPages.map((section) => ({
+        ...section,
+        items: section.items.filter((item) => {
+          if (item.to) {
+            const resolvedRoute = this.router.resolve(item.to);
+            if (!hasRoutePermission(resolvedRoute.matched)) {
+              return false;
+            }
+          }
+          return item.show ?? true;
+        }),
+      }));
+
+      return result.filter((section) => section.items.length > 0);
+    },
     fullName(state) {
       if (!state.firstName && !state.lastName) {
         return state.email;
