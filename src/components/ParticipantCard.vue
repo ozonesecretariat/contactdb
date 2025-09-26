@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <div class="col-3 q-gutter-y-md">
+    <div class="col-3 q-gutter-y-md q-px-sm">
       <slot name="buttons"></slot>
       <q-img v-if="participant.hasPhoto" :src="photoUrl" alt="contact photo" />
     </div>

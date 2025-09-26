@@ -22,6 +22,7 @@ export interface Contact {
   needsVisaLetter: boolean;
   organization?: Organization;
   phones: string[];
+  photo: null | string;
   postalCode: string;
   state: string;
   title: string;

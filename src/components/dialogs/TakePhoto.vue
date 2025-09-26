@@ -23,7 +23,7 @@
         </div>
 
         <div class="row justify-center q-mt-md">
-          <q-btn color="primary" icon="photo_camera" label="Capture" @click="capturePicture" />
+          <q-btn color="primary" icon="photo_camera" label="Capture" :disable="isLoading" @click="capturePicture" />
         </div>
       </q-card-section>
     </q-card>

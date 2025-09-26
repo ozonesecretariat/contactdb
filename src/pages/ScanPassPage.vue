@@ -35,6 +35,7 @@
               Print badge
             </q-btn>
             <take-photo v-if="canEditContact" @capture="setPicture" />
+            <crop-photo v-if="canEditContact && pass?.contact?.hasPhoto" :photo-url="photoUrl" @crop="setPicture" />
           </q-card-actions>
         </q-card>
         <div class="registration-date-range q-pt-lg text-subtitle1 text-white">
@@ -94,8 +95,9 @@ import type { PriorityPass } from "src/types/priorityPass";
 import type { Registration } from "src/types/registration";
 
 import { useRouteQuery } from "@vueuse/router";
-import { api, apiBase, apiURL } from "boot/axios";
+import { api, apiBase } from "boot/axios";
 import CodeScanner from "components/dialogs/CodeScanner.vue";
+import CropPhoto from "components/dialogs/CropPhoto.vue";
 import SearchPass from "components/dialogs/SearchPass.vue";
 import TakePhoto from "components/dialogs/TakePhoto.vue";
 import ParticipantCard from "components/ParticipantCard.vue";
@@ -131,11 +133,7 @@ const badgeUrl = computed(() => {
 
   return apiBase + pass.value.badgeUrl;
 });
-const photoUrl = computed(() => {
-  if (!pass?.value?.contact?.hasPhoto) return "";
-
-  return `${apiURL}/contacts/${pass.value?.contact.id}/photo/`;
-});
+const photoUrl = computed(() => pass?.value?.contact?.photo ?? "");
 
 const cardColors = {
   Accredited: "bg-primary",
