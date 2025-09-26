@@ -123,7 +123,15 @@ export default defineConfig((/* ctx */) => ({
     open: false, // opens browser window automatically
     port: 8080,
     watch: {
-      ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**", "**/venv/**", "**/.venv/**", "**/.fs/**"],
+      ignored: [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/.git/**",
+        "**/venv/**",
+        "**/.venv/**",
+        "**/.fs/**",
+        "**/.idea/**",
+      ],
     },
   },
 
