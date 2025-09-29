@@ -23,7 +23,7 @@
       @row-click="onRowClick"
     >
       <template #top>
-        <div class="row justify-between full-width q-gutter-md">
+        <div class="row justify-between full-width top-filters">
           <div class="q-gutter-md filter-list">
             <q-input
               v-model="search"
@@ -57,6 +57,7 @@
               label="Event"
               :loading="isLoadingEvent"
               :disable="disableEvent"
+              popup-content-class="wrap-options"
               @update:model-value="fetchData()"
             />
             <q-input
@@ -68,6 +69,7 @@
               name="priorityPassCode"
               label="Code"
               clearable
+              style="max-width: 100px"
               @update:model-value="fetchData()"
             />
             <q-select
@@ -395,11 +397,17 @@ function setCode(code: string) {
 </script>
 
 <style scoped lang="scss">
+.top-filters {
+  gap: 1rem;
+}
+
 .filter-list {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .filter-list > * {
   min-width: 150px;
+  max-width: 350px;
 }
 </style>
