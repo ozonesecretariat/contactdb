@@ -16,3 +16,9 @@ export interface Organization {
   state: string;
   websites: string[];
 }
+
+export interface OrganizationType {
+  acronym: string;
+  statisticsTile: string;
+  title: string;
+}

@@ -47,6 +47,12 @@ export const useUserStore = defineStore("user", {
         {
           items: [
             {
+              icon: "bar_chart",
+              label: "Dashboard",
+              show: state.isStaff,
+              to: { name: "dashboard" },
+            },
+            {
               icon: "event",
               label: "Events",
               show: state.isStaff,

@@ -132,6 +132,15 @@ const routes: RouteRecordRaw[] = [
         path: "account/",
       },
       {
+        component: () => import("pages/DashboardPage.vue"),
+        meta: {
+          header: "Dashboard",
+          requirePermissions: ["events.view_event"],
+        },
+        name: "dashboard",
+        path: "dashboard",
+      },
+      {
         component: () => import("pages/EventsPage.vue"),
         meta: {
           header: "Events",
