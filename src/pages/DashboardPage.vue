@@ -89,7 +89,15 @@ import { computed, ref, watch } from "vue";
 
 const eventCode = useRouteQuery<string>("eventCode", "");
 const { isLoading: isLoadingEvent, state: events } = useAsyncState(
-  async () => (await api.get<MeetingEvent[]>("/events/?ordering=-startDate")).data,
+  async () =>
+    (
+      await api.get<MeetingEvent[]>("/events/", {
+        params: {
+          isCurrent: true,
+          ordering: "-startDate",
+        },
+      })
+    ).data,
   [],
 );
 

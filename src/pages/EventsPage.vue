@@ -6,8 +6,8 @@
       :columns="columns"
       :pagination="{
         rowsPerPage: 15,
-        sortBy: 'code',
-        descending: false,
+        sortBy: 'startDate',
+        descending: true,
       }"
     >
       <template #top-left>Events</template>
@@ -51,7 +51,17 @@ const columns = [
   { field: "venueCity", label: "Venue city", name: "venueCity", sortable: true },
   { field: "dates", label: "Dates", name: "dates", sortable: true },
 ];
-const { isLoading, state } = useAsyncState(async () => (await api.get<MeetingEvent[]>("/events/")).data, []);
+const { isLoading, state } = useAsyncState(
+  async () =>
+    (
+      await api.get<MeetingEvent[]>("/events/", {
+        params: {
+          isCurrent: true,
+        },
+      })
+    ).data,
+  [],
+);
 const search = useRouteQuery("search", "");
 
 const events = computed(() =>

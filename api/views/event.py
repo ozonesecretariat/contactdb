@@ -1,6 +1,9 @@
+import django_filters
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Case, Count, F, Value, When
+from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -14,11 +17,27 @@ from core.models import Contact, OrganizationType, Region, Subregion
 from events.models import AnnotatedRegistration, Event, Registration, RegistrationRole
 
 
+class EventFilterSet(FilterSet):
+    is_current = django_filters.BooleanFilter(method='filter_is_current')
+
+    class Meta:
+        model = Event
+        fields = ['is_current']
+
+    def filter_is_current(self, queryset, name, value):
+        today = timezone.now().date()
+
+        if value:
+            return queryset.filter(end_date__gte=today)
+        return queryset.filter(end_date__lt=today)
+
+
 class EventViewSet(ReadOnlyModelViewSet):
     queryset = Event.objects.all().select_related("venue_country")
     serializer_class = EventSerializer
     lookup_field = "code"
-    filter_backends = [filters.SearchFilter, CamelCaseOrderingFilter]
+    filter_backends = [filters.SearchFilter, CamelCaseOrderingFilter, DjangoFilterBackend]
+    filterset_class = EventFilterSet
     search_fields = [
         "code",
         "title",
