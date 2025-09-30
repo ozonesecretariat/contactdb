@@ -52,6 +52,7 @@
         />
         <bar-chart
           v-for="(stats, region) in dataByRegion ?? {}"
+          :key="region"
           :title="`${region} Participants`"
           :horizontal="true"
           :key1="disc"
@@ -142,6 +143,7 @@ const dataByRegion = computed<null | Record<string, Statistics>>(() => {
 .dashboard {
   .row {
     gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .row + .row {

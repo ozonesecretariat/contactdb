@@ -12,6 +12,7 @@ import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from
 import { use } from "echarts/core";
 import { SVGRenderer } from "echarts/renderers";
 import { useQuasar } from "quasar";
+import { ChartColors } from "src/constants";
 import { getChartSeries } from "src/utils/chart";
 import { computed } from "vue";
 import VChart from "vue-echarts";
@@ -41,6 +42,7 @@ const options = computed(() => {
   });
 
   return {
+    color: ChartColors,
     legend: {},
     series,
     title: { text: props.title },

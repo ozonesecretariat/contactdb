@@ -12,6 +12,7 @@ import { LegendComponent, TitleComponent, TooltipComponent } from "echarts/compo
 import { use } from "echarts/core";
 import { SVGRenderer } from "echarts/renderers";
 import { useQuasar } from "quasar";
+import { ChartColors } from "src/constants";
 import { computed } from "vue";
 import VChart from "vue-echarts";
 
@@ -44,6 +45,7 @@ const data = computed(() => {
 });
 
 const options = computed(() => ({
+  color: ChartColors,
   legend: { orient: "horizontal" },
   series: [
     {
