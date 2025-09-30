@@ -257,6 +257,7 @@ class PreMeetingStatistics(StatisticsBase):
 
     def get_content(self):
         self.table_pax_by_category()
+        self.table_hl()
         self.table_parties_by_region()
 
         for region in self.regions:
