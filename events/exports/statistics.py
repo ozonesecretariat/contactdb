@@ -290,7 +290,7 @@ class PreMeetingStatistics(StatisticsBase):
         body.sort(key=lambda x: x[0] or "")
 
         table = self.table(
-            "HL Participants Accredited",
+            "HL Participants Registered",
             [
                 ("Party", "Organization", "Name"),
             ],
