@@ -15,7 +15,17 @@
         popup-content-class="wrap-options"
         :loading="isLoadingEvent"
       />
-      <q-select v-model="disc" dense filled name="disc" :options="discChoices" label="Group by" :loading="isLoading" />
+      <q-select
+        v-model="group"
+        dense
+        filled
+        name="disc"
+        :options="groupChoices"
+        map-options
+        emit-value
+        label="Group by"
+        :loading="isLoading"
+      />
       <q-select
         v-model="status"
         dense
@@ -29,11 +39,11 @@
     </div>
     <div v-if="filteredData && dataByRegion" class="q-mt-md dashboard">
       <div class="row">
-        <pie-chart :key1="disc" title="Total Participants" :stats="filteredData" class="col-4" />
+        <pie-chart :key1="group" title="Total Participants" :stats="filteredData" class="col-4" />
         <bar-chart
           title="Participants by Organization Type"
           :horizontal="true"
-          :key1="disc"
+          :key1="group"
           key2="organizationType"
           :stack="true"
           :stats="filteredData"
@@ -44,7 +54,7 @@
         <bar-chart
           title="Participants by Region"
           :horizontal="false"
-          :key1="disc"
+          :key1="group"
           key2="region"
           :stack="false"
           :stats="filteredData"
@@ -55,7 +65,7 @@
           :key="region"
           :title="`${region} Participants`"
           :horizontal="true"
-          :key1="disc"
+          :key1="group"
           key2="subregion"
           :stack="true"
           :stats="stats"
@@ -83,10 +93,14 @@ const { isLoading: isLoadingEvent, state: events } = useAsyncState(
   [],
 );
 
-const discChoices = ["status", "role", "gender"] as const;
-type DiscChoice = (typeof discChoices)[number];
+const groupChoices = [
+  { label: "Status", value: "status" },
+  { label: "Role", value: "role" },
+  { label: "Gender", value: "gender" },
+] as const;
+type GroupChoice = (typeof groupChoices)[number]["value"];
 
-const disc = useRouteQuery<DiscChoice>("disc", "status");
+const group = useRouteQuery<GroupChoice>("group", "status");
 const status = useRouteQuery<string>("status", "");
 
 const isLoading = ref(true);
@@ -120,7 +134,7 @@ const dataByRegion = computed<null | Record<string, Statistics>>(() => {
       registrations,
       schema: {
         ...stats.schema,
-        subregion: data.value.schema.subregion.filter((name) => subregions.has(name)),
+        subregion: stats.schema.subregion.filter((name) => subregions.has(name)),
       },
     };
   }
@@ -137,7 +151,7 @@ const dataByRegion = computed<null | Record<string, Statistics>>(() => {
 
 .filter-list > * {
   min-width: 150px;
-  max-width: 350px;
+  max-width: 450px;
 }
 
 .dashboard {
