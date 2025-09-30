@@ -12,42 +12,54 @@
         map-options
         emit-value
         label="Event"
+        popup-content-class="wrap-options"
         :loading="isLoadingEvent"
       />
-      <q-select
-        v-model="region"
-        dense
-        filled
-        name="region"
-        :options="data?.regions"
-        option-value="code"
-        option-label="name"
-        map-options
-        emit-value
-        label="Region"
-        clearable
-        :loading="isLoading"
-      />
-
+      <q-select v-model="disc" dense filled name="disc" :options="discChoices" label="Group by" :loading="isLoading" />
       <q-select
         v-model="status"
         dense
         filled
         name="status"
-        :options="RegistrationStatusChoices"
+        :options="data?.schema.status ?? []"
         label="Status"
         clearable
         :loading="isLoading"
       />
     </div>
-    <div v-if="data" class="q-mt-md">
-      <div class="row wrap" style="height: 35rem; gap: 1rem">
-        <q-card style="min-width: 30rem">
-          <data-by-status :entries="entries" :statistics="data" />
-        </q-card>
-        <q-card style="min-width: 50rem">
-          <data-by-organization-type :entries="entries" :statistics="data" />
-        </q-card>
+    <div v-if="filteredData && dataByRegion" class="q-mt-md dashboard">
+      <div class="row">
+        <pie-chart :key1="disc" title="Total Participants" :stats="filteredData" class="col-4" />
+        <bar-chart
+          title="Participants by Organization Type"
+          :horizontal="true"
+          :key1="disc"
+          key2="organizationType"
+          :stack="true"
+          :stats="filteredData"
+          class="col"
+        />
+      </div>
+      <div class="row">
+        <bar-chart
+          title="Participants by Region"
+          :horizontal="false"
+          :key1="disc"
+          key2="region"
+          :stack="false"
+          :stats="filteredData"
+          class="col-4"
+        />
+        <bar-chart
+          v-for="(stats, region) in dataByRegion ?? {}"
+          :title="`${region} Participants`"
+          :horizontal="true"
+          :key1="disc"
+          key2="subregion"
+          :stack="true"
+          :stats="stats"
+          class="col"
+        />
       </div>
     </div>
   </q-page>
@@ -60,9 +72,8 @@ import type { Statistics } from "src/types/statistics";
 import { computedAsync, useAsyncState } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
 import { api } from "boot/axios";
-import DataByOrganizationType from "components/charts/DataByOrganizationType.vue";
-import DataByStatus from "components/charts/DataByStatus.vue";
-import { RegistrationStatusChoices } from "src/constants";
+import BarChart from "components/charts/BarChart.vue";
+import PieChart from "components/charts/PieChart.vue";
 import { computed, ref, watch } from "vue";
 
 const eventCode = useRouteQuery<string>("eventCode", "");
@@ -70,6 +81,12 @@ const { isLoading: isLoadingEvent, state: events } = useAsyncState(
   async () => (await api.get<MeetingEvent[]>("/events/?ordering=-startDate")).data,
   [],
 );
+
+const discChoices = ["status", "role", "gender"] as const;
+type DiscChoice = (typeof discChoices)[number];
+
+const disc = useRouteQuery<DiscChoice>("disc", "status");
+const status = useRouteQuery<string>("status", "");
 
 const isLoading = ref(true);
 const data = computedAsync(
@@ -82,15 +99,32 @@ watch([isLoadingEvent], () => {
   eventCode.value ||= events.value[0]?.code ?? "";
 });
 
-const status = useRouteQuery<string>("status", "");
-const region = useRouteQuery<string>("region", "");
+const filteredData = computed<null | Statistics>(() => {
+  if (!data.value) return null;
+  return {
+    ...data.value,
+    registrations: data.value.registrations.filter((r) => !status.value || r.status === status.value),
+  };
+});
 
-const entries = computed(
-  () =>
-    data.value?.registrations.filter(
-      (r) => (!region.value || r.region === region.value) && (!status.value || r.status === status.value),
-    ) ?? [],
-);
+const dataByRegion = computed<null | Record<string, Statistics>>(() => {
+  const stats = filteredData.value;
+  if (!stats) return null;
+
+  const result: Record<string, Statistics> = {};
+  for (const region of stats.schema.region) {
+    const registrations = stats.registrations.filter((r) => r.region === region);
+    const subregions = new Set(registrations.map((r) => r.subregion));
+    result[region] = {
+      registrations,
+      schema: {
+        ...stats.schema,
+        subregion: data.value.schema.subregion.filter((name) => subregions.has(name)),
+      },
+    };
+  }
+  return result;
+});
 </script>
 
 <style scoped lang="scss">
@@ -103,5 +137,19 @@ const entries = computed(
 .filter-list > * {
   min-width: 150px;
   max-width: 350px;
+}
+
+.dashboard {
+  .row {
+    gap: 1rem;
+  }
+
+  .row + .row {
+    margin-top: 1rem;
+  }
+
+  .row > * {
+    height: 35rem;
+  }
 }
 </style>
