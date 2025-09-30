@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import permission_required
-from django.db.models import Count, F
+from django.db.models import Case, Count, F, Value, When
 from django.utils.decorators import method_decorator
 from rest_framework import filters
 from rest_framework.decorators import action
@@ -10,11 +10,8 @@ from api.serializers.event import (
     EventSerializer,
 )
 from common.filters import CamelCaseOrderingFilter
-from core.models import Country, OrganizationType, Region, Subregion
-from events.models import (
-    AnnotatedRegistration,
-    Event,
-)
+from core.models import Contact, OrganizationType, Region, Subregion
+from events.models import AnnotatedRegistration, Event, Registration, RegistrationRole
 
 
 class EventViewSet(ReadOnlyModelViewSet):
@@ -41,38 +38,59 @@ class EventViewSet(ReadOnlyModelViewSet):
             AnnotatedRegistration.objects.filter(registration__event=event)
             .exclude(usable_organization__organization_type__hide_in_statistics=True)
             .annotate(
-                organization_type=F("usable_organization__organization_type__acronym"),
-                government=F("usable_organization__government"),
-                region=F("usable_organization__government__region__code"),
-                subregion=F("usable_organization__government__subregion__code"),
-                gender=F("registration__contact__gender"),
+                organization_type=Case(
+                    When(
+                        usable_organization__organization_type__statistics_title="",
+                        then=F("usable_organization__organization_type__title"),
+                    ),
+                    default=F(
+                        "usable_organization__organization_type__statistics_title"
+                    ),
+                ),
+                region=F("usable_organization__government__region__name"),
+                subregion=F("usable_organization__government__subregion__name"),
+                gender=Case(
+                    When(registration__contact__gender="", then=Value("N/A")),
+                    default=F("registration__contact__gender"),
+                ),
                 status=F("registration__status"),
+                role=F("registration__role__name"),
             )
             .values(
-                "government",
                 "organization_type",
                 "region",
                 "subregion",
                 "gender",
                 "status",
+                "role",
             )
             .annotate(count=Count(1))
         )
 
+        org_type_query = OrganizationType.objects.exclude(
+            hide_in_statistics=True
+        ).order_by("sort_order")
+        org_types = []
+        for org_type in org_type_query:
+            if org_type.statistics_display_name not in org_types:
+                org_types.append(org_type.statistics_display_name)
+
         return Response(
             {
                 "registrations": regs,
-                "countries": Country.objects.values(
-                    "code", "name", "region", "subregion"
-                ).order_by("name"),
-                "regions": Region.objects.values("code", "name").order_by("sort_order"),
-                "subregions": Subregion.objects.values("code", "name").order_by(
-                    "sort_order"
-                ),
-                "organization_types": OrganizationType.objects.exclude(
-                    hide_in_statistics=True
-                )
-                .values("acronym", "title", "statistics_title")
-                .order_by("sort_order"),
+                "schema": {
+                    "role": RegistrationRole.objects.values_list(
+                        "name", flat=True
+                    ).order_by("sort_order"),
+                    "region": Region.objects.values_list("name", flat=True).order_by(
+                        "sort_order"
+                    ),
+                    "subregion": Subregion.objects.values_list(
+                        "name", flat=True
+                    ).order_by("sort_order"),
+                    "organization_type": org_types,
+                    "status": [i[0] for i in Registration.Status.choices],
+                    "gender": [i[0] for i in Contact.GenderChoices.choices] + ["N/A"],
+                },
             }
         )
