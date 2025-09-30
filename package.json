@@ -5,7 +5,7 @@
   "productName": "ContactDB",
   "description": "ContactDB",
   "scripts": {
-    "dev": "cross-env CHOKIDAR_USEPOLLING=1 NODE_OPTIONS=--max-old-space-size=8192 quasar dev",
+    "dev": "cross-env CHOKIDAR_USEPOLLING=0 NODE_OPTIONS=--max-old-space-size=8192 quasar dev",
     "build": "quasar build",
     "postinstall": "quasar prepare",
     "type-check": "vue-tsc --build",
@@ -15,8 +15,10 @@
     "lint:check": "run-s -c lint:eslint:check lint:prettier:check",
     "lint:eslint": "eslint --fix .",
     "lint:eslint:check": "eslint .",
+    "lint:eslint:check:staged": "eslint",
     "lint:prettier": "prettier --write .",
-    "lint:prettier:check": "prettier --check ."
+    "lint:prettier:check": "prettier --check .",
+    "lint:prettier:check:staged": "prettier --check --ignore-unknown"
   },
   "dependencies": {
     "@quasar/extras": "1.16.17",
