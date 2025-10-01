@@ -1,5 +1,6 @@
 import type { AxiosError } from "axios";
 import type { MenuSection } from "src/types/menu";
+import type { RouteLocationRaw } from "vue-router";
 
 import { api, apiBase } from "boot/axios";
 import { defineStore } from "pinia";
@@ -117,6 +118,9 @@ export const useUserStore = defineStore("user", {
       }));
 
       return result.filter((section) => section.items.length > 0);
+    },
+    defaultPage(): RouteLocationRaw {
+      return this.availablePages[0]?.items[0]?.to ?? { name: "home" };
     },
     fullName(state) {
       if (!state.firstName && !state.lastName) {

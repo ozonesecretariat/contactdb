@@ -295,6 +295,7 @@ Cypress.Commands.addAll({
     cy.get("[type=submit]:not([hidden])").click();
     if (checkSuccess) {
       cy.get(`[data-user-email="${user}"]`);
+      cy.get(".q-loading.fullscreen").should("not.exist");
     }
     if (checkSuccess && goToAdmin) {
       cy.get("a").contains("Admin").click();
