@@ -52,7 +52,7 @@ function permissionGuard(to: RouteLocationNormalizedGeneric) {
     }
 
     if (route.meta.requireAnonymous && userStore.isLoggedIn) {
-      return { name: "home" };
+      return userStore.defaultPage;
     }
   }
 
@@ -61,7 +61,7 @@ function permissionGuard(to: RouteLocationNormalizedGeneric) {
       message: "Your account does not have the required permissions to access this page.",
       type: "warning",
     });
-    return { name: "home" };
+    return userStore.defaultPage;
   }
 
   if (requireAuth && !userStore.twoFactorEnabled && appSettingsStore.require2fa && to.name !== "account-security") {

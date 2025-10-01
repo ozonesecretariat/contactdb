@@ -9,6 +9,7 @@ from django.core.files import File
 from django.db import models
 from django.db.models import Exists, Max, Min, OuterRef, Q
 from django.utils import timezone
+from django_db_views.db_view import DBView
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 from encrypted_fields import EncryptedJSONField
@@ -792,6 +793,23 @@ class Registration(models.Model):
         if self.usable_organization:
             return self.usable_organization.country
         return None
+
+
+class AnnotatedRegistration(DBView):
+    registration = models.OneToOneField(Registration, on_delete=models.DO_NOTHING)
+    usable_organization = models.ForeignKey(
+        Organization, on_delete=models.DO_NOTHING, null=True
+    )
+    view_definition = """
+        SELECT registration.id                                                 AS id, 
+               registration.id                                                 AS registration_id,
+               COALESCE(registration.organization_id, contact.organization_id) AS usable_organization_id
+        FROM events_registration AS registration
+                 LEFT JOIN core_contact AS contact ON registration.contact_id = contact.id
+    """
+
+    class Meta:
+        managed = False
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):

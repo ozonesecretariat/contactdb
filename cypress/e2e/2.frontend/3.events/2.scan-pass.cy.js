@@ -19,7 +19,7 @@ describe("Check scan pass", () => {
     cy.visit("/scan-pass?code=T6UQZRYW0S");
     cy.contains("Mr. Lyra-Pulse Solstice");
     cy.contains("lyra-pulse@example.com");
-    cy.contains("Registered 11 Jul 2020 to 7 Jun 2023");
+    cy.contains("Registered 11 Jul 2020 to 19 Jul 9999");
     cy.contains("Psychedelic Dreamscape Art Fair");
     cy.contains("Quantum Quest: A Science Adventure Symposium");
     cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
@@ -32,7 +32,7 @@ describe("Check scan pass", () => {
     cy.loginSecurity(false);
     cy.visit("/scan-pass?code=T6UQZRYW0S");
     cy.contains("Mr. Lyra-Pulse Solstice");
-    cy.contains("Registered 11 Jul 2020 to 7 Jun 2023");
+    cy.contains("Registered 11 Jul 2020 to 19 Jul 9999");
     cy.should("not.contain", "lyra-pulse@example.com");
     cy.should("not.contain", "Psychedelic Dreamscape Art Fair");
     cy.should("not.contain", "Quantum Quest: A Science Adventure Symposium");

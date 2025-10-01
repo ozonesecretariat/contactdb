@@ -219,7 +219,7 @@ const priorityPassCode = useRouteQuery<string>("priorityPassCode", "");
 
 const selected = ref<null | Registration>(null);
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const rows = ref<Registration[]>([]);
 const pagination = ref({
   page: 1,
@@ -333,7 +333,15 @@ const filteredColumns = computed(() =>
 );
 
 const { isLoading: isLoadingEvent, state: events } = useAsyncState(
-  async () => (await api.get<MeetingEvent[]>("/events/?ordering=-startDate")).data,
+  async () =>
+    (
+      await api.get<MeetingEvent[]>("/events/", {
+        params: {
+          isCurrent: true,
+          ordering: "-startDate",
+        },
+      })
+    ).data,
   [],
 );
 const { isLoading: isLoadingTags, state: tags } = useAsyncState(

@@ -66,6 +66,16 @@ Cypress.Commands.addAll({
       expect(Array.from(remainingApps), "Expecting all apps to be checked").to.be.empty;
     });
   },
+  checkChart(title, strings) {
+    cy.get(`[aria-label="${title}"] .echarts`)
+      .invoke("attr", "aria-label")
+      .then((ariaLabel) => {
+        expect(ariaLabel).to.exist;
+        strings.forEach((str) => {
+          expect(ariaLabel).to.include(str);
+        });
+      });
+  },
   checkExport({ expected = [], filePattern, filters = {}, modelName, searchValue = "" }) {
     cy.task("cleanDownloadsFolder");
     cy.performSearch({ filters, modelName, searchValue });
@@ -285,6 +295,7 @@ Cypress.Commands.addAll({
     cy.get("[type=submit]:not([hidden])").click();
     if (checkSuccess) {
       cy.get(`[data-user-email="${user}"]`);
+      cy.get(".q-loading.fullscreen").should("not.exist");
     }
     if (checkSuccess && goToAdmin) {
       cy.get("a").contains("Admin").click();

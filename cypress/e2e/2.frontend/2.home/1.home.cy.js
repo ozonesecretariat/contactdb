@@ -1,7 +1,7 @@
 describe("Check home page", () => {
   it("Check home page admin", () => {
     cy.loginAdmin(false);
-    cy.checkNavActive("Events");
+    cy.checkNavActive("Dashboard");
   });
   it("Check home page security", () => {
     cy.loginSecurity(false);
