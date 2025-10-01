@@ -111,45 +111,45 @@
         </div>
       </template>
 
-      <template #body-cell-passport="props">
-        <q-td :props="props">
+      <template #body-cell-passport="cellProps">
+        <q-td :props="cellProps">
           <q-btn
-            v-if="props.value"
+            v-if="cellProps.value"
             color="primary"
             dense
             flat
-            :href="props.value.data"
-            :download="props.value.filename"
+            :href="cellProps.value.data"
+            :download="cellProps.value.filename"
             @click.stop
           >
             Passport
           </q-btn>
         </q-td>
       </template>
-      <template #body-cell-boardingPass="props">
-        <q-td :props="props">
+      <template #body-cell-boardingPass="cellProps">
+        <q-td :props="cellProps">
           <q-btn
-            v-if="props.value"
+            v-if="cellProps.value"
             color="primary"
             dense
             flat
-            :href="props.value.data"
-            :download="props.value.filename"
+            :href="cellProps.value.data"
+            :download="cellProps.value.filename"
             @click.stop
           >
             Boarding
           </q-btn>
         </q-td>
       </template>
-      <template #body-cell-signature="props">
-        <q-td :props="props">
+      <template #body-cell-signature="cellProps">
+        <q-td :props="cellProps">
           <q-btn
-            v-if="props.value"
+            v-if="cellProps.value"
             color="primary"
             dense
             flat
-            :href="props.value.data"
-            :download="props.value.filename"
+            :href="cellProps.value.data"
+            :download="cellProps.value.filename"
             @click.stop
           >
             Signature
@@ -174,7 +174,7 @@ import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
 import { formatDate } from "src/utils/intl";
 import { useUserStore } from "stores/userStore";
-import { computed, ref, watch } from "vue";
+import { computed, type PropType, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 type QTableRequestProps = Parameters<NonNullable<QTableProps["onRequest"]>>[0];
@@ -183,7 +183,11 @@ const tableRef = ref();
 const route = useRoute();
 const userStore = useUserStore();
 
-defineProps({
+const props = defineProps({
+  columns: {
+    default: null,
+    type: Array as PropType<string[]>,
+  },
   disableEvent: {
     default: false,
     type: Boolean,
@@ -220,7 +224,7 @@ const pagination = ref({
   rowsNumber: 0,
   rowsPerPage: 20,
 });
-const columns: QTableColumn<Registration>[] = [
+const possibleColumns: QTableColumn<Registration>[] = [
   {
     field: (row) => row.dsaCountry?.name,
     label: "Country",
@@ -318,8 +322,9 @@ const columns: QTableColumn<Registration>[] = [
   },
 ];
 const filteredColumns = computed(() =>
-  columns.filter(
+  possibleColumns.filter(
     (c) =>
+      (!props.columns || props.columns.includes(c.name)) &&
       (c.name !== "tags" || !tag.value) &&
       (c.name !== "status" || !status.value) &&
       (c.name !== "paidDsa" || !paidDsa.value),
@@ -350,8 +355,8 @@ function fetchData(resetPagination = true) {
   tableRef.value.requestServerInteraction();
 }
 
-async function onRequest(props: QTableRequestProps) {
-  const { page, rowsPerPage: pageSize } = props.pagination;
+async function onRequest(requestProps: QTableRequestProps) {
+  const { page, rowsPerPage: pageSize } = requestProps.pagination;
 
   isLoading.value = true;
   try {

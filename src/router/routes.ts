@@ -148,6 +148,9 @@ const routes: RouteRecordRaw[] = [
         },
         name: "delegates",
         path: "delegates",
+        props: {
+          columns: ["country", "title", "firstName", "lastName", "umojaTravel", "bp", "status", "tags"],
+        },
       },
       {
         component: () => import("pages/DelegatesPage.vue"),
@@ -158,6 +161,18 @@ const routes: RouteRecordRaw[] = [
         name: "dsa",
         path: "dsa",
         props: {
+          columns: [
+            "country",
+            "title",
+            "firstName",
+            "lastName",
+            "umojaTravel",
+            "bp",
+            "termExp",
+            "cashCard",
+            "status",
+            "tags",
+          ],
           disablePaidDsa: true,
           disableStatus: true,
           disableTag: true,
