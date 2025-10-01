@@ -9,10 +9,10 @@
         sortBy: 'startDate',
         descending: true,
       }"
+      @row-click="onRowClick"
     >
-      <template #top-left>Events</template>
-      <template #top-right>
-        <q-input v-model="search" borderless dense placeholder="Search" autofocus role="search">
+      <template #top-left>
+        <q-input v-model="search" filled dense placeholder="Search" autofocus role="search">
           <template #append>
             <q-icon name="search" />
           </template>
@@ -31,6 +31,9 @@ import { api } from "boot/axios";
 import { formatDate } from "src/utils/intl";
 import { unaccentSearch } from "src/utils/search";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const columns = [
   { field: "code", label: "Code", name: "code", sortable: true },
@@ -74,4 +77,8 @@ const events = computed(() =>
     event.venueCountry?.officialName,
   ]),
 );
+
+function onRowClick(ev: Event, row: MeetingEvent) {
+  router.push({ name: "dashboard", params: { eventCode: row.code } });
+}
 </script>
