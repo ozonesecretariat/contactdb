@@ -1,9 +1,10 @@
 <template>
   <q-page class="q-pa-lg">
     <dsa-form
-      v-if="selected"
+      v-if="selected && tags"
       :model-value="true"
       :registration="selected"
+      :possible-tags="tags.map((t) => t.name)"
       @hide="selected = null"
       @update="fetchData(false)"
     />

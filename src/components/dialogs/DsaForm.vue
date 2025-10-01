@@ -13,6 +13,19 @@
         </q-inner-loading>
 
         <q-form class="q-gutter-xs" @submit="onSubmit">
+          <q-select
+            v-model="dataReg.tags"
+            label="Tags"
+            name="tags"
+            :options="possibleTags"
+            :error="!!errorsReg.tags"
+            :error-message="errorsReg.tags"
+            outlined
+            dense
+            multiple
+            use-chips
+            stack-label
+          />
           <q-input
             v-model="data.umojaTravel"
             label="Umoja Travel #"
@@ -148,6 +161,7 @@ const emit = defineEmits<{
   update: [];
 }>();
 const props = defineProps<{
+  possibleTags: string[];
   registration: Registration;
 }>();
 
@@ -169,25 +183,27 @@ const data = reactive<DSA>({
   totalDsa: "",
   umojaTravel: "",
 });
+const dataReg = reactive({
+  tags: props.registration.tags ?? [],
+});
 const { errors, setErrors } = useFormErrors();
+const { errors: errorsReg, setErrors: setErrorsReg } = useFormErrors();
 
 reset();
 
 async function onSubmit() {
   try {
     isLoading.value = true;
-    if (!data.id) {
-      await api.post("/dsa/", data);
-    } else {
-      await api.put(`/dsa/${data.id}/`, data);
+    const [result, resultReg] = await Promise.allSettled([submitDSA(), submitRegistration()]);
+    if (result.status === "rejected") {
+      setErrors(result.reason);
     }
-    $q.notify({
-      message: "DSA saved successfully.",
-      type: "positive",
-    });
-    emit("update");
-  } catch (e) {
-    setErrors(e);
+    if (resultReg.status === "rejected") {
+      setErrorsReg(resultReg.reason);
+    }
+    if (result.status === "fulfilled" && resultReg.status === "fulfilled") {
+      emit("update");
+    }
   } finally {
     isLoading.value = false;
   }
@@ -196,6 +212,22 @@ async function onSubmit() {
 function reset() {
   Object.assign(data, props.registration.dsa);
   data.registration = props.registration.id;
+}
+
+async function submitDSA() {
+  if (!data.id) {
+    await api.post("/dsa/", data);
+  } else {
+    await api.put(`/dsa/${data.id}/`, data);
+  }
+  $q.notify({
+    message: "DSA saved successfully.",
+    type: "positive",
+  });
+}
+
+async function submitRegistration() {
+  await api.patch(`/registrations/${props.registration.id}/`, dataReg);
 }
 </script>
 
