@@ -39,6 +39,7 @@ dependencies = [
     "psycopg[binary]>=3.2.9",
     "pycountry>=24.6.1",
     "python-docx>=1.1.2",
+    "qrcode>=7.4.2",
     "requests>=2.32.3",
     "rq-scheduler>=0.14.0",
     "sentry-sdk[django]>=2.28.0",

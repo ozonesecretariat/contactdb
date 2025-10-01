@@ -1,7 +1,10 @@
+import base64
 import math
 import uuid
+from io import BytesIO
 from urllib.parse import urljoin
 
+import qrcode
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -297,6 +300,25 @@ class EventInvitation(models.Model):
     @property
     def invitation_link_html(self):
         return f'<a href="{self.invitation_link}" target="_blank">{self.invitation_link}</a>'
+
+    @property
+    def invitation_link_qr_code(self):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(self.invitation_link)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        img_data = base64.b64encode(buffer.getvalue()).decode()
+        return f"data:image/png;base64,{img_data}"
 
     @property
     def is_for_future_event(self):
