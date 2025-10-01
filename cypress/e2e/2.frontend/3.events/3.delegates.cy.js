@@ -10,8 +10,8 @@ describe("Check DSA", () => {
   });
   it("Check filtering records", () => {
     cy.loginDSA(false);
-    cy.contains("Delegates").click();
-    cy.get("header").contains("Delegates");
+    cy.checkNav("Delegates").click();
+    cy.checkNavActive("Delegates");
     cy.contains("Records per page");
 
     cy.chooseQSelect("Event", "Spectrum Symposium: Colorful Conference on Creativity");
@@ -25,8 +25,8 @@ describe("Check DSA", () => {
   });
   it("Check filtering by code", () => {
     cy.loginDSA(false);
-    cy.contains("Delegates").click();
-    cy.get("header").contains("Delegates");
+    cy.checkNav("Delegates").click();
+    cy.checkNavActive("Delegates");
     cy.contains("Records per page");
 
     cy.chooseQSelect("Event", "Spectrum Symposium: Colorful Conference on Creativity");
@@ -48,8 +48,8 @@ describe("Check DSA", () => {
       });
       // Go to DSA page
       cy.contains("View site").click();
-      cy.contains("Delegates").click();
-      cy.get("header").contains("Delegates");
+      cy.checkNav("Delegates").click();
+      cy.checkNavActive("Delegates");
       cy.contains("Records per page");
       // Find our contact
       cy.chooseQSelect("Event", "Yoga Experience");
@@ -117,8 +117,8 @@ describe("Check DSA", () => {
       });
       // Go to DSA page
       cy.contains("View site").click();
-      cy.contains("Delegates").click();
-      cy.get("header").contains("Delegates");
+      cy.checkNav("Delegates").click();
+      cy.checkNavActive("Delegates");
       cy.contains("Records per page");
       // Find our contact
       cy.chooseQSelect("Event", "Yoga Experience");
