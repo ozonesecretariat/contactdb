@@ -35,7 +35,6 @@
               autofocus
               role="search"
               label="Search"
-              @update:model-value="fetchData()"
             >
               <template #append>
                 <q-icon name="search" />
@@ -58,7 +57,6 @@
               :loading="isLoadingEvent"
               :disable="disableEvent"
               popup-content-class="wrap-options"
-              @update:model-value="fetchData()"
             />
             <q-input
               v-model="priorityPassCode"
@@ -70,7 +68,6 @@
               label="Code"
               clearable
               style="max-width: 100px"
-              @update:model-value="fetchData()"
             />
             <q-select
               v-model="paidDsa"
@@ -83,7 +80,6 @@
               emit-value
               clearable
               :disable="disablePaidDsa"
-              @update:model-value="fetchData()"
             />
             <q-select
               v-model="status"
@@ -94,7 +90,6 @@
               label="Status"
               clearable
               :disable="disableStatus"
-              @update:model-value="fetchData()"
             />
             <q-select
               v-model="tag"
@@ -111,7 +106,6 @@
               placeholder="Tag"
               :loading="isLoadingTags"
               :disable="disableTag"
-              @update:model-value="fetchData()"
             />
           </div>
         </div>
