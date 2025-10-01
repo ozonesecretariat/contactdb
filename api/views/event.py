@@ -1,28 +1,27 @@
 import django_filters
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Case, Count, F, Value, When
+from django.http import FileResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
-from django.contrib.auth.decorators import permission_required
-from django.http import FileResponse
-from django.utils.decorators import method_decorator
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.serializers.event import (
     EventSerializer,
 )
 from common.filters import CamelCaseOrderingFilter
+from core.models import Contact, OrganizationType, Region, Subregion
 from events.exports.dsa import DSAReport
 from events.models import (
+    AnnotatedRegistration,
     Event,
+    Registration,
+    RegistrationRole,
 )
-from core.models import Contact, OrganizationType, Region, Subregion
-from events.models import AnnotatedRegistration, Event, Registration, RegistrationRole
 
 
 class EventFilterSet(FilterSet):
