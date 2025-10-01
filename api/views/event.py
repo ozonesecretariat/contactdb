@@ -73,7 +73,7 @@ class EventViewSet(ReadOnlyModelViewSet):
                 region=F("usable_organization__government__region__name"),
                 subregion=F("usable_organization__government__subregion__name"),
                 gender=Case(
-                    When(registration__contact__gender="", then=Value("N/A")),
+                    When(registration__contact__gender="", then=Value("No response")),
                     default=F("registration__contact__gender"),
                 ),
                 status=F("registration__status"),
@@ -113,7 +113,8 @@ class EventViewSet(ReadOnlyModelViewSet):
                     ).order_by("sort_order"),
                     "organization_type": org_types,
                     "status": [i[0] for i in Registration.Status.choices],
-                    "gender": [i[0] for i in Contact.GenderChoices.choices] + ["N/A"],
+                    "gender": [i[0] for i in Contact.GenderChoices.choices]
+                    + ["No response"],
                 },
             }
         )
