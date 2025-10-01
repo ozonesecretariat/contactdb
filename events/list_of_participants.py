@@ -32,8 +32,10 @@ class Section(Enum):
     SECRETARIAT = "Ozone Secretariat"
 
 
-# Some sections require page breaks before certain sub-sections
-PAGE_BREAK_SUBSECTIONS = {Section.OBSERVERS: {"NGOs and IGOs", "Others"}}
+# Some sections require page breaks before certain sub-sections,
+# e.g. {"NGOs and IGOs", "Others"}
+# If all subsections need breaks, "all" can be used instead of a set.
+PAGE_BREAK_SUBSECTIONS = {Section.OBSERVERS: "all"}
 
 # In order to preserve the layout, use a placeholder if no symbols are provided
 # in the event settings.
@@ -451,8 +453,11 @@ class ListOfParticipants:
             registrations, key=key_l1
         ):
             # Add page break before specific subsections if needed
-            # (e.g. "NGOs and IGOs" and "Others")
-            if l1_group_name in page_break_subsections:
+            needs_page_break = (
+                page_break_subsections == "all"
+                or l1_group_name in page_break_subsections
+            )
+            if needs_page_break:
                 self.doc.add_page_break()
 
             if l1_group_name:
