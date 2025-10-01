@@ -42,6 +42,14 @@
               </template>
             </q-input>
             <code-scanner @code="setCode" />
+            <q-btn
+              v-if="downloadReport"
+              label="Download report"
+              color="primary"
+              icon="download"
+              :href="downloadLink"
+              download
+            />
           </div>
           <div class="q-gutter-md filter-list">
             <q-select
@@ -169,7 +177,7 @@ import type { Registration, RegistrationTag } from "src/types/registration";
 
 import { useAsyncState } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
-import { api } from "boot/axios";
+import { api, apiURL } from "boot/axios";
 import CodeScanner from "components/dialogs/CodeScanner.vue";
 import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
@@ -202,6 +210,10 @@ const props = defineProps({
     type: Boolean,
   },
   disableTag: {
+    default: false,
+    type: Boolean,
+  },
+  downloadReport: {
     default: false,
     type: Boolean,
   },
@@ -331,6 +343,7 @@ const filteredColumns = computed(() =>
       (c.name !== "paidDsa" || !paidDsa.value),
   ),
 );
+const downloadLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa/`);
 
 const { isLoading: isLoadingEvent, state: events } = useAsyncState(
   async () => (await api.get<MeetingEvent[]>("/events/?ordering=-startDate")).data,

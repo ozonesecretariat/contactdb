@@ -165,4 +165,13 @@ describe("Check DSA", () => {
       cy.deleteContactGroup(group);
     });
   });
+  it("Check download DSA", () => {
+    cy.loginDSA(false);
+    cy.checkNav("Paid DSA").click();
+    cy.checkNavActive("Paid DSA");
+    cy.get("a").contains("Download report").click();
+    cy.checkFile({
+      filePattern: "CC_IAP-DSA.xlsx",
+    });
+  });
 });

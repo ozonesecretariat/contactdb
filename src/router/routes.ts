@@ -190,6 +190,7 @@ const routes: RouteRecordRaw[] = [
           disablePaidDsa: true,
           disableStatus: true,
           disableTag: true,
+          downloadReport: true,
         },
       },
       {
