@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QTableColumn } from "quasar";
 import type { MeetingEvent } from "src/types/event";
 
 import { useAsyncState } from "@vueuse/core";
@@ -35,18 +36,25 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const columns = [
+const columns: QTableColumn<MeetingEvent>[] = [
   { field: "code", label: "Code", name: "code", sortable: true },
   { field: "title", label: "Title", name: "title", sortable: true },
   {
-    field: (row: MeetingEvent) => formatDate(row.startDate),
+    field: "startDate",
+    format: formatDate,
     label: "Start date",
     name: "startDate",
     sortable: true,
   },
-  { field: (row: MeetingEvent) => formatDate(row.endDate), label: "End date", name: "endDate", sortable: true },
   {
-    field: (row: MeetingEvent) => row.venueCountry?.name ?? "",
+    field: "endDate",
+    format: formatDate,
+    label: "End date",
+    name: "endDate",
+    sortable: true,
+  },
+  {
+    field: (row) => row.venueCountry?.name ?? "",
     label: "Venue country",
     name: "venueCountry",
     sortable: true,

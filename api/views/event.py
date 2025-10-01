@@ -18,11 +18,11 @@ from events.models import AnnotatedRegistration, Event, Registration, Registrati
 
 
 class EventFilterSet(FilterSet):
-    is_current = django_filters.BooleanFilter(method='filter_is_current')
+    is_current = django_filters.BooleanFilter(method="filter_is_current")
 
     class Meta:
         model = Event
-        fields = ['is_current']
+        fields = ["is_current"]
 
     def filter_is_current(self, queryset, name, value):
         today = timezone.now().date()
@@ -36,7 +36,11 @@ class EventViewSet(ReadOnlyModelViewSet):
     queryset = Event.objects.all().select_related("venue_country")
     serializer_class = EventSerializer
     lookup_field = "code"
-    filter_backends = [filters.SearchFilter, CamelCaseOrderingFilter, DjangoFilterBackend]
+    filter_backends = [
+        filters.SearchFilter,
+        CamelCaseOrderingFilter,
+        DjangoFilterBackend,
+    ]
     filterset_class = EventFilterSet
     search_fields = [
         "code",

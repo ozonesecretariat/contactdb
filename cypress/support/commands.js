@@ -66,6 +66,16 @@ Cypress.Commands.addAll({
       expect(Array.from(remainingApps), "Expecting all apps to be checked").to.be.empty;
     });
   },
+  checkChart(title, strings) {
+    cy.get(`[aria-label="${title}"] .echarts`)
+      .invoke("attr", "aria-label")
+      .then((ariaLabel) => {
+        expect(ariaLabel).to.exist;
+        strings.forEach((str) => {
+          expect(ariaLabel).to.include(str);
+        });
+      });
+  },
   checkExport({ expected = [], filePattern, filters = {}, modelName, searchValue = "" }) {
     cy.task("cleanDownloadsFolder");
     cy.performSearch({ filters, modelName, searchValue });

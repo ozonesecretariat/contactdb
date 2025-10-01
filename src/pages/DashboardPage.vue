@@ -181,6 +181,17 @@ const dataByRegion = computed<null | Record<string, Statistics>>(() => {
 
   .row > * {
     height: 25rem;
+    min-width: 25rem;
+    padding: 0 0.5rem;
+  }
+}
+
+@media (min-width: 2000px) {
+  .dashboard {
+    .row > * {
+      height: 35rem;
+      min-width: 35rem;
+    }
   }
 }
 </style>

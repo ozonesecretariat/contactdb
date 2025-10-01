@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card :aria-label="title">
     <v-chart autoresize :theme="$q.dark.isActive ? 'dark' : ''" :option="options" />
   </q-card>
 </template>
@@ -8,7 +8,7 @@
 import type { Statistics } from "src/types/statistics";
 
 import { PieChart } from "echarts/charts";
-import { LegendComponent, TitleComponent, TooltipComponent } from "echarts/components";
+import { AriaComponent, LegendComponent, TitleComponent, TooltipComponent } from "echarts/components";
 import { use } from "echarts/core";
 import { SVGRenderer } from "echarts/renderers";
 import { useQuasar } from "quasar";
@@ -16,7 +16,7 @@ import { ChartColors } from "src/constants";
 import { computed } from "vue";
 import VChart from "vue-echarts";
 
-use([TitleComponent, TooltipComponent, LegendComponent, PieChart, SVGRenderer]);
+use([AriaComponent, TitleComponent, TooltipComponent, LegendComponent, PieChart, SVGRenderer]);
 
 const $q = useQuasar();
 const props = defineProps<{
@@ -45,6 +45,7 @@ const data = computed(() => {
 });
 
 const options = computed(() => ({
+  aria: { show: true },
   color: ChartColors,
   legend: { orient: "horizontal" },
   series: [
