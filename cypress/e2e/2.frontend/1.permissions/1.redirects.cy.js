@@ -15,13 +15,13 @@ describe("Check redirects", () => {
     cy.get("input[autocomplete=current-password]").type("admin");
     cy.get("[type=submit]:not([hidden])").click();
     // check that we redirect back to the home page
-    cy.checkNavActive("Events");
+    cy.checkNavActive("Dashboard");
   });
   it("Check access anon only page while logged in", () => {
     cy.loginAdmin(false);
     cy.visit("/auth/login");
     // check that we redirect back to the home page
-    cy.checkNavActive("Event");
+    cy.checkNavActive("Dashboard");
   });
   it("Check access page without permissions", () => {
     cy.loginNoAccess(false);
