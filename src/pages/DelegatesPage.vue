@@ -219,7 +219,7 @@ const priorityPassCode = useRouteQuery<string>("priorityPassCode", "");
 
 const selected = ref<null | Registration>(null);
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const rows = ref<Registration[]>([]);
 const pagination = ref({
   page: 1,

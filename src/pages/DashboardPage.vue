@@ -37,6 +37,10 @@
         :loading="isLoading"
       />
     </div>
+    <q-banner v-if="!isLoadingEvent && events.length === 0" class="q-mt-md">
+      <q-icon name="warning" size="md" />
+      No events available.
+    </q-banner>
     <div v-if="filteredData && dataByRegion" class="q-mt-md dashboard">
       <div class="row">
         <pie-chart :key1="group" title="Total Participants" :stats="filteredData" class="col-4" />
@@ -113,7 +117,10 @@ const status = useRouteQuery<string>("status", "");
 
 const isLoading = ref(true);
 const data = computedAsync(
-  async () => (await api.get<Statistics>(`/events/${eventCode.value}/statistics/`)).data,
+  async () => {
+    if (!eventCode.value) return null;
+    return (await api.get<Statistics>(`/events/${eventCode.value}/statistics/`)).data;
+  },
   null,
   isLoading,
 );
@@ -173,7 +180,7 @@ const dataByRegion = computed<null | Record<string, Statistics>>(() => {
   }
 
   .row > * {
-    height: 35rem;
+    height: 25rem;
   }
 }
 </style>
