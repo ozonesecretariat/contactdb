@@ -198,7 +198,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     list_display = (
         "contact__first_name",
         "contact__last_name",
-        "event__code",
+        "event_code_link",
         "organization__government",
         "status",
         "role",
@@ -293,6 +293,16 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     @admin.display(description="Tags")
     def tags_display(self, obj: Registration):
         return ", ".join(map(str, obj.tags.all()))
+
+    @admin.display(description="Event Code", ordering="event__code")
+    def event_code_link(self, obj):
+        if not obj.event:
+            return "-"
+
+        event_url = reverse("admin:events_event_change", args=[obj.event.pk])
+        return format_html(
+            '<a href="{}" target="_blank">{}</a>', event_url, obj.event.code
+        )
 
     @admin.action(description="Send email to selected contacts", permissions=["view"])
     def send_email(self, request, queryset):
