@@ -508,6 +508,7 @@ class ListOfParticipants:
                     p = row.cells[1].paragraphs[0]
                     p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                     p.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
+                    p.paragraph_format.left_indent = Pt(12)
                     self.contact_list_item(p, item, section)
 
                 self.doc.add_paragraph("", style="LOP Table Space")
