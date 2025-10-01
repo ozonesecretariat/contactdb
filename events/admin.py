@@ -1,3 +1,5 @@
+import base64
+
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django import forms
@@ -5,7 +7,7 @@ from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Max, Min, Q
 from django.forms.models import BaseInlineFormSet
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
@@ -1038,6 +1040,7 @@ class EventInvitationAdmin(ModelAdmin):
         "link_accessed",
         "created_at",
         "invitation_link",
+        "qr_code_display",
         "unregistered_organizations_display",
     )
 
@@ -1095,6 +1098,7 @@ class EventInvitationAdmin(ModelAdmin):
                 "fields": (
                     "token",
                     "invitation_link",
+                    "qr_code_display",
                     "link_accessed",
                     "created_at",
                 )
@@ -1169,10 +1173,26 @@ class EventInvitationAdmin(ModelAdmin):
 
     @admin.display(description="Invitation Link")
     def invitation_link(self, obj):
+        qr_url = reverse("admin:events_eventinvitation_qr", args=[obj.pk])
+
         return format_html(
-            '<a href="{}" target="_blank">{}</a>',
+            '<a href="{}" target="_blank">View Invitation Link</a> | '
+            '<a href="{}" target="_blank">QR Code</a>',
             obj.invitation_link,
-            "View Invitation Link",
+            qr_url,
+        )
+
+    @admin.display(description="QR Code")
+    def qr_code_display(self, obj):
+        if not obj.pk:
+            return "-"
+
+        return format_html(
+            '<div style="text-align: center;">'
+            '<img src="{}" alt="QR Code" style="max-width: 200px; max-height: 200px;" />'
+            "<br><small>Scan to access invitation</small>"
+            "</div>",
+            obj.invitation_link_qr_code,
         )
 
     @admin.display(description="Future Event", boolean=True)
@@ -1191,6 +1211,26 @@ class EventInvitationAdmin(ModelAdmin):
             obj.id,
             tasks.count(),
         )
+
+    def get_urls(self):
+        return [
+            path(
+                "<path:object_id>/qr/",
+                self.admin_site.admin_view(self.qr_code_view),
+                name="events_eventinvitation_qr",
+            ),
+            *super().get_urls(),
+        ]
+
+    def qr_code_view(self, request, object_id):
+        invitation = self.get_object(request, object_id)
+
+        data_url = invitation.invitation_link_qr_code
+        # Removes the "data:image/png;base64," prefix
+        img_data = data_url.split(",")[1]
+        img_bytes = base64.b64decode(img_data)
+
+        return HttpResponse(img_bytes, content_type="image/png")
 
 
 @admin.register(DSA)
