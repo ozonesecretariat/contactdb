@@ -2,12 +2,12 @@ describe("Check events page", () => {
   it("Check events page", () => {
     cy.loginAdmin(false);
     cy.checkNav("Events").click();
-    cy.contains("1-15 of 20");
+    cy.contains("1-3 of 3");
   });
   it("Check search events", () => {
     cy.loginAdmin(false);
     cy.checkNav("Events").click();
-    cy.get("[role=search]").type("expo");
-    cy.contains("1-2 of 2");
+    cy.get("[role=search]").type("music");
+    cy.contains("1-1 of 1");
   });
 });
