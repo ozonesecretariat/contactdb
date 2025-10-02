@@ -1,6 +1,6 @@
 <template>
   <div class="fileInput">
-    <q-file v-model="fileUpload" v-bind="$attrs" style="width: 25rem" />
+    <q-file v-model="fileUpload" v-bind="$attrs" style="width: 25rem" hint="Click or drag file to upload" />
     <take-photo label="" @capture="setPicture" />
     <q-btn
       color="secondary"
