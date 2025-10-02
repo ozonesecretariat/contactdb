@@ -69,7 +69,8 @@ class TestsPostMeetingStatistics(TestCase):
         self,
         acc_contacts=0,
         reg_contacts=2,
-        hl_contacts=0,
+        hl_contacts_reg=0,
+        hl_contacts_acc=0,
         a2_parties=1,
         a5_parties=1,
         a2_contacts=1,
@@ -84,49 +85,42 @@ class TestsPostMeetingStatistics(TestCase):
         result = get_table_data(doc)
 
         self.assertEqual(
-            result["Table 1: Participants by gender"][-1][1],
+            result["Table 1: Participants by Category and Gender"][-1][1],
             str(acc_contacts + reg_contacts),
             "T1: Total number of participants should be acc + reg",
         )
         self.assertEqual(
-            result["Table 1: Participants by gender"][-1][2],
+            result["Table 1: Participants by Category and Gender"][-1][2],
             str(reg_contacts),
             "T1: Invalid number of registered participants",
         )
+
         self.assertEqual(
-            result["Table 2: HL Participants Registered"][-1][0],
-            f"Total: {hl_contacts}",
-            "T2: Invalid number of HL registered participants",
-        )
-        self.assertEqual(
-            result["Table 3: Participants Registered"][-1][1],
-            str(a2_contacts + a5_contacts),
-            "T3: invalid number of registered participants",
-        )
-        self.assertEqual(
-            result["Table 4: Parties Registered"][-1][1],
-            str(a2_parties + a5_parties),
-            "T4: invalid number of registered parties",
-        )
-        self.assertEqual(
-            result["Table 5: A2 Participants Registered"][-1][1],
-            str(a2_contacts),
-            "T5: invalid number of A2 registered participants",
-        )
-        self.assertEqual(
-            result["Table 6: A2 Parties Registered"][-1][1],
+            result["Table 2: A2 Participants by Region and Gender"][-1][1],
             str(a2_parties),
-            "T6: invalid number of A2 registered parties",
+            "T2: invalid number of A2 registered participants",
         )
         self.assertEqual(
-            result["Table 7: A5 Participants Registered"][-1][1],
-            str(a5_contacts),
-            "T7: invalid number of A5 registered participants",
+            result["Table 2: A2 Participants by Region and Gender"][-1][2],
+            str(a2_contacts),
+            "T2: invalid number of A2 registered participants",
         )
+
         self.assertEqual(
-            result["Table 8: A5 Parties Registered"][-1][1],
+            result["Table 3: A5 Participants by Region and Gender"][-1][1],
             str(a5_parties),
-            "T8: invalid number of A5 registered parties",
+            "T3: invalid number of A5 registered parties",
+        )
+        self.assertEqual(
+            result["Table 3: A5 Participants by Region and Gender"][-1][2],
+            str(a5_contacts),
+            "T3: invalid number of A5 registered parties",
+        )
+
+        self.assertEqual(
+            result["Table 4: HL"][-1][0],
+            f"Total (Registered): {hl_contacts_reg}\nTotal (Accredited): {hl_contacts_acc}",
+            "T4: Invalid number of HL participants",
         )
 
         return result
@@ -138,7 +132,8 @@ class TestsPostMeetingStatistics(TestCase):
         self.check_doc(
             acc_contacts=0,
             reg_contacts=0,
-            hl_contacts=0,
+            hl_contacts_reg=0,
+            hl_contacts_acc=0,
             a2_parties=0,
             a5_parties=0,
             a2_contacts=0,
@@ -158,15 +153,16 @@ class TestsPostMeetingStatistics(TestCase):
         result = self.check_doc(
             acc_contacts=0,
             reg_contacts=2,
-            hl_contacts=0,
+            hl_contacts_reg=0,
+            hl_contacts_acc=0,
             a2_parties=0,
             a5_parties=0,
             a2_contacts=0,
             a5_contacts=0,
         )
 
-        obs_row = result["Table 1: Participants by gender"][4]
-        ass_row = result["Table 1: Participants by gender"][5]
+        obs_row = result["Table 1: Participants by Category and Gender"][4]
+        ass_row = result["Table 1: Participants by Category and Gender"][5]
 
         self.assertEqual(obs_row[0], "Observers")
         self.assertEqual(obs_row[1], "1")
@@ -177,94 +173,59 @@ class TestsPostMeetingStatistics(TestCase):
         self.assertEqual(ass_row[7], "1")
 
     def test_t2(self):
+        result = self.check_doc()
+        row = result["Table 2: A2 Participants by Region and Gender"][4]
+
+        self.assertEqual(row[0], "European Union")
+        self.assertEqual(row[1], "1")
+        self.assertEqual(row[2], "1")
+        self.assertEqual(row[4], "1")
+
+    def test_t3(self):
+        result = self.check_doc()
+        row = result["Table 3: A5 Participants by Region and Gender"][3]
+
+        self.assertEqual(row[0], "Anglophone Africa")
+        self.assertEqual(row[1], "1")
+        self.assertEqual(row[2], "1")
+        self.assertEqual(row[7], "1")
+
+    def test_t4(self):
         self.contact1.title = BaseContact.Title.HE_MR
         self.contact1.save()
 
         self.contact2.title = BaseContact.Title.HON_MS
         self.contact2.save()
 
-        result = self.check_doc(hl_contacts=2)
+        result = self.check_doc(hl_contacts_reg=2, hl_contacts_acc=0)
         self.assertEqual(
-            result["Table 2: HL Participants Registered"][2],
+            result["Table 4: HL"][2],
             [
                 self.country2.name,
                 self.org2.name,
+                self.contact2.designation,
                 self.contact2.full_name,
+                "Registered",
             ],
         )
         self.assertEqual(
-            result["Table 2: HL Participants Registered"][3],
+            result["Table 4: HL"][3],
             [
                 self.country1.name,
                 self.org1.name,
+                self.contact1.designation,
                 self.contact1.full_name,
+                "Registered",
             ],
         )
-
-    def test_t3(self):
-        result = self.check_doc()
-
-        a2_row = result["Table 3: Participants Registered"][3]
-        a5_row = result["Table 3: Participants Registered"][4]
-
-        self.assertEqual(a2_row[0], "A2")
-        self.assertEqual(a2_row[1], "1")
-        self.assertEqual(a2_row[3], "1")
-
-        self.assertEqual(a5_row[0], "A5")
-        self.assertEqual(a5_row[1], "1")
-        self.assertEqual(a5_row[6], "1")
-
-    def test_t4(self):
-        result = self.check_doc()
-
-        a2_row = result["Table 4: Parties Registered"][2]
-        a5_row = result["Table 4: Parties Registered"][3]
-
-        self.assertEqual(a2_row, ["A2", "1"])
-        self.assertEqual(a5_row, ["A5", "1"])
-
-    def test_t5(self):
-        result = self.check_doc()
-
-        row = result["Table 5: A2 Participants Registered"][4]
-
-        self.assertEqual(row[0], "European Union")
-        self.assertEqual(row[1], "1")
-        self.assertEqual(row[3], "1")
-
-    def test_t6(self):
-        result = self.check_doc()
-
-        row = result["Table 6: A2 Parties Registered"][3]
-        self.assertEqual(row, ["European Union", "1"])
-
-    def test_t7(self):
-        result = self.check_doc()
-
-        row = result["Table 7: A5 Participants Registered"][3]
-
-        self.assertEqual(row[0], "Anglophone Africa")
-        self.assertEqual(row[1], "1")
-        self.assertEqual(row[6], "1")
-
-    def test_t8(self):
-        result = self.check_doc()
-
-        row = result["Table 8: A5 Parties Registered"][2]
-        self.assertEqual(row, ["Anglophone Africa", "1"])
 
     def test_subregion_sort_order(self):
         Subregion.objects.filter(code="EUN").update(sort_order=20)
         Subregion.objects.filter(code="AFE").update(sort_order=20)
         result = self.check_doc()
 
-        row = result["Table 5: A2 Participants Registered"][-2]
-        self.assertEqual(row[:2], ["European Union", "1"])
-        row = result["Table 6: A2 Parties Registered"][-2]
+        row = result["Table 2: A2 Participants by Region and Gender"][-2]
         self.assertEqual(row[:2], ["European Union", "1"])
 
-        row = result["Table 7: A5 Participants Registered"][-2]
-        self.assertEqual(row[:2], ["Anglophone Africa", "1"])
-        row = result["Table 8: A5 Parties Registered"][-2]
+        row = result["Table 3: A5 Participants by Region and Gender"][-2]
         self.assertEqual(row[:2], ["Anglophone Africa", "1"])
