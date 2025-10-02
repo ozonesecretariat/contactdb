@@ -377,14 +377,24 @@ class EventInvitation(models.Model):
         )
 
 
+class RegistrationTagManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class RegistrationTag(models.Model):
-    name = CICharField(max_length=250, primary_key=True)
+    objects = RegistrationTagManager()
+
+    name = CICharField(max_length=250, unique=True)
 
     class Meta:
         ordering = ("name",)
 
     def __str__(self):
         return self.name
+
+    def natural_key(self):
+        return (self.name,)
 
 
 class RegistrationRole(models.Model):
