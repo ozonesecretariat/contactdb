@@ -1,8 +1,29 @@
+import django_filters
+from django.utils import timezone
+from django_filters import FilterSet
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
 from api.serializers.priority_pass import PriorityPassSerializer
 from common.filters import CamelCaseOrderingFilter
 from events.models import PriorityPass
+
+
+class PriorityPassFilterSet(FilterSet):
+    is_current = django_filters.BooleanFilter(method="filter_is_current")
+
+    class Meta:
+        model = PriorityPass
+        fields = ["is_current"]
+
+    def filter_is_current(self, queryset, name, value):
+        today = timezone.now().date()
+
+        if value is True:
+            return queryset.filter(registrations__event__end_date__gte=today)
+        if value is False:
+            return queryset.filter(registrations__event__end_date__lt=today)
+        return queryset
 
 
 class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
@@ -26,6 +47,7 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (
         filters.SearchFilter,
         CamelCaseOrderingFilter,
+        DjangoFilterBackend,
     )
     search_fields = (
         "registrations__event__code",
@@ -38,3 +60,4 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
         "registrations__contact__organization__name__unaccent",
         "registrations__organization__name__unaccent",
     )
+    filterset_class = PriorityPassFilterSet

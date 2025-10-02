@@ -17,7 +17,8 @@
           dense
           autofocus
           role="search"
-          @keyup.enter="searchPasses"
+          debounce="300"
+          @update:model-value="searchPasses"
         >
           <template #append>
             <q-icon v-if="searchQuery" name="close" class="cursor-pointer" @click="searchQuery = ''" />
@@ -65,7 +66,7 @@ async function searchPasses() {
 
   try {
     const response = await api.get<Paginated<PriorityPass>>("/priority-passes/", {
-      params: { page: 1, pageSize: 10, search: searchQuery.value },
+      params: { isCurrent: true, page: 1, pageSize: 10, search: searchQuery.value },
     });
     passes.value = response.data.results;
     hasSearched.value = true;
