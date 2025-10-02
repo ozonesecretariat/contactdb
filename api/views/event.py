@@ -1,6 +1,7 @@
 import django_filters
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Case, Count, F, Value, When
+from django.http import FileResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
@@ -14,7 +15,13 @@ from api.serializers.event import (
 )
 from common.filters import CamelCaseOrderingFilter
 from core.models import Contact, OrganizationType, Region, Subregion
-from events.models import AnnotatedRegistration, Event, Registration, RegistrationRole
+from events.exports.dsa import DSAReport
+from events.models import (
+    AnnotatedRegistration,
+    Event,
+    Registration,
+    RegistrationRole,
+)
 
 
 class EventFilterSet(FilterSet):
@@ -51,6 +58,12 @@ class EventViewSet(ReadOnlyModelViewSet):
     ]
     ordering_fields = ["code", "title", "start_date", "end_date"]
     ordering = ["code"]
+
+    @method_decorator(permission_required("events.view_dsa", raise_exception=True))
+    @action(detail=True, methods=["get"])
+    def export_dsa(self, *args, **kwargs):
+        event = self.get_object()
+        return FileResponse(DSAReport(event).export_xlsx(), as_attachment=True)
 
     @method_decorator(permission_required("events.view_event", raise_exception=True))
     @action(detail=True, methods=["get"])

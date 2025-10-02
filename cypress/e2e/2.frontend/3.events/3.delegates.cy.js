@@ -63,6 +63,8 @@ describe("Check DSA", () => {
       cy.get("input[name=arrivalDate]").type("2025-09-01");
       cy.get("input[name=departureDate]").type("2025-09-11");
       cy.get("input[name=cashCard]").type("56");
+      cy.get('[role="checkbox"][aria-label="Paid DSA"]').click();
+      cy.chooseQSelect("Tags", "Is funded");
       // Upload files
       cy.get("input[name=passport]").selectFile("fixtures/test/files/test-logo.png");
       cy.get("input[name=boardingPass]").selectFile("fixtures/test/files/test-logo.png");
@@ -72,9 +74,18 @@ describe("Check DSA", () => {
       cy.get("[role=dialog] .q-inner-loading").should("not.exist");
       cy.get("[role=dialog] button").contains("Capture").click();
 
-      // Save and validate
+      // Save DSA and Registration
       cy.get("[type=submit]").click();
       cy.get("[role=dialog]").should("not.exist");
+
+      // Go to Paid DSA page
+      cy.checkNav("Paid DSA").click();
+      cy.checkNavActive("Paid DSA");
+      cy.chooseQSelect("Event", "Yoga Experience");
+      cy.get("input[name=search]").type(contact.last_name);
+      cy.contains("1-1 of 1");
+
+      // Validated details
       cy.contains("12");
       cy.contains("34");
       cy.contains("56");
@@ -84,6 +95,7 @@ describe("Check DSA", () => {
       cy.contains("5256"); // total
       cy.contains("Sep 1, 2025");
       cy.contains("Sep 11, 2025");
+      cy.task("cleanDownloadsFolder");
       cy.get("td a").contains("Passport").click();
       cy.checkFile({ filePattern: "test-logo.png" });
       cy.get("td a").contains("Signature").click();
@@ -116,7 +128,10 @@ describe("Check DSA", () => {
       cy.contains(contact.first_name);
       // Open the edit modal
       cy.get("tbody tr").click();
-      cy.get("input[name=bp]").type("123456");
+      cy.get('[role="checkbox"][aria-label="Paid DSA"]').click();
+      cy.get("input[name=umojaTravel]").type("123456");
+      cy.get("input[name=bp]").type("67589");
+      cy.chooseQSelect("Tags", "Is funded");
       // Save and validate
       cy.get("[type=submit]").click();
       cy.get("[role=dialog]").should("not.exist");
@@ -137,6 +152,10 @@ describe("Check DSA", () => {
       cy.get("[type=submit]").click();
 
       cy.get("[role=dialog]").should("not.exist");
+
+      // Go to Paid DSA page and validate
+      cy.visit(`/paid?eventCode=ZZ:SYE&paidDsa=true&tag=Is+funded&status=Registered&search=${contact.last_name}`);
+      cy.checkNavActive("Paid DSA");
       cy.contains("10"); // nr of days
       cy.contains("4840"); // dsa days * 484
       cy.contains("416"); // termExp
@@ -145,6 +164,16 @@ describe("Check DSA", () => {
       // Cleanup
       cy.get("a").contains("Admin").click();
       cy.deleteContactGroup(group);
+    });
+  });
+  it("Check download DSA", () => {
+    cy.loginDSA(false);
+    cy.checkNav("Paid DSA").click();
+    cy.checkNavActive("Paid DSA");
+    cy.task("cleanDownloadsFolder");
+    cy.get("a").contains("Download report").click();
+    cy.checkFile({
+      filePattern: "SS_CCC-DSA.xlsx",
     });
   });
 });

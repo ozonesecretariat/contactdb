@@ -70,7 +70,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class RegistrationDSASerializer(RegistrationSerializer):
     dsa = DSASerializer()
     dsa_country = CountrySerializer(read_only=True)
-    tags = serializers.SlugRelatedField("name", many=True, read_only=True)
+    tags = serializers.SlugRelatedField(
+        "name", many=True, queryset=RegistrationTag.objects.all()
+    )
 
     class Meta(RegistrationSerializer.Meta):
         fields = RegistrationSerializer.Meta.fields + ("dsa", "dsa_country", "tags")

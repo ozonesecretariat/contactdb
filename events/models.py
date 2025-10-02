@@ -917,8 +917,8 @@ class DSA(models.Model):
     registration = models.OneToOneField(
         Registration, on_delete=models.CASCADE, related_name="dsa"
     )
-    umoja_travel = models.CharField(max_length=255, blank=True)
-    bp = models.CharField(max_length=255, blank=True)
+    umoja_travel = models.CharField(max_length=255)
+    bp = models.CharField(max_length=255)
     arrival_date = models.DateField(blank=True, null=True)
     departure_date = models.DateField(blank=True, null=True)
     cash_card = models.CharField(max_length=255, blank=True)

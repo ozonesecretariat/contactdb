@@ -72,9 +72,9 @@ class RegistrationViewSet(viewsets.ModelViewSet):
     filterset_class = RegistrationDSAFilter
     search_fields = (
         "contact__title",
-        "contact__first_name",
-        "contact__last_name",
-        "organization__name",
+        "contact__first_name__unaccent",
+        "contact__last_name__unaccent",
+        "organization__name__unaccent",
     )
 
 

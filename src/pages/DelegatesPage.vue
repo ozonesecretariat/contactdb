@@ -1,9 +1,10 @@
 <template>
   <q-page class="q-pa-lg">
     <dsa-form
-      v-if="selected"
+      v-if="selected && tags"
       :model-value="true"
       :registration="selected"
+      :possible-tags="tags.map((t) => t.name)"
       @hide="selected = null"
       @update="fetchData(false)"
     />
@@ -35,13 +36,20 @@
               autofocus
               role="search"
               label="Search"
-              @update:model-value="fetchData()"
             >
               <template #append>
                 <q-icon name="search" />
               </template>
             </q-input>
             <code-scanner @code="setCode" />
+            <q-btn
+              v-if="downloadReport"
+              label="Download report"
+              color="primary"
+              icon="download"
+              :href="downloadLink"
+              download
+            />
           </div>
           <div class="q-gutter-md filter-list">
             <q-select
@@ -58,7 +66,6 @@
               :loading="isLoadingEvent"
               :disable="disableEvent"
               popup-content-class="wrap-options"
-              @update:model-value="fetchData()"
             />
             <q-input
               v-model="priorityPassCode"
@@ -70,7 +77,6 @@
               label="Code"
               clearable
               style="max-width: 100px"
-              @update:model-value="fetchData()"
             />
             <q-select
               v-model="paidDsa"
@@ -83,7 +89,6 @@
               emit-value
               clearable
               :disable="disablePaidDsa"
-              @update:model-value="fetchData()"
             />
             <q-select
               v-model="status"
@@ -94,7 +99,6 @@
               label="Status"
               clearable
               :disable="disableStatus"
-              @update:model-value="fetchData()"
             />
             <q-select
               v-model="tag"
@@ -111,51 +115,50 @@
               placeholder="Tag"
               :loading="isLoadingTags"
               :disable="disableTag"
-              @update:model-value="fetchData()"
             />
           </div>
         </div>
       </template>
 
-      <template #body-cell-passport="props">
-        <q-td :props="props">
+      <template #body-cell-passport="cellProps">
+        <q-td :props="cellProps">
           <q-btn
-            v-if="props.value"
+            v-if="cellProps.value"
             color="primary"
             dense
             flat
-            :href="props.value.data"
-            :download="props.value.filename"
+            :href="cellProps.value.data"
+            :download="cellProps.value.filename"
             @click.stop
           >
             Passport
           </q-btn>
         </q-td>
       </template>
-      <template #body-cell-boardingPass="props">
-        <q-td :props="props">
+      <template #body-cell-boardingPass="cellProps">
+        <q-td :props="cellProps">
           <q-btn
-            v-if="props.value"
+            v-if="cellProps.value"
             color="primary"
             dense
             flat
-            :href="props.value.data"
-            :download="props.value.filename"
+            :href="cellProps.value.data"
+            :download="cellProps.value.filename"
             @click.stop
           >
             Boarding
           </q-btn>
         </q-td>
       </template>
-      <template #body-cell-signature="props">
-        <q-td :props="props">
+      <template #body-cell-signature="cellProps">
+        <q-td :props="cellProps">
           <q-btn
-            v-if="props.value"
+            v-if="cellProps.value"
             color="primary"
             dense
             flat
-            :href="props.value.data"
-            :download="props.value.filename"
+            :href="cellProps.value.data"
+            :download="cellProps.value.filename"
             @click.stop
           >
             Signature
@@ -174,13 +177,13 @@ import type { Registration, RegistrationTag } from "src/types/registration";
 
 import { useAsyncState } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
-import { api } from "boot/axios";
+import { api, apiURL } from "boot/axios";
 import CodeScanner from "components/dialogs/CodeScanner.vue";
 import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
 import { formatDate } from "src/utils/intl";
 import { useUserStore } from "stores/userStore";
-import { computed, ref, watch } from "vue";
+import { computed, type PropType, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 type QTableRequestProps = Parameters<NonNullable<QTableProps["onRequest"]>>[0];
@@ -189,7 +192,11 @@ const tableRef = ref();
 const route = useRoute();
 const userStore = useUserStore();
 
-defineProps({
+const props = defineProps({
+  columns: {
+    default: null,
+    type: Array as PropType<string[]>,
+  },
   disableEvent: {
     default: false,
     type: Boolean,
@@ -203,6 +210,10 @@ defineProps({
     type: Boolean,
   },
   disableTag: {
+    default: false,
+    type: Boolean,
+  },
+  downloadReport: {
     default: false,
     type: Boolean,
   },
@@ -226,7 +237,7 @@ const pagination = ref({
   rowsNumber: 0,
   rowsPerPage: 20,
 });
-const columns: QTableColumn<Registration>[] = [
+const possibleColumns: QTableColumn<Registration>[] = [
   {
     field: (row) => row.dsaCountry?.name,
     label: "Country",
@@ -324,13 +335,15 @@ const columns: QTableColumn<Registration>[] = [
   },
 ];
 const filteredColumns = computed(() =>
-  columns.filter(
+  possibleColumns.filter(
     (c) =>
+      (!props.columns || props.columns.includes(c.name)) &&
       (c.name !== "tags" || !tag.value) &&
       (c.name !== "status" || !status.value) &&
       (c.name !== "paidDsa" || !paidDsa.value),
   ),
 );
+const downloadLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa/`);
 
 const { isLoading: isLoadingEvent, state: events } = useAsyncState(
   async () =>
@@ -364,8 +377,8 @@ function fetchData(resetPagination = true) {
   tableRef.value.requestServerInteraction();
 }
 
-async function onRequest(props: QTableRequestProps) {
-  const { page, rowsPerPage: pageSize } = props.pagination;
+async function onRequest(requestProps: QTableRequestProps) {
+  const { page, rowsPerPage: pageSize } = requestProps.pagination;
 
   isLoading.value = true;
   try {

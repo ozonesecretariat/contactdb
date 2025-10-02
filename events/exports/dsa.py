@@ -198,6 +198,8 @@ class DSAReport:
                     f"=L{self.row_index}+M{self.row_index}",
                 ]
             )
+        if not self.registrations:
+            self.row_index += 1
 
     def write_row(self, row):
         self.ws.row_dimensions[self.row_index].height = 30
