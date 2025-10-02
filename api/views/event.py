@@ -34,9 +34,11 @@ class EventFilterSet(FilterSet):
     def filter_is_current(self, queryset, name, value):
         today = timezone.now().date()
 
-        if value:
+        if value is True:
             return queryset.filter(end_date__gte=today)
-        return queryset.filter(end_date__lt=today)
+        if value is False:
+            return queryset.filter(end_date__lt=today)
+        return queryset
 
 
 class EventViewSet(ReadOnlyModelViewSet):
