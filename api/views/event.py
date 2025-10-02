@@ -15,7 +15,7 @@ from api.serializers.event import (
 )
 from common.filters import CamelCaseOrderingFilter
 from core.models import Contact, OrganizationType, Region, Subregion
-from events.exports.dsa import DSAReport
+from events.exports.dsa import DSAFiles, DSAReport
 from events.models import (
     AnnotatedRegistration,
     Event,
@@ -64,6 +64,12 @@ class EventViewSet(ReadOnlyModelViewSet):
     def export_dsa(self, *args, **kwargs):
         event = self.get_object()
         return FileResponse(DSAReport(event).export_xlsx(), as_attachment=True)
+
+    @method_decorator(permission_required("events.view_dsa", raise_exception=True))
+    @action(detail=True, methods=["get"])
+    def export_dsa_files(self, *args, **kwargs):
+        event = self.get_object()
+        return FileResponse(DSAFiles(event).export_zip(), as_attachment=True)
 
     @method_decorator(permission_required("events.view_event", raise_exception=True))
     @action(detail=True, methods=["get"])

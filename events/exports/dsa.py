@@ -1,5 +1,8 @@
+import base64
 import io
+import zipfile
 
+import img2pdf
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -28,6 +31,59 @@ COL_WIDTHS = {
 }
 
 
+def get_dsa_query(event: Event):
+    return event.registrations.filter(
+        status=Registration.Status.REGISTERED,
+        tags__name="Is funded",
+        dsa__isnull=False,
+    ).select_related("dsa")
+
+
+class DSAFiles:
+    SUFFIX = "-DSA-files"
+
+    def __init__(self, event: Event):
+        self.event = event
+        self.registrations = get_dsa_query(self.event).prefetch_related("contact")
+
+    def export_zip(self):
+        zip_buffer = io.BytesIO()
+        zip_buffer.name = f"{self.event.code}{self.SUFFIX}.zip"
+
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_STORED) as zipf:
+            for f in self.get_files():
+                f.seek(0)
+                zipf.writestr(f.name, f.read())
+
+        zip_buffer.seek(0)
+        return zip_buffer
+
+    def get_files(self):
+        for registration in self.registrations:
+            contact = registration.contact
+            for field in ("passport", "boarding_pass"):
+                value = getattr(registration.dsa, field)
+                if not value:
+                    continue
+
+                pdf_file = self.convert_to_pdf(
+                    value,
+                    f"{contact.last_name}_{contact.first_name}_{contact.id}_{field}.pdf",
+                )
+                yield pdf_file
+
+    def convert_to_pdf(self, file_json, filename):
+        data_uri = file_json["data"]
+        base64_data = data_uri.split(",")[-1]
+
+        img_file = io.BytesIO(base64.b64decode(base64_data))
+        pdf_file = io.BytesIO()
+        pdf_file.name = filename
+
+        img2pdf.convert(img_file, outputstream=pdf_file)
+        return pdf_file
+
+
 class DSAReport:
     SUFFIX = "-DSA"
 
@@ -48,12 +104,7 @@ class DSAReport:
         )
         self.header_bg = PatternFill(start_color="99ccff", fill_type="solid")
         self.registrations = (
-            self.event.registrations.filter(
-                status=Registration.Status.REGISTERED,
-                tags__name="Is funded",
-                dsa__isnull=False,
-            )
-            .select_related("dsa")
+            get_dsa_query(self.event)
             .prefetch_related(
                 "role",
                 "tags",
