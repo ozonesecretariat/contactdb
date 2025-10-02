@@ -95,6 +95,7 @@ describe("Check DSA", () => {
       cy.contains("5256"); // total
       cy.contains("Sep 1, 2025");
       cy.contains("Sep 11, 2025");
+      cy.task("cleanDownloadsFolder");
       cy.get("td a").contains("Passport").click();
       cy.checkFile({ filePattern: "test-logo.png" });
       cy.get("td a").contains("Signature").click();
@@ -169,9 +170,10 @@ describe("Check DSA", () => {
     cy.loginDSA(false);
     cy.checkNav("Paid DSA").click();
     cy.checkNavActive("Paid DSA");
+    cy.task("cleanDownloadsFolder");
     cy.get("a").contains("Download report").click();
     cy.checkFile({
-      filePattern: "CC_IAP-DSA.xlsx",
+      filePattern: "SS_CCC-DSA.xlsx",
     });
   });
 });

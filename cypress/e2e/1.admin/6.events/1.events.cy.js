@@ -67,6 +67,7 @@ describe("Check", () => {
       searchValue: "NN:FDP",
     });
     cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
     cy.get("a").contains("Pre Statistics").click();
     cy.checkFile({
       filePattern: "NN_FDP-pre-meeting-statistics.docx",
@@ -79,6 +80,7 @@ describe("Check", () => {
       searchValue: "NN:FDP",
     });
     cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
     cy.get("a").contains("Post Statistics").click();
     cy.checkFile({
       filePattern: "NN_FDP-post-meeting-statistics.docx",
@@ -91,6 +93,7 @@ describe("Check", () => {
       searchValue: "NN:FDP",
     });
     cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
     cy.get("a").contains("LoP").click();
     cy.checkFile({
       filePattern: "NN_FDP-LoP.docx",
@@ -103,6 +106,7 @@ describe("Check", () => {
       searchValue: "NN:FDP",
     });
     cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
     cy.get("main a").contains("DSA").click();
     cy.checkFile({
       filePattern: "NN_FDP-DSA.xlsx",
