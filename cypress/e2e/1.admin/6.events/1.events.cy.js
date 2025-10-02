@@ -107,9 +107,13 @@ describe("Check", () => {
     });
     cy.contains("1 result");
     cy.task("cleanDownloadsFolder");
-    cy.get("main a").contains("DSA").click();
+    cy.get("main a").contains("DSA Report").click();
     cy.checkFile({
       filePattern: "NN_FDP-DSA.xlsx",
+    });
+    cy.get("main a").contains("DSA Files").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-DSA-files.zip",
     });
   });
 });

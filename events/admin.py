@@ -827,7 +827,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                     '<a href="{}" target="_blank">Pre Statistics</a>',
                     '<a href="{}" target="_blank">LoP</a>',
                     '<a href="{}" target="_blank">Post Statistics</a>',
-                    '<a href="{}" target="_blank">DSA</a>',
+                    '<a href="{}" target="_blank">DSA Report</a>',
                     '<a href="{}" target="_blank">DSA Files</a>',
                 ]
             ),

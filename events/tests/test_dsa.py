@@ -1,6 +1,8 @@
 import io
+import zipfile
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -15,6 +17,7 @@ from api.tests.factories import (
     RegistrationFactory,
 )
 from core.models import OrganizationType
+from core.templatetags.file_base64 import file_to_base64
 from events.models import Registration, RegistrationTag
 
 
@@ -149,3 +152,75 @@ class TestDSAReport(TestCase):
         self.dsa1.departure_date = None
         self.dsa1.save()
         self.check_contacts([self.contact1, self.contact2])
+
+
+class TestDSAFiles(TestCase):
+    fixtures = [
+        "initial/organizationtype",
+        "initial/registrationtag",
+        "initial/role",
+        "test/user",
+    ]
+
+    def setUp(self):
+        self.maxDiff = None
+        self.event = EventFactory(code="TESTEVT")
+
+        with (settings.BASE_DIR / "fixtures/test/files/test-logo.png").open("rb") as f:
+            self.data_uri = file_to_base64(f)
+        self.file_obj = {"data": self.data_uri, "filename": "test-logo.png"}
+
+        self.is_funded = RegistrationTag.objects.get(name="Is funded")
+
+        self.reg1 = RegistrationFactory(
+            event=self.event, status=Registration.Status.REGISTERED
+        )
+        self.reg1.tags.add(self.is_funded)
+        self.dsa1 = DSAFactory(
+            registration=self.reg1, passport=self.file_obj, boarding_pass=self.file_obj
+        )
+
+    def check_report(self, expected_files):
+        url = reverse("admin:dsa_files", args=(self.event.id,))
+        self.client.login(email="admin@example.com", password="admin")
+        resp = self.client.get(url)
+        f = io.BytesIO(b"".join(resp.streaming_content))
+        files = sorted(zipfile.ZipFile(f, mode="r").namelist())
+        self.assertEqual(files, expected_files)
+        return f
+
+    def test_dsa_files_export(self):
+        reg2 = RegistrationFactory(
+            event=self.event, status=Registration.Status.REGISTERED
+        )
+        reg2.tags.add(self.is_funded)
+        DSAFactory(
+            registration=reg2, passport=self.file_obj, boarding_pass=self.file_obj
+        )
+
+        self.check_report(
+            [
+                f"{self.reg1.contact.last_name}_{self.reg1.contact.first_name}_{self.reg1.contact.id}_boarding_pass.pdf",
+                f"{self.reg1.contact.last_name}_{self.reg1.contact.first_name}_{self.reg1.contact.id}_passport.pdf",
+                f"{reg2.contact.last_name}_{reg2.contact.first_name}_{reg2.contact.id}_boarding_pass.pdf",
+                f"{reg2.contact.last_name}_{reg2.contact.first_name}_{reg2.contact.id}_passport.pdf",
+            ]
+        )
+
+    def test_export_with_missing_files(self):
+        self.dsa1.boarding_pass = None
+        self.dsa1.save()
+        zipf = self.check_report(
+            [
+                f"{self.reg1.contact.last_name}_{self.reg1.contact.first_name}_{self.reg1.contact.id}_passport.pdf"
+            ]
+        )
+        with zipfile.ZipFile(zipf) as z:
+            pdf_bytes = z.read(z.namelist()[0])
+            self.assertTrue(pdf_bytes.startswith(b"%PDF"))
+
+    def test_export_with_no_files(self):
+        self.dsa1.passport = None
+        self.dsa1.boarding_pass = None
+        self.dsa1.save()
+        self.check_report([])
