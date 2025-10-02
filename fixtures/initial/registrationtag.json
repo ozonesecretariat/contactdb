@@ -2,31 +2,36 @@
   {
     "model": "events.registrationtag",
     "fields": {
-      "name": "credential"
+      "name": "credential",
+      "protected": false
     }
   },
   {
     "model": "events.registrationtag",
     "fields": {
-      "name": "online"
+      "name": "Is funded",
+      "protected": true
     }
   },
   {
     "model": "events.registrationtag",
     "fields": {
-      "name": "viewer"
+      "name": "online",
+      "protected": false
     }
   },
   {
     "model": "events.registrationtag",
     "fields": {
-      "name": "visa"
+      "name": "viewer",
+      "protected": false
     }
   },
   {
     "model": "events.registrationtag",
     "fields": {
-      "name": "Is funded"
+      "name": "visa",
+      "protected": false
     }
   }
 ]

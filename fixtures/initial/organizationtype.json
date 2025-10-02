@@ -9,7 +9,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "Academia/Expert",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -22,7 +25,10 @@
       "statistics_title": "",
       "badge_color": "#7f97ab",
       "description": "Assessment Panels",
-      "sort_order": 30
+      "sort_order": 30,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": true
     }
   },
   {
@@ -35,7 +41,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "Exhibitors",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -48,7 +57,10 @@
       "statistics_title": "Parties",
       "badge_color": "#df3e24",
       "description": "Government",
-      "sort_order": 10
+      "sort_order": 10,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": true
     }
   },
   {
@@ -61,7 +73,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "IGOs",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -74,7 +89,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "Industry",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -87,7 +105,10 @@
       "statistics_title": "",
       "badge_color": "#7f97ab",
       "description": "Interpreters",
-      "sort_order": 60
+      "sort_order": 60,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -100,7 +121,10 @@
       "statistics_title": "",
       "badge_color": "#7f97ab",
       "description": "Local Support",
-      "sort_order": 60
+      "sort_order": 60,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -113,7 +137,10 @@
       "statistics_title": "",
       "badge_color": "#7f97ab",
       "description": "Media",
-      "sort_order": 60
+      "sort_order": 60,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -126,7 +153,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "NGOs",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -139,7 +169,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "Observers",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -152,7 +185,10 @@
       "statistics_title": "Observers",
       "badge_color": "#7f97ab",
       "description": "Others",
-      "sort_order": 20
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
@@ -165,7 +201,10 @@
       "statistics_title": "Ozone Secretariat",
       "badge_color": "#06aef0",
       "description": "Secretariat",
-      "sort_order": 40
+      "sort_order": 40,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": true
     }
   },
   {
@@ -178,7 +217,10 @@
       "statistics_title": "United Nations",
       "badge_color": "#5b92e5",
       "description": "UN Agencies",
-      "sort_order": 50
+      "sort_order": 50,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   }
 ]

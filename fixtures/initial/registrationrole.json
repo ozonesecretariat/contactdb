@@ -5,6 +5,7 @@
     "fields": {
       "name": "Delegate",
       "hide_for_nomination": false,
+      "hide_in_lop": false,
       "sort_order": 30,
       "kronos_value": null
     }
@@ -15,6 +16,7 @@
     "fields": {
       "name": "Head",
       "hide_for_nomination": false,
+      "hide_in_lop": false,
       "sort_order": 10,
       "kronos_value": 0
     }
@@ -25,6 +27,7 @@
     "fields": {
       "name": "Alternate Head",
       "hide_for_nomination": false,
+      "hide_in_lop": false,
       "sort_order": 20,
       "kronos_value": 1
     }
@@ -35,6 +38,7 @@
     "fields": {
       "name": "Unofficial Delegate",
       "hide_for_nomination": true,
+      "hide_in_lop": false,
       "sort_order": 40,
       "kronos_value": 2
     }

@@ -125,8 +125,19 @@ class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
 @admin.register(RegistrationTag)
 class RegistrationTagAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name",)
+    list_display = ("name", "protected")
     list_display_links = ("name",)
+    readonly_fields = ("protected",)
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.protected:
+            return False
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.protected:
+            return False
+        return super().has_delete_permission(request, obj)
 
 
 class RegistrationResource(ModelResource):

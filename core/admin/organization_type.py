@@ -24,5 +24,17 @@ class OrganizationTypeAdmin(ExportMixin, ModelAdmin):
         "hide_in_lop",
         "hide_in_statistics",
         "sort_order",
+        "protected",
     )
-    readonly_fields = ("organization_type_id",)
+    readonly_fields = ("organization_type_id", "protected")
+
+    def get_readonly_fields(self, request, obj=None):
+        result = super().get_readonly_fields(request, obj)
+        if not obj or not obj.protected:
+            return result
+        return tuple(result) + ("acronym",)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.protected:
+            return False
+        return super().has_delete_permission(request, obj)

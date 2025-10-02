@@ -383,9 +383,10 @@ class RegistrationTagManager(models.Manager):
 
 
 class RegistrationTag(models.Model):
-    objects = RegistrationTagManager()
-
     name = CICharField(max_length=250, unique=True)
+    protected = models.BooleanField(default=False)
+
+    objects = RegistrationTagManager()
 
     class Meta:
         ordering = ("name",)
