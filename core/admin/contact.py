@@ -294,8 +294,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                 "fields": (
                     "contact_ids",
                     "focal_point_ids",
-                    "created_at",
-                    "updated_at",
+                    "audit_created_at",
+                    "audit_updated_at",
                 ),
             },
         ),
@@ -314,6 +314,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "passport_display",
         "credentials_display",
         "has_credentials",
+        "audit_created_at",
+        "audit_updated_at",
     )
     annotate_query = {
         "registration_count": Count("registrations"),

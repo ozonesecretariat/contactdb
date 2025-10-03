@@ -1,10 +1,12 @@
 from functools import wraps
 
+from auditlog.models import LogEntry
 from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.admin.options import get_content_type_for_model
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from django.utils.formats import localize
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
@@ -228,6 +230,43 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
             list_display[index] = preview_name
 
         return tuple(list_display)
+
+    def format_log_entry(self, entry: LogEntry):
+        url = reverse("admin:auditlog_logentry_change", args=(entry.pk,))
+        return format_html(
+            """
+            <a href="{url}">{date} by {actor}</>
+        """,
+            url=url,
+            date=localize(entry.timestamp),
+            actor=entry.actor or "System",
+        )
+
+    @admin.display(description="Created at")
+    def audit_created_at(self, obj):
+        try:
+            log = (
+                LogEntry.objects.get_for_object(obj)
+                .filter(action=LogEntry.Action.CREATE)
+                .select_related("actor")
+                .earliest()
+            )
+        except LogEntry.DoesNotExist:
+            return ""
+        return self.format_log_entry(log)
+
+    @admin.display(description="Updated at")
+    def audit_updated_at(self, obj):
+        try:
+            log = (
+                LogEntry.objects.get_for_object(obj)
+                .filter(action=LogEntry.Action.UPDATE)
+                .select_related("actor")
+                .latest()
+            )
+        except LogEntry.DoesNotExist:
+            return ""
+        return self.format_log_entry(log)
 
 
 class ModelAdmin(_CustomModelAdminMixIn, admin.ModelAdmin):

@@ -47,6 +47,8 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
     readonly_fields = (
         "organization_id",
         "email_links",
+        "audit_created_at",
+        "audit_updated_at",
     )
     autocomplete_fields = ("country", "government", "organization_type")
     prefetch_related = (
@@ -116,7 +118,12 @@ class OrganizationAdmin(ExportMixin, ModelAdmin):
         (
             "Metadata",
             {
-                "fields": ("organization_id", "sort_order"),
+                "fields": (
+                    "organization_id",
+                    "sort_order",
+                    "audit_created_at",
+                    "audit_updated_at",
+                ),
             },
         ),
         (
