@@ -132,16 +132,22 @@ class DSAReport:
 
     def export_xlsx(self):
         self.set_dimensions()
+        title = self.event.title
+        date_str = self.event.date_range
+        if self.event.group:
+            title += " and associated meetings"
+            date_str = self.event.group.date_range
+
         self.write_headers(
             [
                 [
-                    {"label": self.event.title, "colspan": 14},
+                    {"label": title, "colspan": 14},
                 ],
                 [
                     {
                         "label": ", ".join(
                             [
-                                self.event.dates,
+                                date_str,
                                 self.event.venue_city,
                                 self.event.venue_country
                                 and self.event.venue_country.name,

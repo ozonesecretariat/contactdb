@@ -22,6 +22,7 @@ from encrypted_fields import EncryptedJSONField
 
 from common.array_field import ArrayField
 from common.citext import CICharField
+from common.dates import date_range_str
 from common.model import KronosEnum, KronosId
 from common.pdf import print_pdf
 from core.models import Contact, Country, Organization
@@ -68,6 +69,10 @@ class EventGroup(models.Model):
     @property
     def group_end_date(self):
         return self.events.aggregate(Max("end_date"))["end_date__max"]
+
+    @property
+    def date_range(self):
+        return date_range_str(self.group_start_date, self.group_end_date)
 
 
 class Event(models.Model):
@@ -170,6 +175,10 @@ class Event(models.Model):
     @property
     def has_refused_email(self):
         return bool(self.refuse_subject and self.refuse_content)
+
+    @property
+    def date_range(self):
+        return date_range_str(self.start_date, self.end_date)
 
     def clean(self):
         if not self.start_date or not self.end_date:
@@ -583,42 +592,7 @@ class PriorityPass(models.Model):
 
     @property
     def valid_date_range(self):
-        date_fmt = "%-d %b %Y"
-        start, end = self.valid_from, self.valid_to
-
-        if not start and not end:
-            return ""
-
-        if start == end or (bool(start) ^ bool(end)):
-            return (start or end).strftime(date_fmt)
-
-        if end < start:
-            start, end = end, start
-
-        same_year = start.year == end.year
-        same_month = start.month == end.month
-
-        if same_year and same_month:
-            return "{start_day}-{end_day} {month} {year}".format(
-                month=start.strftime("%b"),
-                start_day=start.day,
-                end_day=end.day,
-                year=start.year,
-            )
-
-        if same_year:
-            return "{start_day} {start_month} - {end_day} {end_month} {year}".format(
-                start_month=start.strftime("%b"),
-                start_day=start.day,
-                end_month=end.strftime("%b"),
-                end_day=end.day,
-                year=start.year,
-            )
-
-        return "{start_date} to {end_date}".format(
-            start_date=start.strftime(date_fmt),
-            end_date=end.strftime(date_fmt),
-        )
+        return date_range_str(self.valid_from, self.valid_to)
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:
