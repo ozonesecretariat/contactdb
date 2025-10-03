@@ -12,7 +12,7 @@ from api.serializers.event import (
     RegistrationDSASerializer,
     RegistrationTagSerializer,
 )
-from common.filters import CamelCaseOrderingFilter
+from common.filters import CamelCaseOrderingFilter, CharInFilter
 from events.exports.dsa import DSAFiles, DSAReport
 from events.models import Event, Registration, RegistrationTag
 
@@ -33,6 +33,7 @@ class RegistrationDSAFilter(FilterSet):
         field_name="priority_pass__code", lookup_expr="iexact"
     )
     tag = django_filters.CharFilter(field_name="tags__name", lookup_expr="iexact")
+    status = CharInFilter(lookup_expr="in")
 
     class Meta:
         model = Registration

@@ -88,10 +88,12 @@
               v-model="status"
               dense
               filled
+              multiple
+              use-chips
+              stack-label
               name="status"
               :options="RegistrationStatusChoices"
               label="Status"
-              clearable
               :disable="disableStatus"
             />
             <q-select
@@ -212,7 +214,7 @@ const props = defineProps({
 const canEditDsa = computed(() => userStore.permissions.includes("events.change_dsa"));
 
 const tag = useRouteQuery<string>("tag", "");
-const status = useRouteQuery<string>("status", "");
+const status = useRouteQuery<string[]>("status", []);
 const search = useRouteQuery<string>("search", "");
 const paidDsa = useRouteQuery<string>("paidDsa", "");
 const eventCode = useRouteQuery<string>("eventCode", "");
@@ -365,7 +367,7 @@ const apiFilterParams = computed(() => ({
   paidDsa: paidDsa.value,
   priorityPassCode: priorityPassCode.value,
   search: search.value,
-  status: status.value,
+  status: status.value?.join(","),
   tag: tag.value,
 }));
 
@@ -419,6 +421,7 @@ function setCode(code: string) {
 <style scoped lang="scss">
 .top-filters {
   gap: 1rem;
+  align-items: start;
 }
 
 .filter-list {
