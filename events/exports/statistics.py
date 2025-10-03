@@ -282,6 +282,7 @@ class PreMeetingStatistics(StatisticsBase):
             (
                 r.usable_government and r.usable_government.name,
                 r.usable_organization_name,
+                r.contact.designation,
                 r.contact.full_name,
             )
             for r in self.registrations
@@ -292,12 +293,12 @@ class PreMeetingStatistics(StatisticsBase):
         table = self.table(
             "HL Participants Accredited",
             [
-                ("Party", "Organization", "Name"),
+                ("Party", "Organization", "Designation", "Name"),
             ],
             body,
             [[f"Total: {len(body)}"]],
         )
-        self.col_span(table, len(body) + 2, 0, 3)
+        self.col_span(table, len(body) + 2, 0, 4)
 
     def table_parties_by_region(self):
         total = len(self.gov_parties)
