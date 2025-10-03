@@ -22,7 +22,7 @@ from common.permissions import has_model_permission
 from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
-from events.exports.dsa import DSAReport
+from events.exports.dsa import DSAFiles, DSAReport
 from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
 from events.list_of_participants import ListOfParticipants
@@ -838,13 +838,15 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                     '<a href="{}" target="_blank">Pre Statistics</a>',
                     '<a href="{}" target="_blank">LoP</a>',
                     '<a href="{}" target="_blank">Post Statistics</a>',
-                    '<a href="{}" target="_blank">DSA</a>',
+                    '<a href="{}" target="_blank">DSA Report</a>',
+                    '<a href="{}" target="_blank">DSA Files</a>',
                 ]
             ),
             reverse("admin:pre_meeting_statistics", args=(obj.id,)),
             reverse("admin:lop", args=(obj.id,)),
             reverse("admin:post_meeting_statistics", args=(obj.id,)),
             reverse("admin:dsa", args=(obj.id,)),
+            reverse("admin:dsa_files", args=(obj.id,)),
         )
 
     def get_urls(self):
@@ -869,6 +871,11 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                 self.admin_site.admin_view(self.get_dsa),
                 name="dsa",
             ),
+            path(
+                "<path:object_id>/dsa_files/",
+                self.admin_site.admin_view(self.get_dsa_files),
+                name="dsa_files",
+            ),
             *super().get_urls(),
         ]
 
@@ -891,6 +898,10 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
     def get_dsa(self, request, object_id):
         event = self.get_object(request, object_id)
         return FileResponse(DSAReport(event).export_xlsx(), as_attachment=True)
+
+    def get_dsa_files(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(DSAFiles(event).export_zip(), as_attachment=True)
 
     def has_load_contacts_from_kronos_permission(self, request):
         return self.has_add_permission(request) and has_model_permission(

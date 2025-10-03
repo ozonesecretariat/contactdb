@@ -7,3 +7,4 @@ class EventsConfig(AppConfig):
 
     def ready(self):
         import events.jobs  # noqa
+        import events.signals  # noqa

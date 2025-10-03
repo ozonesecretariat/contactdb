@@ -1,5 +1,8 @@
+import base64
 import io
+import zipfile
 
+from django.utils.text import get_valid_filename
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -28,6 +31,59 @@ COL_WIDTHS = {
 }
 
 
+def get_dsa_query(event: Event):
+    return event.registrations.filter(
+        status=Registration.Status.REGISTERED,
+        tags__name="Is funded",
+        dsa__isnull=False,
+    ).select_related("dsa")
+
+
+class DSAFiles:
+    SUFFIX = "-DSA-files"
+
+    def __init__(self, event: Event):
+        self.event = event
+        self.registrations = get_dsa_query(self.event).prefetch_related("contact")
+
+    def export_zip(self):
+        zip_buffer = io.BytesIO()
+        zip_buffer.name = f"{self.event.code}{self.SUFFIX}.zip"
+
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_STORED) as zipf:
+            for f in self.get_files():
+                f.seek(0)
+                zipf.writestr(f.name, f.read())
+
+        zip_buffer.seek(0)
+        return zip_buffer
+
+    def get_files(self):
+        for registration in self.registrations:
+            dsa = registration.dsa
+            contact = registration.contact
+            needs_save = False
+            for field in ("passport", "boarding_pass"):
+                needs_save = dsa.generate_pdf(field) or needs_save
+                value = getattr(dsa, field)
+                if not value:
+                    continue
+
+                data_uri = value["pdf_data"]
+                base64_data = data_uri.split(",")[-1]
+                pdf_file = io.BytesIO(base64.b64decode(base64_data))
+                pdf_file.name = get_valid_filename(
+                    f"{contact.last_name}_{contact.first_name}_{contact.id}_{field}.pdf".lstrip(
+                        "."
+                    )
+                )
+                yield pdf_file
+
+            # Cache PDFS for later uses, only here in case the signal fails for some reason.
+            if needs_save:
+                dsa.save()
+
+
 class DSAReport:
     SUFFIX = "-DSA"
 
@@ -48,12 +104,7 @@ class DSAReport:
         )
         self.header_bg = PatternFill(start_color="99ccff", fill_type="solid")
         self.registrations = (
-            self.event.registrations.filter(
-                status=Registration.Status.REGISTERED,
-                tags__name="Is funded",
-                dsa__isnull=False,
-            )
-            .select_related("dsa")
+            get_dsa_query(self.event)
             .prefetch_related(
                 "role",
                 "tags",

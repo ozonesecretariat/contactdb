@@ -35,6 +35,7 @@ dependencies = [
     "drf-extra-fields>=3.7.0",
     "drf-spectacular[sidecar]>=0.28.0",
     "gunicorn>=23.0.0",
+    "img2pdf>=0.6.1",
     "pillow>=11.2.1",
     "psycopg[binary]>=3.2.9",
     "pycountry>=24.6.1",

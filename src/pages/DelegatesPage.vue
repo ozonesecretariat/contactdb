@@ -47,7 +47,15 @@
               label="Download report"
               color="primary"
               icon="download"
-              :href="downloadLink"
+              :href="downloadReportLink"
+              download
+            />
+            <q-btn
+              v-if="downloadReport"
+              label="Download files"
+              color="primary"
+              icon="download"
+              :href="downloadFilesLink"
               download
             />
           </div>
@@ -343,7 +351,8 @@ const filteredColumns = computed(() =>
       (c.name !== "paidDsa" || !paidDsa.value),
   ),
 );
-const downloadLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa/`);
+const downloadReportLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa/`);
+const downloadFilesLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa_files/`);
 
 const { isLoading: isLoadingEvent, state: events } = useAsyncState(
   async () =>

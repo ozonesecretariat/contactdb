@@ -175,5 +175,9 @@ describe("Check DSA", () => {
     cy.checkFile({
       filePattern: "SS_CCC-DSA.xlsx",
     });
+    cy.get("a").contains("Download files").click();
+    cy.checkFile({
+      filePattern: "SS_CCC-DSA-files.zip",
+    });
   });
 });
