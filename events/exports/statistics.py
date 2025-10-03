@@ -267,9 +267,9 @@ class PreMeetingStatistics(StatisticsBase):
         counts = self.group_by_org_type(self.registrations)
 
         self.table(
-            "Registered participants",
+            "Accredited participants",
             [
-                ("Category", "Registered"),
+                ("Category", "Accredited"),
             ],
             [(category, len(items)) for category, items in counts.items()],
             [
@@ -290,7 +290,7 @@ class PreMeetingStatistics(StatisticsBase):
         body.sort(key=lambda x: x[0] or "")
 
         table = self.table(
-            "HL Participants Registered",
+            "HL Participants Accredited",
             [
                 ("Party", "Organization", "Name"),
             ],
@@ -306,9 +306,9 @@ class PreMeetingStatistics(StatisticsBase):
             counts[party.region] += 1
 
         self.table(
-            "Registered Parties",
+            "Accredited Parties",
             [
-                ("Category", "Registered", "% of total", "% in category"),
+                ("Category", "Accredited", "% of total", "% in category"),
             ],
             [
                 (
@@ -355,10 +355,10 @@ class PreMeetingStatistics(StatisticsBase):
                     "Parties per region",
                     "Parties registered",
                     "Parties to register",
-                    "Participants registered",
-                    "Funding Requested",
+                    "Participants accredited",
+                    "Funding requested",
                     None,
-                    "Reserved Slots",
+                    "Reserved slots",
                     "Remarks",
                 ),
                 (None, "(a)", "(b)", "(a - b)", None, "Received", "Approved"),
