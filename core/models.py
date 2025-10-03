@@ -189,7 +189,7 @@ class Organization(models.Model):
     @property
     def is_ass_panel(self):
         try:
-            return self.organization_type.acronym == "ASS-PANEL"
+            return self.organization_type.acronym == "ASSMT-PANEL"
         except AttributeError:
             return False
 

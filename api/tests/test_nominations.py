@@ -91,7 +91,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         """
         ro = Country.objects.get(code="RO")
         gov = OrganizationType.objects.get(acronym="GOV")
-        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
 
         org1 = OrganizationFactory(government=ro, organization_type=gov)
         org2 = OrganizationFactory(government=ro, organization_type=ass)
@@ -324,7 +324,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         """Test that nomination works for any org contact with government == country."""
         ro = Country.objects.get(code="RO")
         gov = OrganizationType.objects.get(acronym="GOV")
-        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
 
         org1 = OrganizationFactory(government=ro, organization_type=gov)
         org2 = OrganizationFactory(government=ro, organization_type=ass)
@@ -523,7 +523,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         ro = Country.objects.get(code="RO")
         fr = Country.objects.get(code="FR")
         gov = OrganizationType.objects.get(acronym="GOV")
-        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
 
         org1 = OrganizationFactory(government=ro, organization_type=gov)
         org2 = OrganizationFactory(government=ro, organization_type=ass)
@@ -600,7 +600,7 @@ class TestEventNominationsAPI(BaseAPITestCase):
         ro = Country.objects.get(code="RO")
         fr = Country.objects.get(code="FR")
         gov = OrganizationType.objects.get(acronym="GOV")
-        ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
 
         OrganizationFactory(government=ro, organization_type=gov)
         org2 = OrganizationFactory(government=ro, organization_type=ass)
