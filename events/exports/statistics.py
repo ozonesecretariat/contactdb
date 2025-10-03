@@ -244,9 +244,9 @@ class StatisticsBase:
 
     def count_by_gender(self, registrations: Iterable[Registration]):
         result = dict.fromkeys(BaseContact.GenderChoices, 0)
-        result["N/A"] = 0
+        result["No Response"] = 0
         for registration in registrations:
-            result[registration.contact.gender or "N/A"] += 1
+            result[registration.contact.gender or "No Response"] += 1
         return result
 
 
@@ -267,9 +267,9 @@ class PreMeetingStatistics(StatisticsBase):
         counts = self.group_by_org_type(self.registrations)
 
         self.table(
-            "Registered participants",
+            "Accredited participants",
             [
-                ("Category", "Registered"),
+                ("Category", "Accredited"),
             ],
             [(category, len(items)) for category, items in counts.items()],
             [
@@ -282,6 +282,7 @@ class PreMeetingStatistics(StatisticsBase):
             (
                 r.usable_government and r.usable_government.name,
                 r.usable_organization_name,
+                r.contact.designation,
                 r.contact.full_name,
             )
             for r in self.registrations
@@ -290,14 +291,14 @@ class PreMeetingStatistics(StatisticsBase):
         body.sort(key=lambda x: x[0] or "")
 
         table = self.table(
-            "HL Participants Registered",
+            "HL Participants Accredited",
             [
-                ("Party", "Organization", "Name"),
+                ("Party", "Organization", "Designation", "Name"),
             ],
             body,
             [[f"Total: {len(body)}"]],
         )
-        self.col_span(table, len(body) + 2, 0, 3)
+        self.col_span(table, len(body) + 2, 0, 4)
 
     def table_parties_by_region(self):
         total = len(self.gov_parties)
@@ -306,9 +307,9 @@ class PreMeetingStatistics(StatisticsBase):
             counts[party.region] += 1
 
         self.table(
-            "Registered Parties",
+            "Accredited Parties",
             [
-                ("Category", "Registered", "% of total", "% in category"),
+                ("Category", "Accredited", "% of total", "% in category"),
             ],
             [
                 (
@@ -355,10 +356,10 @@ class PreMeetingStatistics(StatisticsBase):
                     "Parties per region",
                     "Parties registered",
                     "Parties to register",
-                    "Participants registered",
-                    "Funding Requested",
+                    "Participants accredited",
+                    "Funding requested",
                     None,
-                    "Reserved Slots",
+                    "Reserved slots",
                     "Remarks",
                 ),
                 (None, "(a)", "(b)", "(a - b)", None, "Received", "Approved"),
@@ -400,6 +401,9 @@ class PostMeetingStatistics(StatisticsBase):
         self.registrations_reg = [
             r for r in self.registrations if r.status == r.Status.REGISTERED
         ]
+        self.registrations_accr = [
+            r for r in self.registrations if r.status == r.Status.ACCREDITED
+        ]
         self.gov_registrations_reg = [
             r for r in self.gov_registrations if r.status == r.Status.REGISTERED
         ]
@@ -413,23 +417,6 @@ class PostMeetingStatistics(StatisticsBase):
 
     def get_content(self):
         self.table_participants_by_gender()
-        self.table_hl()
-
-        regions = [r.name for r in self.regions]
-        self.table_gov_participants_by_discriminator(
-            "Participants Registered",
-            "Parties",
-            lambda r: r.usable_government.region.name,
-            regions,
-            self.gov_registrations_reg,
-        )
-        self.table_parties_by_discriminator(
-            "Parties Registered",
-            "Parties",
-            lambda c: c.region.name,
-            regions,
-            self.gov_registrations_reg,
-        )
 
         for region in self.regions:
             regs = [
@@ -443,20 +430,15 @@ class PostMeetingStatistics(StatisticsBase):
                 .order_by("subregion__sort_order", "subregion__name")
             )
 
-            self.table_gov_participants_by_discriminator(
-                f"{region} Participants Registered",
+            self.table_gov_participants_by_discriminator_with_parties(
+                f"{region} Participants by Region and Gender",
                 "Region",
                 lambda r: r.usable_government.subregion.name,
                 subregions,
                 regs,
             )
-            self.table_parties_by_discriminator(
-                f"{region} Parties Registered",
-                "Region",
-                lambda c: c.subregion.name,
-                subregions,
-                regs,
-            )
+
+        self.table_hl()
 
     def table_participants_by_gender(self):
         both_by_org_type = self.group_by_org_type(self.registrations)
@@ -470,24 +452,24 @@ class PostMeetingStatistics(StatisticsBase):
                 (
                     org_type,
                     len(all_regs),
-                    len(regs),
                     *self.count_by_gender(regs).values(),
+                    len(regs),
                 )
             )
 
         table = self.table(
-            "Participants by gender",
+            "Participants by Category and Gender",
             [
                 ("Category", "Participants Accredited", "Participants Registered"),
-                (None, None, "Total", *BaseContact.GenderChoices, "N/A"),
+                (None, None, *BaseContact.GenderChoices, "No Response", "Total"),
             ],
             body,
             [
                 (
                     "Total",
                     len(self.registrations),
-                    len(self.registrations_reg),
                     *self.count_by_gender(self.registrations_reg).values(),
+                    len(self.registrations_reg),
                 ),
             ],
         )
@@ -497,24 +479,47 @@ class PostMeetingStatistics(StatisticsBase):
         self.col_span(table, 1, 2, len(BaseContact.GenderChoices) + 2)
 
     def table_hl(self):
-        body = [
+        registered = [
             (
                 r.usable_government and r.usable_government.name,
                 r.usable_organization_name,
+                r.contact.designation,
                 r.contact.full_name,
+                "Registered",
             )
             for r in self.registrations_reg
             if r.contact.title in BaseContact.HL_TITLES
         ]
-        body.sort(key=lambda x: x[0] or "")
+        registered_count = len(registered)
+        registered.sort(key=lambda x: x[0])
+
+        accredited = [
+            (
+                r.usable_government and r.usable_government.name,
+                r.usable_organization_name,
+                r.contact.designation,
+                r.contact.full_name,
+                "Accredited",
+            )
+            for r in self.registrations_accr
+            if r.contact.title in BaseContact.HL_TITLES
+        ]
+        accredited_count = len(accredited)
+        accredited.sort(key=lambda x: x[0])
+
+        body = accredited + registered
 
         table = self.table(
-            "HL Participants Registered",
+            "HL",
             [
-                ("Party", "Organization", "Name"),
+                ("Party", "Organization", "Designation", "Name", "Status"),
             ],
             body,
-            [[f"Total: {len(body)}"]],
+            [
+                [
+                    f"Total (Registered): {registered_count}\nTotal (Accredited): {accredited_count}"
+                ]
+            ],
         )
 
         self.col_span(table, len(body) + 2, 0, 3)
@@ -546,7 +551,7 @@ class PostMeetingStatistics(StatisticsBase):
             name,
             [
                 (header, "Participants Registered"),
-                (None, "Total", *BaseContact.GenderChoices, "N/A"),
+                (None, "Total", *BaseContact.GenderChoices, "No Response"),
             ],
             body,
             [
@@ -581,3 +586,54 @@ class PostMeetingStatistics(StatisticsBase):
                 ("Total", len(parties)),
             ],
         )
+
+    def table_gov_participants_by_discriminator_with_parties(
+        self,
+        name: str,
+        header: str,
+        key_func: Callable[[Registration], str],
+        all_values: Collection[str],
+        registrations: Collection[Registration],
+    ):
+        grouped = {v: [] for v in all_values}
+        for r in registrations:
+            grouped[key_func(r)].append(r)
+
+        body = []
+        total_parties_count = 0
+
+        for value, regs in grouped.items():
+            regs = list(regs)
+
+            parties = {r.usable_government for r in regs if r.usable_government}
+            parties_count = len(parties)
+            total_parties_count += parties_count
+
+            body.append(
+                (
+                    value,
+                    parties_count,
+                    *self.count_by_gender(regs).values(),
+                    len(regs),
+                )
+            )
+
+        table = self.table(
+            name,
+            [
+                (header, "Parties Registered", "Participants Registered"),
+                (None, None, *BaseContact.GenderChoices, "No response", "Total"),
+            ],
+            body,
+            [
+                (
+                    "Total",
+                    total_parties_count,
+                    *self.count_by_gender(registrations).values(),
+                    len(registrations),
+                )
+            ],
+        )
+        self.row_span(table, 1, 0, 2)
+        self.row_span(table, 1, 1, 2)
+        self.col_span(table, 1, 2, len(BaseContact.GenderChoices) + 2)
