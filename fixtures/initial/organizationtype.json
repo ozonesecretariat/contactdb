@@ -19,7 +19,7 @@
     "model": "core.organizationtype",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff2",
-      "acronym": "ASS-PANEL",
+      "acronym": "ASSMT-PANEL",
       "title": "Assessment Panels",
       "badge_title": "",
       "statistics_title": "",

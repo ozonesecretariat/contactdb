@@ -1663,7 +1663,7 @@ class TestInvitationEmailAdminReminders(TestCase):
         when there are multiple invitation emails (with mutually-exclusive org types)
         """
         government = self.country
-        ass_panel_type = OrganizationType.objects.get(acronym="ASS-PANEL")
+        ass_panel_type = OrganizationType.objects.get(acronym="ASSMT-PANEL")
 
         # Create organizations for each invitation email to be sent
         first_email_org_1 = OrganizationFactory(

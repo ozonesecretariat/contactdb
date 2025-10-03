@@ -39,7 +39,7 @@ class TestDSAReport(TestCase):
         self.country2 = CountryFactory()
 
         self.gov = OrganizationType.objects.get(acronym="GOV")
-        self.ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        self.ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
 
         self.org1 = OrganizationFactory(
             government=self.country1, organization_type=self.gov

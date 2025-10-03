@@ -45,7 +45,7 @@ class TestListOfParticipants(TestCase):
         self.alt_head = RegistrationRole.objects.get(name="Alternate Head")
 
         self.gov = OrganizationType.objects.get(acronym="GOV")
-        self.ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        self.ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
         self.sec = OrganizationType.objects.get(acronym="SECRETARIAT")
         self.obs = OrganizationType.objects.get(acronym="OBS")
         self.biz = OrganizationType.objects.get(acronym="BIZ")
@@ -284,7 +284,7 @@ class TestLoPParties(TestListOfParticipants):
 
 
 class TestLoPAss(TestListOfParticipants):
-    ORG_TYPE = "ASS-PANEL"
+    ORG_TYPE = "ASSMT-PANEL"
 
     def test_ass_order(self):
         self.check_doc(

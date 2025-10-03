@@ -32,7 +32,7 @@ class TestsPostMeetingStatistics(TestCase):
         self.country2 = Country.objects.get(pk="EG")
 
         self.gov = OrganizationType.objects.get(acronym="GOV")
-        self.ass = OrganizationType.objects.get(acronym="ASS-PANEL")
+        self.ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
         self.obs = OrganizationType.objects.get(acronym="OBS")
 
         self.org1 = OrganizationFactory(
