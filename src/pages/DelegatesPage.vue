@@ -214,7 +214,7 @@ const props = defineProps({
 const canEditDsa = computed(() => userStore.permissions.includes("events.change_dsa"));
 
 const tag = useRouteQuery<string>("tag", "");
-const status = useRouteQuery<string[]>("status", []);
+const status = useRouteQuery<string[]>("status", [], { transform: (val) => (Array.isArray(val) ? val : [val]) });
 const search = useRouteQuery<string>("search", "");
 const paidDsa = useRouteQuery<string>("paidDsa", "");
 const eventCode = useRouteQuery<string>("eventCode", "");
@@ -367,7 +367,7 @@ const apiFilterParams = computed(() => ({
   paidDsa: paidDsa.value,
   priorityPassCode: priorityPassCode.value,
   search: search.value,
-  status: status.value?.join(","),
+  status: status.value.join(","),
   tag: tag.value,
 }));
 
