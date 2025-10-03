@@ -451,8 +451,8 @@ class PostMeetingStatistics(StatisticsBase):
                 (
                     org_type,
                     len(all_regs),
-                    len(regs),
                     *self.count_by_gender(regs).values(),
+                    len(regs),
                 )
             )
 
@@ -460,15 +460,15 @@ class PostMeetingStatistics(StatisticsBase):
             "Participants by Category and Gender",
             [
                 ("Category", "Participants Accredited", "Participants Registered"),
-                (None, None, "Total", *BaseContact.GenderChoices, "No Response"),
+                (None, None, *BaseContact.GenderChoices, "No Response", "Total"),
             ],
             body,
             [
                 (
                     "Total",
                     len(self.registrations),
-                    len(self.registrations_reg),
                     *self.count_by_gender(self.registrations_reg).values(),
+                    len(self.registrations_reg),
                 ),
             ],
         )
@@ -612,8 +612,8 @@ class PostMeetingStatistics(StatisticsBase):
                 (
                     value,
                     parties_count,
-                    len(regs),
                     *self.count_by_gender(regs).values(),
+                    len(regs),
                 )
             )
 
@@ -621,15 +621,15 @@ class PostMeetingStatistics(StatisticsBase):
             name,
             [
                 (header, "Parties Registered", "Participants Registered"),
-                (None, None, "Total", *BaseContact.GenderChoices, "No response"),
+                (None, None, *BaseContact.GenderChoices, "No response", "Total"),
             ],
             body,
             [
                 (
                     "Total",
                     total_parties_count,
-                    len(registrations),
                     *self.count_by_gender(registrations).values(),
+                    len(registrations),
                 )
             ],
         )

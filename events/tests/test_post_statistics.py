@@ -90,7 +90,7 @@ class TestsPostMeetingStatistics(TestCase):
             "T1: Total number of participants should be acc + reg",
         )
         self.assertEqual(
-            result["Table 1: Participants by Category and Gender"][-1][2],
+            result["Table 1: Participants by Category and Gender"][-1][7],
             str(reg_contacts),
             "T1: Invalid number of registered participants",
         )
@@ -101,7 +101,7 @@ class TestsPostMeetingStatistics(TestCase):
             "T2: invalid number of A2 registered participants",
         )
         self.assertEqual(
-            result["Table 2: A2 Participants by Region and Gender"][-1][2],
+            result["Table 2: A2 Participants by Region and Gender"][-1][7],
             str(a2_contacts),
             "T2: invalid number of A2 registered participants",
         )
@@ -112,7 +112,7 @@ class TestsPostMeetingStatistics(TestCase):
             "T3: invalid number of A5 registered parties",
         )
         self.assertEqual(
-            result["Table 3: A5 Participants by Region and Gender"][-1][2],
+            result["Table 3: A5 Participants by Region and Gender"][-1][7],
             str(a5_contacts),
             "T3: invalid number of A5 registered parties",
         )
@@ -166,11 +166,11 @@ class TestsPostMeetingStatistics(TestCase):
 
         self.assertEqual(obs_row[0], "Observers")
         self.assertEqual(obs_row[1], "1")
-        self.assertEqual(obs_row[4], "1")
+        self.assertEqual(obs_row[3], "1")
 
         self.assertEqual(ass_row[0], "Assessment Panels")
         self.assertEqual(ass_row[1], "1")
-        self.assertEqual(ass_row[7], "1")
+        self.assertEqual(ass_row[6], "1")
 
     def test_t2(self):
         result = self.check_doc()
@@ -178,8 +178,8 @@ class TestsPostMeetingStatistics(TestCase):
 
         self.assertEqual(row[0], "European Union")
         self.assertEqual(row[1], "1")
-        self.assertEqual(row[2], "1")
-        self.assertEqual(row[4], "1")
+        self.assertEqual(row[3], "1")
+        self.assertEqual(row[7], "1")
 
     def test_t3(self):
         result = self.check_doc()
@@ -187,7 +187,7 @@ class TestsPostMeetingStatistics(TestCase):
 
         self.assertEqual(row[0], "Anglophone Africa")
         self.assertEqual(row[1], "1")
-        self.assertEqual(row[2], "1")
+        self.assertEqual(row[6], "1")
         self.assertEqual(row[7], "1")
 
     def test_t4(self):
