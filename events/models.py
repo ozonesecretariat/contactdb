@@ -1,9 +1,12 @@
 import base64
+import hashlib
+import io
 import math
 import uuid
 from io import BytesIO
 from urllib.parse import urljoin
 
+import img2pdf
 import qrcode
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
@@ -22,6 +25,7 @@ from common.citext import CICharField
 from common.model import KronosEnum, KronosId
 from common.pdf import print_pdf
 from core.models import Contact, Country, Organization
+from core.templatetags.file_base64 import file_to_base64
 from emails.validators import validate_placeholders
 
 
@@ -971,3 +975,31 @@ class DSA(models.Model):
     @property
     def total_dsa(self):
         return self.dsa_on_arrival + (self.registration.event.term_exp or 0)
+
+    def generate_pdf(self, field: str):
+        if not (value := getattr(self, field)):
+            return False
+
+        if "data" not in value:
+            return False
+
+        data_uri = value["data"]
+        base64_data = data_uri.split(",")[-1]
+        current_image = base64.b64decode(base64_data)
+
+        stored_hash = value.get("data_hash")
+        current_image_hash = hashlib.sha256(current_image).hexdigest()
+        if "pdf_data" in value and stored_hash == current_image_hash:
+            # Already has the PDF generated and it's up to date
+            return False
+
+        img_file = io.BytesIO(current_image)
+        pdf_file = io.BytesIO()
+        pdf_file.name = field + ".pdf"
+        img2pdf.convert(img_file, outputstream=pdf_file)
+
+        pdf_file.seek(0)
+        value["data_hash"] = current_image_hash
+        value["pdf_data"] = file_to_base64(pdf_file)
+        setattr(self, field, value)
+        return True

@@ -2,7 +2,7 @@ import base64
 import io
 import zipfile
 
-import img2pdf
+from django.utils.text import get_valid_filename
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -60,28 +60,28 @@ class DSAFiles:
 
     def get_files(self):
         for registration in self.registrations:
+            dsa = registration.dsa
             contact = registration.contact
+            needs_save = False
             for field in ("passport", "boarding_pass"):
-                value = getattr(registration.dsa, field)
+                needs_save = dsa.generate_pdf(field) or needs_save
+                value = getattr(dsa, field)
                 if not value:
                     continue
 
-                pdf_file = self.convert_to_pdf(
-                    value,
-                    f"{contact.last_name}_{contact.first_name}_{contact.id}_{field}.pdf",
+                data_uri = value["pdf_data"]
+                base64_data = data_uri.split(",")[-1]
+                pdf_file = io.BytesIO(base64.b64decode(base64_data))
+                pdf_file.name = get_valid_filename(
+                    f"{contact.last_name}_{contact.first_name}_{contact.id}_{field}.pdf".lstrip(
+                        "."
+                    )
                 )
                 yield pdf_file
 
-    def convert_to_pdf(self, file_json, filename):
-        data_uri = file_json["data"]
-        base64_data = data_uri.split(",")[-1]
-
-        img_file = io.BytesIO(base64.b64decode(base64_data))
-        pdf_file = io.BytesIO()
-        pdf_file.name = filename
-
-        img2pdf.convert(img_file, outputstream=pdf_file)
-        return pdf_file
+            # Cache PDFS for later uses, only here in case the signal fails for some reason.
+            if needs_save:
+                dsa.save()
 
 
 class DSAReport:
