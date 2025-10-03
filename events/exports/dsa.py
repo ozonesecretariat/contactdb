@@ -2,6 +2,7 @@ import base64
 import io
 import zipfile
 
+from django.db.models import QuerySet
 from django.utils.text import get_valid_filename
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
@@ -31,20 +32,25 @@ COL_WIDTHS = {
 }
 
 
-def get_dsa_query(event: Event):
-    return event.registrations.filter(
-        status=Registration.Status.REGISTERED,
-        tags__name="Is funded",
-        dsa__isnull=False,
-    ).select_related("dsa")
+def get_dsa_query(event: Event, queryset: QuerySet[Registration] = None):
+    if queryset is None:
+        queryset = event.registrations.filter(
+            status=Registration.Status.REGISTERED,
+            tags__name="Is funded",
+        )
+    return queryset.select_related("dsa")
 
 
 class DSAFiles:
     SUFFIX = "-DSA-files"
 
-    def __init__(self, event: Event):
+    def __init__(self, event: Event, queryset: QuerySet[Registration] = None):
         self.event = event
-        self.registrations = get_dsa_query(self.event).prefetch_related("contact")
+        self.registrations = (
+            get_dsa_query(self.event, queryset)
+            .filter(dsa__isnull=False)
+            .prefetch_related("contact")
+        )
 
     def export_zip(self):
         zip_buffer = io.BytesIO()
@@ -87,7 +93,7 @@ class DSAFiles:
 class DSAReport:
     SUFFIX = "-DSA"
 
-    def __init__(self, event: Event):
+    def __init__(self, event: Event, queryset: QuerySet[Registration] = None):
         self.event = event
         self.wb = Workbook()
         self.ws = self.wb.active
@@ -104,7 +110,7 @@ class DSAReport:
         )
         self.header_bg = PatternFill(start_color="99ccff", fill_type="solid")
         self.registrations = (
-            get_dsa_query(self.event)
+            get_dsa_query(self.event, queryset=queryset)
             .prefetch_related(
                 "role",
                 "tags",
@@ -126,16 +132,22 @@ class DSAReport:
 
     def export_xlsx(self):
         self.set_dimensions()
+        title = self.event.title
+        date_str = self.event.date_range
+        if self.event.group:
+            title += " and associated meetings"
+            date_str = self.event.group.date_range
+
         self.write_headers(
             [
                 [
-                    {"label": self.event.title, "colspan": 14},
+                    {"label": title, "colspan": 14},
                 ],
                 [
                     {
                         "label": ", ".join(
                             [
-                                self.event.dates,
+                                date_str,
                                 self.event.venue_city,
                                 self.event.venue_country
                                 and self.event.venue_country.name,
@@ -232,17 +244,24 @@ class DSAReport:
 
     def write_data(self):
         for reg_index, reg in enumerate(self.registrations, start=1):
+            dsa = getattr(reg, "dsa", None)
             self.write_row(
                 [
                     reg_index,
-                    reg.dsa_country and reg.dsa_country.name,
-                    reg.dsa.umoja_travel,
-                    reg.dsa.bp,
+                    getattr(reg.dsa_country, "name", ""),
+                    getattr(dsa, "umoja_travel", ""),
+                    getattr(dsa, "bp", ""),
                     reg.contact.title,
                     reg.contact.last_name,
                     reg.contact.first_name,
-                    {"value": reg.dsa.arrival_date, "number_format": "DD/MM/YYYY"},
-                    {"value": reg.dsa.departure_date, "number_format": "DD/MM/YYYY"},
+                    {
+                        "value": getattr(dsa, "arrival_date", ""),
+                        "number_format": "DD/MM/YYYY",
+                    },
+                    {
+                        "value": getattr(dsa, "departure_date", ""),
+                        "number_format": "DD/MM/YYYY",
+                    },
                     f"=J{self.row_index}-I{self.row_index}",
                     f"=M3*K{self.row_index}",
                     reg.event.term_exp,

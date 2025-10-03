@@ -1,3 +1,4 @@
+import django_filters
 from djangorestframework_camel_case.util import underscoreize
 from rest_framework import filters
 
@@ -14,3 +15,7 @@ class CamelCaseOrderingFilter(filters.OrderingFilter):
 
         # No ordering was included, or all the ordering fields were invalid
         return self.get_default_ordering(view)
+
+
+class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
+    pass

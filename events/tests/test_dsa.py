@@ -80,7 +80,10 @@ class TestDSAReport(TestCase):
         )
 
     def check_report(self, expected=None, max_col=10):
-        url = reverse("admin:dsa", args=(self.event.id,))
+        url = (
+            reverse("registration-export-dsa")
+            + f"?eventCode={self.event.code}&status=Registered,Accredited&tag=Is+funded"
+        )
         self.client.login(email="admin@example.com", password="admin")
         resp = self.client.get(url)
         f = io.BytesIO(b"".join(resp.streaming_content))
@@ -136,10 +139,16 @@ class TestDSAReport(TestCase):
 
     def test_dsa_missing(self):
         self.dsa1.delete()
-        self.check_contacts([self.contact2])
+        self.check_contacts([self.contact1, self.contact2])
 
     def test_not_funded(self):
         self.reg1.tags.remove(self.is_funded)
+        self.check_contacts([self.contact2])
+
+    def test_not_registered(self):
+        self.reg1.status = Registration.Status.REVOKED
+        self.reg1.save()
+
         self.check_contacts([self.contact2])
 
     def test_no_country(self):
@@ -181,7 +190,10 @@ class TestDSAFiles(TestCase):
         )
 
     def check_report(self, expected_files):
-        url = reverse("admin:dsa_files", args=(self.event.id,))
+        url = (
+            reverse("registration-export-dsa-files")
+            + f"?eventCode={self.event.code}&status=Registered&tag=Is+funded"
+        )
         self.client.login(email="admin@example.com", password="admin")
         resp = self.client.get(url)
         f = io.BytesIO(b"".join(resp.streaming_content))
@@ -223,4 +235,16 @@ class TestDSAFiles(TestCase):
         self.dsa1.passport = None
         self.dsa1.boarding_pass = None
         self.dsa1.save()
+        self.check_report([])
+
+    def test_not_registered(self):
+        self.reg1.status = Registration.Status.REVOKED
+        self.reg1.save()
+
+        self.check_report([])
+
+    def test_not_funded(self):
+        self.reg1.tags.remove(self.is_funded)
+        self.reg1.save()
+
         self.check_report([])
