@@ -79,6 +79,7 @@ class OrganizationType(models.Model):
     hide_in_statistics = models.BooleanField(
         default=False, help_text="Hide in the statistics document"
     )
+    protected = models.BooleanField(default=False)
 
     objects = OrganizationTypeManager()
 

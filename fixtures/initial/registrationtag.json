@@ -1,27 +1,37 @@
 [
   {
     "model": "events.registrationtag",
-    "pk": "credential",
-    "fields": {}
+    "fields": {
+      "name": "credential",
+      "protected": false
+    }
   },
   {
     "model": "events.registrationtag",
-    "pk": "online",
-    "fields": {}
+    "fields": {
+      "name": "Is funded",
+      "protected": true
+    }
   },
   {
     "model": "events.registrationtag",
-    "pk": "viewer",
-    "fields": {}
+    "fields": {
+      "name": "online",
+      "protected": false
+    }
   },
   {
     "model": "events.registrationtag",
-    "pk": "visa",
-    "fields": {}
+    "fields": {
+      "name": "viewer",
+      "protected": false
+    }
   },
   {
     "model": "events.registrationtag",
-    "pk": "Is funded",
-    "fields": {}
+    "fields": {
+      "name": "visa",
+      "protected": false
+    }
   }
 ]

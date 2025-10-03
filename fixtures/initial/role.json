@@ -18,12 +18,12 @@
       "name": "View events",
       "permissions": [
         ["view_event", "events", "event"],
+        ["view_eventgroup", "events", "eventgroup"],
+        ["view_eventinvitation", "events", "eventinvitation"],
         ["view_prioritypass", "events", "prioritypass"],
         ["view_registration", "events", "registration"],
         ["view_registrationrole", "events", "registrationrole"],
-        ["view_registrationtag", "events", "registrationtag"],
-        ["view_eventgroup", "events", "eventgroup"],
-        ["view_eventinvitation", "events", "eventinvitation"]
+        ["view_registrationtag", "events", "registrationtag"]
       ]
     }
   },
@@ -68,8 +68,16 @@
         ["change_event", "events", "event"],
         ["delete_event", "events", "event"],
         ["view_event", "events", "event"],
-        ["view_prioritypass", "events", "prioritypass"],
+        ["add_eventgroup", "events", "eventgroup"],
+        ["change_eventgroup", "events", "eventgroup"],
+        ["delete_eventgroup", "events", "eventgroup"],
+        ["view_eventgroup", "events", "eventgroup"],
+        ["add_eventinvitation", "events", "eventinvitation"],
+        ["change_eventinvitation", "events", "eventinvitation"],
+        ["delete_eventinvitation", "events", "eventinvitation"],
+        ["view_eventinvitation", "events", "eventinvitation"],
         ["change_prioritypass", "events", "prioritypass"],
+        ["view_prioritypass", "events", "prioritypass"],
         ["add_registration", "events", "registration"],
         ["change_registration", "events", "registration"],
         ["delete_registration", "events", "registration"],
@@ -81,15 +89,7 @@
         ["add_registrationtag", "events", "registrationtag"],
         ["change_registrationtag", "events", "registrationtag"],
         ["delete_registrationtag", "events", "registrationtag"],
-        ["view_registrationtag", "events", "registrationtag"],
-        ["add_eventgroup", "events", "eventgroup"],
-        ["change_eventgroup", "events", "eventgroup"],
-        ["delete_eventgroup", "events", "eventgroup"],
-        ["view_eventgroup", "events", "eventgroup"],
-        ["add_eventinvitation", "events", "eventinvitation"],
-        ["change_eventinvitation", "events", "eventinvitation"],
-        ["delete_eventinvitation", "events", "eventinvitation"],
-        ["view_eventinvitation", "events", "eventinvitation"]
+        ["view_registrationtag", "events", "registrationtag"]
       ]
     }
   },
@@ -132,8 +132,8 @@
         ["view_loadorganizationsfromkronostask", "events", "loadorganizationsfromkronostask"],
         ["add_loadparticipantsfromkronostask", "events", "loadparticipantsfromkronostask"],
         ["view_loadparticipantsfromkronostask", "events", "loadparticipantsfromkronostask"],
-        ["view_prioritypass", "events", "prioritypass"],
         ["change_prioritypass", "events", "prioritypass"],
+        ["view_prioritypass", "events", "prioritypass"],
         ["add_registration", "events", "registration"],
         ["change_registration", "events", "registration"],
         ["delete_registration", "events", "registration"],
@@ -156,8 +156,8 @@
       "permissions": [
         ["view_email", "emails", "email"],
         ["view_emailattachment", "emails", "emailattachment"],
-        ["view_invitationemail", "emails", "invitationemail"],
         ["view_emailtemplate", "emails", "emailtemplate"],
+        ["view_invitationemail", "emails", "invitationemail"],
         ["view_sendemailtask", "emails", "sendemailtask"]
       ]
     }
@@ -216,11 +216,11 @@
     "fields": {
       "name": "Support Staff",
       "permissions": [
+        ["change_contact", "core", "contact"],
         ["view_contact", "core", "contact"],
         ["view_prioritypass", "events", "prioritypass"],
-        ["view_registration", "events", "registration"],
         ["change_registration", "events", "registration"],
-        ["change_contact", "core", "contact"]
+        ["view_registration", "events", "registration"]
       ]
     }
   },
@@ -229,8 +229,8 @@
     "fields": {
       "name": "DSA Staff",
       "permissions": [
-        ["view_dsa", "events", "dsa"],
         ["change_dsa", "events", "dsa"],
+        ["view_dsa", "events", "dsa"],
         ["view_event", "events", "event"],
         ["view_registration", "events", "registration"],
         ["view_registrationtag", "events", "registrationtag"]
