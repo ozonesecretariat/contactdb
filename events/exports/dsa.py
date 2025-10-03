@@ -249,7 +249,7 @@ class DSAReport:
                 [
                     reg_index,
                     getattr(reg.dsa_country, "name", ""),
-                    getattr(dsa, "umoja_travel_number", ""),
+                    getattr(dsa, "umoja_travel", ""),
                     getattr(dsa, "bp", ""),
                     reg.contact.title,
                     reg.contact.last_name,
