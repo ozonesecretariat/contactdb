@@ -42,22 +42,8 @@
               </template>
             </q-input>
             <code-scanner @code="setCode" />
-            <q-btn
-              v-if="downloadReport"
-              label="Download report"
-              color="primary"
-              icon="download"
-              :href="downloadReportLink"
-              download
-            />
-            <q-btn
-              v-if="downloadReport"
-              label="Download files"
-              color="primary"
-              icon="download"
-              :href="downloadFilesLink"
-              download
-            />
+            <q-btn label="Download report" color="primary" icon="download" :href="downloadReportLink" download />
+            <q-btn label="Download files" color="primary" icon="download" :href="downloadFilesLink" download />
           </div>
           <div class="q-gutter-md filter-list">
             <q-select
@@ -185,7 +171,7 @@ import type { Registration, RegistrationTag } from "src/types/registration";
 
 import { useAsyncState } from "@vueuse/core";
 import { useRouteQuery } from "@vueuse/router";
-import { api, apiURL } from "boot/axios";
+import { api } from "boot/axios";
 import CodeScanner from "components/dialogs/CodeScanner.vue";
 import DsaForm from "components/dialogs/DsaForm.vue";
 import { BooleanFilterChoices, RegistrationStatusChoices } from "src/constants";
@@ -218,10 +204,6 @@ const props = defineProps({
     type: Boolean,
   },
   disableTag: {
-    default: false,
-    type: Boolean,
-  },
-  downloadReport: {
     default: false,
     type: Boolean,
   },
@@ -351,8 +333,8 @@ const filteredColumns = computed(() =>
       (c.name !== "paidDsa" || !paidDsa.value),
   ),
 );
-const downloadReportLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa/`);
-const downloadFilesLink = computed(() => `${apiURL}/events/${eventCode.value}/export_dsa_files/`);
+const downloadReportLink = computed(() => buildDownloadUrl("/registrations/export_dsa/"));
+const downloadFilesLink = computed(() => buildDownloadUrl(`/registrations/export_dsa_files/`));
 
 const { isLoading: isLoadingEvent, state: events } = useAsyncState(
   async () =>
@@ -378,6 +360,19 @@ watch([isLoadingEvent, route], () => {
   }
 });
 
+const apiFilterParams = computed(() => ({
+  eventCode: eventCode.value,
+  paidDsa: paidDsa.value,
+  priorityPassCode: priorityPassCode.value,
+  search: search.value,
+  status: status.value,
+  tag: tag.value,
+}));
+
+function buildDownloadUrl(url: string) {
+  return api.getUri({ params: apiFilterParams.value, url });
+}
+
 function fetchData(resetPagination = true) {
   if (resetPagination) {
     pagination.value.page = 1;
@@ -393,14 +388,9 @@ async function onRequest(requestProps: QTableRequestProps) {
   try {
     const resp = await api.get<Paginated<Registration>>("/registrations/", {
       params: {
-        eventCode: eventCode.value,
+        ...apiFilterParams.value,
         page,
         pageSize,
-        paidDsa: paidDsa.value,
-        priorityPassCode: priorityPassCode.value,
-        search: search.value,
-        status: status.value,
-        tag: tag.value,
       },
     });
     const data = resp.data;

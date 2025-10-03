@@ -1,14 +1,25 @@
 import django_filters
+from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
+from django.http import FileResponse
+from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import filters, viewsets
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 
 from api.serializers.event import (
     RegistrationDSASerializer,
     RegistrationTagSerializer,
 )
 from common.filters import CamelCaseOrderingFilter
-from events.models import Registration, RegistrationTag
+from events.exports.dsa import DSAFiles, DSAReport
+from events.models import Event, Registration, RegistrationTag
+
+
+class RegistrationTagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = RegistrationTag.objects.all()
+    serializer_class = RegistrationTagSerializer
 
 
 class RegistrationDSAFilter(FilterSet):
@@ -77,7 +88,24 @@ class RegistrationViewSet(viewsets.ModelViewSet):
         "organization__name__unaccent",
     )
 
+    @method_decorator(permission_required("events.view_dsa", raise_exception=True))
+    @action(detail=False, methods=["get"])
+    def export_dsa(self, *args, **kwargs):
+        event = get_object_or_404(
+            Event.objects, code=self.request.GET.get("event_code")
+        )
+        queryset = self.filter_queryset(self.get_queryset())
+        return FileResponse(
+            DSAReport(event, queryset=queryset).export_xlsx(), as_attachment=True
+        )
 
-class RegistrationTagViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = RegistrationTag.objects.all()
-    serializer_class = RegistrationTagSerializer
+    @method_decorator(permission_required("events.view_dsa", raise_exception=True))
+    @action(detail=False, methods=["get"])
+    def export_dsa_files(self, *args, **kwargs):
+        event = get_object_or_404(
+            Event.objects, code=self.request.GET.get("event_code")
+        )
+        queryset = self.filter_queryset(self.get_queryset())
+        return FileResponse(
+            DSAFiles(event, queryset=queryset).export_zip(), as_attachment=True
+        )
