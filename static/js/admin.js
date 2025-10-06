@@ -155,9 +155,6 @@ function getNewValue(el) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const $ = window.django.jQuery;
-  $("[data-choice-select2=true]").select2();
-
   checkForDifferences();
   for (const el of document.querySelectorAll("fieldset.compare .form-row")) {
     el.querySelector(".copy-button")?.addEventListener("click", copyFromNew);
@@ -165,4 +162,9 @@ document.addEventListener("DOMContentLoaded", () => {
       elInput.addEventListener("input", checkForDifferences);
     }
   }
+});
+
+window.addEventListener("load", () => {
+  const $ = window.$ || window.jQuery || window.django?.jQuery;
+  $?.("[data-choice-select2=true]")?.select2?.();
 });
