@@ -236,6 +236,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
         AutocompleteFilterFactory("event group", "event__group"),
+        "has_credentials",
     ]
     autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
@@ -272,6 +273,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                 "fields": (
                     "organization",
                     ("designation", "department"),
+                    "has_credentials",
+                    "credentials_display",
                 )
             },
         ),
@@ -291,6 +294,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "created_at",
         "updated_at",
         "priority_pass",
+        "credentials_display",
     )
 
     def get_readonly_fields(self, request, obj=None):
@@ -326,6 +330,10 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             )
         )
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
+
+    @admin.display(description="Credentials")
+    def credentials_display(self, obj):
+        return self.get_encrypted_file_display(obj, "credentials")
 
 
 class RegistrationInlineFormSet(BaseInlineFormSet):

@@ -142,34 +142,25 @@ class EventNominationViewSet(ViewSet):
 
         created_registrations = []
         for hidden_event in hidden_events:
-            registration, created = Registration.objects.get_or_create(
+            defaults = {
+                "has_credentials": contact.has_credentials,
+                "credentials": contact.credentials,
+                "organization": contact.organization,
+                "designation": contact.designation or "",
+                "department": contact.department or "",
+                "priority_pass": priority_pass,
+            }
+
+            registration, created = Registration.objects.update_or_create(
                 contact=contact,
                 event=hidden_event,
-                defaults={
+                defaults=defaults,
+                create_defaults={
                     "status": "",
                     "role": None,
-                    "organization": contact.organization,
-                    "designation": contact.designation or "",
-                    "department": contact.department or "",
-                    "priority_pass": priority_pass,
+                    **defaults,
                 },
             )
-
-            # If the registration already existed, simply update the relevant fields
-            if not created:
-                registration.organization = contact.organization
-                registration.designation = contact.designation or ""
-                registration.department = contact.department or ""
-                registration.priority_pass = priority_pass
-                registration.save(
-                    update_fields=[
-                        "organization",
-                        "designation",
-                        "department",
-                        "priority_pass",
-                    ]
-                )
-
             created_registrations.append(registration)
 
         return created_registrations
@@ -276,6 +267,8 @@ class EventNominationViewSet(ViewSet):
                     raise ValidationError({"status": "Registration cannot be updated."})
 
                 registration.role = nomination["role"]
+                registration.has_credentials = contact.has_credentials
+                registration.credentials = contact.credentials
                 registration.organization = contact.organization
                 registration.department = contact.department
                 registration.designation = contact.designation
