@@ -23,9 +23,9 @@ from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
 from events.exports.dsa import DSAFiles, DSAReport
+from events.exports.list_of_participants import ListOfParticipants
 from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
-from events.list_of_participants import ListOfParticipants
 from events.models import (
     DSA,
     Event,
