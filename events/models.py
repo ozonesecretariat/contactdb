@@ -19,6 +19,7 @@ from django_db_views.db_view import DBView
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 from encrypted_fields import EncryptedJSONField
+from timezone_field import TimeZoneField
 
 from common.array_field import ArrayField
 from common.citext import CICharField
@@ -81,6 +82,7 @@ class Event(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
+    timezone = TimeZoneField(default="UTC")
     venue_country = models.ForeignKey(
         Country,
         on_delete=models.CASCADE,
@@ -204,6 +206,14 @@ class Event(models.Model):
                     "confirmation_content": msg,
                 }
             )
+
+    @property
+    def local_start_date(self):
+        return self.start_date.replace(tzinfo=self.timezone)
+
+    @property
+    def local_end_date(self):
+        return self.end_date.replace(tzinfo=self.timezone)
 
 
 class EventInvitation(models.Model):
@@ -579,20 +589,30 @@ class PriorityPass(models.Model):
     @property
     def valid_from(self):
         try:
-            return min(reg.event.start_date for reg in self.registered_registrations)
+            return min(
+                reg.event.local_start_date for reg in self.registered_registrations
+            )
         except ValueError:
             return None
 
     @property
     def valid_to(self):
         try:
-            return max(reg.event.end_date for reg in self.registered_registrations)
+            return max(
+                reg.event.local_end_date for reg in self.registered_registrations
+            )
         except ValueError:
             return None
 
     @property
     def valid_date_range(self):
         return date_range_str(self.valid_from, self.valid_to)
+
+    @property
+    def is_currently_valid(self):
+        if not self.valid_from or not self.valid_to:
+            return False
+        return self.valid_from <= timezone.now() <= self.valid_to
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:
