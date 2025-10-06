@@ -389,16 +389,20 @@ class BaseContact(models.Model):
                 if not getattr(self, field):
                     errors[field] = "This field is required."
 
-        primary_org = self.primary_for_orgs.first()
-        secondary_org = self.secondary_for_orgs.first()
-        if primary_org and primary_org != self.organization:
-            errors["organization"] = (
-                "Cannot change organization while contact is primary"
-            )
-        if secondary_org and secondary_org != self.organization:
-            errors["organization"] = (
-                "Cannot change organization while contact is secondary"
-            )
+        # Can only perform this check after the first save, but it's not possible
+        # to set the primary_for_orgs when creating a contact, so should not be an
+        # issue.
+        if self.pk:
+            primary_org = self.primary_for_orgs.first()
+            secondary_org = self.secondary_for_orgs.first()
+            if primary_org and primary_org != self.organization:
+                errors["organization"] = (
+                    "Cannot change organization while contact is primary"
+                )
+            if secondary_org and secondary_org != self.organization:
+                errors["organization"] = (
+                    "Cannot change organization while contact is secondary"
+                )
 
         if errors:
             raise ValidationError(errors)
