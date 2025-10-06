@@ -1,4 +1,5 @@
 import django_filters
+from constance import config
 from django.utils import timezone
 from django_filters import FilterSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,14 +11,16 @@ from events.models import PriorityPass
 
 
 class PriorityPassFilterSet(FilterSet):
-    is_current = django_filters.BooleanFilter(method="filter_is_current")
+    is_recent = django_filters.BooleanFilter(method="filter_is_recent")
 
     class Meta:
         model = PriorityPass
-        fields = ["is_current"]
+        fields = ["is_recent"]
 
-    def filter_is_current(self, queryset, name, value):
-        today = timezone.now().date()
+    def filter_is_recent(self, queryset, name, value):
+        today = timezone.now().date() - timezone.timedelta(
+            days=config.RECENT_EVENTS_DAYS
+        )
 
         if value is True:
             return queryset.filter(registrations__event__end_date__gte=today)

@@ -364,6 +364,10 @@ CONSTANCE_CONFIG = {
         "",
         "The description under the main title.",
     ),
+    "RECENT_EVENTS_DAYS": (
+        180,
+        "Number of days to keep showing event in the UI after the event is finished.",
+    ),
 }
 CONSTANCE_CONFIG_FIELDSETS = (
     (
@@ -380,6 +384,7 @@ CONSTANCE_CONFIG_FIELDSETS = (
             "fields": (
                 "APP_TITLE",
                 "WELCOME_MESSAGE",
+                "RECENT_EVENTS_DAYS",
             ),
         },
     ),

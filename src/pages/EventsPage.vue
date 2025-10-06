@@ -67,7 +67,7 @@ const { isLoading, state } = useAsyncState(
     (
       await api.get<MeetingEvent[]>("/events/", {
         params: {
-          isCurrent: true,
+          isRecent: true,
         },
       })
     ).data,
