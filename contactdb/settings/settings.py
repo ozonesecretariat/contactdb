@@ -375,7 +375,7 @@ CONSTANCE_CONFIG = {
         "The description under the main title.",
     ),
     "RECENT_EVENTS_DAYS": (
-        180,
+        30,
         "Number of days to keep showing event in the UI after the event is finished.",
         "limited_int",
     ),

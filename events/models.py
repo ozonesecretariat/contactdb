@@ -15,6 +15,7 @@ from django.core.files import File
 from django.db import models
 from django.db.models import Exists, Max, Min, OuterRef, Q
 from django.utils import timezone
+from django.utils.timezone import get_default_timezone
 from django_db_views.db_view import DBView
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
@@ -612,7 +613,13 @@ class PriorityPass(models.Model):
     def is_currently_valid(self):
         if not self.valid_from or not self.valid_to:
             return False
-        return self.valid_from <= timezone.now() <= self.valid_to
+        # Need to compare dates against a common timezone, otherwise
+        # the comparison will be incorrect.
+        common_tz = get_default_timezone()
+        utc_from = self.valid_from.astimezone(common_tz)
+        utc_now = timezone.now().astimezone(common_tz)
+        utc_to = self.valid_to.astimezone(common_tz)
+        return utc_from <= utc_now <= utc_to
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:
