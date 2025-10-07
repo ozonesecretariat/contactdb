@@ -10,7 +10,7 @@ from api.tests.factories import (
     OrganizationFactory,
     RegistrationFactory,
 )
-from core.models import Country, OrganizationType, Subregion
+from core.models import BaseContact, Country, OrganizationType, Subregion
 from events.models import Registration
 from events.tests.utils import get_table_data
 
@@ -48,16 +48,27 @@ class TestsPreMeetingStatistics(TestCase):
     def parse_doc(self, resp, pax=0, gov=0, a5=0, a2=0):
         f = io.BytesIO(b"".join(resp.streaming_content))
         doc = docx.Document(f)
-        result = list(get_table_data(doc).values())
-        self.assertEqual(result[0][-1], ["Total", str(pax)])
-        self.assertEqual(result[2][-1], ["Total", str(gov), "", ""])
+        result = get_table_data(doc)
+
         self.assertEqual(
-            result[3][-1],
-            ["Total", "43", str(a2), str(43 - a2), str(a2), "", "", "", ""],
+            result["Table 1: Accredited participants"][-1],
+            ["Total", str(pax)],
+            "Table 1: Invalid number of participants",
         )
         self.assertEqual(
-            result[4][-1],
+            result["Table 2: Accredited Parties"][-1],
+            ["Total", str(gov), "", ""],
+            "Table 2: Invalid number of Parties",
+        )
+        self.assertEqual(
+            result["Table 3: A2 Parties"][-1],
+            ["Total", "43", str(a2), str(43 - a2), str(a2), "", "", "", ""],
+            "Table 3: Invalid totals for A2 Parties",
+        )
+        self.assertEqual(
+            result["Table 4: A5 Parties"][-1],
             ["Total", "155", str(a5), str(155 - a5), str(a5), "", "", "", ""],
+            "Table 4: Invalid totals for A5 Parties",
         )
 
         return result
@@ -75,16 +86,35 @@ class TestsPreMeetingStatistics(TestCase):
         self.assertEqual(resp.status_code, 302)
 
     def test_get_data(self):
+        self.contact.title = BaseContact.Title.HE_MR
+        self.contact.save()
+
         self.client.login(email="admin@example.com", password="admin")
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
 
         result = self.parse_doc(resp, pax=1, gov=1, a5=0, a2=1)
 
-        self.assertEqual(result[0][2], ["Parties", "1"])
-        self.assertEqual(result[2][2], ["A2 Parties", "1", "100.00%", "2.33%"])
         self.assertEqual(
-            result[3][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
+            result["Table 1: Accredited participants"][2],
+            ["Parties", "1"],
+        )
+        self.assertEqual(
+            result["Table 2: Accredited Parties"][2],
+            ["A2 Parties", "1", "100.00%", "2.33%"],
+        )
+        self.assertEqual(
+            result["Table 3: A2 Parties"][4],
+            ["European Union", "28", "1", "27", "1", "", "", "", ""],
+        )
+        self.assertEqual(
+            result["Table 5: HL Participants Accredited"][2],
+            [
+                self.country.name,
+                self.org.name,
+                self.contact.designation,
+                self.contact.full_name,
+            ],
         )
 
     def test_no_org_type(self):
@@ -96,7 +126,10 @@ class TestsPreMeetingStatistics(TestCase):
         self.assertEqual(resp.status_code, 200)
 
         result = self.parse_doc(resp, pax=1, gov=0, a5=0, a2=0)
-        self.assertEqual(result[0][-2], ["Unknown", "1"])
+        self.assertEqual(
+            result["Table 1: Accredited participants"][-2],
+            ["Unknown", "1"],
+        )
 
     def test_no_org(self):
         self.registration.organization = None
@@ -109,7 +142,10 @@ class TestsPreMeetingStatistics(TestCase):
         self.assertEqual(resp.status_code, 200)
 
         result = self.parse_doc(resp, pax=1, gov=0, a5=0, a2=0)
-        self.assertEqual(result[0][-2], ["Unknown", "1"])
+        self.assertEqual(
+            result["Table 1: Accredited participants"][-2],
+            ["Unknown", "1"],
+        )
 
     def test_no_org_registration(self):
         self.registration.organization = None
@@ -121,10 +157,17 @@ class TestsPreMeetingStatistics(TestCase):
 
         result = self.parse_doc(resp, pax=1, gov=1, a5=0, a2=1)
 
-        self.assertEqual(result[0][2], ["Parties", "1"])
-        self.assertEqual(result[2][2], ["A2 Parties", "1", "100.00%", "2.33%"])
         self.assertEqual(
-            result[3][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
+            result["Table 1: Accredited participants"][2],
+            ["Parties", "1"],
+        )
+        self.assertEqual(
+            result["Table 2: Accredited Parties"][2],
+            ["A2 Parties", "1", "100.00%", "2.33%"],
+        )
+        self.assertEqual(
+            result["Table 3: A2 Parties"][4],
+            ["European Union", "28", "1", "27", "1", "", "", "", ""],
         )
 
     def test_no_org_contact(self):
@@ -137,10 +180,17 @@ class TestsPreMeetingStatistics(TestCase):
 
         result = self.parse_doc(resp, pax=1, gov=1, a5=0, a2=1)
 
-        self.assertEqual(result[0][2], ["Parties", "1"])
-        self.assertEqual(result[2][2], ["A2 Parties", "1", "100.00%", "2.33%"])
         self.assertEqual(
-            result[3][4], ["European Union", "28", "1", "27", "1", "", "", "", ""]
+            result["Table 1: Accredited participants"][2],
+            ["Parties", "1"],
+        )
+        self.assertEqual(
+            result["Table 2: Accredited Parties"][2],
+            ["A2 Parties", "1", "100.00%", "2.33%"],
+        )
+        self.assertEqual(
+            result["Table 3: A2 Parties"][4],
+            ["European Union", "28", "1", "27", "1", "", "", "", ""],
         )
 
     def test_no_gov(self):
@@ -171,4 +221,4 @@ class TestsPreMeetingStatistics(TestCase):
         self.assertEqual(resp.status_code, 200)
 
         result = self.parse_doc(resp)
-        self.assertEqual(result[3][-2][0], "Australia")
+        self.assertEqual(result["Table 3: A2 Parties"][-2][0], "Australia")

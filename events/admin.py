@@ -23,9 +23,9 @@ from common.urls import reverse
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
 from events.exports.dsa import DSAFiles, DSAReport
+from events.exports.list_of_participants import ListOfParticipants
 from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
-from events.list_of_participants import ListOfParticipants
 from events.models import (
     DSA,
     Event,
@@ -725,7 +725,10 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "group",
         "documents",
     )
-    autocomplete_fields = ("venue_country", "group")
+    autocomplete_fields = (
+        "venue_country",
+        "group",
+    )
     list_filter = (
         AutocompleteFilterFactory("venue country", "venue_country"),
         AutocompleteFilterFactory("group", "group"),
@@ -771,6 +774,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "Dates",
             {
                 "fields": (
+                    "timezone",
                     "start_date",
                     "end_date",
                     "dates",
@@ -971,6 +975,17 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             queryset = queryset.filter(end_date__gte=timezone.now())
 
         return queryset, may_have_duplicates
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "timezone":
+            formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
+            formfield.widget.attrs.update(
+                {
+                    "data-choice-select2": "true",
+                }
+            )
+            return formfield
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 class FutureEventFilter(admin.SimpleListFilter):
