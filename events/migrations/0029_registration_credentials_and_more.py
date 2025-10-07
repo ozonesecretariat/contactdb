@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("events", "0027_registrationtag_protected"),
+        ("events", "0028_event_timezone.py"),
     ]
 
     operations = [
