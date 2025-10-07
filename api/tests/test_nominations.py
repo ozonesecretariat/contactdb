@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.utils import timezone
 from rest_framework.reverse import reverse as api_reverse
 
@@ -15,6 +16,7 @@ from api.tests.factories import (
     RegistrationRoleFactory,
 )
 from core.models import Country, Organization, OrganizationType
+from core.templatetags.file_base64 import file_to_base64
 from events.models import Registration
 
 TEST_IMAGE = b"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
@@ -45,6 +47,10 @@ class TestEventNominationsAPI(BaseAPITestCase):
     def setUp(self):
         super().setUp()
 
+        with (settings.BASE_DIR / "fixtures/test/files/test-logo.png").open("rb") as f:
+            self.data_uri = file_to_base64(f)
+        self.file_obj = {"data": self.data_uri, "filename": "test-logo.png"}
+
         self.organization = OrganizationFactory()
         self.organization2 = OrganizationFactory()
 
@@ -53,6 +59,8 @@ class TestEventNominationsAPI(BaseAPITestCase):
             first_name="Test",
             last_name="Contact1",
             emails=["test1@example.com"],
+            has_credentials=True,
+            credentials=self.file_obj,
         )
         self.contact2 = ContactFactory(
             organization=self.organization,
@@ -135,6 +143,14 @@ class TestEventNominationsAPI(BaseAPITestCase):
         registrations = Registration.objects.all()
         self.assertEqual(registrations.count(), 1)
         self.assertEqual(registrations.filter(contact=self.contact1).exists(), True)
+
+        # Verify org info was copied
+        reg = registrations[0]
+        self.assertEqual(reg.organization, self.contact1.organization)
+        self.assertEqual(reg.department, self.contact1.department)
+        self.assertEqual(reg.designation, self.contact1.designation)
+        self.assertEqual(reg.has_credentials, self.contact1.has_credentials)
+        self.assertEqual(reg.credentials, self.contact1.credentials)
 
         # Check returned data
         response_data = response.json()

@@ -579,7 +579,12 @@ class TestRegistrationAdmin(TestCase):
 
         # Chack that only model read-only fields are read-only for new Registrations
         readonly_fields_new = self.admin.get_readonly_fields(request, obj=None)
-        expected_for_new = ("created_at", "updated_at", "priority_pass")
+        expected_for_new = (
+            "created_at",
+            "updated_at",
+            "priority_pass",
+            "credentials_display",
+        )
         self.assertEqual(set(readonly_fields_new), set(expected_for_new))
 
         # And that for existing Registrations, contact and event become RO
@@ -592,6 +597,7 @@ class TestRegistrationAdmin(TestCase):
             "priority_pass",
             "contact",
             "event",
+            "credentials_display",
         )
         self.assertEqual(set(readonly_fields_existing), set(expected_for_existing))
 

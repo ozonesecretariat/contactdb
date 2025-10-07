@@ -700,8 +700,10 @@ class Registration(models.Model):
         help_text="Override the role sort order for this registration.",
     )
 
-    # Save the state of organization, designation, and department as it
+    # Save the state of credentials, organization, designation, and department as it
     # was when the contact registered
+    has_credentials = models.BooleanField(default=False)
+    credentials = EncryptedJSONField(blank=True, null=True)
     organization = models.ForeignKey(
         Organization,
         on_delete=models.PROTECT,
