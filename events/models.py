@@ -15,10 +15,12 @@ from django.core.files import File
 from django.db import models
 from django.db.models import Exists, Max, Min, OuterRef, Q
 from django.utils import timezone
+from django.utils.timezone import get_default_timezone
 from django_db_views.db_view import DBView
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
 from encrypted_fields import EncryptedJSONField
+from timezone_field import TimeZoneField
 
 from common.array_field import ArrayField
 from common.citext import CICharField
@@ -81,6 +83,7 @@ class Event(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
+    timezone = TimeZoneField(default="UTC")
     venue_country = models.ForeignKey(
         Country,
         on_delete=models.CASCADE,
@@ -204,6 +207,14 @@ class Event(models.Model):
                     "confirmation_content": msg,
                 }
             )
+
+    @property
+    def local_start_date(self):
+        return self.start_date.replace(tzinfo=self.timezone)
+
+    @property
+    def local_end_date(self):
+        return self.end_date.replace(tzinfo=self.timezone)
 
 
 class EventInvitation(models.Model):
@@ -579,20 +590,36 @@ class PriorityPass(models.Model):
     @property
     def valid_from(self):
         try:
-            return min(reg.event.start_date for reg in self.registered_registrations)
+            return min(
+                reg.event.local_start_date for reg in self.registered_registrations
+            )
         except ValueError:
             return None
 
     @property
     def valid_to(self):
         try:
-            return max(reg.event.end_date for reg in self.registered_registrations)
+            return max(
+                reg.event.local_end_date for reg in self.registered_registrations
+            )
         except ValueError:
             return None
 
     @property
     def valid_date_range(self):
         return date_range_str(self.valid_from, self.valid_to)
+
+    @property
+    def is_currently_valid(self):
+        if not self.valid_from or not self.valid_to:
+            return False
+        # Need to compare dates against a common timezone, otherwise
+        # the comparison will be incorrect.
+        common_tz = get_default_timezone()
+        utc_from = self.valid_from.astimezone(common_tz)
+        utc_now = timezone.now().astimezone(common_tz)
+        utc_to = self.valid_to.astimezone(common_tz)
+        return utc_from <= utc_now <= utc_to
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:

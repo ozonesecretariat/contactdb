@@ -1,4 +1,5 @@
 import django_filters
+from constance import config
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Case, Count, F, Value, When
 from django.http import FileResponse
@@ -25,14 +26,16 @@ from events.models import (
 
 
 class EventFilterSet(FilterSet):
-    is_current = django_filters.BooleanFilter(method="filter_is_current")
+    is_recent = django_filters.BooleanFilter(method="filter_is_recent")
 
     class Meta:
         model = Event
-        fields = ["is_current"]
+        fields = ["is_recent"]
 
-    def filter_is_current(self, queryset, name, value):
-        today = timezone.now().date()
+    def filter_is_recent(self, queryset, name, value):
+        today = timezone.now().date() - timezone.timedelta(
+            days=config.RECENT_EVENTS_DAYS
+        )
 
         if value is True:
             return queryset.filter(end_date__gte=today)

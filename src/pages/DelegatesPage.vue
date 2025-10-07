@@ -343,7 +343,7 @@ const { isLoading: isLoadingEvent, state: events } = useAsyncState(
     (
       await api.get<MeetingEvent[]>("/events/", {
         params: {
-          isCurrent: true,
+          isRecent: true,
           ordering: "-startDate",
         },
       })

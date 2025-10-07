@@ -1,4 +1,6 @@
 import django_filters
+from constance import config
+from django.db.models import Max
 from django.utils import timezone
 from django_filters import FilterSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,14 +12,16 @@ from events.models import PriorityPass
 
 
 class PriorityPassFilterSet(FilterSet):
-    is_current = django_filters.BooleanFilter(method="filter_is_current")
+    is_recent = django_filters.BooleanFilter(method="filter_is_recent")
 
     class Meta:
         model = PriorityPass
-        fields = ["is_current"]
+        fields = ["is_recent"]
 
-    def filter_is_current(self, queryset, name, value):
-        today = timezone.now().date()
+    def filter_is_recent(self, queryset, name, value):
+        today = timezone.now().date() - timezone.timedelta(
+            days=config.RECENT_EVENTS_DAYS
+        )
 
         if value is True:
             return queryset.filter(registrations__event__end_date__gte=today)
@@ -30,19 +34,25 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "code"
     lookup_url_kwarg = "code"
     serializer_class = PriorityPassSerializer
-    queryset = PriorityPass.objects.all().prefetch_related(
-        "registrations",
-        "registrations__role",
-        "registrations__contact",
-        "registrations__contact__country",
-        "registrations__contact__organization",
-        "registrations__contact__organization__country",
-        "registrations__contact__organization__government",
-        "registrations__organization",
-        "registrations__organization__country",
-        "registrations__organization__government",
-        "registrations__event",
-        "registrations__event__venue_country",
+    queryset = (
+        PriorityPass.objects.all()
+        .annotate(latest_event_date=Max("registrations__event__start_date"))
+        .prefetch_related(
+            "registrations",
+            "registrations__role",
+            "registrations__contact",
+            "registrations__contact__country",
+            "registrations__contact__organization",
+            "registrations__contact__organization__country",
+            "registrations__contact__organization__government",
+            "registrations__organization",
+            "registrations__organization__country",
+            "registrations__organization__government",
+            "registrations__event",
+            "registrations__event__venue_country",
+        )
+        .order_by("-latest_event_date")
+        .distinct()
     )
     filter_backends = (
         filters.SearchFilter,

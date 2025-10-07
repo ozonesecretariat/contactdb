@@ -230,6 +230,7 @@ dependencies = [
     { name = "django-redis" },
     { name = "django-rq" },
     { name = "django-task" },
+    { name = "django-timezone-field" },
     { name = "django-two-factor-auth", extra = ["phonenumbers"] },
     { name = "djangorestframework" },
     { name = "djangorestframework-camel-case" },
@@ -293,6 +294,7 @@ requires-dist = [
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-rq", specifier = ">=3.0.1" },
     { name = "django-task", specifier = ">=2.0.7" },
+    { name = "django-timezone-field", specifier = ">=7.1" },
     { name = "django-two-factor-auth", extras = ["phonenumbers"], specifier = ">=1.17.0" },
     { name = "djangorestframework", specifier = ">=3.16.0" },
     { name = "djangorestframework-camel-case", specifier = ">=1.4.2" },
@@ -815,6 +817,18 @@ version = "2.0.7"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f9/e0/11964001df87ee1141c2f86c4071aa28474285ff74652a8763aaea67d98c/django_task-2.0.7-py2.py3-none-any.whl", hash = "sha256:b306ce4c9d2b2e965b6b48c633984b862a0044824f273f10c09f24ec0e02930f", size = 43198, upload-time = "2024-05-03T21:07:20.442Z" },
+]
+
+[[package]]
+name = "django-timezone-field"
+version = "7.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ba/5b/0dbe271fef3c2274b83dbcb1b19fa3dacf1f7e542382819294644e78ea8b/django_timezone_field-7.1.tar.gz", hash = "sha256:b3ef409d88a2718b566fabe10ea996f2838bc72b22d3a2900c0aa905c761380c", size = 13727, upload-time = "2025-01-11T17:49:54.486Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/09/7a808392a751a24ffa62bec00e3085a9c1a151d728c323a5bab229ea0e58/django_timezone_field-7.1-py3-none-any.whl", hash = "sha256:93914713ed882f5bccda080eda388f7006349f25930b6122e9b07bf8db49c4b4", size = 13177, upload-time = "2025-01-11T17:49:52.142Z" },
 ]
 
 [[package]]

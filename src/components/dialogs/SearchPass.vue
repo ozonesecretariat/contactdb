@@ -66,7 +66,7 @@ async function searchPasses() {
 
   try {
     const response = await api.get<Paginated<PriorityPass>>("/priority-passes/", {
-      params: { isCurrent: true, page: 1, pageSize: 10, search: searchQuery.value },
+      params: { isRecent: true, page: 1, pageSize: 10, search: searchQuery.value },
     });
     passes.value = response.data.results;
     hasSearched.value = true;

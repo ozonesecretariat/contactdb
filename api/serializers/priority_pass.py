@@ -28,6 +28,7 @@ class PriorityPassSerializer(serializers.ModelSerializer):
             "created_at",
             "badge_url",
             "valid_date_range",
+            "is_currently_valid",
         )
 
     def get_badge_url(self, obj: PriorityPass):

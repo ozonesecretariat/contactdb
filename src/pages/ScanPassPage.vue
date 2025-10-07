@@ -39,8 +39,7 @@
           </q-card-actions>
         </q-card>
         <div class="registration-date-range q-pt-lg text-subtitle1 text-white">
-          <q-card v-if="validRange" flat bordered class="valid-card bg-positive">Registered {{ validRange }}</q-card>
-          <q-card v-else flat bordered class="valid-card bg-negative">Not registered</q-card>
+          <q-card flat bordered class="valid-card" :class="validDateClass">{{ validDateString }}</q-card>
         </div>
       </section>
       <div v-if="canViewRegistration" class="registrations-section">
@@ -127,6 +126,18 @@ const canPrintBadge = computed(
 );
 
 const validRange = computed(() => pass?.value?.validDateRange);
+const validDateString = computed(() => {
+  if (validRange.value) {
+    return `Registered ${validRange.value}`;
+  }
+  return "Not registered";
+});
+const validDateClass = computed(() => {
+  if (validRange.value && pass?.value?.isCurrentlyValid) {
+    return "bg-positive";
+  }
+  return "bg-negative";
+});
 
 const badgeUrl = computed(() => {
   if (!pass?.value?.badgeUrl) return "";
