@@ -15,7 +15,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
   });
@@ -31,7 +31,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
     // Check that only 1 email has been sent.
@@ -61,7 +61,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
     // Check that only 1 email has been sent.
@@ -89,7 +89,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
 
@@ -107,7 +107,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
 
@@ -129,7 +129,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
 
@@ -228,7 +228,7 @@ describe("Check", () => {
       },
       modelName: "Emails",
       nameField: "subject",
-      saveButtonSelector: "input[name=_save]",
+      saveButtonSelector: "input[name='_save'][value='Send Emails Now']",
       suffix: "-email-subject",
     });
     // Wait for the task to finish
