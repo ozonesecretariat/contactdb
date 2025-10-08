@@ -24,7 +24,7 @@ class DataURIImageField(Base64ImageField):
 
     def to_representation(self, file):
         result = super().to_representation(file)
-        if self.represent_in_base64 and file is not None:
+        if self.represent_in_base64 and file is not None and result:
             mime_type = mimetypes.guess_type(file.name or "")[0]
             return f"data:{mime_type};base64,{result}"
         return result
