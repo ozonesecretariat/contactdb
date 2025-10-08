@@ -231,12 +231,11 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("contact", "contact"),
         "status",
         AutocompleteFilterFactory("role", "role"),
-        "contact__has_credentials",
+        "has_credentials",
         "contact__needs_visa_letter",
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
         AutocompleteFilterFactory("event group", "event__group"),
-        "has_credentials",
     ]
     autocomplete_fields = ("contact", "event", "role", "tags", "organization")
     prefetch_related = (
