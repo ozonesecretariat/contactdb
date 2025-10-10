@@ -10,11 +10,13 @@ repos:
     hooks:
       - id: prettier
         name: prettier
-        entry: npm run lint:prettier:check:staged
+        entry: npm run lint:prettier:check:staged --
         language: system
         files: \.(js|jsx|ts|tsx|json|css|scss|md|html|yaml|yml|vue)$
+        pass_filenames: true
       - id: eslint
         name: eslint
-        entry: npm run lint:eslint:check:staged
+        entry: npm run lint:eslint:check:staged --
         language: system
         files: \.(js|jsx|ts|tsx|vue)$
+        pass_filenames: true
