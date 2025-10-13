@@ -21,7 +21,7 @@ export default defineBoot(async ({ app, redirect, router, store, urlPath }) => {
     }
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(e);
+    console.error(e);
     $q.notify({
       message: "Unknown error while loading data, please try again later.",
       type: "negative",
@@ -35,7 +35,10 @@ export default defineBoot(async ({ app, redirect, router, store, urlPath }) => {
       app,
       dsn: appSettingsStore.sentryDsn,
       environment: appSettingsStore.environmentName,
-      integrations: [Sentry.browserTracingIntegration({ router })],
+      integrations: [
+        Sentry.browserTracingIntegration({ router }),
+        Sentry.captureConsoleIntegration({ levels: ["error"] }),
+      ],
     });
     store.use(createSentryPiniaPlugin());
   }
