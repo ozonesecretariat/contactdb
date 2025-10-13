@@ -51,13 +51,21 @@ describe("Check nominations page", () => {
     cy.get("input[name=designation]").type("Corpo");
     cy.get("[role=checkbox]:has([name=isUseOrganizationAddress])").click();
     cy.chooseQSelect("Organization", "Galactic Research Institute for Advanced Technologies");
-    // Save without photo or passport first
+    // Save without a photo or passport first
     cy.contains("Save").click();
     cy.contains("Nominate participant");
     // Add the photo
     cy.get("a").contains("Edit").click();
     cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo.png");
-    // Add passport info
+    cy.contains("Save").click();
+    cy.contains("Nominate participant");
+    // Change the photo
+    cy.get("a").contains("Edit").click();
+    cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo2.png");
+    cy.contains("Save").click();
+    cy.contains("Nominate participant");
+    // Add passport info but don't change the photo
+    cy.get("a").contains("Edit").click();
     cy.get("[role=checkbox]:has([name=needsVisaLetter])").click();
     cy.get("[name=nationality]").type("klingon");
     cy.get("[name=passportNumber]").type("123456789");
