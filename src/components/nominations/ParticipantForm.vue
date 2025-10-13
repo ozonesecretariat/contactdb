@@ -426,7 +426,7 @@ async function saveForm() {
         mobiles: toList(data.mobiles),
         passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
-        photo: data.photo ? await fileToBase64(data.photo) : null,
+        photo: data.photo ? await fileToBase64(data.photo) : data.photoDataUri,
         postalCode: data.postalCode,
         state: data.state,
       })

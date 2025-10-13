@@ -54,16 +54,22 @@ describe("Check nominations page", () => {
     // Save without a photo or passport first
     cy.contains("Save").click();
     cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("not.exist");
+
     // Add the photo
     cy.get("a").contains("Edit").click();
     cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo.png");
     cy.contains("Save").click();
     cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("be.visible");
+
     // Change the photo
     cy.get("a").contains("Edit").click();
     cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo2.png");
     cy.contains("Save").click();
     cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("be.visible");
+
     // Add passport info but don't change the photo
     cy.get("a").contains("Edit").click();
     cy.get("[role=checkbox]:has([name=needsVisaLetter])").click();
@@ -74,6 +80,7 @@ describe("Check nominations page", () => {
     cy.get("[name=passport]").selectFile("fixtures/test/files/test-logo.png");
     cy.contains("Save").click();
     cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("be.visible");
     // Add a nomination for the participant
     cy.chooseQSelect("Role of the participant", "Delegate");
     cy.contains("Confirm nomination").click();
