@@ -37,7 +37,7 @@ urlpatterns = [
 ]
 
 
-if settings.DJANGO_DEBUG_TOOLBAR:
+if settings.DEBUG and settings.DJANGO_DEBUG_TOOLBAR:
     try:
         import debug_toolbar
     except ImportError:
