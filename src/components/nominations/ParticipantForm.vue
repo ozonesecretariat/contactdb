@@ -115,7 +115,7 @@
       name="photo"
       outlined
       accept=".jpeg,.jpg,.png"
-      :label="data.hasPhoto ? 'Change photo' : 'Add photo'"
+      :label="data.photoDataUri || data.hasPhoto ? 'Change photo' : 'Add photo'"
     >
       <template #append>
         <q-btn v-if="data.hasPhoto" label="View current" @click="currentImageDialog = true" />
@@ -128,8 +128,8 @@
           <q-space />
           <q-btn v-close-popup flat round dense icon="close" />
         </q-card-section>
-        <q-card-section v-if="data.id">
-          <q-img :src="invitation.getPhotoUrl(data.id)" alt="" style="max-height: 80vh" />
+        <q-card-section v-if="data.photoDataUri">
+          <q-img :src="data.photoDataUri" alt="" style="max-height: 80vh" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -379,6 +379,7 @@ const data = reactive({
   passportNumber: "",
   phones: "",
   photo: null,
+  photoDataUri: "",
   postalCode: "",
   state: "",
   title: "",
@@ -397,6 +398,8 @@ if (invitation.participant) {
     mobiles: invitation.participant.mobiles?.[0] ?? "",
     organization: invitation.participant.organization?.id ?? "",
     phones: invitation.participant.phones?.[0] ?? "",
+    photo: null,
+    photoDataUri: invitation.participant.photo ?? "",
   });
 }
 
@@ -423,7 +426,7 @@ async function saveForm() {
         mobiles: toList(data.mobiles),
         passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
-        photo: typeof data.photo === "string" ? data.photo : await fileToBase64(data.photo),
+        photo: data.photo ? await fileToBase64(data.photo) : data.photoDataUri,
         postalCode: data.postalCode,
         state: data.state,
       })
