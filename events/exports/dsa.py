@@ -31,6 +31,9 @@ COL_WIDTHS = {
     "O": 30,
 }
 
+DATE_FORMAT = "DD/MM/YYYY"
+NUMBER_FORMAT = "#,##0"
+
 
 def get_dsa_query(event: Event, queryset: QuerySet[Registration] = None):
     if queryset is None:
@@ -257,16 +260,28 @@ class DSAReport:
                     reg.contact.first_name,
                     {
                         "value": getattr(dsa, "arrival_date", ""),
-                        "number_format": "DD/MM/YYYY",
+                        "number_format": DATE_FORMAT,
                     },
                     {
                         "value": getattr(dsa, "departure_date", ""),
-                        "number_format": "DD/MM/YYYY",
+                        "number_format": DATE_FORMAT,
                     },
-                    f"=J{self.row_index}-I{self.row_index}",
-                    f"=M3*K{self.row_index}",
-                    reg.event.term_exp,
-                    f"=L{self.row_index}+M{self.row_index}",
+                    {
+                        "value": f"=J{self.row_index}-I{self.row_index}",
+                        "number_format": NUMBER_FORMAT,
+                    },
+                    {
+                        "value": f"=M3*K{self.row_index}",
+                        "number_format": NUMBER_FORMAT,
+                    },
+                    {
+                        "value": reg.event.term_exp,
+                        "number_format": NUMBER_FORMAT,
+                    },
+                    {
+                        "value": f"=L{self.row_index}+M{self.row_index}",
+                        "number_format": NUMBER_FORMAT,
+                    },
                 ]
             )
         if not self.registrations:
@@ -293,6 +308,7 @@ class DSAReport:
             column=14,
             value=f"=SUM(N{self.max_header_row + 1}:N{self.row_index - 1})",
         )
+        cell.number_format = NUMBER_FORMAT
         cell.font = self.header_font
         self.row_index += 1
 
