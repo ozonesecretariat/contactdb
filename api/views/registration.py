@@ -55,7 +55,7 @@ class RegistrationDSAFilter(FilterSet):
 
 class RegistrationViewSet(viewsets.ModelViewSet):
     queryset = (
-        Registration.objects.all()
+        Registration.objects.with_annotations()
         .select_related("dsa")
         .prefetch_related(
             "role",
@@ -73,7 +73,7 @@ class RegistrationViewSet(viewsets.ModelViewSet):
             "contact__organization__country",
             "contact__organization__organization_type",
         )
-        .order_by("contact__last_name", "contact__first_name")
+        .order_by("dsa_country_name", "contact__last_name", "contact__first_name")
     )
     serializer_class = RegistrationDSASerializer
     filter_backends = (
@@ -87,9 +87,7 @@ class RegistrationViewSet(viewsets.ModelViewSet):
         "contact__first_name__unaccent",
         "contact__last_name__unaccent",
         "organization__name__unaccent",
-        "organization__government__name__unaccent",
-        "organization__country__name__unaccent",
-        "contact__country__name__unaccent",
+        "dsa_country_name",
     )
 
     @method_decorator(permission_required("events.view_dsa", raise_exception=True))

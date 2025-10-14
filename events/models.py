@@ -13,7 +13,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.db import models
-from django.db.models import Exists, Max, Min, OuterRef, Q
+from django.db.models import Case, Exists, F, Max, Min, OuterRef, Q, When
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.timezone import get_default_timezone
 from django_db_views.db_view import DBView
@@ -662,6 +663,35 @@ class PriorityPass(models.Model):
         msg.queue_emails()
 
 
+class RegistrationManager(models.Manager):
+    def with_annotations(self):
+        return self.annotate(
+            usable_organization_type=Coalesce(
+                F("organization__organization_type__acronym"),
+                F("contact__organization__organization_type__acronym"),
+            ),
+            usable_organization_government=Coalesce(
+                F("organization__government__name"),
+                F("contact__organization__government__name"),
+            ),
+            usable_organization_country=Coalesce(
+                F("organization__country__name"),
+                F("contact__organization__country__name"),
+            ),
+            dsa_country_name=Case(
+                When(
+                    usable_organization_type="GOV",
+                    then=F("usable_organization_government"),
+                ),
+                When(
+                    contact__is_use_organization_address=True,
+                    then=F("usable_organization_country"),
+                ),
+                default=F("contact__country__name"),
+            ),
+        )
+
+
 class Registration(models.Model):
     class Status(models.TextChoices):
         NOMINATED = "Nominated", "Nominated"
@@ -717,6 +747,8 @@ class Registration(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    objects = RegistrationManager()
 
     class Meta:
         unique_together = ("contact", "event")
@@ -830,9 +862,7 @@ class Registration(models.Model):
     def dsa_country(self):
         if self.is_gov:
             return self.usable_government
-        if self.usable_organization:
-            return self.usable_organization.country
-        return None
+        return self.contact.address_entity.country
 
 
 class AnnotatedRegistration(DBView):

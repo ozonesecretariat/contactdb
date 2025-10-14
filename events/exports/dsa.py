@@ -34,7 +34,8 @@ COL_WIDTHS = {
 
 def get_dsa_query(event: Event, queryset: QuerySet[Registration] = None):
     if queryset is None:
-        queryset = event.registrations.filter(
+        queryset = Registration.objects.with_annotations().filter(
+            event=event,
             status=Registration.Status.REGISTERED,
             tags__name="Is funded",
         )
@@ -109,7 +110,7 @@ class DSAReport:
             horizontal="center", vertical="center", wrap_text=True
         )
         self.header_bg = PatternFill(start_color="99ccff", fill_type="solid")
-        self.registrations = (
+        self.registrations = list(
             get_dsa_query(self.event, queryset=queryset)
             .prefetch_related(
                 "role",
@@ -127,7 +128,7 @@ class DSAReport:
                 "contact__organization__country",
                 "contact__organization__organization_type",
             )
-            .order_by("contact__last_name", "contact__first_name")
+            .order_by("dsa_country_name", "contact__last_name", "contact__first_name")
         )
 
     def export_xlsx(self):
@@ -248,7 +249,7 @@ class DSAReport:
             self.write_row(
                 [
                     reg_index,
-                    getattr(reg.dsa_country, "name", ""),
+                    reg.dsa_country_name or "",
                     getattr(dsa, "umoja_travel", ""),
                     getattr(dsa, "bp", ""),
                     reg.contact.title,
