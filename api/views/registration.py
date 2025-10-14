@@ -87,6 +87,9 @@ class RegistrationViewSet(viewsets.ModelViewSet):
         "contact__first_name__unaccent",
         "contact__last_name__unaccent",
         "organization__name__unaccent",
+        "organization__government__name__unaccent",
+        "organization__country__name__unaccent",
+        "contact__country__name__unaccent",
     )
 
     @method_decorator(permission_required("events.view_dsa", raise_exception=True))
