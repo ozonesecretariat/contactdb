@@ -1,9 +1,12 @@
 from functools import wraps
 
 from auditlog.models import LogEntry
+from ckeditor.fields import RichTextField
 from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.admin.options import get_content_type_for_model
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.formats import localize
@@ -11,9 +14,11 @@ from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 from django_task.admin import TaskAdmin as BaseTaskAdmin
+from encrypted_fields import EncryptedFieldMixin
 from import_export import resources, widgets
 
 from common.boolean_widget import BooleanWidget
+from common.model import KronosId
 from common.urls import reverse
 
 
@@ -300,3 +305,42 @@ class ModelResource(_QuerysetMixIn, resources.ModelResource):
         if internal_type in ("BooleanField", "NullBooleanField"):
             return BooleanWidget
         return super().widget_from_django_field(f, default=default)
+
+    @classmethod
+    def expand_all_fields(cls, model, max_depth=0, exclude=None, prefix=""):
+        excluded_fields = (
+            EncryptedFieldMixin,
+            models.FileField,
+            KronosId,
+            RichTextField,
+        )
+
+        fields = []
+        for field in model._meta.get_fields():
+            if getattr(field, "primary_key", False):
+                continue
+
+            name = prefix + field.name
+            if exclude and name in exclude:
+                continue
+
+            if isinstance(field, excluded_fields):
+                continue
+            if isinstance(field, ArrayField) and isinstance(
+                field.base_field, excluded_fields
+            ):
+                continue
+
+            if not field.is_relation:
+                fields.append(prefix + field.name)
+            elif max_depth > 0 and (field.many_to_one or field.one_to_one):
+                related_model = field.related_model
+                fields.extend(
+                    cls.expand_all_fields(
+                        related_model,
+                        max_depth=max_depth - 1,
+                        exclude=exclude,
+                        prefix=name + "__",
+                    )
+                )
+        return fields

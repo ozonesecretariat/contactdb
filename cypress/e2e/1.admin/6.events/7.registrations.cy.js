@@ -34,7 +34,7 @@ describe("Check", () => {
   it("Check export", () => {
     cy.loginView();
     cy.checkExport({
-      expected: ["MP Kai Nova", "Mr. Kai-Nova Nova"],
+      expected: ["Kai,Nova", "Kai-Nova,Nova"],
       filePattern: "Registration",
       filters: {
         event: "NN:FDP",
