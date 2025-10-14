@@ -6,7 +6,7 @@ describe("Check DSA", () => {
     cy.contains("1-1 of 1");
     cy.contains("Orion-Spectrum");
     cy.contains("Nova");
-    cy.contains("Belarus");
+    cy.contains("Argentina");
   });
   it("Check filtering records", () => {
     cy.loginDSA(false);
@@ -21,7 +21,7 @@ describe("Check DSA", () => {
     cy.contains("1-1 of 1");
     cy.contains("Orion-Spectrum");
     cy.contains("Nova");
-    cy.contains("Belarus");
+    cy.contains("Argentina");
   });
   it("Check filtering by code", () => {
     cy.loginDSA(false);
@@ -34,7 +34,7 @@ describe("Check DSA", () => {
     cy.contains("1-1 of 1");
     cy.contains("Orion-Spectrum");
     cy.contains("Nova");
-    cy.contains("Belarus");
+    cy.contains("Argentina");
   });
   it("Check create DSA", () => {
     cy.loginAdmin();

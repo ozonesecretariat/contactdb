@@ -31,10 +31,14 @@ COL_WIDTHS = {
     "O": 30,
 }
 
+DATE_FORMAT = "DD/MM/YYYY"
+NUMBER_FORMAT = "#,##0"
+
 
 def get_dsa_query(event: Event, queryset: QuerySet[Registration] = None):
     if queryset is None:
-        queryset = event.registrations.filter(
+        queryset = Registration.objects.with_annotations().filter(
+            event=event,
             status=Registration.Status.REGISTERED,
             tags__name="Is funded",
         )
@@ -109,7 +113,7 @@ class DSAReport:
             horizontal="center", vertical="center", wrap_text=True
         )
         self.header_bg = PatternFill(start_color="99ccff", fill_type="solid")
-        self.registrations = (
+        self.registrations = list(
             get_dsa_query(self.event, queryset=queryset)
             .prefetch_related(
                 "role",
@@ -127,7 +131,7 @@ class DSAReport:
                 "contact__organization__country",
                 "contact__organization__organization_type",
             )
-            .order_by("contact__last_name", "contact__first_name")
+            .order_by("dsa_country_name", "contact__last_name", "contact__first_name")
         )
 
     def export_xlsx(self):
@@ -248,7 +252,7 @@ class DSAReport:
             self.write_row(
                 [
                     reg_index,
-                    getattr(reg.dsa_country, "name", ""),
+                    reg.dsa_country_name or "",
                     getattr(dsa, "umoja_travel", ""),
                     getattr(dsa, "bp", ""),
                     reg.contact.title,
@@ -256,16 +260,28 @@ class DSAReport:
                     reg.contact.first_name,
                     {
                         "value": getattr(dsa, "arrival_date", ""),
-                        "number_format": "DD/MM/YYYY",
+                        "number_format": DATE_FORMAT,
                     },
                     {
                         "value": getattr(dsa, "departure_date", ""),
-                        "number_format": "DD/MM/YYYY",
+                        "number_format": DATE_FORMAT,
                     },
-                    f"=J{self.row_index}-I{self.row_index}",
-                    f"=M3*K{self.row_index}",
-                    reg.event.term_exp,
-                    f"=L{self.row_index}+M{self.row_index}",
+                    {
+                        "value": f"=J{self.row_index}-I{self.row_index}",
+                        "number_format": NUMBER_FORMAT,
+                    },
+                    {
+                        "value": f"=M3*K{self.row_index}",
+                        "number_format": NUMBER_FORMAT,
+                    },
+                    {
+                        "value": reg.event.term_exp,
+                        "number_format": NUMBER_FORMAT,
+                    },
+                    {
+                        "value": f"=L{self.row_index}+M{self.row_index}",
+                        "number_format": NUMBER_FORMAT,
+                    },
                 ]
             )
         if not self.registrations:
@@ -292,6 +308,7 @@ class DSAReport:
             column=14,
             value=f"=SUM(N{self.max_header_row + 1}:N{self.row_index - 1})",
         )
+        cell.number_format = NUMBER_FORMAT
         cell.font = self.header_font
         self.row_index += 1
 

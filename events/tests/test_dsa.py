@@ -35,8 +35,9 @@ class TestDSAReport(TestCase):
 
         self.is_funded = RegistrationTag.objects.get(name="Is funded")
 
-        self.country1 = CountryFactory()
-        self.country2 = CountryFactory()
+        self.country0 = CountryFactory(name="Country 0")
+        self.country1 = CountryFactory(name="Country 1")
+        self.country2 = CountryFactory(name="Country 2")
 
         self.gov = OrganizationType.objects.get(acronym="GOV")
         self.ass = OrganizationType.objects.get(acronym="ASSMT-PANEL")
@@ -109,6 +110,8 @@ class TestDSAReport(TestCase):
         for row, contact in zip(result, expected_contacts, strict=False):
             self.assertEqual(row[5], contact.last_name)
 
+        return result
+
     def test_dsa_report(self):
         self.check_report(
             [
@@ -154,7 +157,26 @@ class TestDSAReport(TestCase):
     def test_no_country(self):
         self.org1.government = None
         self.org1.save()
-        self.check_contacts([self.contact1, self.contact2])
+        self.check_contacts([self.contact2, self.contact1])
+
+    def test_use_org_address(self):
+        self.org2.country = self.country0
+        self.org2.save()
+        self.contact2.is_use_organization_address = True
+        self.contact2.save()
+
+        result = self.check_contacts([self.contact2, self.contact1])
+        self.assertEqual(result[0][1], self.country0.name)
+        self.assertEqual(result[1][1], self.country1.name)
+
+    def test_use_contact_address(self):
+        self.contact2.is_use_organization_address = False
+        self.contact2.country = self.country0
+        self.contact2.save()
+
+        result = self.check_contacts([self.contact2, self.contact1])
+        self.assertEqual(result[0][1], self.country0.name)
+        self.assertEqual(result[1][1], self.country1.name)
 
     def test_no_dates(self):
         self.dsa1.arrival_date = None
