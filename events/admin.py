@@ -13,13 +13,13 @@ from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
-from import_export import fields
 from import_export.admin import ExportMixin
 
 from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
 from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
+from core.models import Contact, Organization
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
 from events.exports.dsa import DSAFiles, DSAReport
@@ -141,47 +141,66 @@ class RegistrationTagAdmin(ExportMixin, ModelAdmin):
 
 
 class RegistrationResource(ModelResource):
-    organization = fields.Field(
-        column_name="organization",
-        attribute="contact__organization__name",
-    )
-    government = fields.Field(
-        column_name="government",
-        attribute="contact__organization__government__name",
-    )
-    country = fields.Field(
-        column_name="country",
-        attribute="contact__organization__country__name",
-    )
-    event = fields.Field(
-        column_name="event",
-        attribute="event__title",
-    )
-    contact = fields.Field(
-        column_name="contact",
-        attribute="contact__full_name",
-    )
-    role = fields.Field(
-        column_name="role",
-        attribute="role__name",
-    )
-    priority_pass = fields.Field(
-        column_name="priority_pass",
-        attribute="priority_pass__code",
-    )
-
     prefetch_related = (
-        "organization",
-        "contact",
-        "contact__organization",
-        "contact__organization__government",
-        "contact__organization__country",
+        "dsa",
+        "tags",
         "role",
+        "priority_pass",
+        "contact",
+        "contact__groups",
+        "event",
+        "organization",
+        "organization__country",
+        "organization__country__region",
+        "organization__country__subregion",
+        "organization__government",
+        "organization__government__region",
+        "organization__government__subregion",
+        "organization__organization_type",
+        "organization__primary_contacts",
+        "organization__secondary_contacts",
     )
 
     class Meta:
         model = Registration
-        exclude = ("id",)
+        fields = [
+            *ModelResource.expand_all_fields(Registration),
+            *ModelResource.expand_all_fields(DSA, prefix="dsa__"),
+            "tags",
+            *ModelResource.expand_all_fields(RegistrationRole, prefix="role__"),
+            *ModelResource.expand_all_fields(PriorityPass, prefix="priority_pass__"),
+            *ModelResource.expand_all_fields(Contact, prefix="contact__"),
+            "contact__groups",
+            *ModelResource.expand_all_fields(
+                Event,
+                prefix="event__",
+                exclude=[
+                    "event__confirmation_subject",
+                    "event__refusal_subject",
+                ],
+            ),
+            *ModelResource.expand_all_fields(
+                Organization, prefix="organization__", max_depth=2
+            ),
+            "organization__primary_contacts",
+            "organization__secondary_contacts",
+        ]
+
+    def dehydrate_tags(self, obj):
+        return ", ".join(t.name for t in obj.tags.all())
+
+    def dehydrate_contact__groups(self, obj):
+        return ", ".join(g.name for g in obj.contact.groups.all())
+
+    def dehydrate_organization__primary_contacts(self, obj):
+        if not obj.organization:
+            return ""
+        return ", ".join(c.full_name for c in obj.organization.primary_contacts.all())
+
+    def dehydrate_organization__secondary_contacts(self, obj):
+        if not obj.organization:
+            return ""
+        return ", ".join(c.full_name for c in obj.organization.secondary_contacts.all())
 
 
 @admin.register(Registration)
