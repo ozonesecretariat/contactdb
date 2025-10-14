@@ -10,3 +10,7 @@ RQ_QUEUES = {
         "ASYNC": False,
     }
 }
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: False,
+}
