@@ -437,6 +437,11 @@ CKEDITOR_CONTACT_PLACEHOLDERS = {
     "title_localized": {"attr": "title_localized"},
     "party": {"attr": "organization__government__name"},
     "organization": {"attr": "organization__name"},
+    "job_title": {"attr": "designation"},
+    "department": {"attr": "department"},
+    "city": {"attr": "address_entity__city"},
+    "postal_code": {"attr": "address_entity__postal_code"},
+    "country": {"attr": "address_entity__country__name"},
 }
 
 # Placeholders for event invitations

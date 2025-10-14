@@ -368,6 +368,13 @@ class BaseContact(models.Model):
             return f"{self.display_name} ({self.organization})"
         return self.display_name
 
+    @property
+    def address_entity(self):
+        if self.is_use_organization_address:
+            return self.organization
+
+        return self
+
     def clean(self):
         errors = {}
         if not self.first_name and not self.last_name:
