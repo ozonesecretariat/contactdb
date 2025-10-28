@@ -1,13 +1,18 @@
 import datetime
 
 
-def date_range_str(start: datetime.date, end: datetime.date):
+def date_range_str(start: datetime.datetime, end: datetime.datetime):
     date_fmt = "%-d %b %Y"
     if not start and not end:
         return ""
 
-    if start == end or (bool(start) ^ bool(end)):
-        return (start or end).strftime(date_fmt)
+    if not start or not end:
+        # One date is missing, assume a single-day event
+        start = end = start or end
+
+    start, end = start.date(), end.date()
+    if start == end:
+        return start.strftime(date_fmt)
 
     if end < start:
         start, end = end, start

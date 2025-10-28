@@ -76,6 +76,16 @@ class TestPriorityPass(TestCase):
 
         self.assertEqual(self.priority_pass.valid_date_range, "1 Nov 2025")
 
+    def test_same_day_different_hours(self):
+        self.event1.end_date = "2025-11-01 12:30:45"
+        self.event1.save()
+        self.reg2.status = Registration.Status.REVOKED
+        self.reg2.save()
+        self.reg3.status = Registration.Status.REVOKED
+        self.reg3.save()
+
+        self.assertEqual(self.priority_pass.valid_date_range, "1 Nov 2025")
+
     def test_no_day(self):
         self.reg1.status = Registration.Status.REVOKED
         self.reg1.save()
