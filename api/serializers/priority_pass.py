@@ -32,4 +32,4 @@ class PriorityPassSerializer(serializers.ModelSerializer):
         )
 
     def get_badge_url(self, obj: PriorityPass):
-        return reverse("prioritypass-print-badge", args=[obj.code]) + "?pdf=true"
+        return reverse("prioritypass-print-badge", args=[obj.code])

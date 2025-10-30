@@ -65,6 +65,7 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
         DjangoFilterBackend,
     )
     search_fields = (
+        "code",
         "registrations__event__code",
         "registrations__event__title__unaccent",
         "registrations__contact__first_name__unaccent",
