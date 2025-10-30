@@ -30,3 +30,12 @@ class BaseAPITestCase(APITestCase):
 
     def login_non_staff_no_access_user(self):
         self.client.login(email="test-non-staff-no-access@example.com", password="test")
+
+    def login_security(self):
+        self.client.login(email="test-security@example.com", password="test")
+
+    def login_support(self):
+        self.client.login(email="test-support@example.com", password="test")
+
+    def login_dsa(self):
+        self.client.login(email="test-dsa@example.com", password="test")

@@ -1,13 +1,18 @@
 import django_filters
 from constance import config
+from django.contrib.auth.decorators import permission_required
 from django.db.models import Max
+from django.http import FileResponse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django_filters import FilterSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
+from rest_framework.decorators import action
 
 from api.serializers.priority_pass import PriorityPassSerializer
 from common.filters import CamelCaseOrderingFilter
+from common.pdf import print_pdf
 from events.models import PriorityPass
 
 
@@ -60,6 +65,7 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
         DjangoFilterBackend,
     )
     search_fields = (
+        "code",
         "registrations__event__code",
         "registrations__event__title__unaccent",
         "registrations__contact__first_name__unaccent",
@@ -71,3 +77,20 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
         "registrations__organization__name__unaccent",
     )
     filterset_class = PriorityPassFilterSet
+
+    @method_decorator(
+        permission_required("events.view_registration", raise_exception=True)
+    )
+    @action(detail=True, methods=["get"])
+    def print_badge(self, *args, **kwargs):
+        priority_pass = self.get_object()
+        return FileResponse(
+            print_pdf(
+                priority_pass.badge_template,
+                context=priority_pass.priority_pass_context,
+                request=self.request,
+            ),
+            content_type="application/pdf",
+            filename=f"badge_{priority_pass.code}.pdf",
+            as_attachment=self.request.GET.get("download") == "true",
+        )
