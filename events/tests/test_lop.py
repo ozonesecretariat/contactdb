@@ -282,6 +282,17 @@ class TestLoPParties(TestListOfParticipants):
             }
         )
 
+    def test_party_role_missing(self):
+        self.reg1.role = None
+        self.reg1.save()
+
+        self.check_doc(
+            {
+                "Romania": [self.contact1],
+                "Spain": [self.contact2],
+            }
+        )
+
 
 class TestLoPAss(TestListOfParticipants):
     ORG_TYPE = "ASSMT-PANEL"
