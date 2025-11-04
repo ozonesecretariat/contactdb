@@ -68,7 +68,7 @@ class ListOfParticipants:
             except AttributeError:
                 pass
 
-            if r.role.hide_in_lop:
+            if r.role and r.role.hide_in_lop:
                 continue
 
             if r.is_gov and r.usable_government:
