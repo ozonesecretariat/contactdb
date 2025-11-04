@@ -1383,6 +1383,10 @@ class DSAAdmin(ModelAdmin):
 
 
 if settings.KRONOS_ENABLED:
-    admin.register(LoadEventsFromKronosTask)
-    admin.register(LoadParticipantsFromKronosTask)
-    admin.register(LoadOrganizationsFromKronosTask)
+    admin.site.register(LoadEventsFromKronosTask, LoadEventsFromKronosTaskAdmin)
+    admin.site.register(
+        LoadParticipantsFromKronosTask, LoadParticipantsFromKronosTaskAdmin
+    )
+    admin.site.register(
+        LoadOrganizationsFromKronosTask, LoadOrganizationsFromKronosTaskAdmin
+    )
