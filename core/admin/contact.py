@@ -3,6 +3,7 @@ from functools import cached_property
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from auditlog.models import LogEntry
 from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import AutocompleteSelect
 from django.db.models import BooleanField, Case, Count, Q, Value, When
@@ -19,6 +20,7 @@ from common.audit import bulk_audit_update
 from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
+from common.permissions import has_model_permission
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
 from core.models import (
@@ -345,6 +347,13 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "import_photos_from_kronos",
     ]
 
+    def has_import_photos_from_kronos_permission(self, request):
+        return (
+            settings.KRONOS_ENABLED
+            and self.has_change_permission(request)
+            and has_model_permission(request, ImportContactPhotosTask, "add")
+        )
+
     @admin.display(description="Events", ordering="registration_count")
     def registrations_link(self, obj):
         return self.get_related_link(
@@ -423,7 +432,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             },
         )
 
-    @admin.action(description="Import photos from Kronos", permissions=["change"])
+    @admin.action(
+        description="Import photos from Kronos",
+        permissions=["import_photos_from_kronos"],
+    )
     def import_photos_from_kronos(self, request, queryset):
         """Import photos for selected contacts from Kronos API."""
         if "apply" in request.POST:

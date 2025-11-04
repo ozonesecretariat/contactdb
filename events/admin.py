@@ -3,6 +3,7 @@ import base64
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Max, Min, Q
@@ -41,7 +42,6 @@ from events.models import (
 )
 
 
-@admin.register(LoadEventsFromKronosTask)
 class LoadEventsFromKronosTaskAdmin(TaskAdmin):
     """Task that imports all available events from Kronos.
     Events that are already present will have their attributes updated.
@@ -60,7 +60,6 @@ class LoadEventsFromKronosTaskAdmin(TaskAdmin):
     ordering = ("-created_on",)
 
 
-@admin.register(LoadParticipantsFromKronosTask)
 class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
     """Import contacts and registrations from Kronos.
     Contacts that have conflict data will be added as temporary contacts in
@@ -91,7 +90,6 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
         return False
 
 
-@admin.register(LoadOrganizationsFromKronosTask)
 class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
     """Import organizations from Kronos that were not imported together
     with events.
@@ -934,8 +932,10 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         return FileResponse(DSAFiles(event).export_zip(), as_attachment=True)
 
     def has_load_contacts_from_kronos_permission(self, request):
-        return self.has_add_permission(request) and has_model_permission(
-            request, LoadParticipantsFromKronosTask, "add"
+        return (
+            settings.KRONOS_ENABLED
+            and self.has_add_permission(request)
+            and has_model_permission(request, LoadParticipantsFromKronosTask, "add")
         )
 
     @admin.action(
@@ -1380,3 +1380,9 @@ class DSAAdmin(ModelAdmin):
     @admin.display(description="Signature")
     def get_signature_display(self, obj):
         return self.get_encrypted_file_display(obj, "signature")
+
+
+if settings.KRONOS_ENABLED:
+    admin.register(LoadEventsFromKronosTask)
+    admin.register(LoadParticipantsFromKronosTask)
+    admin.register(LoadOrganizationsFromKronosTask)
