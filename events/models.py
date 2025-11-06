@@ -819,7 +819,7 @@ class Registration(models.Model):
     @property
     def usable_organization_sort_order(self) -> int | float:
         try:
-            return self.usable_organization.sort_order
+            return self.usable_organization.sort_order or math.inf
         except AttributeError:
             return math.inf
 
