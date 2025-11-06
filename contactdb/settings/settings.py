@@ -626,6 +626,7 @@ SPECTACULAR_SETTINGS = {
 ### App settings
 
 # Kronos import
+KRONOS_ENABLED = env.bool("KRONOS_ENABLED", default=True)
 ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
 KRONOS_HOST = env.str("KRONOS_HOST", default="")
 

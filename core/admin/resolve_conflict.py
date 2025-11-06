@@ -2,6 +2,7 @@ from copy import copy
 from itertools import chain
 
 from admin_auto_filters.filters import AutocompleteFilterFactory
+from django.conf import settings
 from django.contrib import admin, messages
 from django.db import transaction
 from django.db.models import Q
@@ -14,7 +15,6 @@ from core.models import Contact, ResolveConflict
 from core.parsers import ContactParser
 
 
-@admin.register(ResolveConflict)
 class ResolveConflictAdmin(ContactAdminBase):
     show_index_page_count = True
     search_fields = (
@@ -191,3 +191,7 @@ class ResolveConflictAdmin(ContactAdminBase):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+if settings.KRONOS_ENABLED:
+    admin.site.register(ResolveConflict, ResolveConflictAdmin)
