@@ -3,11 +3,43 @@ describe("Check scan pass", () => {
     cy.loginAdmin(false);
     cy.visit("/scan-pass?code=69EFWLUG49");
     cy.contains("Luna-Nova Vortex");
+    cy.contains("Intergalactic Defense Coalition");
+    cy.contains("Spain");
     cy.contains("Psychedelic Dreamscape Art Fair");
     cy.contains("Quantum Quest: A Science Adventure Symposium");
     cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
     cy.contains("Accredited");
     cy.contains("Nominated");
+    cy.contains("Take photo");
+    // Can't print badge because participant isn't registered yet
+    cy.should("not.contain", "Print badge");
+  });
+  it("Check support staff view", () => {
+    cy.loginSupport(false);
+    cy.visit("/scan-pass?code=T6UQZRYW0S");
+    cy.contains("Mr. Lyra-Pulse Solstice");
+    cy.contains("lyra-pulse@example.com");
+    cy.contains("Registered 11 Jul 2020 to 19 Jul 9999");
+    cy.contains("Psychedelic Dreamscape Art Fair");
+    cy.contains("Quantum Quest: A Science Adventure Symposium");
+    cy.contains("Stéllâr Sérènade Müsïc Fêstivàl");
+    cy.contains("Accredited");
+    cy.contains("Registered");
+    cy.contains("Print badge");
+    cy.should("not.contain", "Take photo");
+  });
+  it("Check security staff view", () => {
+    cy.loginSecurity(false);
+    cy.visit("/scan-pass?code=T6UQZRYW0S");
+    cy.contains("Mr. Lyra-Pulse Solstice");
+    cy.contains("Registered 11 Jul 2020 to 19 Jul 9999");
+    cy.should("not.contain", "lyra-pulse@example.com");
+    cy.should("not.contain", "Psychedelic Dreamscape Art Fair");
+    cy.should("not.contain", "Quantum Quest: A Science Adventure Symposium");
+    cy.should("not.contain", "Stéllâr Sérènade Müsïc Fêstivàl");
+    cy.should("not.contain", "Print badge");
+    cy.should("not.contain", "Take photo");
+    cy.get(".registrations-section").should("not.exist");
   });
   it("Scan wrong code", () => {
     cy.loginAdmin(false);
@@ -45,7 +77,22 @@ describe("Check scan pass", () => {
       cy.contains("Register").click();
       cy.contains("Registration status updated.");
       cy.contains("Registered");
-      cy.contains("Admin").click();
+
+      // Check taking a photo
+      cy.get('img[alt="contact photo"]').should("not.exist");
+      cy.contains("Take photo").click();
+      cy.get(".q-inner-loading").should("not.exist");
+      cy.get("[role=dialog] video").should("be.visible");
+      cy.get("[role=dialog] button").contains("Capture").click();
+      cy.get('img[alt="contact photo"]').should("be.visible");
+
+      // Check cropping the photo
+      cy.contains("Crop photo").click();
+      cy.get(".q-inner-loading").should("not.exist");
+      cy.get("[role=dialog] button").contains("Crop").click();
+      cy.get('img[alt="contact photo"]').should("be.visible");
+
+      cy.get("a").contains("Admin").click();
       cy.deleteContactGroup(group);
     });
   });
@@ -69,7 +116,7 @@ describe("Check scan pass", () => {
       cy.contains("Revoke").click();
       cy.contains("Registration status updated.");
       cy.contains("Revoked");
-      cy.contains("Admin").click();
+      cy.get("a").contains("Admin").click();
       cy.deleteContactGroup(group);
     });
   });

@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
-import { apiBase } from "boot/axios";
 import MenuList from "components/MenuList.vue";
 import OzoneLogo from "components/OzoneLogo.vue";
 import { useQuasar } from "quasar";
@@ -66,58 +65,49 @@ $q.dark.set(isDarkMode.value);
 
 const menuItems = computed(() => [
   {
-    icon: "account_circle",
-    label: "Account settings",
-    to: { name: "account-settings" },
+    items: [
+      {
+        icon: "account_circle",
+        label: "Account settings",
+        to: { name: "account-settings" },
+      },
+      {
+        icon: "security",
+        label: "Account security",
+        to: { name: "account-security" },
+      },
+      {
+        icon: "password",
+        label: "Change password",
+        to: { name: "account-change-password" },
+      },
+    ],
+    name: "account",
   },
   {
-    icon: "security",
-    label: "Account security",
-    to: { name: "account-security" },
-  },
-  {
-    icon: "password",
-    label: "Change password",
-    to: { name: "account-change-password" },
-  },
-  {
-    label: "Account separator",
-    type: "separator" as const,
-  },
-  {
-    click: logout,
-    icon: "logout",
-    label: "Log out",
+    items: [
+      {
+        click: logout,
+        icon: "logout",
+        label: "Log out",
+      },
+    ],
+    name: "other",
   },
 ]);
 
 const drawerItems = computed(() => [
+  ...userStore.availablePages,
   {
-    icon: "home",
-    label: "Home",
-    to: { name: "home" },
+    items: [
+      {
+        click: logout,
+        icon: "logout",
+        label: "Log out",
+      },
+    ],
+    name: "other",
   },
-  {
-    icon: "event",
-    label: "Events",
-    to: { name: "events" },
-  },
-  {
-    icon: "qr_code_scanner",
-    label: "Scan Pass",
-    to: { name: "scan-pass" },
-  },
-  {
-    label: "Account separator",
-    type: "separator" as const,
-  },
-  {
-    href: `${apiBase}/admin/`,
-    icon: "admin_panel_settings",
-    label: "Admin",
-    show: userStore.isStaff,
-  },
-  ...menuItems.value,
 ]);
 
 async function logout() {

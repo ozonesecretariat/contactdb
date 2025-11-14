@@ -97,6 +97,46 @@ describe("Check", () => {
     cy.reloadUntilText(".paginator", "1 send email task");
     cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
   });
+  it("Check sending use org address", () => {
+    const content = ["full_name", "party", "organization", "job_title", "department", "city", "postal_code", "country"]
+      .map((f) => `${f}: [[${f}]]`)
+      .join("\n");
+
+    cy.loginEmails();
+    cy.checkModelAdmin({
+      checkDelete: false,
+      extraFields: {
+        content,
+        recipients: "Nyx-Thalia",
+      },
+      modelName: "Emails",
+      nameField: "subject",
+      saveButtonSelector: "input[name=_save]",
+      suffix: "-email-subject",
+    });
+    // Wait for the task to finish
+    cy.reloadUntilText(".paginator", "1 send email task");
+    cy.get(".field-status_display").contains("SUCCESS", { timeout: emailTimeout });
+    cy.get(".field-email a").click();
+    // Check interpolation
+    cy.get("#fieldset-0-1-heading").click();
+
+    const expected = [
+      "full_name: Ms. Nyx-Thalia Eclipse",
+      "organization: Celestial Exploratory Society",
+      "party: Kuwait",
+      "job_title: Janitor",
+      "department: Engineering",
+      "city: Lima",
+      "postal_code: 123456",
+      "country: Germany",
+    ];
+    cy.getIframeBody(".field-email_preview iframe").then((body) => {
+      for (const line of expected) {
+        expect(body.text()).to.contain(line);
+      }
+    });
+  });
   it("Checking sending to contact with no name", () => {
     cy.loginEmails();
     cy.checkModelAdmin({

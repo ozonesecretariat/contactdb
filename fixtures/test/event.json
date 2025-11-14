@@ -7,11 +7,12 @@
       "code": "SSMF",
       "title": "Stéllâr Sérènade Müsïc Fêstivàl",
       "start_date": "2020-07-11T00:00:00Z",
-      "end_date": "2020-07-19T00:00:00Z",
+      "end_date": "9999-07-19T00:00:00Z",
       "venue_country": "MM",
       "venue_city": "Tashkent",
       "dates": "15-22 April",
       "group": 2,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -21,7 +22,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "433.00",
+      "term_exp": "134.00"
     }
   },
   {
@@ -37,6 +41,7 @@
       "venue_city": "Oslo",
       "dates": "15-22 April",
       "group": 2,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -46,7 +51,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "230.00",
+      "term_exp": "264.00"
     }
   },
   {
@@ -62,6 +70,7 @@
       "venue_city": "Prague",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -71,7 +80,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "444.00",
+      "term_exp": "347.00"
     }
   },
   {
@@ -87,6 +99,7 @@
       "venue_city": "Hanoi",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -96,7 +109,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "498.00",
+      "term_exp": "215.00"
     }
   },
   {
@@ -112,6 +128,7 @@
       "venue_city": "Dodoma",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -121,7 +138,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "230.00",
+      "term_exp": "369.00"
     }
   },
   {
@@ -137,6 +157,7 @@
       "venue_city": "Bandar Seri Begawan",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -146,7 +167,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "481.00",
+      "term_exp": "188.00"
     }
   },
   {
@@ -162,6 +186,7 @@
       "venue_city": "Prague",
       "dates": "15-22 April",
       "group": 2,
+      "hide_for_nomination": false,
       "attach_priority_pass": true,
       "confirmation_subject": "Congratulations!",
       "confirmation_content": "<p>Hello&nbsp;[[full_name]]</p>\r\n\r\n<p>Congratulation on getting accepted!&nbsp;</p>\r\n\r\n<p>Ozone&nbsp;</p>",
@@ -171,7 +196,10 @@
       "wifi_name": "PDAF",
       "wifi_password": "PDAF@2025",
       "app_store_url": "https://example.com?appstore",
-      "play_store_url": "https://example.com?playstore"
+      "play_store_url": "https://example.com?playstore",
+      "lop_doc_symbols": null,
+      "dsa": "263.00",
+      "term_exp": "313.00"
     }
   },
   {
@@ -187,6 +215,7 @@
       "venue_city": "Riyadh",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -196,7 +225,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "297.00",
+      "term_exp": "301.00"
     }
   },
   {
@@ -212,6 +244,7 @@
       "venue_city": "Mata-Utu",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -221,7 +254,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "438.00",
+      "term_exp": "125.00"
     }
   },
   {
@@ -231,12 +267,13 @@
       "event_id": null,
       "code": "MMB",
       "title": "Mythos Masquerade Ball",
-      "start_date": "2025-10-22T00:00:00Z",
-      "end_date": "2025-10-26T00:00:00Z",
+      "start_date": "2024-10-22T00:00:00Z",
+      "end_date": "2024-10-26T00:00:00Z",
       "venue_country": "AD",
       "venue_city": "Apia",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -246,7 +283,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "198.00",
+      "term_exp": "473.00"
     }
   },
   {
@@ -256,12 +296,13 @@
       "event_id": null,
       "code": "NN:FDP",
       "title": "Neon Nights: Futuristic Dance Party",
-      "start_date": "2025-11-19T00:00:00Z",
-      "end_date": "2025-11-22T00:00:00Z",
+      "start_date": "2024-11-19T00:00:00Z",
+      "end_date": "2024-11-22T00:00:00Z",
       "venue_country": "MG",
       "venue_city": "Budapest",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -271,7 +312,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "218.00",
+      "term_exp": "287.00"
     }
   },
   {
@@ -287,6 +331,7 @@
       "venue_city": "Porto-Novo",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -296,7 +341,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "114.00",
+      "term_exp": "123.00"
     }
   },
   {
@@ -312,6 +360,7 @@
       "venue_city": "Damascus",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -321,7 +370,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "316.00",
+      "term_exp": "429.00"
     }
   },
   {
@@ -332,11 +384,12 @@
       "code": "ZZ:SYE",
       "title": "Zenith Zen: Skyline Yoga Experience",
       "start_date": "2021-02-15T00:00:00Z",
-      "end_date": "2021-02-26T00:00:00Z",
+      "end_date": "9999-02-26T00:00:00Z",
       "venue_country": "BZ",
       "venue_city": "Suva",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -346,7 +399,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "484.00",
+      "term_exp": "416.00"
     }
   },
   {
@@ -362,6 +418,7 @@
       "venue_city": "Online",
       "dates": "15-22 April",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "Congratulations!",
       "confirmation_content": "<p>Hello&nbsp;[[full_name]]</p>\r\n\r\n<p>Congratulation on getting accepted!&nbsp;</p>\r\n\r\n<p>Ozone&nbsp;</p>",
@@ -371,7 +428,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "355.00",
+      "term_exp": "215.00"
     }
   },
   {
@@ -387,6 +447,7 @@
       "venue_city": "Kuwait City",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -396,7 +457,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "237.00",
+      "term_exp": "321.00"
     }
   },
   {
@@ -412,6 +476,7 @@
       "venue_city": "Online",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -421,7 +486,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "180.00",
+      "term_exp": "181.00"
     }
   },
   {
@@ -437,6 +505,7 @@
       "venue_city": "Ottawa",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -446,7 +515,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "166.00",
+      "term_exp": "249.00"
     }
   },
   {
@@ -462,6 +534,7 @@
       "venue_city": "Nouakchott",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -471,7 +544,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "314.00",
+      "term_exp": "330.00"
     }
   },
   {
@@ -482,11 +558,12 @@
       "code": "SS:CCC",
       "title": "Spectrum Symposium: Colorful Conference on Creativity",
       "start_date": "2021-08-24T00:00:00Z",
-      "end_date": "2021-09-03T00:00:00Z",
+      "end_date": "9999-01-01T00:00:00Z",
       "venue_country": "AF",
       "venue_city": "Yaoundé",
       "dates": "",
       "group": null,
+      "hide_for_nomination": false,
       "attach_priority_pass": false,
       "confirmation_subject": "",
       "confirmation_content": "",
@@ -496,7 +573,10 @@
       "wifi_name": "",
       "wifi_password": "",
       "app_store_url": "",
-      "play_store_url": ""
+      "play_store_url": "",
+      "lop_doc_symbols": null,
+      "dsa": "150.00",
+      "term_exp": "259.00"
     }
   }
 ]

@@ -1,8 +1,8 @@
 import contextlib
 import textwrap
-from uuid import uuid4
 
 import pycountry
+from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_db_views.db_view import DBView
@@ -53,17 +53,52 @@ class Country(models.Model):
                 ).official_name
 
 
+class OrganizationTypeManager(models.Manager):
+    def get_by_natural_key(self, acronym):
+        return self.get(acronym=acronym)
+
+
 class OrganizationType(models.Model):
     organization_type_id = KronosId()
-    acronym = CICharField(max_length=50, primary_key=True)
+    acronym = CICharField(max_length=50, unique=True)
     title = CICharField(max_length=250, blank=True)
+    badge_title = CICharField(
+        max_length=250, blank=True, help_text="Used on badges instead of the title."
+    )
+    statistics_title = CICharField(
+        max_length=250,
+        blank=True,
+        help_text="Used for event statistics instead of the title.",
+    )
+    badge_color = ColorField(default="#7f97ab")
     description = models.TextField(blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+    hide_in_lop = models.BooleanField(
+        default=False, help_text="Hide in the List of Participants document"
+    )
+    hide_in_statistics = models.BooleanField(
+        default=False, help_text="Hide in the statistics document"
+    )
+    protected = models.BooleanField(default=False)
+
+    objects = OrganizationTypeManager()
 
     class Meta:
-        ordering = ("title",)
+        ordering = ("sort_order", "title")
 
     def __str__(self):
         return f"{self.title} ({self.acronym})"
+
+    def natural_key(self):
+        return (self.acronym,)
+
+    @property
+    def badge_display_name(self):
+        return self.badge_title or self.title
+
+    @property
+    def statistics_display_name(self):
+        return self.statistics_title or self.title
 
 
 class Organization(models.Model):
@@ -107,6 +142,8 @@ class Organization(models.Model):
     emails = ArrayField(null=True, base_field=CIEmailField(), blank=True)
     email_ccs = ArrayField(null=True, base_field=CIEmailField(), blank=True)
 
+    # XXX Why is this many to many if we don't support multiple orgs per contact?
+    # XXX We should likely make this a simple flag on the contact itself.
     primary_contacts = models.ManyToManyField(
         "Contact", related_name="primary_for_orgs"
     )
@@ -114,9 +151,10 @@ class Organization(models.Model):
         "Contact", related_name="secondary_for_orgs"
     )
     include_in_invitation = models.BooleanField(default=True)
+    sort_order = models.PositiveIntegerField(default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ["name", "country__name"]
+        ordering = ("sort_order", "name", "country__name")
 
     def __str__(self):
         if self.government:
@@ -143,6 +181,27 @@ class Organization(models.Model):
             government=self.government, include_in_invitation=True
         )
 
+    @property
+    def is_gov(self):
+        try:
+            return self.government and self.organization_type.acronym == "GOV"
+        except AttributeError:
+            return False
+
+    @property
+    def is_ass_panel(self):
+        try:
+            return self.organization_type.acronym == "ASSMT-PANEL"
+        except AttributeError:
+            return False
+
+    @property
+    def is_secretariat(self):
+        try:
+            return self.organization_type.acronym == "SECRETARIAT"
+        except AttributeError:
+            return False
+
 
 class BaseContact(models.Model):
     organization = None
@@ -154,6 +213,8 @@ class BaseContact(models.Model):
         HE_MS = "H.E. Ms.", "H.E. Ms."
         HON_MR = "Hon. Mr.", "Hon. Mr."
         HON_MS = "Hon. Ms.", "Hon. Ms."
+
+    HL_TITLES = (Title.HE_MR, Title.HE_MS, Title.HON_MR, Title.HON_MS)
 
     title = models.CharField(max_length=30, choices=Title.choices, blank=True)
 
@@ -307,20 +368,24 @@ class BaseContact(models.Model):
             return f"{self.display_name} ({self.organization})"
         return self.display_name
 
+    @property
+    def address_entity(self):
+        if self.is_use_organization_address:
+            return self.organization
+
+        return self
+
     def clean(self):
+        errors = {}
         if not self.first_name and not self.last_name:
-            raise ValidationError(
-                {
-                    "first_name": "At least first name or last name must be provided",
-                    "last_name": "At least first name or last name must be provided",
-                }
-            )
+            msg = "At least first name or last name must be provided"
+            errors["first_name"] = msg
+            errors["last_name"] = msg
 
         if self.has_credentials and not self.credentials:
-            raise ValidationError({"credentials": "This field is required."})
+            errors["credentials"] = "This field is required."
 
         if self.needs_visa_letter:
-            errors = {}
             for field in [
                 "nationality",
                 "passport_number",
@@ -330,8 +395,24 @@ class BaseContact(models.Model):
             ]:
                 if not getattr(self, field):
                     errors[field] = "This field is required."
-            if errors:
-                raise ValidationError(errors)
+
+        # Can only perform this check after the first save, but it's not possible
+        # to set the primary_for_orgs when creating a contact, so should not be an
+        # issue.
+        if self.pk:
+            primary_org = self.primary_for_orgs.first()
+            secondary_org = self.secondary_for_orgs.first()
+            if primary_org and primary_org != self.organization:
+                errors["organization"] = (
+                    "Cannot change organization while contact is primary"
+                )
+            if secondary_org and secondary_org != self.organization:
+                errors["organization"] = (
+                    "Cannot change organization while contact is secondary"
+                )
+
+        if errors:
+            raise ValidationError(errors)
 
     def clean_for_nomination(self):
         required_fields = [
@@ -376,22 +457,12 @@ class Contact(BaseContact):
         help_text="Contact photo; initially imported from Kronos",
         storage=get_protected_storage,
     )
-    photo_access_uuid = models.UUIDField(default=uuid4, null=True, editable=False)
 
     groups = models.ManyToManyField(
         "ContactGroup",
         blank=True,
         related_name="contacts",
     )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["photo_access_uuid"],
-                name="unique_photo_access_uuid_not_null",
-                condition=models.Q(photo_access_uuid__isnull=False),
-            )
-        ]
 
     def add_to_group(self, name):
         return self.groups.add(ContactGroup.objects.get(name=name))
@@ -711,9 +782,13 @@ class ImportContactPhotosTask(TaskRQ):
 class Region(models.Model):
     code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("name",)
+        ordering = (
+            "sort_order",
+            "name",
+        )
         verbose_name_plural = "regions"
 
     def __str__(self):
@@ -723,9 +798,10 @@ class Region(models.Model):
 class Subregion(models.Model):
     code = CICharField(max_length=4, primary_key=True, help_text="Up to 4 characters")
     name = CICharField(max_length=255, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("sort_order", "name")
         verbose_name_plural = "subregions"
 
     def __str__(self):

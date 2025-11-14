@@ -177,3 +177,16 @@ ul.m2m-list li {
   background-color: #218838 !important;
   border-color: #1e7e34 !important;
 }
+
+.color-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-preview {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #ccc;
+}

@@ -212,13 +212,19 @@ class Email(models.Model):
     @property
     def all_to_contacts(self):
         all_recipients = set(self.recipients.all())
+
         for group in self.groups.prefetch_related("contacts"):
             all_recipients.update(group.contacts.all())
+
+        for org in self.organizations.all().prefetch_related("primary_contacts"):
+            all_recipients.update(org.primary_contacts.all())
+
         for event in self.events.all().prefetch_related(
             "registrations", "registrations__contact"
         ):
             for registration in event.registrations.all():
                 all_recipients.add(registration.contact)
+
         return all_recipients
 
     @property
@@ -226,6 +232,9 @@ class Email(models.Model):
         result = set(self.cc_recipients.all())
         for group in self.cc_groups.all().prefetch_related("contacts"):
             result.update(group.contacts.all())
+        for org in self.organizations.all().prefetch_related("secondary_contacts"):
+            result.update(org.secondary_contacts.all())
+
         return result
 
     @property

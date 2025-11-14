@@ -5,6 +5,7 @@ export interface Contact {
   address: string;
   city: string;
   country: string;
+  countryName: string;
   department: string;
   designation: string;
   emailCcs: string[];
@@ -13,6 +14,7 @@ export interface Contact {
   fullName: string;
   gender: string;
   hasCredentials: boolean;
+  hasPhoto: boolean;
   id: number;
   isUseOrganizationAddress: boolean;
   lastName: string;
@@ -20,7 +22,7 @@ export interface Contact {
   needsVisaLetter: boolean;
   organization?: Organization;
   phones: string[];
-  photoUrl: null | string;
+  photo: null | string;
   postalCode: string;
   state: string;
   title: string;

@@ -1,13 +1,9 @@
-import uuid
-
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.urls import reverse
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from common.serializers import DateField
+from common.serializers import DataURIImageField, DateField
 from core.models import Contact, Country, Organization
 
 
@@ -20,6 +16,7 @@ class CountrySerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     country = CountrySerializer(read_only=True)
     government = CountrySerializer(read_only=True)
+    organization_type = serializers.SlugRelatedField("acronym", read_only=True)
 
     class Meta:
         model = Organization
@@ -63,8 +60,11 @@ class ContactSerializer(serializers.ModelSerializer):
     passport_date_of_expiry = DateField(
         write_only=True, required=False, allow_blank=True
     )
-    photo = Base64ImageField(write_only=True, required=False, allow_null=True)
-    photo_url = serializers.SerializerMethodField()
+    photo = DataURIImageField(required=False, allow_null=True)
+    has_photo = serializers.SerializerMethodField()
+    country_name = serializers.SlugRelatedField(
+        "name", source="country", read_only=True
+    )
 
     class Meta:
         model = Contact
@@ -89,10 +89,11 @@ class ContactSerializer(serializers.ModelSerializer):
             "passport_date_of_issue",
             "passport_date_of_expiry",
             "photo",
-            "photo_url",
+            "has_photo",
             "department",
             "designation",
             # Address
+            "country_name",
             "country",
             "city",
             "state",
@@ -101,19 +102,8 @@ class ContactSerializer(serializers.ModelSerializer):
             "is_use_organization_address",
         )
 
-    def get_photo_url(self, obj):
-        if not obj.photo or not obj.photo_access_uuid:
-            return None
-        request = self.context.get("request")
-        nomination_token = self.context.get("nomination_token")
-        photo_url = reverse(
-            "secure-photo", kwargs={"photo_token": obj.photo_access_uuid}
-        )
-        if nomination_token:
-            photo_url = f"{photo_url}?nomination_token={nomination_token}"
-        if request:
-            return request.build_absolute_uri(photo_url)
-        return photo_url
+    def get_has_photo(self, obj) -> bool:
+        return bool(obj.photo)
 
     def create(self, validated_data):
         with transaction.atomic():
@@ -128,12 +118,9 @@ class ContactSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             instance = super().update(instance, validated_data)
-            if validated_data.get("photo"):
-                # Regenerate the UUID so the photo isn't cached
-                instance.photo_access_uuid = uuid.uuid4()
-                instance.save()
             try:
-                instance.clean_for_nomination()
+                if not self.partial:
+                    instance.clean_for_nomination()
                 instance.clean()
             except DjangoValidationError as e:
                 raise ValidationError(e.message_dict) from e

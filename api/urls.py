@@ -7,18 +7,21 @@ from drf_spectacular.views import (
 from rest_framework import routers
 
 import api.views.user
-from api.views.contact import ContactViewSet, PhotoUploadView, SecurePhotoView
+from api.views.contact import ContactViewSet
+from api.views.dsa import DSAViewSet
 from api.views.event import EventViewSet
 from api.views.misc import AppSettingsView
 from api.views.nomination import EventNominationViewSet
 from api.views.priority_pass import PriorityPassViewSet
-from api.views.registration import RegistrationStatusViewSet
+from api.views.registration import RegistrationTagViewSet, RegistrationViewSet
 
 router = routers.SimpleRouter()
+router.register("dsa", DSAViewSet)
 router.register("events", EventViewSet)
 router.register("contacts", ContactViewSet)
 router.register("priority-passes", PriorityPassViewSet)
-router.register("registration-status", RegistrationStatusViewSet)
+router.register("registrations", RegistrationViewSet)
+router.register("registration-tags", RegistrationTagViewSet)
 router.register(
     "events-nominations", EventNominationViewSet, basename="events-nominations"
 )
@@ -64,15 +67,5 @@ urlpatterns = [
         "app-settings/",
         AppSettingsView.as_view(),
         name="app-settings",
-    ),
-    path(
-        "contacts/<uuid:photo_token>/photo/",
-        SecurePhotoView.as_view(),
-        name="secure-photo",
-    ),
-    path(
-        "contacts/photo-upload/",
-        PhotoUploadView.as_view(),
-        name="photo-upload",
     ),
 ] + router.urls

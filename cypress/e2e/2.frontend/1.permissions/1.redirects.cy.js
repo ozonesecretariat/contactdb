@@ -7,7 +7,7 @@ describe("Check redirects", () => {
     cy.get("[type=submit]:not([hidden])").click();
     // check that we redirect back to the account settings page
     cy.url().should("include", "/account/settings");
-    cy.checkNavActive("Account settings");
+    cy.get("header").contains("Account settings");
   });
   it("Check unsafe redirect after login", () => {
     cy.visit("/auth/login?next=https://example.com");
@@ -15,19 +15,18 @@ describe("Check redirects", () => {
     cy.get("input[autocomplete=current-password]").type("admin");
     cy.get("[type=submit]:not([hidden])").click();
     // check that we redirect back to the home page
-    cy.checkNavActive("Home");
+    cy.checkNavActive("Dashboard");
   });
   it("Check access anon only page while logged in", () => {
     cy.loginAdmin(false);
     cy.visit("/auth/login");
     // check that we redirect back to the home page
-    cy.checkNavActive("Home");
+    cy.checkNavActive("Dashboard");
   });
   it("Check access page without permissions", () => {
     cy.loginNoAccess(false);
     cy.visit("/events");
     // check that we redirect back to the home page
-    cy.checkNavActive("Home");
     cy.contains("Your account does not have the required permissions");
   });
 });

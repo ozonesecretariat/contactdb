@@ -1,8 +1,14 @@
 {% extends "admin/submit_line.html" %}
+{% load admin_urls %}
 
 {% block submit-row %}
   {% if show_save %}
     <input type="submit" value="Save and send" class="default send-email-btn" name="_save" />
     <input type="submit" value="Save without sending" name="_save_without_sending" />
+  {% endif %}
+
+  {% if show_delete_link and original %}
+    {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+    <a href="{% add_preserved_filters delete_url %}" class="deletelink">Delete</a>
   {% endif %}
 {% endblock %}

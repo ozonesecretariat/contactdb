@@ -1,8 +1,16 @@
 import factory
 from django.utils import timezone
 
-from core.models import BaseContact, Contact, Country, Organization, ResolveConflict
+from core.models import (
+    BaseContact,
+    Contact,
+    Country,
+    Organization,
+    OrganizationType,
+    ResolveConflict,
+)
 from events.models import (
+    DSA,
     Event,
     EventGroup,
     EventInvitation,
@@ -24,6 +32,15 @@ class CountryFactory(factory.django.DjangoModelFactory):
     subregion = None
 
 
+class OrganizationTypeFactory(factory.django.DjangoModelFactory):
+    acronym = factory.Sequence(lambda n: f"ORGTYPE{n}")
+    title = factory.Sequence(lambda n: f"OrgType {n}")
+
+    class Meta:
+        model = OrganizationType
+        django_get_or_create = ("acronym",)
+
+
 class OrganizationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Organization
@@ -31,6 +48,7 @@ class OrganizationFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Test Organization {n}")
     acronym = factory.Sequence(lambda n: f"ORG{n}")
     emails = ["org@example.com"]
+    organization_type = factory.SubFactory(OrganizationTypeFactory)
     include_in_invitation = True
 
 
@@ -131,11 +149,20 @@ class RegistrationFactory(factory.django.DjangoModelFactory):
         model = Registration
 
     contact = factory.SubFactory(ContactFactory)
-    event = factory.SubFactory("events.tests.factories.EventFactory")
+    event = factory.SubFactory(EventFactory)
     role = factory.SubFactory(RegistrationRoleFactory)
     date = factory.LazyFunction(timezone.now)
     is_funded = False
     priority_pass = factory.SubFactory(PriorityPassFactory)
+
+
+class DSAFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = DSA
+
+    registration = factory.SubFactory(RegistrationFactory)
+    umoja_travel = factory.Faker("random_number")
+    bp = factory.Faker("random_number")
 
 
 class ResolveConflictFactory(factory.django.DjangoModelFactory):

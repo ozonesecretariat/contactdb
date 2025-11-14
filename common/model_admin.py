@@ -1,16 +1,24 @@
 from functools import wraps
 
+from auditlog.models import LogEntry
+from ckeditor.fields import RichTextField
+from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.admin.options import get_content_type_for_model
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from django.utils.formats import localize
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 from django_task.admin import TaskAdmin as BaseTaskAdmin
+from encrypted_fields import EncryptedFieldMixin
 from import_export import resources, widgets
 
 from common.boolean_widget import BooleanWidget
+from common.model import KronosId
 from common.urls import reverse
 
 
@@ -83,6 +91,18 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
     @maybe_redirect
     def response_post_save_change(self, request, obj):
         return super().response_post_save_change(request, obj)
+
+    def get_encrypted_file_display(self, obj, field):
+        if not (file := getattr(obj, field)):
+            return "-"
+
+        try:
+            b64data = file["data"]
+            filename = file["filename"]
+        except KeyError:
+            return "-"
+
+        return mark_safe(f'<a href="data:{b64data}" download="{filename}">Download</a>')
 
     def get_admin_list_link(self, model, query=None):
         opts = model._meta
@@ -181,6 +201,78 @@ class _CustomModelAdminMixIn(_QuerysetMixIn, admin.ModelAdmin):
             )
         )
 
+    def get_list_display(self, request):
+        list_display = list(super().get_list_display(request))
+
+        for field in self.model._meta.get_fields():
+            if not isinstance(field, ColorField):
+                continue
+
+            try:
+                index = list_display.index(field.name)
+            except ValueError:
+                continue
+
+            preview_name = f"{field.name}_preview"
+
+            if not hasattr(self, preview_name):
+                # Dynamically create a preview method
+                def _preview(self, obj, fname=field.name):
+                    color = getattr(obj, fname)
+                    return format_html(
+                        """
+                            <div class="color-field">
+                                <div class="color-preview" style="background-color: {color}"></div> 
+                                <div>{color}<div>
+                            </div>
+                        """,
+                        color=color,
+                    )
+
+                _preview.short_description = field.name.replace("_", " ")
+                _preview.admin_order_field = field.name
+                setattr(self.__class__, preview_name, _preview)
+            list_display[index] = preview_name
+
+        return tuple(list_display)
+
+    def format_log_entry(self, entry: LogEntry):
+        url = reverse("admin:auditlog_logentry_change", args=(entry.pk,))
+        return format_html(
+            """
+            <a href="{url}">{date} by {actor}</>
+        """,
+            url=url,
+            date=localize(entry.timestamp),
+            actor=entry.actor or "System",
+        )
+
+    @admin.display(description="Created at")
+    def audit_created_at(self, obj):
+        try:
+            log = (
+                LogEntry.objects.get_for_object(obj)
+                .filter(action=LogEntry.Action.CREATE)
+                .select_related("actor")
+                .earliest()
+            )
+        except LogEntry.DoesNotExist:
+            return ""
+        return self.format_log_entry(log)
+
+    @admin.display(description="Updated at")
+    def audit_updated_at(self, obj):
+        try:
+            log = (
+                LogEntry.objects.get_for_object(obj)
+                .filter(action=LogEntry.Action.UPDATE)
+                .select_related("actor")
+                .latest()
+            )
+        except LogEntry.DoesNotExist:
+            return ""
+        return self.format_log_entry(log)
+
 
 class ModelAdmin(_CustomModelAdminMixIn, admin.ModelAdmin):
     pass
@@ -213,3 +305,42 @@ class ModelResource(_QuerysetMixIn, resources.ModelResource):
         if internal_type in ("BooleanField", "NullBooleanField"):
             return BooleanWidget
         return super().widget_from_django_field(f, default=default)
+
+    @classmethod
+    def expand_all_fields(cls, model, max_depth=0, exclude=None, prefix=""):
+        excluded_fields = (
+            EncryptedFieldMixin,
+            models.FileField,
+            KronosId,
+            RichTextField,
+        )
+
+        fields = []
+        for field in model._meta.get_fields():
+            if getattr(field, "primary_key", False):
+                continue
+
+            name = prefix + field.name
+            if exclude and name in exclude:
+                continue
+
+            if isinstance(field, excluded_fields):
+                continue
+            if isinstance(field, ArrayField) and isinstance(
+                field.base_field, excluded_fields
+            ):
+                continue
+
+            if not field.is_relation:
+                fields.append(prefix + field.name)
+            elif max_depth > 0 and (field.many_to_one or field.one_to_one):
+                related_model = field.related_model
+                fields.extend(
+                    cls.expand_all_fields(
+                        related_model,
+                        max_depth=max_depth - 1,
+                        exclude=exclude,
+                        prefix=name + "__",
+                    )
+                )
+        return fields

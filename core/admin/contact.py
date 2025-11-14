@@ -3,9 +3,10 @@ from functools import cached_property
 from admin_auto_filters.filters import AutocompleteFilterFactory
 from auditlog.models import LogEntry
 from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import AutocompleteSelect
-from django.db.models import BooleanField, Case, Count, Value, When
+from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
@@ -19,6 +20,7 @@ from common.audit import bulk_audit_update
 from common.auto_complete_multiple import AutocompleteFilterMultipleFactory
 from common.import_export import ManyToManyWidgetWithCreation
 from common.model_admin import ModelResource
+from common.permissions import has_model_permission
 from common.urls import reverse
 from core.admin.contact_base import ContactAdminBase, MergeContacts
 from core.models import (
@@ -189,6 +191,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "org_head",
         BooleanAnnotationFilter.init("primary"),
         BooleanAnnotationFilter.init("secondary"),
+        BooleanAnnotationFilter.init("primary_or_secondary"),
+        "organization__include_in_invitation",
     )
     fieldsets = (
         (
@@ -292,8 +296,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
                 "fields": (
                     "contact_ids",
                     "focal_point_ids",
-                    "created_at",
-                    "updated_at",
+                    "audit_created_at",
+                    "audit_updated_at",
                 ),
             },
         ),
@@ -312,6 +316,8 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "passport_display",
         "credentials_display",
         "has_credentials",
+        "audit_created_at",
+        "audit_updated_at",
     )
     annotate_query = {
         "registration_count": Count("registrations"),
@@ -325,6 +331,14 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             default=Value(False),
             output_field=BooleanField(),
         ),
+        "primary_or_secondary": Case(
+            When(
+                Q(primary_for_orgs__isnull=False) | Q(secondary_for_orgs__isnull=False),
+                then=Value(True),
+            ),
+            default=Value(False),
+            output_field=BooleanField(),
+        ),
     }
     actions = [
         "send_email",
@@ -332,6 +346,13 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
         "merge_contacts",
         "import_photos_from_kronos",
     ]
+
+    def has_import_photos_from_kronos_permission(self, request):
+        return (
+            settings.KRONOS_ENABLED
+            and self.has_change_permission(request)
+            and has_model_permission(request, ImportContactPhotosTask, "add")
+        )
 
     @admin.display(description="Events", ordering="registration_count")
     def registrations_link(self, obj):
@@ -411,7 +432,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
             },
         )
 
-    @admin.action(description="Import photos from Kronos", permissions=["change"])
+    @admin.action(
+        description="Import photos from Kronos",
+        permissions=["import_photos_from_kronos"],
+    )
     def import_photos_from_kronos(self, request, queryset):
         """Import photos for selected contacts from Kronos API."""
         if "apply" in request.POST:
@@ -462,22 +486,10 @@ class ContactAdmin(MergeContacts, ImportExportMixin, ContactAdminBase):
     def organization_link(self, obj):
         return self.get_object_display_link(obj.organization)
 
-    def _get_file_display(self, obj, field):
-        if not (file := getattr(obj, field)):
-            return "-"
-
-        try:
-            b64data = file["data"]
-            filename = file["filename"]
-        except KeyError:
-            return "-"
-
-        return mark_safe(f'<a href="data:{b64data}" download="{filename}">Download</a>')
-
     @admin.display(description="Credentials")
     def credentials_display(self, obj):
-        return self._get_file_display(obj, "credentials")
+        return self.get_encrypted_file_display(obj, "credentials")
 
     @admin.display(description="Passport")
     def passport_display(self, obj):
-        return self._get_file_display(obj, "passport")
+        return self.get_encrypted_file_display(obj, "passport")

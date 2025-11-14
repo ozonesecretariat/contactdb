@@ -1,4 +1,5 @@
 <template>
+  <q-btn color="primary" label="Search for pass" icon="search" @click="show()" />
   <q-dialog v-model="showDialog">
     <q-card style="min-width: 400px; min-height: 400px">
       <q-card-section class="row items-center q-pb-none">
@@ -10,12 +11,14 @@
       <q-card-section>
         <q-input
           v-model="searchQuery"
+          name="searchForPass"
           label="Search by event, contact, email or organization"
           filled
           dense
           autofocus
           role="search"
-          @keyup.enter="searchPasses"
+          debounce="300"
+          @update:model-value="searchPasses"
         >
           <template #append>
             <q-icon v-if="searchQuery" name="close" class="cursor-pointer" @click="searchQuery = ''" />
@@ -63,7 +66,7 @@ async function searchPasses() {
 
   try {
     const response = await api.get<Paginated<PriorityPass>>("/priority-passes/", {
-      params: { page: 1, pageSize: 10, search: searchQuery.value },
+      params: { isRecent: true, page: 1, pageSize: 10, search: searchQuery.value },
     });
     passes.value = response.data.results;
     hasSearched.value = true;

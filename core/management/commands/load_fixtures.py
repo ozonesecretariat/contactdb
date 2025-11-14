@@ -19,6 +19,7 @@ from core.models import (
 )
 from emails.models import Email, EmailTemplate, SendEmailTask
 from events.models import (
+    DSA,
     Event,
     EventGroup,
     EventInvitation,
@@ -69,6 +70,7 @@ class Command(BaseCommand):
             LoadParticipantsFromKronosTask,
             PriorityPass,
             Registration,
+            DSA,
             # Email
             EmailTemplate,
             Email,

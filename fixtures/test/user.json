@@ -3,7 +3,7 @@
     "model": "accounts.user",
     "fields": {
       "password": "pbkdf2_sha256$1000000$kHuxe4wmH9Pk914OsbSrJA$oDiWeg85dJ9l5BD0IYsUSsVQfRmSHgenJnoz3ClJIoA=",
-      "last_login": "2025-07-21T13:26:11.232Z",
+      "last_login": "2025-10-01T09:23:31.956Z",
       "is_superuser": true,
       "email": "admin@example.com",
       "first_name": null,
@@ -167,6 +167,57 @@
       "updated_at": "2025-05-14T06:45:03.593Z",
       "user_permissions": [],
       "roles": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$vRpsiCHEfbSIJEXJffCvWk$XgayBSM+2+mkeOhrcZ459RG4c1Fgucbor3xxmUqJLoo=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-security@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-08-29T10:55:27.099Z",
+      "updated_at": "2025-08-29T10:56:38.665Z",
+      "user_permissions": [],
+      "roles": [["Security Staff"]]
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$kIFX99h8U41sPRnqzpWmzT$id4pWHf4LNPFS+z8MfK7GYZAZycKM5m8mKk5/EAgqnU=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "test-support@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-08-29T11:45:57.483Z",
+      "updated_at": "2025-08-29T11:46:18.518Z",
+      "user_permissions": [],
+      "roles": [["Support Staff"]]
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$JTrwbuzAYZN9a58Ox4arm2$T+//HadYSZJ5OrF5w9iNYGiVBQ6ZqifqFyKLRBPAHMY=",
+      "last_login": "2025-09-25T11:53:08.916Z",
+      "is_superuser": false,
+      "email": "test-dsa@example.com",
+      "first_name": null,
+      "last_name": null,
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-09-23T12:35:43.731Z",
+      "updated_at": "2025-09-23T12:36:19.342Z",
+      "user_permissions": [],
+      "roles": [["DSA Staff"]]
     }
   }
 ]

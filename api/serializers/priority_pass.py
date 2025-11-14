@@ -27,7 +27,9 @@ class PriorityPassSerializer(serializers.ModelSerializer):
             "registrations",
             "created_at",
             "badge_url",
+            "valid_date_range",
+            "is_currently_valid",
         )
 
-    def get_badge_url(self, obj):
-        return reverse("admin:badge_view", args=[obj.id]) + "?pdf=true"
+    def get_badge_url(self, obj: PriorityPass):
+        return reverse("prioritypass-print-badge", args=[obj.code])

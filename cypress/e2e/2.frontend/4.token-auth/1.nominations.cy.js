@@ -25,6 +25,11 @@ describe("Check nominations page", () => {
     cy.contains("Guatemala");
     cy.visit("/token/123e4567-e89b-12d3-a456-426614174000/nominations");
     cy.contains("Galactic Research Institute for Advanced Technologies");
+    cy.contains("1-1 of 1");
+    // Check the information appears in the nominate participant dialog as well
+    cy.get("[aria-label=Edit]").click();
+    cy.get("[role=dialog]").contains("Uzbekistan");
+    cy.get("[role=dialog]").contains("Galactic Research Institute for Advanced Technologies");
   });
   it("Find existing contact", () => {
     cy.visit("/token/123e4567-e89b-12d3-a456-426614174000/nominations");
@@ -45,31 +50,58 @@ describe("Check nominations page", () => {
     cy.get("input[name=lastName]").type(lastName);
     cy.get("input[name=designation]").type("Corpo");
     cy.get("[role=checkbox]:has([name=isUseOrganizationAddress])").click();
-    cy.get("[aria-label=Organization]").click();
-    cy.get("[role=option]").contains("Galactic Research Institute for Advanced Technologies").click();
-    // Add passport info
+    cy.chooseQSelect("Organization", "Galactic Research Institute for Advanced Technologies");
+    // Save without a photo or passport first
+    cy.contains("Save").click();
+    cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("not.exist");
+
+    // Add the photo
+    cy.get("a").contains("Edit").click();
+    cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo.png");
+    cy.contains("Save").click();
+    cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("be.visible");
+
+    // Change the photo
+    cy.get("a").contains("Edit").click();
+    cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo2.png");
+    cy.contains("Save").click();
+    cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("be.visible");
+
+    // Add passport info but don't change the photo
+    cy.get("a").contains("Edit").click();
     cy.get("[role=checkbox]:has([name=needsVisaLetter])").click();
     cy.get("[name=nationality]").type("klingon");
     cy.get("[name=passportNumber]").type("123456789");
     cy.get("[name=passportDateOfIssue]").type("2022-01-01");
     cy.get("[name=passportDateOfExpiry]").type("2025-01-01");
     cy.get("[name=passport]").selectFile("fixtures/test/files/test-logo.png");
-    // Add the photo
-    cy.get("[name=photo]").selectFile("fixtures/test/files/test-logo.png");
     cy.contains("Save").click();
     cy.contains("Nominate participant");
+    cy.get('img[alt="contact photo"]').should("be.visible");
     // Add a nomination for the participant
-    cy.get('[aria-label="Role of the participant"]').click();
-    cy.get("[role=option]").contains("Delegate").click();
+    cy.chooseQSelect("Role of the participant", "Delegate");
     cy.contains("Confirm nomination").click();
     // Check that the new nomination was added and the store was reloaded
     cy.get("[role=search]").type(email);
     cy.contains("1-1 of 1");
     cy.get("[aria-label=Edit]").click();
     cy.contains(email);
-    // Remove the nomination we just added
+    // Remove the nomination we just added; taking dialog into account
     cy.get("[role=switch][aria-checked=true]").click();
     cy.contains("Confirm nomination").click();
+    cy.get("[role=dialog]").contains("Confirm Removal").should("be.visible");
+    cy.contains("Confirm Removal")
+      .closest("[role=dialog]")
+      .within(() => {
+        cy.contains("You are about to remove the nominations");
+        cy.contains("Remove nominations").click();
+      });
+    // Wait for the dialog to close
+    cy.get("[role=dialog]").should("not.exist");
+    cy.url().should("include", "/nominations");
     // Check it was removed
     cy.get("[role=search]").type(email);
     cy.contains("No data available");

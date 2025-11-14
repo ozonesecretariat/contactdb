@@ -60,4 +60,60 @@ describe("Check", () => {
     cy.get(".select2-selection__choice").contains("TT:VRAQ");
     cy.get(".select2-selection__choice").contains("TTTE");
   });
+  it("Check download pre-statistics", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
+    cy.get("a").contains("Pre Statistics").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-pre-meeting-statistics.docx",
+    });
+  });
+  it("Check download post-statistics", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
+    cy.get("a").contains("Post Statistics").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-post-meeting-statistics.docx",
+    });
+  });
+  it("Check download list of participants", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
+    cy.get("a").contains("LoP").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-LoP.docx",
+    });
+  });
+  it("Check download DSA", () => {
+    cy.loginAdmin();
+    cy.performSearch({
+      modelName: "Events",
+      searchValue: "NN:FDP",
+    });
+    cy.contains("1 result");
+    cy.task("cleanDownloadsFolder");
+    cy.get("main a").contains("DSA Report").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-DSA.xlsx",
+    });
+    cy.get("main a").contains("DSA Files").click();
+    cy.checkFile({
+      filePattern: "NN_FDP-DSA-files.zip",
+    });
+  });
 });

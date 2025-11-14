@@ -15,6 +15,7 @@ from pathlib import Path
 
 import environ
 import pycountry
+from django.core.validators import MaxValueValidator, MinValueValidator
 from import_export.formats.base_formats import DEFAULT_FORMATS
 
 from common.docx_format import DOCX
@@ -84,6 +85,7 @@ INSTALLED_APPS = [
     "django_admin_env_notice",
     # "django.contrib.admin",
     "contactdb.site.ContactDBAdminConfig",
+    "colorfield",
     "ckeditor",
     "ckeditor_uploader",
     "django.contrib.auth",
@@ -118,6 +120,7 @@ INSTALLED_APPS = [
     "health_check.db",
     "health_check.contrib.redis",
     "qr_code",
+    "rangefilter",
     # This app
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
@@ -143,7 +146,11 @@ MIDDLEWARE = [
 
 # https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
 AUDITLOG_INCLUDE_ALL_MODELS = True
-AUDITLOG_EXCLUDE_TRACKING_MODELS = ("sessions",)
+AUDITLOG_EXCLUDE_TRACKING_MODELS = (
+    "sessions",
+    "db",
+    "emails.sendemailtask",
+)
 
 
 ROOT_URLCONF = "contactdb.urls"
@@ -348,6 +355,15 @@ ENVIRONMENT_TEXT_COLOR = env.str("ENVIRONMENT_TEXT_COLOR", default="#ffffff")
 
 # https://django-constance.readthedocs.io/en/latest/
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+CONSTANCE_ADDITIONAL_FIELDS = {
+    "limited_int": [
+        "django.forms.fields.IntegerField",
+        {
+            "widget": "django.forms.widgets.NumberInput",
+            "validators": [MinValueValidator(0), MaxValueValidator(10000)],
+        },
+    ],
+}
 CONSTANCE_CONFIG = {
     "REQUIRE_2FA": (
         False,
@@ -361,6 +377,11 @@ CONSTANCE_CONFIG = {
     "WELCOME_MESSAGE": (
         "",
         "The description under the main title.",
+    ),
+    "RECENT_EVENTS_DAYS": (
+        30,
+        "Number of days to keep showing event in the UI after the event is finished.",
+        "limited_int",
     ),
 }
 CONSTANCE_CONFIG_FIELDSETS = (
@@ -378,6 +399,7 @@ CONSTANCE_CONFIG_FIELDSETS = (
             "fields": (
                 "APP_TITLE",
                 "WELCOME_MESSAGE",
+                "RECENT_EVENTS_DAYS",
             ),
         },
     ),
@@ -419,6 +441,11 @@ CKEDITOR_CONTACT_PLACEHOLDERS = {
     "title_localized": {"attr": "title_localized"},
     "party": {"attr": "organization__government__name"},
     "organization": {"attr": "organization__name"},
+    "job_title": {"attr": "designation"},
+    "department": {"attr": "department"},
+    "city": {"attr": "address_entity__city"},
+    "postal_code": {"attr": "address_entity__postal_code"},
+    "country": {"attr": "address_entity__country__name"},
 }
 
 # Placeholders for event invitations
@@ -599,6 +626,7 @@ SPECTACULAR_SETTINGS = {
 ### App settings
 
 # Kronos import
+KRONOS_ENABLED = env.bool("KRONOS_ENABLED", default=True)
 ACCOUNTS_HOST = env.str("ACCOUNTS_HOST", default="")
 KRONOS_HOST = env.str("KRONOS_HOST", default="")
 

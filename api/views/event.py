@@ -1,19 +1,59 @@
+import django_filters
+from constance import config
+from django.contrib.auth.decorators import permission_required
+from django.db.models import Case, Count, F, Value, When
+from django.http import FileResponse
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.serializers.event import (
     EventSerializer,
 )
+from common.filters import CamelCaseOrderingFilter
+from core.models import Contact, OrganizationType, Region, Subregion
+from events.exports.dsa import DSAFiles, DSAReport
 from events.models import (
+    AnnotatedRegistration,
     Event,
+    Registration,
+    RegistrationRole,
 )
+
+
+class EventFilterSet(FilterSet):
+    is_recent = django_filters.BooleanFilter(method="filter_is_recent")
+
+    class Meta:
+        model = Event
+        fields = ["is_recent"]
+
+    def filter_is_recent(self, queryset, name, value):
+        today = timezone.now().date() - timezone.timedelta(
+            days=config.RECENT_EVENTS_DAYS
+        )
+
+        if value is True:
+            return queryset.filter(end_date__gte=today)
+        if value is False:
+            return queryset.filter(end_date__lt=today)
+        return queryset
 
 
 class EventViewSet(ReadOnlyModelViewSet):
     queryset = Event.objects.all().select_related("venue_country")
     serializer_class = EventSerializer
     lookup_field = "code"
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        filters.SearchFilter,
+        CamelCaseOrderingFilter,
+        DjangoFilterBackend,
+    ]
+    filterset_class = EventFilterSet
     search_fields = [
         "code",
         "title",
@@ -23,3 +63,82 @@ class EventViewSet(ReadOnlyModelViewSet):
     ]
     ordering_fields = ["code", "title", "start_date", "end_date"]
     ordering = ["code"]
+
+    @method_decorator(permission_required("events.view_dsa", raise_exception=True))
+    @action(detail=True, methods=["get"])
+    def export_dsa(self, *args, **kwargs):
+        event = self.get_object()
+        return FileResponse(DSAReport(event).export_xlsx(), as_attachment=True)
+
+    @method_decorator(permission_required("events.view_dsa", raise_exception=True))
+    @action(detail=True, methods=["get"])
+    def export_dsa_files(self, *args, **kwargs):
+        event = self.get_object()
+        return FileResponse(DSAFiles(event).export_zip(), as_attachment=True)
+
+    @method_decorator(permission_required("events.view_event", raise_exception=True))
+    @action(detail=True, methods=["get"])
+    def statistics(self, *args, **kwargs):
+        event = self.get_object()
+
+        regs = (
+            AnnotatedRegistration.objects.filter(registration__event=event)
+            .exclude(usable_organization__organization_type__hide_in_statistics=True)
+            .annotate(
+                organization_type=Case(
+                    When(
+                        usable_organization__organization_type__statistics_title="",
+                        then=F("usable_organization__organization_type__title"),
+                    ),
+                    default=F(
+                        "usable_organization__organization_type__statistics_title"
+                    ),
+                ),
+                region=F("usable_organization__government__region__name"),
+                subregion=F("usable_organization__government__subregion__name"),
+                gender=Case(
+                    When(registration__contact__gender="", then=Value("No response")),
+                    default=F("registration__contact__gender"),
+                ),
+                status=F("registration__status"),
+                role=F("registration__role__name"),
+            )
+            .values(
+                "organization_type",
+                "region",
+                "subregion",
+                "gender",
+                "status",
+                "role",
+            )
+            .annotate(count=Count(1))
+        )
+
+        org_type_query = OrganizationType.objects.exclude(
+            hide_in_statistics=True
+        ).order_by("sort_order")
+        org_types = []
+        for org_type in org_type_query:
+            if org_type.statistics_display_name not in org_types:
+                org_types.append(org_type.statistics_display_name)
+
+        return Response(
+            {
+                "registrations": regs,
+                "schema": {
+                    "role": RegistrationRole.objects.values_list(
+                        "name", flat=True
+                    ).order_by("sort_order"),
+                    "region": Region.objects.values_list("name", flat=True).order_by(
+                        "sort_order"
+                    ),
+                    "subregion": Subregion.objects.values_list(
+                        "name", flat=True
+                    ).order_by("sort_order"),
+                    "organization_type": org_types,
+                    "status": [i[0] for i in Registration.Status.choices],
+                    "gender": [i[0] for i in Contact.GenderChoices.choices]
+                    + ["No response"],
+                },
+            }
+        )

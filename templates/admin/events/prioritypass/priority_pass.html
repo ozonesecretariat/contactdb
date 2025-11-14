@@ -90,8 +90,13 @@
 
       tbody tr td {
         background-color: #62a6d2;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: bold;
+      }
+
+      .event-title {
+        font-size: 14px;
+        padding-bottom: 8px;
       }
 
       .country {
@@ -102,16 +107,21 @@
       }
 
       .name {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bold;
       }
 
       .details {
+        margin-top: 2em;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 16px;
         align-items: start;
         justify-content: space-between;
+      }
+
+      .details p {
+        margin: 0 0 8px 0;
       }
 
       footer {
@@ -153,46 +163,59 @@
             <td>{{ registration.event.dates }}</td>
           </tr>
           <tr>
-            <td colspan="3">{{ registration.event.title }}</td>
+            <td class="event-title" colspan="3">{{ registration.event.title }}</td>
           </tr>
         </tbody>
       {% endfor %}
     </table>
-    {% if priority_pass.is_gov %}
-      <h1 class="country">{{ country.name|default:'' }}</h1>
-    {% endif %}
     <section class="details">
       <div>
         <p class="name">{{ contact.display_name }}</p>
         <p class="org">
-          {{ contact.designation|default:'-' }}
-          <br />
-          {{ organization_name|default:'-' }}
+          {% if contact.designation %}
+            {{ contact.designation }}
+          {% endif %}
+          {% if contact.department %}
+            <br />
+            {{ contact.department }}
+          {% endif %}
+          {% if organization_name %}
+            <br />
+            <b>{{ organization_name }}</b>
+          {% endif %}
+          {% if priority_pass.is_gov and country.name %}
+            <br />
+            <b>{{ country.name }}</b>
+          {% endif %}
         </p>
         <p>
-          {{ organization.city|default:'-' }}
-          <br />
-          {{ organization.country.name|default:'-' }}
+          {% if address_entity.city %}
+            {{ address_entity.city }}{% if address_entity.state or address_entity.postal_code %},{% endif %}
+          {% endif %}
+          {% if address_entity.state %}
+            {{ address_entity.state }}{% if address_entity.postal_code %},{% endif %}
+          {% endif %}
+          {% if address_entity.postal_code %}
+            {{ address_entity.postal_code }}
+          {% endif %}
+
+          {% if address_entity.country %}
+            <br />
+            {{ address_entity.country.name }}
+          {% endif %}
         </p>
       </div>
-      <dl>
-        <dt>Phone</dt>
-        <dd>{{ contact.phones|join:", "|default:"-" }}</dd>
-        <dt>Email</dt>
-        <dd>{{ contact.emails|join:", "|default:"-" }}</dd>
-        <dt>Other emails</dt>
-        <dd>{{ contact.email_ccs|join:", "|default:"-" }}</dd>
-      </dl>
     </section>
     <footer>
       <p><b>Note</b></p>
       <p>
-        This Priority Pass bears the information needed to obtain your conference badge. Please bring a copy of this
-        Priority Pass on-site and have your PASSPORT ready for verification.
+        This pass bears the information required for you to obtain your meeting badge. A copy of this pass, either
+        printed or on a handheld device, must be presented, along with a valid photo identification card, to pick up
+        your badge at the registration counter.
       </p>
-      <p>This is only valid for the person whose name is mentioned on this pass. This pass is non-transferable.</p>
+      <p>This pass is only valid for the person whose name is mentioned on it. This pass is not transferable.</p>
       <p class="warning">
-        !! THIS PASS DOES NOT GRANT ACCESS TO THE VENUE. IT CAN SOLELY BE USED TO OBTAIN AN ACCESS BADGE !!
+        !! THIS PASS DOES NOT GRANT ACCESS TO THE VENUE. IT CAN ONLY BE USED TO OBTAIN A MEETING BADGE !!
       </p>
     </footer>
   </body>

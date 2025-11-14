@@ -115,10 +115,10 @@
       name="photo"
       outlined
       accept=".jpeg,.jpg,.png"
-      :label="data.photoUrl ? 'Change photo' : 'Add photo'"
+      :label="data.photoDataUri || data.hasPhoto ? 'Change photo' : 'Add photo'"
     >
       <template #append>
-        <q-btn v-if="data.photoUrl" label="View current" @click="currentImageDialog = true" />
+        <q-btn v-if="data.hasPhoto" label="View current" @click="currentImageDialog = true" />
       </template>
     </q-file>
     <q-dialog v-model="currentImageDialog">
@@ -128,8 +128,8 @@
           <q-space />
           <q-btn v-close-popup flat round dense icon="close" />
         </q-card-section>
-        <q-card-section>
-          <q-img :src="apiBase + data.photoUrl" alt="" style="max-height: 80vh" />
+        <q-card-section v-if="data.photoDataUri">
+          <q-img :src="data.photoDataUri" alt="" style="max-height: 80vh" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -273,7 +273,6 @@
           name="passportDateOfIssue"
           outlined
           mask="####-##-##"
-          :rules="['date']"
           label="Date of Issue"
           class="col"
         >
@@ -296,7 +295,6 @@
           name="passportDateOfExpiry"
           outlined
           mask="####-##-##"
-          :rules="['date']"
           label="Date of Expiry"
           class="col q-ml-md"
         >
@@ -339,8 +337,9 @@
 import type { Contact } from "src/types/nomination";
 import type { QSelectOnFilterUpdate } from "src/types/quasar";
 
-import { api, apiBase } from "boot/axios";
+import { api } from "boot/axios";
 import useFormErrors from "src/composables/useFormErrors";
+import { fileToBase64, fileToBase64Dict } from "src/utils/file";
 import { unaccentSearch } from "src/utils/search";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
@@ -366,6 +365,8 @@ const data = reactive({
   firstName: "",
   gender: "",
   hasCredentials: false,
+  hasPhoto: false,
+  id: null,
   isUseOrganizationAddress: false,
   lastName: "",
   mobiles: "",
@@ -378,7 +379,7 @@ const data = reactive({
   passportNumber: "",
   phones: "",
   photo: null,
-  photoUrl: "",
+  photoDataUri: "",
   postalCode: "",
   state: "",
   title: "",
@@ -397,36 +398,14 @@ if (invitation.participant) {
     mobiles: invitation.participant.mobiles?.[0] ?? "",
     organization: invitation.participant.organization?.id ?? "",
     phones: invitation.participant.phones?.[0] ?? "",
+    photo: null,
+    photoDataUri: invitation.participant.photo ?? "",
   });
 }
 
 // Auto-select the org if there is only one
 if (invitation.organizations.length === 1 && invitation.organizations?.[0]?.id) {
   Object.assign(data, { organization: data.organization || invitation.organizations?.[0]?.id });
-}
-
-async function fileToBase64(file: File | null) {
-  const result = await fileToBase64Dict(file);
-  return result ? result.data : null;
-}
-
-function fileToBase64Dict(file: File | null): Promise<null | { data: string; filename: string }> {
-  return new Promise((resolve, reject) => {
-    if (!file) {
-      resolve(null);
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      resolve({
-        data: reader.result as string,
-        filename: file.name,
-      });
-    };
-    reader.onerror = () => reject(new Error(`Error while reading file.`));
-  });
 }
 
 async function saveForm() {
@@ -447,7 +426,7 @@ async function saveForm() {
         mobiles: toList(data.mobiles),
         passport: data.needsVisaLetter ? await fileToBase64Dict(data.passport) : null,
         phones: toList(data.phones),
-        photo: await fileToBase64(data.photo),
+        photo: data.photo ? await fileToBase64(data.photo) : data.photoDataUri,
         postalCode: data.postalCode,
         state: data.state,
       })

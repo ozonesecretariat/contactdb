@@ -1,24 +1,34 @@
+import base64
+
 import django_rq
 from admin_auto_filters.filters import AutocompleteFilterFactory
+from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
-from django.db.models import Count, Q
-from django.http import FileResponse
+from django.core.exceptions import ValidationError
+from django.db.models import Count, Max, Min, Q
+from django.forms.models import BaseInlineFormSet
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
-from import_export import fields
 from import_export.admin import ExportMixin
 
 from common.model_admin import ModelAdmin, ModelResource, TaskAdmin
 from common.pdf import print_pdf
 from common.permissions import has_model_permission
 from common.urls import reverse
+from core.models import Contact, Organization
 from emails.admin import CKEditorTemplatesBase
 from emails.models import SendEmailTask
+from events.exports.dsa import DSAFiles, DSAReport
+from events.exports.list_of_participants import ListOfParticipants
+from events.exports.statistics import PostMeetingStatistics, PreMeetingStatistics
 from events.jobs import send_priority_pass_status_emails
 from events.models import (
+    DSA,
     Event,
     EventGroup,
     EventInvitation,
@@ -32,7 +42,6 @@ from events.models import (
 )
 
 
-@admin.register(LoadEventsFromKronosTask)
 class LoadEventsFromKronosTaskAdmin(TaskAdmin):
     """Task that imports all available events from Kronos.
     Events that are already present will have their attributes updated.
@@ -51,7 +60,6 @@ class LoadEventsFromKronosTaskAdmin(TaskAdmin):
     ordering = ("-created_on",)
 
 
-@admin.register(LoadParticipantsFromKronosTask)
 class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
     """Import contacts and registrations from Kronos.
     Contacts that have conflict data will be added as temporary contacts in
@@ -82,7 +90,6 @@ class LoadParticipantsFromKronosTaskAdmin(TaskAdmin):
         return False
 
 
-@admin.register(LoadOrganizationsFromKronosTask)
 class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
     """Import organizations from Kronos that were not imported together
     with events.
@@ -109,53 +116,102 @@ class LoadOrganizationsFromKronosTaskAdmin(TaskAdmin):
 @admin.register(RegistrationRole)
 class RegistrationRoleAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name", "hide_for_nomination")
+    list_display = ("name", "sort_order", "hide_for_nomination", "hide_in_lop")
     list_display_links = ("name",)
 
 
 @admin.register(RegistrationTag)
 class RegistrationTagAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name",)
+    list_display = ("name", "protected")
     list_display_links = ("name",)
+    readonly_fields = ("protected",)
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.protected:
+            return False
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.protected:
+            return False
+        return super().has_delete_permission(request, obj)
 
 
 class RegistrationResource(ModelResource):
-    organization = fields.Field(
-        column_name="organization",
-        attribute="contact__organization__name",
-    )
-    event = fields.Field(
-        column_name="event",
-        attribute="event__title",
-    )
-    contact = fields.Field(
-        column_name="contact",
-        attribute="contact__full_name",
-    )
-    role = fields.Field(
-        column_name="role",
-        attribute="role__name",
-    )
-    priority_pass = fields.Field(
-        column_name="priority_pass",
-        attribute="priority_pass__code",
-    )
     prefetch_related = (
-        "organization",
-        "contact",
+        "dsa",
+        "tags",
         "role",
+        "priority_pass",
+        "contact",
+        "contact__groups",
+        "event",
+        "organization",
+        "organization__country",
+        "organization__country__region",
+        "organization__country__subregion",
+        "organization__government",
+        "organization__government__region",
+        "organization__government__subregion",
+        "organization__organization_type",
+        "organization__primary_contacts",
+        "organization__secondary_contacts",
     )
 
     class Meta:
         model = Registration
-        exclude = ("id",)
+        fields = [
+            *ModelResource.expand_all_fields(Registration),
+            *ModelResource.expand_all_fields(DSA, prefix="dsa__"),
+            "tags",
+            *ModelResource.expand_all_fields(RegistrationRole, prefix="role__"),
+            *ModelResource.expand_all_fields(PriorityPass, prefix="priority_pass__"),
+            *ModelResource.expand_all_fields(Contact, prefix="contact__"),
+            "contact__groups",
+            *ModelResource.expand_all_fields(
+                Event,
+                prefix="event__",
+                exclude=[
+                    "event__confirmation_subject",
+                    "event__refusal_subject",
+                ],
+            ),
+            *ModelResource.expand_all_fields(
+                Organization, prefix="organization__", max_depth=2
+            ),
+            "organization__primary_contacts",
+            "organization__secondary_contacts",
+        ]
+
+    def dehydrate_tags(self, obj):
+        return ", ".join(t.name for t in obj.tags.all())
+
+    def dehydrate_contact__groups(self, obj):
+        return ", ".join(g.name for g in obj.contact.groups.all())
+
+    def dehydrate_organization__primary_contacts(self, obj):
+        if not obj.organization:
+            return ""
+        return ", ".join(c.full_name for c in obj.organization.primary_contacts.all())
+
+    def dehydrate_organization__secondary_contacts(self, obj):
+        if not obj.organization:
+            return ""
+        return ", ".join(c.full_name for c in obj.organization.secondary_contacts.all())
 
 
 @admin.register(Registration)
 class RegistrationAdmin(ExportMixin, ModelAdmin):
     resource_class = RegistrationResource
-    ordering = ("contact__first_name", "contact__last_name", "event__title")
+    ordering = (
+        "event",
+        "organization__government",
+        "sort_order",
+        "role__sort_order",
+        "contact__last_name",
+        "contact__first_name",
+    )
     search_fields = [
         "event__title",
         "contact__first_name",
@@ -166,12 +222,16 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "role__name",
         "priority_pass__code",
     ]
-    list_display_links = ("contact", "event")
+    list_display_links = ("contact__last_name", "contact__first_name", "event")
     list_display = (
-        "contact",
-        "event",
+        "contact__first_name",
+        "contact__last_name",
+        "event_code_link",
+        "organization__government",
         "status",
         "role",
+        "sort_order",
+        "role__sort_order",
         "is_funded",
         "tags_display",
     )
@@ -179,10 +239,16 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         AutocompleteFilterFactory("event", "event"),
         AutocompleteFilterFactory("organization", "contact__organization"),
         AutocompleteFilterFactory("government", "contact__organization__government"),
+        AutocompleteFilterFactory(
+            "subregion", "contact__organization__country__subregion"
+        ),
+        AutocompleteFilterFactory(
+            "organization type", "contact__organization__organization_type"
+        ),
         AutocompleteFilterFactory("contact", "contact"),
         "status",
         AutocompleteFilterFactory("role", "role"),
-        "contact__has_credentials",
+        "has_credentials",
         "contact__needs_visa_letter",
         AutocompleteFilterFactory("tags", "tags"),
         "is_funded",
@@ -195,6 +261,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "contact__organization",
         "contact__organization__government",
         "contact__organization__country",
+        "contact__organization__country__subregion",
+        "contact__organization__organization_type",
         "role",
         "tags",
     )
@@ -221,6 +289,8 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
                 "fields": (
                     "organization",
                     ("designation", "department"),
+                    "has_credentials",
+                    "credentials_display",
                 )
             },
         ),
@@ -228,6 +298,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
             "Metadata",
             {
                 "fields": (
+                    "sort_order",
                     "tags",
                     "created_at",
                     "updated_at",
@@ -239,6 +310,7 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         "created_at",
         "updated_at",
         "priority_pass",
+        "credentials_display",
     )
 
     def get_readonly_fields(self, request, obj=None):
@@ -253,6 +325,16 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
     def tags_display(self, obj: Registration):
         return ", ".join(map(str, obj.tags.all()))
 
+    @admin.display(description="Event Code", ordering="event__code")
+    def event_code_link(self, obj):
+        if not obj.event:
+            return "-"
+
+        event_url = reverse("admin:events_event_change", args=[obj.event.pk])
+        return format_html(
+            '<a href="{}" target="_blank">{}</a>', event_url, obj.event.code
+        )
+
     @admin.action(description="Send email to selected contacts", permissions=["view"])
     def send_email(self, request, queryset):
         ids = ",".join(
@@ -265,9 +347,67 @@ class RegistrationAdmin(ExportMixin, ModelAdmin):
         )
         return redirect(reverse("admin:emails_email_add") + "?recipients=" + ids)
 
+    @admin.display(description="Credentials")
+    def credentials_display(self, obj):
+        return self.get_encrypted_file_display(obj, "credentials")
+
+
+class RegistrationInlineFormSet(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+
+        # Disable showing add/edit/delete buttons for related "role"
+        if "role" in form.fields:
+            form.fields["role"].widget = forms.Select(
+                choices=form.fields["role"].widget.choices
+            )
+
+        # Customize the DELETE field behavior for each form
+        if (
+            "DELETE" in form.fields
+            and hasattr(form, "instance")
+            and form.instance
+            and form.instance.pk
+        ):
+            registration = form.instance
+
+            # Only allow deletion for "placeholder" registrations
+            can_delete = (
+                registration.status == "" and registration.event.hide_for_nomination
+            )
+            if not can_delete:
+                form.fields["DELETE"].disabled = True
+
+    def clean(self):
+        """
+        Additional validation to prevent deletion of non-placeholder registrations.
+        """
+        super().clean()
+
+        for form in self.forms:
+            if (
+                form.cleaned_data.get("DELETE")
+                and hasattr(form, "instance")
+                and form.instance
+                and form.instance.pk
+            ):
+                registration = form.instance
+                can_delete = (
+                    registration.status == "" and registration.event.hide_for_nomination
+                )
+
+                if not can_delete:
+                    if registration.status != "":
+                        error_msg = f"Cannot delete registration with status '{registration.get_status_display()}'"
+                    else:
+                        error_msg = "Cannot delete registration for visible event"
+
+                    form.add_error("DELETE", error_msg)
+
 
 class RegistrationInline(admin.TabularInline):
     model = Registration
+    formset = RegistrationInlineFormSet
     extra = 0
     max_num = 0
     fields = (
@@ -277,7 +417,24 @@ class RegistrationInline(admin.TabularInline):
         "status",
     )
     readonly_fields = ("contact", "event")
-    can_delete = False
+
+    def save_model(self, request, obj, form, change):
+        """
+        Overridden to call full_clean before saving, which does not happen automatically
+        for inlines.
+        """
+        try:
+            obj.full_clean()
+        except ValidationError as e:
+            # If there are any validation errors, add them to the form
+            for field, errors in e.message_dict.items():
+                for error in errors:
+                    form.add_error(field, error)
+            # And avoid calling super.save()
+            if form.errors:
+                return
+
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(PriorityPass)
@@ -303,6 +460,8 @@ class PriorityPassAdmin(ModelAdmin):
         "created_at",
     )
     list_filter = (
+        AutocompleteFilterFactory("event", "registrations__event"),
+        AutocompleteFilterFactory("event group", "registrations__event__group"),
         "registrations__status",
         AutocompleteFilterFactory("contact", "registrations__contact"),
         AutocompleteFilterFactory(
@@ -315,8 +474,6 @@ class PriorityPassAdmin(ModelAdmin):
         AutocompleteFilterFactory(
             "government", "registrations__contact__organization__government"
         ),
-        AutocompleteFilterFactory("event", "registrations__event"),
-        AutocompleteFilterFactory("event group", "registrations__event__group"),
     )
     fields = (
         "code",
@@ -350,7 +507,10 @@ class PriorityPassAdmin(ModelAdmin):
     actions = ("send_confirmation_emails",)
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        """Only allow deleting priority passes with no related registration"""
+        if obj is None:
+            return False
+        return not obj.registrations.exists()
 
     def has_add_permission(self, request):
         return False
@@ -485,7 +645,15 @@ class PriorityPassAdmin(ModelAdmin):
 class EventInline(admin.TabularInline):
     max_num = 0
     model = Event
-    fields = readonly_fields = ("code", "event_link", "start_date", "end_date")
+    fields = readonly_fields = (
+        "code",
+        "event_link",
+        "start_date",
+        "end_date",
+        "hide_for_nomination",
+        "attach_priority_pass",
+    )
+    ordering = ("-start_date",)
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -505,11 +673,48 @@ class EventInline(admin.TabularInline):
 @admin.register(EventGroup)
 class EventGroupAdmin(ExportMixin, ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name", "description")
+    list_display = ("name", "description", "date_range")
     list_display_links = ("name",)
-    ordering = ("name",)
+    ordering = ("-created_at",)
     prefetch_related = ("events",)
     inlines = [EventInline]
+
+    def get_queryset(self, request):
+        """Using event dates annotations for the list view"""
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                start_date=Min("events__start_date"), end_date=Max("events__end_date")
+            )
+            .prefetch_related("events")
+            .order_by("-start_date", "name")
+        )
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term
+        )
+
+        referrer = request.META.get("HTTP_REFERER", "")
+
+        if "/admin/emails/invitationemail" in referrer:
+            queryset = queryset.filter(
+                events__isnull=False,
+                events__end_date__gte=timezone.now(),
+            ).distinct()
+
+        return queryset, may_have_duplicates
+
+    @admin.display(description="Dates", ordering="start_date")
+    def date_range(self, obj):
+        if hasattr(obj, "start_date") and obj.start_date:
+            start_formatted = obj.start_date.strftime("%d %b %Y")
+            if hasattr(obj, "end_date") and obj.end_date:
+                end_formatted = obj.end_date.strftime("%d %b %Y")
+                return f"{start_formatted} to {end_formatted}"
+            return start_formatted
+        return "-"
 
 
 @admin.register(Event)
@@ -534,15 +739,19 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         "dates",
         "registrations_count",
         "group",
+        "documents",
     )
-    autocomplete_fields = ("venue_country", "group")
+    autocomplete_fields = (
+        "venue_country",
+        "group",
+    )
     list_filter = (
         AutocompleteFilterFactory("venue country", "venue_country"),
         AutocompleteFilterFactory("group", "group"),
         "start_date",
         "end_date",
     )
-    readonly_fields = ("event_id",)
+    readonly_fields = ("event_id", "documents")
     ordering = (
         "-start_date",
         "-end_date",
@@ -564,6 +773,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
                     "code",
                     "title",
                     "group",
+                    "hide_for_nomination",
                 )
             },
         ),
@@ -580,9 +790,19 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             "Dates",
             {
                 "fields": (
+                    "timezone",
                     "start_date",
                     "end_date",
                     "dates",
+                )
+            },
+        ),
+        (
+            "DSA",
+            {
+                "fields": (
+                    "dsa",
+                    "term_exp",
                 )
             },
         ),
@@ -620,7 +840,11 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         (
             "Metadata",
             {
-                "fields": ("event_id",),
+                "fields": (
+                    "event_id",
+                    "documents",
+                    "lop_doc_symbols",
+                ),
             },
         ),
     )
@@ -634,9 +858,84 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             f"{obj.registration_count} participants",
         )
 
+    @admin.display(description="Documents")
+    def documents(self, obj):
+        return format_html(
+            " | ".join(
+                [
+                    '<a href="{}" target="_blank">Pre Statistics</a>',
+                    '<a href="{}" target="_blank">LoP</a>',
+                    '<a href="{}" target="_blank">Post Statistics</a>',
+                    '<a href="{}" target="_blank">DSA Report</a>',
+                    '<a href="{}" target="_blank">DSA Files</a>',
+                ]
+            ),
+            reverse("admin:pre_meeting_statistics", args=(obj.id,)),
+            reverse("admin:lop", args=(obj.id,)),
+            reverse("admin:post_meeting_statistics", args=(obj.id,)),
+            reverse("admin:dsa", args=(obj.id,)),
+            reverse("admin:dsa_files", args=(obj.id,)),
+        )
+
+    def get_urls(self):
+        return [
+            path(
+                "<path:object_id>/pre-statistics/",
+                self.admin_site.admin_view(self.get_pre_meeting_statistics),
+                name="pre_meeting_statistics",
+            ),
+            path(
+                "<path:object_id>/post-statistics/",
+                self.admin_site.admin_view(self.get_post_meeting_statistics),
+                name="post_meeting_statistics",
+            ),
+            path(
+                "<path:object_id>/lop/",
+                self.admin_site.admin_view(self.get_lop),
+                name="lop",
+            ),
+            path(
+                "<path:object_id>/dsa/",
+                self.admin_site.admin_view(self.get_dsa),
+                name="dsa",
+            ),
+            path(
+                "<path:object_id>/dsa_files/",
+                self.admin_site.admin_view(self.get_dsa_files),
+                name="dsa_files",
+            ),
+            *super().get_urls(),
+        ]
+
+    def get_pre_meeting_statistics(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(
+            PreMeetingStatistics(event).export_docx(), as_attachment=True
+        )
+
+    def get_post_meeting_statistics(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(
+            PostMeetingStatistics(event).export_docx(), as_attachment=True
+        )
+
+    def get_lop(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(ListOfParticipants(event).export_docx(), as_attachment=True)
+
+    def get_dsa(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(DSAReport(event).export_xlsx(), as_attachment=True)
+
+    def get_dsa_files(self, request, object_id):
+        event = self.get_object(request, object_id)
+        return FileResponse(DSAFiles(event).export_zip(), as_attachment=True)
+
     def has_load_contacts_from_kronos_permission(self, request):
-        return self.has_add_permission(request) and has_model_permission(
-            request, LoadParticipantsFromKronosTask, "add"
+        return (
+            settings.KRONOS_ENABLED
+            and self.has_add_permission(request)
+            and has_model_permission(request, LoadParticipantsFromKronosTask, "add")
         )
 
     @admin.action(
@@ -690,7 +989,21 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
         if "/admin/emails/email/" in referrer:
             queryset = queryset.filter(~Q(registrations=None))
 
+        if "/admin/emails/invitationemail" in referrer:
+            queryset = queryset.filter(end_date__gte=timezone.now())
+
         return queryset, may_have_duplicates
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "timezone":
+            formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
+            formfield.widget.attrs.update(
+                {
+                    "data-choice-select2": "true",
+                }
+            )
+            return formfield
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 class FutureEventFilter(admin.SimpleListFilter):
@@ -800,6 +1113,7 @@ class EventInvitationAdmin(ModelAdmin):
         "link_accessed",
         "created_at",
         "invitation_link",
+        "qr_code_display",
         "unregistered_organizations_display",
     )
 
@@ -857,6 +1171,7 @@ class EventInvitationAdmin(ModelAdmin):
                 "fields": (
                     "token",
                     "invitation_link",
+                    "qr_code_display",
                     "link_accessed",
                     "created_at",
                 )
@@ -931,10 +1246,26 @@ class EventInvitationAdmin(ModelAdmin):
 
     @admin.display(description="Invitation Link")
     def invitation_link(self, obj):
+        qr_url = reverse("admin:events_eventinvitation_qr", args=[obj.pk])
+
         return format_html(
-            '<a href="{}" target="_blank">{}</a>',
+            '<a href="{}" target="_blank">View Invitation Link</a> | '
+            '<a href="{}" target="_blank">QR Code</a>',
             obj.invitation_link,
-            "View Invitation Link",
+            qr_url,
+        )
+
+    @admin.display(description="QR Code")
+    def qr_code_display(self, obj):
+        if not obj.pk:
+            return "-"
+
+        return format_html(
+            '<div style="text-align: center;">'
+            '<img src="{}" alt="QR Code" style="max-width: 200px; max-height: 200px;" />'
+            "<br><small>Scan to access invitation</small>"
+            "</div>",
+            obj.invitation_link_qr_code,
         )
 
     @admin.display(description="Future Event", boolean=True)
@@ -953,3 +1284,109 @@ class EventInvitationAdmin(ModelAdmin):
             obj.id,
             tasks.count(),
         )
+
+    def get_urls(self):
+        return [
+            path(
+                "<path:object_id>/qr/",
+                self.admin_site.admin_view(self.qr_code_view),
+                name="events_eventinvitation_qr",
+            ),
+            *super().get_urls(),
+        ]
+
+    def qr_code_view(self, request, object_id):
+        invitation = self.get_object(request, object_id)
+
+        data_url = invitation.invitation_link_qr_code
+        # Removes the "data:image/png;base64," prefix
+        img_data = data_url.split(",")[1]
+        img_bytes = base64.b64decode(img_data)
+
+        return HttpResponse(img_bytes, content_type="image/png")
+
+
+@admin.register(DSA)
+class DSAAdmin(ModelAdmin):
+    list_display = (
+        "registration",
+        "umoja_travel",
+        "bp",
+        "arrival_date",
+        "departure_date",
+        "number_of_days",
+        "cash_card",
+        "paid_dsa",
+    )
+    list_filter = (
+        AutocompleteFilterFactory("event", "registration__event"),
+        "registration__status",
+        "paid_dsa",
+    )
+    autocomplete_fields = ("registration",)
+    prefetch_related = (
+        "registration__contact",
+        "registration__event",
+        "registration__organization",
+        "registration__organization__government",
+        "registration__organization__country",
+        "registration__organization__organization_type",
+        "registration__contact__organization",
+        "registration__contact__organization__government",
+        "registration__contact__organization__country",
+        "registration__contact__organization__organization_type",
+    )
+    search_fields = (
+        "registration__contact__title",
+        "registration__contact__first_name",
+        "registration__contact__last_name",
+        "registration__organization__name",
+        "registration__event__title",
+    )
+
+    fields = (
+        "registration",
+        "umoja_travel",
+        "bp",
+        "arrival_date",
+        "departure_date",
+        "cash_card",
+        "paid_dsa",
+        "get_boarding_pass_display",
+        "get_passport_display",
+        "get_signature_display",
+        "number_of_days",
+        "dsa_on_arrival",
+        "total_dsa",
+    )
+
+    readonly_fields = (
+        "get_boarding_pass_display",
+        "get_passport_display",
+        "get_signature_display",
+        "number_of_days",
+        "dsa_on_arrival",
+        "total_dsa",
+    )
+
+    @admin.display(description="Boarding pass")
+    def get_boarding_pass_display(self, obj):
+        return self.get_encrypted_file_display(obj, "boarding_pass")
+
+    @admin.display(description="Passport")
+    def get_passport_display(self, obj):
+        return self.get_encrypted_file_display(obj, "passport")
+
+    @admin.display(description="Signature")
+    def get_signature_display(self, obj):
+        return self.get_encrypted_file_display(obj, "signature")
+
+
+if settings.KRONOS_ENABLED:
+    admin.site.register(LoadEventsFromKronosTask, LoadEventsFromKronosTaskAdmin)
+    admin.site.register(
+        LoadParticipantsFromKronosTask, LoadParticipantsFromKronosTaskAdmin
+    )
+    admin.site.register(
+        LoadOrganizationsFromKronosTask, LoadOrganizationsFromKronosTaskAdmin
+    )

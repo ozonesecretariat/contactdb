@@ -163,3 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+window.addEventListener("load", () => {
+  const $ = window.$ || window.jQuery || window.django?.jQuery;
+  $?.("[data-choice-select2=true]")?.select2?.();
+});

@@ -75,6 +75,7 @@ class ContactPhotosParser:
 
                 filename = f"contact_{contact.id}_{kronos_id}.{ext}"
                 contact.photo.save(filename, ContentFile(image_data), save=True)
+                contact.save()
 
                 self.task.log(
                     logging.INFO,

@@ -1,5 +1,12 @@
 import type { RouteRecordRaw } from "vue-router";
 
+const dsaPermissions = [
+  "events.view_registration",
+  "events.view_dsa",
+  "events.view_registrationtag",
+  "events.view_event",
+];
+
 const routes: RouteRecordRaw[] = [
   {
     children: [
@@ -125,6 +132,15 @@ const routes: RouteRecordRaw[] = [
         path: "account/",
       },
       {
+        component: () => import("pages/DashboardPage.vue"),
+        meta: {
+          header: "Dashboard",
+          requirePermissions: ["events.view_event"],
+        },
+        name: "dashboard",
+        path: "dashboard",
+      },
+      {
         component: () => import("pages/EventsPage.vue"),
         meta: {
           header: "Events",
@@ -134,10 +150,62 @@ const routes: RouteRecordRaw[] = [
         path: "events",
       },
       {
+        component: () => import("pages/DelegatesPage.vue"),
+        meta: {
+          header: "Delegates",
+          requirePermissions: dsaPermissions,
+        },
+        name: "delegates",
+        path: "delegates",
+        props: {
+          columns: ["country", "title", "firstName", "lastName", "umojaTravel", "bp", "status", "tags"],
+        },
+      },
+      {
+        component: () => import("pages/DelegatesPage.vue"),
+        meta: {
+          header: "DSA",
+          requirePermissions: dsaPermissions,
+        },
+        name: "dsa",
+        path: "dsa",
+        props: {
+          columns: [
+            "country",
+            "title",
+            "firstName",
+            "lastName",
+            "umojaTravel",
+            "bp",
+            "termExp",
+            "cashCard",
+            "status",
+            "tags",
+          ],
+          disablePaidDsa: true,
+          disableStatus: true,
+          disableTag: true,
+        },
+      },
+      {
+        component: () => import("pages/DelegatesPage.vue"),
+        meta: {
+          header: "Paid",
+          requirePermissions: dsaPermissions,
+        },
+        name: "paid",
+        path: "paid",
+        props: {
+          disablePaidDsa: true,
+          disableStatus: true,
+          disableTag: true,
+        },
+      },
+      {
         component: () => import("pages/ScanPassPage.vue"),
         meta: {
           header: "Scan Pass",
-          requirePermissions: ["events.view_registration", "events.view_prioritypass"],
+          requirePermissions: ["events.view_prioritypass"],
         },
         name: "scan-pass",
         path: "scan-pass",

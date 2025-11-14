@@ -6,13 +6,13 @@
       :columns="columns"
       :pagination="{
         rowsPerPage: 15,
-        sortBy: 'code',
-        descending: false,
+        sortBy: 'startDate',
+        descending: true,
       }"
+      @row-click="onRowClick"
     >
-      <template #top-left>Events</template>
-      <template #top-right>
-        <q-input v-model="search" borderless dense placeholder="Search" autofocus role="search">
+      <template #top-left>
+        <q-input v-model="search" filled dense placeholder="Search" autofocus role="search">
           <template #append>
             <q-icon name="search" />
           </template>
@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QTableColumn } from "quasar";
 import type { MeetingEvent } from "src/types/event";
 
 import { useAsyncState } from "@vueuse/core";
@@ -31,19 +32,29 @@ import { api } from "boot/axios";
 import { formatDate } from "src/utils/intl";
 import { unaccentSearch } from "src/utils/search";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 
-const columns = [
+const router = useRouter();
+
+const columns: QTableColumn<MeetingEvent>[] = [
   { field: "code", label: "Code", name: "code", sortable: true },
   { field: "title", label: "Title", name: "title", sortable: true },
   {
-    field: (row: MeetingEvent) => formatDate(row.startDate),
+    field: "startDate",
+    format: formatDate,
     label: "Start date",
     name: "startDate",
     sortable: true,
   },
-  { field: (row: MeetingEvent) => formatDate(row.endDate), label: "End date", name: "endDate", sortable: true },
   {
-    field: (row: MeetingEvent) => row.venueCountry?.name ?? "",
+    field: "endDate",
+    format: formatDate,
+    label: "End date",
+    name: "endDate",
+    sortable: true,
+  },
+  {
+    field: (row) => row.venueCountry?.name ?? "",
     label: "Venue country",
     name: "venueCountry",
     sortable: true,
@@ -51,7 +62,17 @@ const columns = [
   { field: "venueCity", label: "Venue city", name: "venueCity", sortable: true },
   { field: "dates", label: "Dates", name: "dates", sortable: true },
 ];
-const { isLoading, state } = useAsyncState(async () => (await api.get<MeetingEvent[]>("/events/")).data, []);
+const { isLoading, state } = useAsyncState(
+  async () =>
+    (
+      await api.get<MeetingEvent[]>("/events/", {
+        params: {
+          isRecent: true,
+        },
+      })
+    ).data,
+  [],
+);
 const search = useRouteQuery("search", "");
 
 const events = computed(() =>
@@ -64,4 +85,8 @@ const events = computed(() =>
     event.venueCountry?.officialName,
   ]),
 );
+
+function onRowClick(ev: Event, row: MeetingEvent) {
+  router.push({ name: "dashboard", params: { eventCode: row.code } });
+}
 </script>

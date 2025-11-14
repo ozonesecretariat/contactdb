@@ -7,7 +7,7 @@ import { useUserStore } from "stores/userStore";
 /**
  * Initializes the application store and configure sentry.
  */
-export default defineBoot(async ({ app, router, store }) => {
+export default defineBoot(async ({ app, redirect, router, store, urlPath }) => {
   const $q = app.config.globalProperties.$q;
   const userStore = useUserStore();
   const appSettingsStore = useAppSettingsStore();
@@ -15,9 +15,13 @@ export default defineBoot(async ({ app, router, store }) => {
   try {
     $q.loading.show();
     await Promise.all([userStore.load(), appSettingsStore.load()]);
+    const defaultPage = userStore.availablePages[0]?.items[0]?.to;
+    if (urlPath === "/" && defaultPage) {
+      redirect(userStore.defaultPage);
+    }
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(e);
+    console.error(e);
     $q.notify({
       message: "Unknown error while loading data, please try again later.",
       type: "negative",
@@ -31,7 +35,10 @@ export default defineBoot(async ({ app, router, store }) => {
       app,
       dsn: appSettingsStore.sentryDsn,
       environment: appSettingsStore.environmentName,
-      integrations: [Sentry.browserTracingIntegration({ router })],
+      integrations: [
+        Sentry.browserTracingIntegration({ router }),
+        Sentry.captureConsoleIntegration({ levels: ["error"] }),
+      ],
     });
     store.use(createSentryPiniaPlugin());
   }

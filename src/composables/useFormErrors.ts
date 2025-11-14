@@ -26,6 +26,9 @@ export default function useFormErrors() {
 
       if (!reason) {
         result.nonFieldErrors = "Unknown error";
+        // Log to console and sentry in case this is a bug.
+        // eslint-disable-next-line no-console
+        console.error(axiosError);
       } else {
         for (const [key, value] of Object.entries(reason)) {
           let errorMsg = value;

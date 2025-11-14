@@ -66,6 +66,16 @@ Cypress.Commands.addAll({
       expect(Array.from(remainingApps), "Expecting all apps to be checked").to.be.empty;
     });
   },
+  checkChart(title, strings) {
+    cy.get(`[aria-label="${title}"] .echarts`)
+      .invoke("attr", "aria-label")
+      .then((ariaLabel) => {
+        expect(ariaLabel).to.exist;
+        strings.forEach((str) => {
+          expect(ariaLabel).to.include(str);
+        });
+      });
+  },
   checkExport({ expected = [], filePattern, filters = {}, modelName, searchValue = "" }) {
     cy.task("cleanDownloadsFolder");
     cy.performSearch({ filters, modelName, searchValue });
@@ -74,7 +84,7 @@ Cypress.Commands.addAll({
     cy.get("[type=submit]").contains("Submit").click();
     cy.checkFile({ expected, filePattern, lineLength: expected.length + 1 });
   },
-  checkFile({ expected, filePattern, lineLength = null }) {
+  checkFile({ expected = [], filePattern, lineLength = null }) {
     cy.verifyDownload(filePattern, { contains: true });
     cy.task("downloads").then((files) => {
       const downloadsFolder = Cypress.config("downloadsFolder");
@@ -82,6 +92,10 @@ Cypress.Commands.addAll({
         downloadsFolder,
         files.find((fn) => fn.includes(filePattern)),
       );
+
+      if (!lineLength && expected.length === 0) {
+        return;
+      }
 
       cy.readFile(fullPath, "utf-8").then((content) => {
         if (lineLength) {
@@ -127,6 +141,9 @@ Cypress.Commands.addAll({
     cy.performSearch({ filters, modelName, searchValue });
     cy.contains("0 results");
   },
+  checkQInputError(name, error) {
+    cy.get(`label:has([name="${name}"]) [role=alert]`).contains(error);
+  },
   checkSearch({ expectedValue = null, filters = {}, modelName, searchValue = "" }) {
     const checkedValue = expectedValue ?? searchValue;
 
@@ -134,6 +151,10 @@ Cypress.Commands.addAll({
     cy.contains("1 result");
     cy.get("#result_list a").contains(checkedValue).click();
     cy.contains(checkedValue);
+  },
+  chooseQSelect(name, value) {
+    cy.get(`[role=combobox][aria-label="${name}"]`).click();
+    cy.get("[role=option]").contains(value).click();
   },
   chooseSelect2(name, values) {
     cy.get(`[name=${name}]`).then(($el) => {
@@ -274,6 +295,7 @@ Cypress.Commands.addAll({
     cy.get("[type=submit]:not([hidden])").click();
     if (checkSuccess) {
       cy.get(`[data-user-email="${user}"]`);
+      cy.get(".q-loading.fullscreen").should("not.exist");
     }
     if (checkSuccess && goToAdmin) {
       cy.get("a").contains("Admin").click();
@@ -281,6 +303,9 @@ Cypress.Commands.addAll({
   },
   loginAdmin(goToAdmin = true) {
     cy.login("admin@example.com", "admin", true, goToAdmin);
+  },
+  loginDSA(goToAdmin = true) {
+    cy.login("test-dsa@example.com", "test", true, goToAdmin);
   },
   loginEdit(goToAdmin = true) {
     cy.login("test-edit@example.com", "test", true, goToAdmin);
@@ -303,6 +328,12 @@ Cypress.Commands.addAll({
   loginNonStaffView(goToAdmin = true) {
     cy.login("test-non-staff-view@example.com", "test", true, goToAdmin);
   },
+  loginSecurity(goToAdmin = true) {
+    cy.login("test-security@example.com", "test", true, goToAdmin);
+  },
+  loginSupport(goToAdmin = true) {
+    cy.login("test-support@example.com", "test", true, goToAdmin);
+  },
   loginView(goToAdmin = true) {
     cy.login("test-view@example.com", "test", true, goToAdmin);
   },
@@ -311,7 +342,7 @@ Cypress.Commands.addAll({
     cy.fillInputs(filters);
     if (searchValue) {
       cy.get("#searchbar").type(searchValue);
-      cy.get("input[value=Search]").click();
+      cy.get("[role=search] input[value=Search]").click();
     }
   },
   triggerAction({ action, filters = {}, modelName, searchValue = "" }) {

@@ -1,128 +1,226 @@
 [
   {
     "model": "core.organizationtype",
-    "pk": "ACC-EXPERT",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff5",
+      "acronym": "ACC-EXPERT",
       "title": "Academia/Expert",
-      "description": "Academia/Expert"
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "Academia/Expert",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "ASS-PANEL",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff2",
+      "acronym": "ASSMT-PANEL",
       "title": "Assessment Panels",
-      "description": "Assessment Panels"
+      "badge_title": "",
+      "statistics_title": "",
+      "badge_color": "#7f97ab",
+      "description": "Assessment Panels",
+      "sort_order": 30,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": true
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "BIZ",
-    "fields": {
-      "organization_type_id": "594bce8cf939e087ce7d5ff4",
-      "title": "Industry",
-      "description": "Industry"
-    }
-  },
-  {
-    "model": "core.organizationtype",
-    "pk": "EXHIBITOR",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff7",
+      "acronym": "EXHIBITOR",
       "title": "Exhibitors",
-      "description": "Exhibitors"
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "Exhibitors",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "GOV",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5fef",
+      "acronym": "GOV",
       "title": "Government",
-      "description": "Government"
+      "badge_title": "Parties",
+      "statistics_title": "Parties",
+      "badge_color": "#df3e24",
+      "description": "Government",
+      "sort_order": 10,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": true
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "IGO",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5fee",
+      "acronym": "IGO",
       "title": "IGOs",
-      "description": "IGOs"
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "IGOs",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "INTERPRETER",
+    "fields": {
+      "organization_type_id": "594bce8cf939e087ce7d5ff4",
+      "acronym": "BIZ",
+      "title": "Industry",
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "Industry",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
+    }
+  },
+  {
+    "model": "core.organizationtype",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ffb",
+      "acronym": "INTERPRETER",
       "title": "Interpreters",
-      "description": "Interpreters"
+      "badge_title": "",
+      "statistics_title": "",
+      "badge_color": "#7f97ab",
+      "description": "Interpreters",
+      "sort_order": 60,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "LOCALSTAFF",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff8",
+      "acronym": "LOCALSTAFF",
       "title": "Local Support",
-      "description": "Local Support"
+      "badge_title": "",
+      "statistics_title": "",
+      "badge_color": "#7f97ab",
+      "description": "Local Support",
+      "sort_order": 60,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "MEDIA",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ffa",
+      "acronym": "MEDIA",
       "title": "Media",
-      "description": "Media"
+      "badge_title": "",
+      "statistics_title": "",
+      "badge_color": "#7f97ab",
+      "description": "Media",
+      "sort_order": 60,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "NGO",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff1",
+      "acronym": "NGO",
       "title": "NGOs",
-      "description": "NGOs"
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "NGOs",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "OBS",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff0",
+      "acronym": "OBS",
       "title": "Observers",
-      "description": "Observers"
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "Observers",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "OTHER",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff9",
+      "acronym": "OTHER",
       "title": "Others",
-      "description": "Others"
+      "badge_title": "Observers",
+      "statistics_title": "Observers",
+      "badge_color": "#7f97ab",
+      "description": "Others",
+      "sort_order": 20,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "SECRETARIAT",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff6",
+      "acronym": "SECRETARIAT",
       "title": "Secretariat",
-      "description": "Secretariat"
+      "badge_title": "Ozone Secretariat",
+      "statistics_title": "Ozone Secretariat",
+      "badge_color": "#06aef0",
+      "description": "Secretariat",
+      "sort_order": 40,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": true
     }
   },
   {
     "model": "core.organizationtype",
-    "pk": "UN",
     "fields": {
       "organization_type_id": "594bce8cf939e087ce7d5ff3",
+      "acronym": "UN",
       "title": "UN Agencies",
-      "description": "UN Agencies"
+      "badge_title": "United Nations",
+      "statistics_title": "United Nations",
+      "badge_color": "#5b92e5",
+      "description": "UN Agencies",
+      "sort_order": 50,
+      "hide_in_lop": false,
+      "hide_in_statistics": false,
+      "protected": false
     }
   }
 ]

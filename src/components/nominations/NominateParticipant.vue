@@ -4,47 +4,16 @@
     <div v-if="errors.contact" class="text-negative">
       {{ errors.contact }}
     </div>
-    <div class="bg-grey-2 q-pa-md rounded-borders">
-      <div class="row items-start justify-between">
-        <div class="col">
-          <div class="col-10 q-gutter-x-lg">
-            <p class="text-h6 text-secondary">
-              {{ participant?.fullName }}
-            </p>
-            <div class="text-subtitle1">
-              {{ participant.designation }}
-              <br v-if="participant.designation && participant.department" />
-              {{ participant.department }}
-            </div>
-            <div class="text-h6">
-              {{ participant.organization?.name }}
-            </div>
-            <div v-if="participant.organization?.government" class="text-h6">
-              {{ participant.organization?.government?.name }}
-            </div>
-          </div>
-          <div class="row items-start justify-left q-mt-md q-col-gutter-sm">
-            <div v-if="addressEntity" class="col-6">
-              {{ addressEntity.address }}
-              <br v-if="addressEntity.address" />
-              {{ addressEntity.city }}
-              {{ addressEntity.state }}
-              {{ addressEntity.postalCode }}
-              <br v-if="addressEntity.city || addressEntity.state || addressEntity.postalCode" />
-              {{ country }}
-            </div>
-            <div>
-              Email: {{ participant.emails?.[0] ?? "-" }}
-              <br />
-              Mobile: {{ participant.mobiles?.[0] ?? "-" }}
-            </div>
-          </div>
-        </div>
-        <div class="col-2 q-gutter-y-md">
+    <div class="bg-grey-2 rounded-borders">
+      <participant-card
+        v-if="invitation.participant"
+        :participant="invitation.participant"
+        :photo-url="invitation.getPhotoUrl(participant.id)"
+      >
+        <template #buttons>
           <q-btn :to="{ name: 'edit-participant', params: { participantId: participant.id } }" size="sm">Edit</q-btn>
-          <q-img v-if="participant.photoUrl" :src="apiBase + participant.photoUrl" alt="" />
-        </div>
-      </div>
+        </template>
+      </participant-card>
     </div>
   </q-card-section>
   <q-card-section v-if="participant" class="col-grow">
@@ -84,15 +53,54 @@
   </q-card-section>
   <q-card-section class="modal-footer">
     <q-btn :to="{ name: 'find-participant' }">Back</q-btn>
-    <q-btn color="accent" :loading="loading" @click="confirmNomination">Confirm nomination</q-btn>
+    <q-btn
+      :color="hasChanges ? 'accent' : 'grey'"
+      :disabled="!hasChanges"
+      :loading="loading"
+      @click="confirmNomination"
+    >
+      {{ hasChanges ? "Confirm nomination" : "No changes to save" }}
+    </q-btn>
   </q-card-section>
+  <q-dialog v-model="showConfirmDialog" persistent>
+    <q-card>
+      <q-card-section class="row items-center">
+        <q-avatar icon="warning" color="negative" text-color="white" />
+        <span class="q-ml-sm text-h6">Confirm Removal</span>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <p>You are about to remove the nominations for the following event(s):</p>
+        <ul>
+          <li v-for="item in actionSummary.removing" :key="item.event.code">
+            <strong>{{ item.event.code }}</strong>
+            ({{ item.role }})
+          </li>
+        </ul>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn v-close-popup flat label="Cancel" />
+        <q-btn
+          flat
+          label="Remove nominations"
+          color="negative"
+          @click="
+            performNomination();
+            showConfirmDialog = false;
+          "
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
 import type { MeetingEvent } from "src/types/event";
 import type { EventNomination } from "src/types/nomination";
 
-import { api, apiBase } from "boot/axios";
+import { api } from "boot/axios";
+import ParticipantCard from "components/ParticipantCard.vue";
 import useFormErrors from "src/composables/useFormErrors";
 import { useInvitationStore } from "stores/invitationStore";
 import { computed, reactive, ref } from "vue";
@@ -102,15 +110,6 @@ const router = useRouter();
 const loading = ref(false);
 const invitation = useInvitationStore();
 const participant = computed(() => invitation.participant);
-const country = computed(() => {
-  if (invitation.participant?.isUseOrganizationAddress) {
-    return invitation.participant.organization?.country?.name ?? invitation.participant.organization?.government?.name;
-  }
-  return invitation.countries.find((_country) => _country.code === invitation.participant?.country)?.name;
-});
-const addressEntity = computed(() =>
-  invitation.participant?.isUseOrganizationAddress ? invitation.participant?.organization : invitation.participant,
-);
 
 const { errors, setErrors } = useFormErrors();
 const nominations = reactive<Record<string, string>>({});
@@ -127,6 +126,45 @@ const currentNominations = computed(() => {
   return result;
 });
 
+const actionSummary = computed(() => {
+  const removing = [];
+
+  for (const event of invitation.events) {
+    const isSelected = nominationsToggle[event.code];
+    const currentNomination = currentNominations.value[event.code];
+    const hasCurrentNomination = Boolean(currentNomination);
+
+    // This allows us to keep tracks of whether any nomination are removed
+    if (!isSelected && hasCurrentNomination) {
+      removing.push({ event, role: currentNomination?.role });
+    }
+  }
+
+  return { removing };
+});
+
+const hasChanges = computed(() => {
+  // Check if current state differs from initial state
+  for (const event of invitation.events) {
+    const isSelected = nominationsToggle[event.code];
+    const currentNomination = currentNominations.value[event.code];
+    const hasCurrentNomination = Boolean(currentNomination);
+    const selectedRole = nominations[event.code];
+
+    if (isSelected !== hasCurrentNomination) {
+      return true;
+    }
+
+    // Tracking role changes as well, not just selections
+    if (isSelected && hasCurrentNomination && selectedRole !== currentNomination?.role) {
+      return true;
+    }
+  }
+  return false;
+});
+
+const willRemoveNominations = computed(() => actionSummary.value.removing.length > 0);
+
 // Init values for all events
 for (const event of invitation.events) {
   roleErrors[event.code] = "";
@@ -141,11 +179,27 @@ for (const [code, nomination] of Object.entries(currentNominations.value)) {
   nominationsToggle[code] = Boolean(nomination.status);
 }
 
+const showConfirmDialog = ref(false);
+
 async function confirmNomination() {
   if (!validateNominations()) {
     return;
   }
 
+  // Show confirmation dialog if removing nominations
+  if (willRemoveNominations.value) {
+    showConfirmDialog.value = true;
+    return;
+  }
+
+  await performNomination();
+}
+
+function nominationReadOnly(event: MeetingEvent) {
+  return Boolean(currentNominations.value[event.code]) && currentNominations.value[event.code]?.status !== "Nominated";
+}
+
+async function performNomination() {
   const url = `/events-nominations/${invitation.token}/nominate-contact/${invitation.participantId}/`;
 
   loading.value = true;
@@ -170,11 +224,12 @@ async function confirmNomination() {
   }
 }
 
-function nominationReadOnly(event: MeetingEvent) {
-  return Boolean(currentNominations.value[event.code]) && currentNominations.value[event.code]?.status !== "Nominated";
-}
-
 function validateNominations() {
+  // Do not enable submit button when no changes have been performed
+  if (!hasChanges.value) {
+    return false;
+  }
+
   let valid = true;
   for (const event of invitation.events) {
     if (!nominationsToggle[event.code]) {

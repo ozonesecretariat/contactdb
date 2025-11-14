@@ -226,11 +226,15 @@ class EmailAdminForm(forms.ModelForm):
             not self.cleaned_data["recipients"].exists()
             and not self.cleaned_data["groups"].exists()
             and not self.cleaned_data["events"].exists()
+            and not self.cleaned_data["organizations"].exists()
         ):
-            msg = "At least one recipient, group or event must be specified"
+            msg = (
+                "At least one recipient, group, organization or event must be specified"
+            )
             self.add_error("events", msg)
             self.add_error("groups", msg)
             self.add_error("recipients", msg)
+            self.add_error("organizations", msg)
 
 
 class EmailAttachmentForm(forms.ModelForm):
@@ -433,7 +437,9 @@ class EmailAdmin(BaseEmailAdmin):
         "cc_groups",
         "bcc_groups",
         "events",
+        "organizations",
     )
+    search_fields = BaseEmailAdmin.search_fields + ("organizations__name__unaccent",)
     prefetch_related = ("email_logs",)
     fieldsets = (
         (
@@ -441,13 +447,15 @@ class EmailAdmin(BaseEmailAdmin):
             {
                 "description": (
                     "One individual mail will be sent to each of the selected "
-                    "contacts, contact group members and event participants. "
+                    "contacts, contact group members, organization contacts "
+                    "and event participants. "
                     "Contacts will not see addresses from this list other than "
                     "their own."
                 ),
                 "fields": (
                     "recipients",
                     "groups",
+                    "organizations",
                     "events",
                 ),
             },
@@ -497,6 +505,7 @@ class EmailAdmin(BaseEmailAdmin):
                 "fields": (
                     "recipients_links",
                     "groups_links",
+                    "organizations_links",
                     "events_links",
                 )
             },
@@ -598,6 +607,10 @@ class EmailAdmin(BaseEmailAdmin):
     @admin.display(description="Groups")
     def groups_links(self, obj):
         return self.get_m2m_links(obj.groups.all())
+
+    @admin.display(description="Organizations")
+    def organizations_links(self, obj):
+        return self.get_m2m_links(obj.organizations.all())
 
     @admin.display(description="Events")
     def events_links(self, obj):

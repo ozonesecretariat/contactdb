@@ -7,7 +7,7 @@
       "name": "Galactic Research Institute for Advanced Technologies",
       "alt_names": null,
       "acronym": "GRIAT",
-      "organization_type": "UN",
+      "organization_type": ["UN"],
       "government": "TG",
       "country": "UA",
       "state": "",
@@ -20,6 +20,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -32,7 +33,7 @@
       "name": "Intergalactic Defense Coalition",
       "alt_names": null,
       "acronym": "IDC",
-      "organization_type": "OBS",
+      "organization_type": ["OBS"],
       "government": "ES",
       "country": "UY",
       "state": "",
@@ -45,6 +46,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -57,12 +59,12 @@
       "name": "Celestial Exploratory Society",
       "alt_names": null,
       "acronym": "CES",
-      "organization_type": "OTHER",
+      "organization_type": ["OTHER"],
       "government": "KW",
       "country": "DE",
       "state": "",
-      "city": "",
-      "postal_code": "",
+      "city": "Lima",
+      "postal_code": "123456",
       "address": "",
       "phones": null,
       "faxes": null,
@@ -70,6 +72,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -82,7 +85,7 @@
       "name": "Quantum Engineering Consortium",
       "alt_names": null,
       "acronym": "QEC",
-      "organization_type": "OBS",
+      "organization_type": ["OBS"],
       "government": "GQ",
       "country": "TH",
       "state": "",
@@ -95,6 +98,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -107,8 +111,8 @@
       "name": "Interstellar Alliance for Planetary Preservation",
       "alt_names": null,
       "acronym": "IAPP",
-      "organization_type": "GOV",
-      "government": "KM",
+      "organization_type": ["GOV"],
+      "government": "FR",
       "country": "IE",
       "state": "",
       "city": "",
@@ -120,6 +124,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -132,7 +137,7 @@
       "name": "Cosmic Nexus Intelligence Agency",
       "alt_names": null,
       "acronym": "CNIA",
-      "organization_type": "OTHER",
+      "organization_type": ["OTHER"],
       "government": "PY",
       "country": "SL",
       "state": "",
@@ -145,6 +150,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -157,7 +163,7 @@
       "name": "Astral Technologies Syndicate",
       "alt_names": null,
       "acronym": "ATS",
-      "organization_type": "SECRETARIAT",
+      "organization_type": ["SECRETARIAT"],
       "government": "BH",
       "country": "NI",
       "state": "",
@@ -170,6 +176,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -182,7 +189,7 @@
       "name": "Universal Science Foundation",
       "alt_names": null,
       "acronym": "USF",
-      "organization_type": "OBS",
+      "organization_type": ["OBS"],
       "government": "JO",
       "country": "LR",
       "state": "",
@@ -195,6 +202,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -207,7 +215,7 @@
       "name": "Extraterrestrial Relations Bureau",
       "alt_names": null,
       "acronym": "ERB",
-      "organization_type": "ASS-PANEL",
+      "organization_type": ["ASSMT-PANEL"],
       "government": "RW",
       "country": "UY",
       "state": "",
@@ -220,6 +228,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -232,7 +241,7 @@
       "name": "Stellar Cartography Society",
       "alt_names": null,
       "acronym": "SCS",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "MD",
       "country": "ME",
       "state": "",
@@ -245,6 +254,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -257,7 +267,7 @@
       "name": "Warp Dynamics Institute",
       "alt_names": null,
       "acronym": "WDI",
-      "organization_type": "IGO",
+      "organization_type": ["IGO"],
       "government": "CU",
       "country": "GT",
       "state": "",
@@ -270,6 +280,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -282,7 +293,7 @@
       "name": "Astronomical Phenomena Research Council",
       "alt_names": null,
       "acronym": "APRC",
-      "organization_type": "GOV",
+      "organization_type": ["GOV"],
       "government": "GT",
       "country": "MZ",
       "state": "",
@@ -295,6 +306,7 @@
       "emails": "[]",
       "email_ccs": "[]",
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -307,7 +319,7 @@
       "name": "Terraforming Initiative Taskforce",
       "alt_names": null,
       "acronym": "TIT",
-      "organization_type": "OTHER",
+      "organization_type": ["OTHER"],
       "government": "CZ",
       "country": "KR",
       "state": "",
@@ -320,6 +332,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -332,8 +345,8 @@
       "name": "Metaverse Security Council",
       "alt_names": null,
       "acronym": "MSC",
-      "organization_type": "LOCALSTAFF",
-      "government": "AM",
+      "organization_type": ["LOCALSTAFF"],
+      "government": "CA",
       "country": "VC",
       "state": "",
       "city": "",
@@ -345,6 +358,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -357,7 +371,7 @@
       "name": "Hyperion Galactic Council",
       "alt_names": null,
       "acronym": "HGC",
-      "organization_type": "IGO",
+      "organization_type": ["IGO"],
       "government": "TN",
       "country": "JP",
       "state": "",
@@ -370,6 +384,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -382,7 +397,7 @@
       "name": "Orion Institute of Alien Studies",
       "alt_names": null,
       "acronym": "OIAS",
-      "organization_type": "IGO",
+      "organization_type": ["IGO"],
       "government": "AZ",
       "country": "NG",
       "state": "",
@@ -395,6 +410,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -407,7 +423,7 @@
       "name": "Nebula Network Operations Center",
       "alt_names": null,
       "acronym": "NNOC",
-      "organization_type": "LOCALSTAFF",
+      "organization_type": ["LOCALSTAFF"],
       "government": "UA",
       "country": "BY",
       "state": "",
@@ -420,6 +436,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -432,7 +449,7 @@
       "name": "Deep Space Exploration Agency",
       "alt_names": null,
       "acronym": "DSEA",
-      "organization_type": "MEDIA",
+      "organization_type": ["MEDIA"],
       "government": "TV",
       "country": "JM",
       "state": "",
@@ -445,6 +462,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -457,7 +475,7 @@
       "name": "Quantum Entanglement Research Consortium",
       "alt_names": null,
       "acronym": "QERC",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -470,6 +488,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -482,7 +501,7 @@
       "name": "Exøplănetâry Çolönizàtion Áuțhôrîtÿ",
       "alt_names": null,
       "acronym": "ECA",
-      "organization_type": "GOV",
+      "organization_type": ["GOV"],
       "government": "GT",
       "country": "EE",
       "state": "",
@@ -495,6 +514,7 @@
       "emails": "[]",
       "email_ccs": "[]",
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -507,7 +527,7 @@
       "name": "Photonics and Quantum Technologies Alliance",
       "alt_names": null,
       "acronym": "PQTA",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -520,6 +540,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -532,7 +553,7 @@
       "name": "Photonics and Quantum Technologies Alliance",
       "alt_names": null,
       "acronym": "PQTA",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -545,6 +566,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -557,7 +579,7 @@
       "name": "Photonics and Quantum Technologies Alliance",
       "alt_names": null,
       "acronym": "PQTA",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -570,6 +592,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -582,7 +605,7 @@
       "name": "Advanced Quantum Computing Institute",
       "alt_names": null,
       "acronym": "AQCI",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -595,6 +618,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -607,7 +631,7 @@
       "name": "Advanced Quantum Computing Institute",
       "alt_names": null,
       "acronym": "",
-      "organization_type": "GOV",
+      "organization_type": ["GOV"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -620,6 +644,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -632,7 +657,7 @@
       "name": "Center for Quantum Simulation Technologies",
       "alt_names": null,
       "acronym": "CQST",
-      "organization_type": "OTHER",
+      "organization_type": ["OTHER"],
       "government": "CL",
       "country": null,
       "state": "",
@@ -645,6 +670,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }
@@ -657,7 +683,7 @@
       "name": "Center for Quantum Simulation Technologies",
       "alt_names": null,
       "acronym": "CQST",
-      "organization_type": "EXHIBITOR",
+      "organization_type": ["EXHIBITOR"],
       "government": "CL",
       "country": "KR",
       "state": "",
@@ -670,6 +696,7 @@
       "emails": null,
       "email_ccs": null,
       "include_in_invitation": true,
+      "sort_order": null,
       "primary_contacts": [],
       "secondary_contacts": []
     }

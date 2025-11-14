@@ -12,6 +12,8 @@ class TestMergeContacts(TestCase):
         "initial/contactgroup",
         "test/eventgroup",
         "test/event",
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "test/organization",
@@ -65,7 +67,6 @@ class TestMergeContacts(TestCase):
             notes="Notes 1",
             contact_ids=["111111"],
             focal_point_ids=["1"],
-            photo_access_uuid=None,
         )
 
         self.contact2 = Contact.objects.create(
@@ -95,7 +96,6 @@ class TestMergeContacts(TestCase):
             notes="Notes 2",
             contact_ids=["2"],
             focal_point_ids=["2"],
-            photo_access_uuid=None,
         )
 
         self.contact1.registrations.create(
@@ -259,7 +259,6 @@ class TestMergeContacts(TestCase):
             "country_id",
             "organization_id",
             "org_head",
-            "photo_access_uuid",
         )[0]
 
         duplicate_contact = Contact.objects.create(

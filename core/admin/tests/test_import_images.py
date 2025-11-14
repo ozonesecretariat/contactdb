@@ -268,13 +268,6 @@ class TestContactAdminPhotoImport(TestCase):
 
     def test_action_requires_change_permission(self):
         """Test that the action requires change permission."""
-        self.assertTrue(
-            hasattr(self.admin.import_photos_from_kronos, "allowed_permissions")
-        )
-        self.assertIn(
-            "change", self.admin.import_photos_from_kronos.allowed_permissions
-        )
-
         user_no_perms = get_user_model().objects.create_user(
             email="impermisibilul@permisiuni.com", password="parola"
         )

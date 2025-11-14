@@ -9,6 +9,8 @@ export interface PriorityPass {
   contact: Contact;
   country: Country | null;
   createdAt: string;
+  isCurrentlyValid: boolean;
   organization: null | Organization;
   registrations: Registration[];
+  validDateRange: string;
 }

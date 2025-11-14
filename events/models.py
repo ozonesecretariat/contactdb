@@ -1,20 +1,35 @@
+import base64
+import hashlib
+import io
+import math
 import uuid
+from io import BytesIO
 from urllib.parse import urljoin
 
+import img2pdf
+import qrcode
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.db import models
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Case, Exists, F, Max, Min, OuterRef, Q, When
+from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.timezone import get_default_timezone
+from django_db_views.db_view import DBView
 from django_extensions.db.fields import RandomCharField
 from django_task.models import TaskRQ
+from encrypted_fields import EncryptedJSONField
+from timezone_field import TimeZoneField
 
+from common.array_field import ArrayField
 from common.citext import CICharField
+from common.dates import date_range_str
 from common.model import KronosEnum, KronosId
 from common.pdf import print_pdf
 from core.models import Contact, Country, Organization
+from core.templatetags.file_base64 import file_to_base64
 from emails.validators import validate_placeholders
 
 
@@ -43,12 +58,24 @@ class EventGroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("-created_at",)
         verbose_name = "event group"
         verbose_name_plural = "event groups"
 
     def __str__(self):
         return self.name
+
+    @property
+    def group_start_date(self):
+        return self.events.aggregate(Min("start_date"))["start_date__min"]
+
+    @property
+    def group_end_date(self):
+        return self.events.aggregate(Max("end_date"))["end_date__max"]
+
+    @property
+    def date_range(self):
+        return date_range_str(self.group_start_date, self.group_end_date)
 
 
 class Event(models.Model):
@@ -57,6 +84,7 @@ class Event(models.Model):
     title = models.CharField(max_length=255, blank=False, null=False)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
+    timezone = TimeZoneField(default="UTC")
     venue_country = models.ForeignKey(
         Country,
         on_delete=models.CASCADE,
@@ -73,6 +101,10 @@ class Event(models.Model):
         null=True,
         related_name="events",
         help_text="Group linking related events",
+    )
+    hide_for_nomination = models.BooleanField(
+        default=False,
+        help_text="Do not allow direct nominations for this event",
     )
 
     attach_priority_pass = models.BooleanField(
@@ -105,6 +137,22 @@ class Event(models.Model):
     play_store_url = models.CharField(max_length=1024, blank=True)
     # TODO: Allow choosing the badge template for the event
 
+    lop_doc_symbols = ArrayField(
+        null=True,
+        base_field=models.TextField(),
+        blank=True,
+        help_text="Document symbols for the List of Participants document",
+    )
+
+    # DSA
+    dsa = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    term_exp = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True
+    )
+
+    class Meta:
+        ordering = ("-start_date",)
+
     def __str__(self):
         return f"{self.code} {self.title}"
 
@@ -132,6 +180,10 @@ class Event(models.Model):
     def has_refused_email(self):
         return bool(self.refuse_subject and self.refuse_content)
 
+    @property
+    def date_range(self):
+        return date_range_str(self.start_date, self.end_date)
+
     def clean(self):
         if not self.start_date or not self.end_date:
             return
@@ -156,6 +208,14 @@ class Event(models.Model):
                     "confirmation_content": msg,
                 }
             )
+
+    @property
+    def local_start_date(self):
+        return self.start_date.replace(tzinfo=self.timezone)
+
+    @property
+    def local_end_date(self):
+        return self.end_date.replace(tzinfo=self.timezone)
 
 
 class EventInvitation(models.Model):
@@ -267,6 +327,25 @@ class EventInvitation(models.Model):
         return f'<a href="{self.invitation_link}" target="_blank">{self.invitation_link}</a>'
 
     @property
+    def invitation_link_qr_code(self):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(self.invitation_link)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        img_data = base64.b64encode(buffer.getvalue()).decode()
+        return f"data:image/png;base64,{img_data}"
+
+    @property
     def is_for_future_event(self):
         today = timezone.now()
 
@@ -323,8 +402,16 @@ class EventInvitation(models.Model):
         )
 
 
+class RegistrationTagManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class RegistrationTag(models.Model):
-    name = CICharField(max_length=250, primary_key=True)
+    name = CICharField(max_length=250, unique=True)
+    protected = models.BooleanField(default=False)
+
+    objects = RegistrationTagManager()
 
     class Meta:
         ordering = ("name",)
@@ -332,16 +419,23 @@ class RegistrationTag(models.Model):
     def __str__(self):
         return self.name
 
+    def natural_key(self):
+        return (self.name,)
+
 
 class RegistrationRole(models.Model):
     name = CICharField(max_length=250, unique=True)
     hide_for_nomination = models.BooleanField(
         default=False, help_text="Hide this role in the nomination form."
     )
+    hide_in_lop = models.BooleanField(
+        default=False, help_text="Hide in the List of Participants document"
+    )
+    sort_order = models.PositiveIntegerField(default=0)
     kronos_value = KronosEnum()
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("sort_order", "name")
 
     def __str__(self):
         return self.name
@@ -394,6 +488,7 @@ class PriorityPass(models.Model):
             "organization_name": self.organization_name,
             "contact": self.contact,
             "country": self.country,
+            "address_entity": self.address_entity,
             "main_event": self.main_event,
         }
 
@@ -402,7 +497,7 @@ class PriorityPass(models.Model):
         return [
             r
             for r in self.registrations.all()
-            if r.status != Registration.Status.REVOKED
+            if r.status not in ("", Registration.Status.REVOKED)
         ]
 
     @property
@@ -432,8 +527,6 @@ class PriorityPass(models.Model):
     def organization_name(self):
         if not self.organization:
             return None
-        if self.is_gov:
-            return str(self.organization)
         return self.organization.name
 
     @property
@@ -454,6 +547,16 @@ class PriorityPass(models.Model):
         return None
 
     @property
+    def address_entity(self):
+        if self.contact and self.contact.is_use_organization_address:
+            return self.organization
+
+        if self.contact:
+            return self.contact
+
+        return None
+
+    @property
     def main_event(self):
         registrations = list(self.registrations.all())
         if not registrations:
@@ -465,23 +568,59 @@ class PriorityPass(models.Model):
 
         return registrations[0].event
 
+    def _filter_registrations(self, status: "Registration.Status"):
+        # Filter here instead of SQL to take advantage of prefetching.
+        return [
+            registration
+            for registration in self.registrations.all()
+            if registration.status == status
+        ]
+
     @property
     def accredited_registrations(self):
-        result = []
-        for registration in self.registrations.all():
-            if registration.status == Registration.Status.ACCREDITED:
-                result.append(registration)
-
-        return result
+        return self._filter_registrations(Registration.Status.ACCREDITED)
 
     @property
     def revoked_registrations(self):
-        result = []
-        for registration in self.registrations.all():
-            if registration.status == Registration.Status.REVOKED:
-                result.append(registration)
+        return self._filter_registrations(Registration.Status.REVOKED)
 
-        return result
+    @property
+    def registered_registrations(self):
+        return self._filter_registrations(Registration.Status.REGISTERED)
+
+    @property
+    def valid_from(self):
+        try:
+            return min(
+                reg.event.local_start_date for reg in self.registered_registrations
+            )
+        except ValueError:
+            return None
+
+    @property
+    def valid_to(self):
+        try:
+            return max(
+                reg.event.local_end_date for reg in self.registered_registrations
+            )
+        except ValueError:
+            return None
+
+    @property
+    def valid_date_range(self):
+        return date_range_str(self.valid_from, self.valid_to)
+
+    @property
+    def is_currently_valid(self):
+        if not self.valid_from or not self.valid_to:
+            return False
+        # Need to compare dates against a common timezone, otherwise
+        # the comparison will be incorrect.
+        common_tz = get_default_timezone()
+        utc_from = self.valid_from.astimezone(common_tz)
+        utc_now = timezone.now().astimezone(common_tz)
+        utc_to = self.valid_to.astimezone(common_tz)
+        return utc_from <= utc_now <= utc_to
 
     def send_confirmation_email(self):
         if not self.main_event or not self.main_event.has_confirmation_email:
@@ -524,6 +663,35 @@ class PriorityPass(models.Model):
         msg.queue_emails()
 
 
+class RegistrationManager(models.Manager):
+    def with_annotations(self):
+        return self.annotate(
+            usable_organization_type=Coalesce(
+                F("organization__organization_type__acronym"),
+                F("contact__organization__organization_type__acronym"),
+            ),
+            usable_organization_government=Coalesce(
+                F("organization__government__name"),
+                F("contact__organization__government__name"),
+            ),
+            usable_organization_country=Coalesce(
+                F("organization__country__name"),
+                F("contact__organization__country__name"),
+            ),
+            dsa_country_name=Case(
+                When(
+                    usable_organization_type="GOV",
+                    then=F("usable_organization_government"),
+                ),
+                When(
+                    contact__is_use_organization_address=True,
+                    then=F("usable_organization_country"),
+                ),
+                default=F("contact__country__name"),
+            ),
+        )
+
+
 class Registration(models.Model):
     class Status(models.TextChoices):
         NOMINATED = "Nominated", "Nominated"
@@ -543,7 +711,7 @@ class Registration(models.Model):
     )
 
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.NOMINATED
+        max_length=20, choices=Status.choices, default=Status.NOMINATED, blank=True
     )
     role = models.ForeignKey(RegistrationRole, on_delete=models.SET_NULL, null=True)
     priority_pass = models.ForeignKey(
@@ -555,9 +723,17 @@ class Registration(models.Model):
     date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(RegistrationTag, blank=True)
     is_funded = models.BooleanField(default=False)
+    sort_order = models.PositiveIntegerField(
+        default=None,
+        null=True,
+        blank=True,
+        help_text="Override the role sort order for this registration.",
+    )
 
-    # Save the state of organization, designation, and department as it
+    # Save the state of credentials, organization, designation, and department as it
     # was when the contact registered
+    has_credentials = models.BooleanField(default=False)
+    credentials = EncryptedJSONField(blank=True, null=True)
     organization = models.ForeignKey(
         Organization,
         on_delete=models.PROTECT,
@@ -572,13 +748,35 @@ class Registration(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
+    objects = RegistrationManager()
+
     class Meta:
         unique_together = ("contact", "event")
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.event.code} - {self.contact.full_name} ({self.status})"
 
     def save(self, *args, **kwargs):
+        """
+        Overridden to reuse priority pass for same contact and event in the same group,
+        or create a new priority pass if none can be reused
+        """
+        if not self.pk and not self.priority_pass and self.event and self.event.group:
+            existing_registration = (
+                Registration.objects.filter(
+                    contact=self.contact,
+                    event__group=self.event.group,
+                    priority_pass__isnull=False,
+                )
+                .order_by("-created_at")
+                .first()
+            )
+
+            if existing_registration:
+                self.priority_pass = existing_registration.priority_pass
+
+        # If one could not be reused, create a new priority pass
         if not self.priority_pass:
             self.priority_pass = PriorityPass.objects.create()
 
@@ -590,6 +788,98 @@ class Registration(models.Model):
             raise ValidationError(
                 "Priority pass can only be used for one contact at a time"
             )
+
+        # Do not allow status changes from non-blank to blank for existing Registrations.
+        # This prevents possible future deletions of non-placeholder Registrations.
+        if self.pk:
+            try:
+                original = Registration.objects.get(pk=self.pk)
+                if original.status and original.status != "" and self.status == "":
+                    raise ValidationError(
+                        {"status": "Status cannot be cleared once it has been set."}
+                    )
+            except Registration.DoesNotExist:
+                pass
+
+    @property
+    def usable_government(self) -> Country | None:
+        return self.usable_organization and self.usable_organization.government
+
+    @property
+    def usable_organization(self) -> Organization | None:
+        return self.organization or self.contact.organization
+
+    @property
+    def usable_organization_name(self) -> str | None:
+        try:
+            return self.organization.name
+        except AttributeError:
+            return None
+
+    @property
+    def usable_organization_sort_order(self) -> int | float:
+        try:
+            return self.usable_organization.sort_order or math.inf
+        except AttributeError:
+            return math.inf
+
+    @property
+    def usable_organization_type_sort_order(self) -> int | float:
+        try:
+            return self.usable_organization.organization_type.sort_order or math.inf
+        except AttributeError:
+            return math.inf
+
+    @property
+    def usable_organization_type_description(self) -> str | None:
+        try:
+            return self.usable_organization.organization_type.description
+        except AttributeError:
+            return None
+
+    @property
+    def is_gov(self):
+        try:
+            return self.usable_organization.is_gov
+        except AttributeError:
+            return False
+
+    @property
+    def is_ass_panel(self):
+        try:
+            return self.usable_organization.is_ass_panel
+        except AttributeError:
+            return False
+
+    @property
+    def is_secretariat(self):
+        try:
+            return self.usable_organization.is_secretariat
+        except AttributeError:
+            return False
+
+    @property
+    def dsa_country(self):
+        if self.is_gov:
+            return self.usable_government
+        return self.contact.address_entity.country
+
+
+class AnnotatedRegistration(DBView):
+    registration = models.OneToOneField(Registration, on_delete=models.DO_NOTHING)
+    usable_organization = models.ForeignKey(
+        Organization, on_delete=models.DO_NOTHING, null=True
+    )
+    view_definition = """
+        SELECT registration.id                                                 AS id, 
+               registration.id                                                 AS registration_id,
+               COALESCE(registration.organization_id, contact.organization_id) AS usable_organization_id
+        FROM events_registration AS registration
+                 LEFT JOIN core_contact AS contact ON registration.contact_id = contact.id
+    """
+
+    class Meta:
+        managed = False
 
 
 class LoadParticipantsFromKronosTask(TaskRQ):
@@ -669,3 +959,91 @@ class LoadOrganizationsFromKronosTask(TaskRQ):
         from .jobs import LoadOrganizationsFromKronos
 
         return LoadOrganizationsFromKronos
+
+
+class DSA(models.Model):
+    registration = models.OneToOneField(
+        Registration, on_delete=models.CASCADE, related_name="dsa"
+    )
+    umoja_travel = models.CharField(max_length=255)
+    bp = models.CharField(max_length=255)
+    arrival_date = models.DateField(blank=True, null=True)
+    departure_date = models.DateField(blank=True, null=True)
+    cash_card = models.CharField(max_length=255, blank=True)
+    paid_dsa = models.BooleanField(default=False)
+
+    boarding_pass = EncryptedJSONField(blank=True, null=True)
+    passport = EncryptedJSONField(blank=True, null=True)
+    signature = EncryptedJSONField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "DSA"
+        verbose_name_plural = "DSAs"
+
+    def __str__(self):
+        return f"DSA - {self.registration}"
+
+    def clean(self):
+        if self.departure_date and not self.arrival_date:
+            raise ValidationError(
+                {"arrival_date": "Cannot specify departure date without arrival date."}
+            )
+
+        if (
+            self.departure_date
+            and self.arrival_date
+            and self.departure_date < self.arrival_date
+        ):
+            msg = "Departure date cannot be before arrival date."
+            raise ValidationError(
+                {
+                    "arrival_date": msg,
+                    "departure_date": msg,
+                }
+            )
+
+    @property
+    def number_of_days(self):
+        if not self.arrival_date or not self.departure_date:
+            return 0
+
+        # This is essentially the "number of nights" and not the number of days.
+        # If the arrival and departure dates are the same, the number of days is 0.
+        # This is intentional, even though it seems incorrect.
+        return (self.departure_date - self.arrival_date).days
+
+    @property
+    def dsa_on_arrival(self):
+        return self.number_of_days * (self.registration.event.dsa or 0)
+
+    @property
+    def total_dsa(self):
+        return self.dsa_on_arrival + (self.registration.event.term_exp or 0)
+
+    def generate_pdf(self, field: str):
+        if not (value := getattr(self, field)):
+            return False
+
+        if "data" not in value:
+            return False
+
+        data_uri = value["data"]
+        base64_data = data_uri.split(",")[-1]
+        current_image = base64.b64decode(base64_data)
+
+        stored_hash = value.get("data_hash")
+        current_image_hash = hashlib.sha256(current_image).hexdigest()
+        if "pdf_data" in value and stored_hash == current_image_hash:
+            # Already has the PDF generated and it's up to date
+            return False
+
+        img_file = io.BytesIO(current_image)
+        pdf_file = io.BytesIO()
+        pdf_file.name = field + ".pdf"
+        img2pdf.convert(img_file, outputstream=pdf_file)
+
+        pdf_file.seek(0)
+        value["data_hash"] = current_image_hash
+        value["pdf_data"] = file_to_base64(pdf_file)
+        setattr(self, field, value)
+        return True

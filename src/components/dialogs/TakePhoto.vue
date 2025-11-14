@@ -1,4 +1,5 @@
 <template>
+  <q-btn color="primary" icon="photo_camera" aria-label="Take photo" @click="show()">{{ label }}</q-btn>
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">
@@ -22,7 +23,7 @@
         </div>
 
         <div class="row justify-center q-mt-md">
-          <q-btn color="primary" icon="photo_camera" label="Capture" @click="capturePicture" />
+          <q-btn color="primary" icon="photo_camera" label="Capture" :disable="isLoading" @click="capturePicture" />
         </div>
       </q-card-section>
     </q-card>
@@ -45,6 +46,12 @@ const selectedCamera = ref<MediaDeviceInfo | null>(null);
 const emit = defineEmits<{
   capture: [imageData: string];
 }>();
+defineProps({
+  label: {
+    default: "Take photo",
+    type: String,
+  },
+});
 
 function capturePicture() {
   if (!videoElement.value || !canvasElement.value) return;
@@ -68,6 +75,8 @@ function capturePicture() {
 }
 
 async function initCamera() {
+  if (!selectedCamera.value) return;
+
   isLoading.value = true;
 
   try {
@@ -116,8 +125,6 @@ watch(showDialog, () => {
 onUnmounted(() => {
   stopCamera();
 });
-
-defineExpose({ show });
 </script>
 
 <style scoped lang="scss">

@@ -37,6 +37,27 @@
         font-family: Arial, sans-serif;
       }
 
+      @media screen {
+        /* Useful for debugging the badge layout*/
+        body {
+          position: relative;
+          width: 105mm;
+          height: 148mm;
+          margin: auto;
+          border: 1px solid black;
+        }
+
+        body::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 0;
+          background-color: black;
+          width: 100%;
+          height: 1px;
+        }
+      }
+
       img {
         max-width: 100%;
         max-height: 100%;
@@ -49,7 +70,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        padding: 1rem;
+        padding: 0.5rem 1rem;
         overflow: hidden;
       }
 
@@ -121,18 +142,6 @@
       .app-qr-code img {
         margin-bottom: 0.25rem;
       }
-
-      .participant-type {
-        background-color: #7f97ab;
-      }
-
-      .participant-type.UN {
-        background-color: #007fc2;
-      }
-
-      .participant-type.GOV {
-        background-color: #e85d30;
-      }
     </style>
     {% block head %}
     {% endblock head %}
@@ -145,7 +154,9 @@
     <div class="back">
       {% block back %}
         <div class="meeting-app">
-          <div class="title">Meeting App</div>
+          {% if main_event.app_store_url or main_event.play_store_url %}
+            <div class="title">Meeting App</div>
+          {% endif %}
           <div>
             {% if main_event.app_store_url %}
               <div class="store-logo">
@@ -175,7 +186,9 @@
         </div>
         {% if main_event.wifi_name and main_event.wifi_password %}
           <div class="wifi">
-            <img src="{% static 'img/wifi_logo.png' %}" alt="wifi log" class="wifi-logo" />
+            <div>
+              <img src="{% static 'img/wifi_logo.png' %}" alt="wifi logo" class="wifi-logo" />
+            </div>
             <div>{{ main_event.wifi_name }}</div>
             <div>{{ main_event.wifi_password }}</div>
           </div>
