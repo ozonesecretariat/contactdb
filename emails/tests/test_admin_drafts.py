@@ -16,6 +16,8 @@ class TestEmailAdminDrafts(TestCase):
     """Test draft-related functionality in EmailAdmin."""
 
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
@@ -255,6 +257,8 @@ class TestInvitationEmailAdminDrafts(TestCase):
     """Test draft functionality in InvitationEmailAdmin."""
 
     fixtures = [
+        "initial/region",
+        "initial/subregion",
         "initial/country",
         "initial/organizationtype",
         "initial/registrationrole",
