@@ -84,10 +84,14 @@ class PriorityPassViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=["get"])
     def print_badge(self, *args, **kwargs):
         priority_pass = self.get_object()
+        include_back_side = self.request.GET.get("include_back_side", "true") == "true"
         return FileResponse(
             print_pdf(
                 priority_pass.badge_template,
-                context=priority_pass.priority_pass_context,
+                context={
+                    **priority_pass.priority_pass_context,
+                    "include_back_side": include_back_side,
+                },
                 request=self.request,
             ),
             content_type="application/pdf",

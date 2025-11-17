@@ -79,3 +79,20 @@ class TestPriorityPassAPI(BaseAPITestCase):
                 self.assertEqual(resp.status_code, 200 if valid else 403)
                 if valid:
                     self.assertTrue(next(resp.streaming_content).startswith(b"%PDF"))
+
+    def test_print_pdf_front_only(self):
+        for login_method, valid in (
+            (self.login_admin, True),
+            # Security cannot print badges even though they can list and view passes
+            (self.login_security, False),
+            (self.login_support, True),
+            (self.login_dsa, False),
+        ):
+            with self.subTest(login_method=login_method.__name__):
+                login_method()
+                resp = self.client.get(
+                    self.url + "QGRCE9XD0W/print_badge/?include_back_side=false"
+                )
+                self.assertEqual(resp.status_code, 200 if valid else 403)
+                if valid:
+                    self.assertTrue(next(resp.streaming_content).startswith(b"%PDF"))

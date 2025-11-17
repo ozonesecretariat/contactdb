@@ -143,10 +143,27 @@
         margin-bottom: 0.25rem;
       }
     </style>
+
+    {% if not include_back_side %}
+      <style>
+        @page {
+          size: A7 landscape;
+        }
+
+        body.no-back .back {
+          display: none;
+        }
+
+        body.no-back .front {
+          bottom: 0;
+        }
+      </style>
+    {% endif %}
+
     {% block head %}
     {% endblock head %}
   </head>
-  <body>
+  <body {% if not include_back_side %}class="no-back"{% endif %}>
     <div class="front">
       {% block front %}
       {% endblock front %}

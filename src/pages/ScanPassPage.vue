@@ -34,6 +34,15 @@
             <q-btn v-if="canPrintBadge" color="positive" icon="picture_as_pdf" :href="badgeUrl" target="_blank">
               Print badge
             </q-btn>
+            <q-btn
+              v-if="canPrintBadge"
+              color="positive"
+              icon="picture_as_pdf"
+              :href="badgeUrl + '?include_back_side=false'"
+              target="_blank"
+            >
+              Print badge (front)
+            </q-btn>
             <take-photo v-if="canEditContact" @capture="setPicture" />
             <crop-photo v-if="canEditContact && pass?.contact?.hasPhoto" :photo-url="photoUrl" @crop="setPicture" />
           </q-card-actions>
