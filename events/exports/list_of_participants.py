@@ -13,6 +13,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt
 from docx.text.paragraph import Paragraph
+from unidecode import unidecode
 
 from events.exports.docx_utils import (
     add_page_number,
@@ -186,7 +187,7 @@ class ListOfParticipants:
 
         self.grouped_participants(
             section=Section.PARTIES,
-            sort=lambda r: (r.usable_government.name,),
+            sort=lambda r: (unidecode(r.usable_government.name).lower(),),
             key_l1=None,
             key_l2=lambda r: r.usable_government.name,
         )
@@ -194,7 +195,7 @@ class ListOfParticipants:
             section=Section.ASS_PANELS,
             sort=lambda r: (
                 r.usable_organization_sort_order,
-                (r.usable_organization_name or "Unknown").lower(),
+                unidecode(r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
@@ -205,7 +206,7 @@ class ListOfParticipants:
                 r.usable_organization_type_sort_order,
                 r.usable_organization_type_description or "Unknown",
                 r.usable_organization_sort_order,
-                (r.usable_organization_name or "Unknown").lower(),
+                unidecode(r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=lambda r: r.usable_organization_type_description or "Unknown",
             key_l2=lambda r: r.usable_organization_name or "Unknown",
@@ -214,7 +215,7 @@ class ListOfParticipants:
             section=Section.SECRETARIAT,
             sort=lambda r: (
                 r.usable_organization_sort_order,
-                r.usable_organization_name.lower(),
+                unidecode(r.usable_organization_name or "Unknown").lower(),
             ),
             key_l1=None,
             key_l2=lambda r: r.usable_organization_name,
