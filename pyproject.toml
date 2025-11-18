@@ -45,6 +45,7 @@ dependencies = [
     "requests==2.32.5",
     "rq-scheduler==0.14.0",
     "sentry-sdk[django]==2.41.0",
+    "unidecode>=1.4.0",
     "wait-for-it==2.3.0",
     "weasyprint==66.0",
 ]
