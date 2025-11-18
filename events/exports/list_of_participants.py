@@ -51,6 +51,8 @@ BOTTOM_MARGIN = Inches(0.25)
 LEFT_MARGIN = Inches(0.25)
 RIGHT_MARGIN = Inches(0.25)
 
+FONT_NAME = "Times New Roman"
+
 
 class ListOfParticipants:
     def __init__(self, event):
@@ -109,10 +111,10 @@ class ListOfParticipants:
         self.doc.settings.odd_and_even_pages_header_footer = True
 
         styles = self.doc.styles
-        styles["Normal"].font.name = "Arial"
+        styles["Normal"].font.name = FONT_NAME
 
         header_style = styles.add_style("LOP Header", WD_STYLE_TYPE.PARAGRAPH)
-        header_style.font.name = "Arial"
+        header_style.font.name = FONT_NAME
         header_style.font.bold = False
         header_style.font.italic = True
         header_style.font.size = Pt(9)
@@ -120,7 +122,7 @@ class ListOfParticipants:
         header_style.paragraph_format.space_before = Pt(0)
 
         header_style = styles.add_style("LOP Header Title", WD_STYLE_TYPE.PARAGRAPH)
-        header_style.font.name = "Arial"
+        header_style.font.name = FONT_NAME
         header_style.font.bold = True
         header_style.font.size = Pt(16)
         header_style.paragraph_format.keep_together = True
@@ -129,7 +131,7 @@ class ListOfParticipants:
         header_style.paragraph_format.space_before = Pt(0)
 
         table_style = styles.add_style("LOP Table", WD_STYLE_TYPE.TABLE)
-        table_style.font.name = "Arial"
+        table_style.font.name = FONT_NAME
         table_style.font.size = Pt(11)
 
         space_style = styles.add_style("LOP Table Space", WD_STYLE_TYPE.PARAGRAPH)
@@ -138,21 +140,21 @@ class ListOfParticipants:
         space_style.font.size = Pt(12)
 
         group_style = styles.add_style("LOP L1 Group", WD_STYLE_TYPE.PARAGRAPH)
-        group_style.font.name = "Arial"
+        group_style.font.name = FONT_NAME
         group_style.font.size = Pt(14)
         group_style.font.bold = True
         group_style.paragraph_format.keep_together = True
         group_style.paragraph_format.keep_with_next = True
 
         group_style = styles.add_style("LOP L2 Group", WD_STYLE_TYPE.PARAGRAPH)
-        group_style.font.name = "Arial"
+        group_style.font.name = FONT_NAME
         group_style.font.bold = True
         group_style.font.underline = True
         group_style.paragraph_format.keep_together = True
         group_style.paragraph_format.keep_with_next = True
 
         footer_style = styles.add_style("LOP Footer", WD_STYLE_TYPE.PARAGRAPH)
-        footer_style.font.name = "Arial"
+        footer_style.font.name = FONT_NAME
         footer_style.font.size = Pt(9)
         footer_style.paragraph_format.space_after = Pt(0)
         footer_style.paragraph_format.space_before = Pt(0)
@@ -238,7 +240,7 @@ class ListOfParticipants:
     def cover_page_header(self):
         table = self.doc.add_table(1, 2)
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
-        table.style.font.name = "Arial"
+        table.style.font.name = FONT_NAME
         table.style.paragraph_format.space_after = ZERO
 
         set_table_border(table, size=0, border_type="none")
