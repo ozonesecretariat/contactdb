@@ -830,6 +830,7 @@ class EventAdmin(ExportMixin, CKEditorTemplatesBase):
             {
                 "fields": (
                     "event_logo",
+                    "include_badge_back_side",
                     "wifi_name",
                     "wifi_password",
                     "app_store_url",

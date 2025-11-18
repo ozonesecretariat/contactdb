@@ -1,4 +1,5 @@
 from api.tests.base import BaseAPITestCase
+from events.models import PriorityPass
 
 
 class TestPriorityPassAPI(BaseAPITestCase):
@@ -81,6 +82,10 @@ class TestPriorityPassAPI(BaseAPITestCase):
                     self.assertTrue(next(resp.streaming_content).startswith(b"%PDF"))
 
     def test_print_pdf_front_only(self):
+        event = PriorityPass.objects.get(code="QGRCE9XD0W").main_event
+        event.include_badge_back_side = False
+        event.save()
+
         for login_method, valid in (
             (self.login_admin, True),
             # Security cannot print badges even though they can list and view passes
@@ -90,9 +95,7 @@ class TestPriorityPassAPI(BaseAPITestCase):
         ):
             with self.subTest(login_method=login_method.__name__):
                 login_method()
-                resp = self.client.get(
-                    self.url + "QGRCE9XD0W/print_badge/?include_back_side=false"
-                )
+                resp = self.client.get(self.url + "QGRCE9XD0W/print_badge/")
                 self.assertEqual(resp.status_code, 200 if valid else 403)
                 if valid:
                     self.assertTrue(next(resp.streaming_content).startswith(b"%PDF"))

@@ -144,17 +144,17 @@
       }
     </style>
 
-    {% if not include_back_side %}
+    {% if not priority_pass.main_event.include_back_side %}
       <style>
         @page {
           size: A7 landscape;
         }
 
-        body.no-back .back {
+        .back {
           display: none;
         }
 
-        body.no-back .front {
+        .front {
           bottom: 0;
         }
       </style>
@@ -163,7 +163,7 @@
     {% block head %}
     {% endblock head %}
   </head>
-  <body {% if not include_back_side %}class="no-back"{% endif %}>
+  <body>
     <div class="front">
       {% block front %}
       {% endblock front %}
