@@ -130,6 +130,10 @@ class Event(models.Model):
         blank=True,
         help_text="Event logo displayed on the badge",
     )
+    include_badge_back_side = models.BooleanField(
+        default=True,
+        help_text="Include badge back side on A6. Disable to print directly to A7.",
+    )
     wifi_name = models.CharField(max_length=255, blank=True)
     wifi_password = models.CharField(max_length=255, blank=True)
 
